@@ -1,0 +1,27 @@
+<div class="mt-4 mx-5">
+    <table class="table table-success">
+        <thead class="table-dark">
+            <tr>                
+                <th scope="col">Raison sociale</th>
+                <th scope="col">Siret</th>
+                <th scope="col">RCS</th>
+                <th scope="col">TVA Name</th>
+                <th scope="col">Code APE</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @for (prestation of prestations; track prestation.id) {
+            <tr>
+                <td>{{ prestation.tarifHT }}</td>
+                <td>{{ prestation.dateFin }}</td>
+                <td>{{ prestation.quantite }}</td>
+                <td>{{ prestation.quantite }}</td>
+                <td>{{ prestation.quantite }}</td>
+                <td>{{ prestation.quantite }}</td>
+            </tr>
+            }           
+        </tbody>
+    </table>
+</div>
