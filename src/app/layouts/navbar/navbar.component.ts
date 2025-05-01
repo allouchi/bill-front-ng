@@ -15,9 +15,8 @@ export class NavbarComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   ngOnInit(): void {
-    console.log('------------------', this.router.url);
-
-    console.log('------------------', this.route.snapshot.paramMap);
+    const path = this.route.snapshot.routeConfig?.path;
+    console.log('Route path:', path);
   }
 
   clicked(event: MouseEvent) {
