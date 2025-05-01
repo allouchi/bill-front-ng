@@ -8,6 +8,7 @@ export default interface Facture {
   dateEncaissement: string;
   delaiPaiement: number;
   montantTVA: number;
+  montantNetTVA: number;
   prixTotalHT: number;
   prixTotalTTC: number;
   nbJourRetard: number;
@@ -20,5 +21,5 @@ export default interface Facture {
   designation: string;
   clientPrestation: string;
   filePath: string;
-  moisFacture : string;
+  moisFacture: string;
 }

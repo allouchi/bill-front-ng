@@ -6,21 +6,18 @@ import Prestation from "../../models/Prestation";
  *
  */
 export interface IPrestationService {
-  
   /**
    * Create new facture for the current project or update it if already exists
    *
    * @param prestation prestation to create or to update
    * @returns Promise<Prestation>
    */
-  createOrUpdatePrestation(
+  createPrestation(
     prestation: Partial<Prestation>,
     siret: string,
     templateChoice: boolean,
     moisFactureId: number
   ): Observable<Prestation>;
-
-  
 
   /**
    * Modify prestation for the current project or update it if already exists
@@ -28,14 +25,17 @@ export interface IPrestationService {
    * @param prestation prestation to create or to update
    * @returns Promise<Prestation>
    */
-  modifyPrestation(prestation: Partial<Prestation>, siret: string): Observable<Prestation>;
+  updatePrestation(
+    prestation: Partial<Prestation>,
+    siret: string
+  ): Observable<Prestation>;
 
   /**
    * Delete one facture by it's id
    *
    * @param id facture id to delete
    */
-deletePrestationById(id: number): Observable<string>;
+  deletePrestationById(id: number): Observable<string>;
 
   /**
    * Get all schemas if no project or all schemas for project name in otherwise

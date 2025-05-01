@@ -17,103 +17,102 @@ import { TvaEditComponent } from './pages/tva/edit/tva-edit.component';
 
 
 export const BILLING_ROUTE: Routes = [
-    {
-        path: "",
-        component: PrestationReadComponent
-    },
-    {
-        path: "bill-dashboard",
-        component: DashboardComponent
-    },
-    {
-        path: 'companies',
-        component: CompanyReadComponent,
-        children: [
-            {
-                path: 'read',
-                loadComponent: () => CompanyReadComponent
-            },
-            {
-                path: 'edit/:id',
-                loadComponent: () => CompanyEditComponent
-            }
-        ]
-    },
-    {
-        path: 'factures',
-        component: FactureReadComponent,
-        children: [
-            {
-                path: 'read',
-                loadComponent: () => FactureReadComponent
-            },
-            {
-                path: 'edit/:id',
-                loadComponent: () => FactureEditComponent
-            }
-        ]
-    },
-    {
-        path: 'clients',
-        component: ClientReadComponent,
-        children: [
-            {
-                path: 'read',
-                loadComponent: () => ClientReadComponent
-            },
-            {
-                path: 'edit/:id',
-                loadComponent: () => ClientEditComponent
-            }
-        ]
-    },
+  {
+    path: '',
+    component: DashboardComponent,
+  },
+  {
+    path: 'bill-dashboard',
+    component: DashboardComponent,
+  },
+  {
+    path: 'companies',
+    component: CompanyReadComponent,
+    children: [
+      {
+        path: 'read',
+        loadComponent: () => CompanyReadComponent,
+      },
+      {
+        path: 'edit/:id',
+        loadComponent: () => CompanyEditComponent,
+      },
+    ],
+  },
+  {
+    path: 'factures',
+    component: FactureReadComponent,
+    children: [
+      {
+        path: 'read',
+        loadComponent: () => FactureReadComponent,
+      },
+      {
+        path: 'edit/:id',
+        loadComponent: () => FactureEditComponent,
+      },
+    ],
+  },
+  {
+    path: 'clients',
+    component: ClientReadComponent,
+    children: [
+      {
+        path: 'read',
+        loadComponent: () => ClientReadComponent,
+      },
+      {
+        path: 'edit/:id',
+        loadComponent: () => ClientEditComponent,
+      },
+    ],
+  },
 
-    {
-        path: 'prestations',
-        component: PrestationReadComponent,
-        children: [
-            {
-                path: 'read',
-                loadComponent: () => PrestationReadComponent
-            },
-            {
-                path: 'edit/:id',
-                loadComponent: () => PrestationEditComponent
-            }
-        ]
-    },
+  {
+    path: 'prestations',
+    component: PrestationReadComponent,
+    children: [
+      {
+        path: 'read',
+        loadComponent: () => PrestationReadComponent,
+      },
+      {
+        path: 'edit/:id',
+        loadComponent: () => PrestationEditComponent,
+      },
+    ],
+  },
 
-    {
-        path: 'consultants',
-        component: ConsultantReadComponent,
-        children: [
-            {
-                path: 'read',
-                loadComponent: () => ConsultantReadComponent
-            },
-            {
-                path: 'edit/:id',
-                loadComponent: () => ConsultantEditComponent
-            }
-        ]
-    },
-    {
-        path: 'tvas',
-        component: TvaReadComponent,
-        children: [
-            {
-                path: 'read',
-                loadComponent: () => TvaReadComponent
-            },
-            {
-                path: 'edit/:id',
-                loadComponent: () => TvaEditComponent
-            }
-        ]
-    },
-    {
-        path: "**",
-        component: NotFoundErrorComponent
-    }
-
+  {
+    path: 'consultants',
+    component: ConsultantReadComponent,
+    children: [
+      {
+        path: 'read',
+        loadComponent: () => ConsultantReadComponent,
+      },
+      {
+        path: 'edit/:id',
+        loadComponent: () => ConsultantEditComponent,
+      },
+    ],
+  },
+  {
+    path: 'tvas',
+    component: TvaReadComponent,
+    children: [
+      {
+        path: 'read',
+        loadComponent: () => TvaReadComponent,
+      },
+      {
+        path: 'edit/:id',
+        loadComponent: () => TvaEditComponent,
+      },
+    ],
+  },
+  {
+    path: '**',
+    component: NotFoundErrorComponent,
+  },
 ];

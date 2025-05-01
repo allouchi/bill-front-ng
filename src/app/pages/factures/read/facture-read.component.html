@@ -1,30 +1,43 @@
-<table class="table table-success">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>mdo</td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>fat</td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>John</td>
-            <td>Doe</td>
-            <td>social</td>
-        </tr>
-    </tbody>
-</table>
+<div class="mt-4 mx-5">
+    <table class="table table-success">
+        <thead class="table-dark">
+            <tr>                
+                <th scope="col">Numéro Facture</th>
+                <th scope="col">Tarif HT</th>
+                <th scope="col">Quantité</th>
+                <th scope="col">Prix Total HT</th>
+                <th scope="col">Prix Total TTC</th>
+                <th scope="col">Total TVA</th>
+                <th scope="col">Total Net TVA</th>
+                <th scope="col">Date d'Echéance</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @for (facture of factures; track facture.id) {
+            <tr>
+                <td align="centre">{{ facture.numeroFacture }}</td>
+                <td>{{ facture.tarifHT }}</td>
+                <td>{{ facture.quantite }}</td>
+                <td>{{ facture.prixTotalHT }}</td>
+                <td>{{ facture.prixTotalTTC }}</td>
+                <td>{{ facture.montantTVA }}</td>
+                <td>{{ facture.montantNetTVA}}</td>
+                <td>{{ facture.dateEcheance}}</td>
+                <td> <button class="btn btn-outline-danger btn-sm me-2"
+                    (click)="deleteFactue(facture)"
+                    title="Supprimer Prestation">
+                     <i class="bi bi-trash"></i>
+                    </button>
+                    
+                    <button class="btn btn-outline-primary btn-sm"
+                    (click)="updateFacture(facture)"
+                    title="Modifier Prestation">
+                     <i class="bi bi-pencil"></i>
+                    </button></td>
+            </tr>
+            }           
+        </tbody>
+    </table>
+</div>

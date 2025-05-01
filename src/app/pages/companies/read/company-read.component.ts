@@ -16,6 +16,6 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 export default class CompanyReadComponent implements OnInit{
 
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    console.log('Method not implemented');
   }
 }

@@ -2,11 +2,13 @@
     <table class="table table-success">
         <thead class="table-dark">
             <tr>                
-                <th scope="col">Raison sociale</th>
-                <th scope="col">Siret</th>
-                <th scope="col">RCS</th>
-                <th scope="col">TVA Name</th>
-                <th scope="col">Code APE</th>
+                <th scope="col">Numéro de commande</th>
+                <th scope="col">Date début</th>
+                <th scope="col">Date fin</th>
+                <th scope="col">Tarif HT</th>
+                <th scope="col">Délai de paiement</th>
+                <th scope="col">Consultant</th>
+                <th scope="col">Client</th>
                 <th scope="col">Action</th>
             </tr>
         </thead>
@@ -14,14 +16,50 @@
 
             @for (prestation of prestations; track prestation.id) {
             <tr>
-                <td>{{ prestation.tarifHT }}</td>
+                <td align="centre">{{ prestation.numeroCommande }}</td>
+                <td>{{ prestation.dateDebut }}</td>
                 <td>{{ prestation.dateFin }}</td>
-                <td>{{ prestation.quantite }}</td>
-                <td>{{ prestation.quantite }}</td>
-                <td>{{ prestation.quantite }}</td>
-                <td>{{ prestation.quantite }}</td>
+                <td>{{ prestation.tarifHT }}</td>
+                <td>{{ prestation.delaiPaiement }}</td>
+                <td>{{ prestation.consultant! | consultantPipe }}</td>
+                <td>{{ prestation.client! | clientPipe}}</td>
+                <td> 
+                    <button class="btn btn-outline-danger btn-sm me-2"
+                    (click)="deletePrestation(prestation)"
+                    title="Supprimer Prestation">
+                     <i class="bi bi-trash"></i>
+                    </button>
+                    
+                    <button class="btn btn-outline-primary btn-sm"
+                    (click)="updatePrestation(prestation)"
+                    title="Modifier Prestation">
+                     <i class="bi bi-pencil"></i>
+                    </button>
+                </td>
             </tr>
             }           
         </tbody>
     </table>
 </div>
+<!-- Modal Bootstrap -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">Confirmation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+  
+        <div class="modal-body">
+          Es-tu sûr(e) de vouloir continuer ?
+        </div>
+  
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+          <button type="button" class="btn btn-danger" (click)="onConfirm()">Oui</button>
+        </div>
+  
+      </div>
+    </div>
+  </div>

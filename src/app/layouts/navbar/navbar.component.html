@@ -1,26 +1,24 @@
-
-
 <nav class="navbar navbar-expand-lg bg-primary">
     <div class="container-fluid">        
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link"  routerLink="/companies/read" >SOCIETES</a>
+                    <a class="nav-link" routerLink="/companies/read" (click)="clicked($event)">SOCIETES</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link"  routerLink="/prestations/read">PRESTATIONS</a>
+                    <a class="nav-link" routerLink="/prestations/read" (click)="clicked($event)">PRESTATIONS</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link"  routerLink="/factures/read">FACTURES</a>
+                    <a class="nav-link" routerLink="/factures/read" (click)="clicked($event)">FACTURES</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" routerLink="/clients/read">CLIENTS</a>
+                    <a class="nav-link" routerLink="/clients/read" (click)="clicked($event)">CLIENTS</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link"  routerLink="/consultants/read">CONSULTANTS</a>
+                    <a class="nav-link" routerLink="/consultants/read" (click)="clicked($event)">CONSULTANTS</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link"  routerLink="/tvas/read">TVA</a>
+                    <a class="nav-link" routerLink="/tvas/read" (click)="clicked($event)">TVA</a>
                 </li>
             </ul>
         <!-- Icône rouge + menu déroulant -->
@@ -39,10 +37,7 @@
         </div>
     </div>
 </nav>
+<bill-header  [route]="selectedRoute"></bill-header>
 
-<div class="card" style="background-color: #e3f2fd;">
-    <div class="card-header">
-        <span class="text-primary fw-bold ms-3">Liste des sociétés</span>
-    </div>    
-</div>
+
 
