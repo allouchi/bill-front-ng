@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import Client from '../models/Client';
+import Client from '../../models/Client';
 
 @Pipe({
   name: 'clientPipe',

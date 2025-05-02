@@ -1,0 +1,19 @@
+{
+    "consultants": [
+        {
+            "id": 1,
+            "firstName": "Alice",
+            "lastName" : "Bono",
+            "fonction": "Dev",
+            "email": "alice@example.com"
+        },
+        {
+            "id": 2,
+            "firstName": "Brice",
+            "lastName": "Bono",
+            "fonction": "Admin",
+            "email": "alice@example.com"
+        }
+    ]    
+}
+

@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PrestationService } from '../../../services/prestations/prestation.service';
 import { Router } from '@angular/router';
 import Prestation from '../../../models/Prestation';
-import { ConsultantNamePipe } from '../../../utils/consultantName-pipe';
-import { ClientNamePipe } from '../../../utils/clientName-pipe';
+import { ConsultantNamePipe } from '../../../shared/pipes/consultantName-pipe';
+import { ClientNamePipe } from '../../../shared/pipes/clientName-pipe';
 
 @Component({
   selector: 'bill-prestation-read',

@@ -1,0 +1,20 @@
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            @for (col of columns; track col.key) {
+            <th>{{ col.label }}</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @for (item of data; track item.id) {
+        <tr>
+            @for (col of columns; track col.key) {
+            <td>
+                {{ item()[col.key] }}
+            </td>
+        }
+        </tr>
+    }
+    </tbody>
+</table>

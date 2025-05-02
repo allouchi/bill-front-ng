@@ -11,13 +11,12 @@ import { HeaderComponent } from '../header/header.component';
 export class NavbarComponent implements OnInit {
   selectedRoute: string = '';
 
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   ngOnInit(): void {
-    console.log('------------------', this.router.url);
-
-    console.log('------------------', this.route.snapshot.paramMap);
+    const path = this.route.snapshot.routeConfig?.path;
+    console.log('Route path:', path);
   }
 
   clicked(event: MouseEvent) {

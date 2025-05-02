@@ -36,6 +36,11 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     this.factures = factures;
   }
 
+
+  private onResponseError(error: any) {
+    console.log('error :', error);
+  }
+
   deleteFactue(facture: Facture) {
     const ok = confirm(
       `Voulez-vous vraiment supprimer "${facture.numeroFacture}" ?`
@@ -48,12 +53,14 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   onConfirm() {}
 
   updateFacture(facture: Facture) {
-    console.log(facture);
+    const ok = confirm(
+      `Voulez-vous vraiment mettre à jour "${facture.numeroFacture}" ?`
+    );
+    if (ok) {
+      console.log(facture.numeroFacture);
+    }
   }
 
-  private onResponseError(error: any) {
-    console.log('error :', error);
-  }
   ngOnDestroy(): void {
     console.log('ngOnDestroy');
   }
