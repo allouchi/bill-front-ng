@@ -2,51 +2,47 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import Client from '../../../models/Client';
 import { ClientService } from '../../../services/clients/client-service';
 import { Router } from '@angular/router';
+import { AdresseClientPipe } from '../../../shared/pipes/clientAdresse-pipe';
+import { AlertService } from '../../../services/alert/alert.service';
+import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 
 @Component({
   selector: 'bill-client-read',
   standalone: true,
-  imports: [],
+  imports: [AdresseClientPipe, WaitingComponent],
   templateUrl: './client-read.component.html',
-  styleUrl: './client-read.component.css'
+  styleUrl: './client-read.component.css',
 })
 export class ClientReadComponent implements OnInit, OnDestroy {
-
   clients: Client[] = [];
+  isLoaded = false;
 
   constructor(
     private readonly clientService: ClientService,
+    private readonly alertService: AlertService,
     private readonly router: Router
-  ) { }
-
-
+  ) {}
 
   ngOnInit(): void {
+    this.loadClients();
+  }
 
+  private loadClients() {
     this.clientService.findClients().subscribe({
       next: (clients) => {
-        this.onResponseSuccess(clients);
+        setTimeout(() => {
+          this.clients = clients;
+          this.isLoaded = true;
+        }, 500);
       },
       error: (err) => {
-        this.onResponseError(err);
+        this.onError(err);
       },
       complete: () => {
         console.log('Requête terminée.');
       },
     });
-
   }
-
-
-  private onResponseSuccess(clients: Client[]) {
-    this.clients = clients;
-  }
-
-
-  private onResponseError(error: any) {
-    console.log('error :', error);
-  }
-
 
   deleteClient(client: Client) {
     const ok = confirm(
@@ -66,9 +62,16 @@ export class ClientReadComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
+  private onSuccess(respSuccess: any) {
+    this.alertService.show('Opération réussie !', 'success');
   }
 
+  private onError(error: any) {
+    this.isLoaded = true;
+    this.alertService.show('Une erreur est survenue.', 'error');
+  }
 
+  ngOnDestroy(): void {
+    console.log('Method not implemented.');
+  }
 }

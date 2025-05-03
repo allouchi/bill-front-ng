@@ -1,29 +1,27 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
+import { AlertComponent } from '../../shared/alert/alert.component';
+import { SharedService } from '../../services/shared/shared.service';
 
 @Component({
   selector: 'bill-navbar',
-  imports: [RouterLink, HeaderComponent],
+  imports: [RouterLink, HeaderComponent, AlertComponent],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
 export class NavbarComponent implements OnInit {
-  selectedRoute: string = '';
+  selectedCompany: string = 'SBATEC CONSULTING';
 
-  private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
+  constructor(private readonly sharedService: SharedService) {}
 
-  ngOnInit(): void {
-    const path = this.route.snapshot.routeConfig?.path;
-    console.log('Route path:', path);
-  }
+  ngOnInit(): void {}
 
   clicked(event: MouseEvent) {
     event.preventDefault();
     const link = event.target as HTMLAnchorElement;
     if (link.textContent) {
-      this.selectedRoute = link.textContent;
+      this.sharedService.updateData('LISTE DES ' + link.textContent);
     }
   }
 }

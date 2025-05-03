@@ -1,32 +1,48 @@
+@if(isLoaded){
+
 <div class="mt-4 mx-5">
-    <table class="table table-success">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>mdo</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>fat</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>John</td>
-                <td>Doe</td>
-                <td>social</td>
-            </tr>
-        </tbody>
-    </table>
+  <table class="table table-success">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col">Raison sociale</th>
+        <th scope="col">Siret</th>
+        <th scope="col">RCS</th>
+        <th scope="col">NOM TVA</th>
+        <th scope="col">Code APE</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (company of companies; track company.id) {
+      <tr>
+        <td align="centre">{{ company.socialReason }}</td>
+        <td>{{ company.siret }}</td>
+        <td>{{ company.rcsName }}</td>
+        <td>{{ company.numeroTva }}</td>
+        <td>{{ company.codeApe }}</td>
+
+        <td>
+          <button
+            class="btn btn-outline-danger btn-sm me-2"
+            (click)="deleteCompany(company)"
+            title="Supprimer Company"
+          >
+            <i class="bi bi-trash"></i>
+          </button>
+
+          <button
+            class="btn btn-outline-primary btn-sm"
+            (click)="updateCompany(company)"
+            title="Modifier Company"
+          >
+            <i class="bi bi-pencil"></i>
+          </button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
 </div>
+} @else {
+<bill-waiting></bill-waiting>
+}

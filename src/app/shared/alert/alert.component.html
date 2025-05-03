@@ -1,0 +1,12 @@
+<div *ngIf="message" 
+class="alert position-fixed text-center" 
+     [ngClass]="{
+       'alert-success': type === 'success',
+       'alert-danger': type === 'error',
+       'fade': true,
+       'show': true
+     }"
+    style="top: 15%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; min-width: 250px;"
+     role="alert">
+  {{ message }}
+</div>

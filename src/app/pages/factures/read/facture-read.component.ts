@@ -2,29 +2,41 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FactureService } from '../../../services/factures/facture.service';
 import Facture from '../../../models/Facture';
 import { Router } from '@angular/router';
+import { AlertService } from '../../../services/alert/alert.service';
+import { env } from '../../../../environments/env';
+import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 
 @Component({
   selector: 'bill-facture-read',
   standalone: true,
-  imports: [],
+  imports: [WaitingComponent],
   templateUrl: './facture-read.component.html',
   styleUrls: ['./facture-read.component.scss'],
 })
 export default class FactureReadComponent implements OnInit, OnDestroy {
   factures: Facture[] = [];
+  isLoaded = false;
+  private readonly router = inject(Router);
 
   constructor(
     private readonly factureService: FactureService,
-    private readonly router: Router
+    private readonly alertService: AlertService
   ) {}
 
   ngOnInit(): void {
-    this.factureService.findFacturesBySiret('85292702900011').subscribe({
+    this.loadFactures();
+  }
+
+  private loadFactures() {
+    this.factureService.findFacturesBySiret(env.siret).subscribe({
       next: (factures) => {
-        this.onResponseSuccess(factures);
+        setTimeout(() => {
+          this.factures = factures;
+          this.isLoaded = true;
+        }, 500);
       },
       error: (err) => {
-        this.onResponseError(err);
+        this.onError(err);
       },
       complete: () => {
         console.log('Requête terminée.');
@@ -32,36 +44,58 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     });
   }
 
-  private onResponseSuccess(factures: Facture[]) {
-    this.factures = factures;
-  }
-
-
-  private onResponseError(error: any) {
-    console.log('error :', error);
-  }
-
   deleteFactue(facture: Facture) {
     const ok = confirm(
       `Voulez-vous vraiment supprimer "${facture.numeroFacture}" ?`
     );
     if (ok) {
-      console.log(facture.numeroFacture);
+      this.factureService.deleteFactureById(facture.id).subscribe({
+        next: () => {
+          this.onSuccess('deleted');
+          this.factures = this.factures.filter(
+            (item) => item.id !== facture.id
+          );
+        },
+        error: (err) => {
+          this.onError(err);
+        },
+        complete: () => {
+          console.log('Requête terminée.');
+        },
+      });
     }
   }
-
-  onConfirm() {}
 
   updateFacture(facture: Facture) {
     const ok = confirm(
       `Voulez-vous vraiment mettre à jour "${facture.numeroFacture}" ?`
     );
     if (ok) {
-      console.log(facture.numeroFacture);
+      this.factureService.updateFacture(facture).subscribe({
+        next: () => {
+          this.onSuccess('updated');
+          this.loadFactures();
+        },
+        error: (err) => {
+          this.onError(err);
+        },
+        complete: () => {
+          console.log('Requête terminée.');
+        },
+      });
     }
   }
 
+  private onSuccess(respSuccess: any) {
+    this.alertService.show('Opération réussie !', 'success');
+  }
+
+  private onError(error: any) {
+    this.isLoaded = true;
+    this.alertService.show('Une erreur est survenue.', 'error');
+  }
+
   ngOnDestroy(): void {
-    console.log('ngOnDestroy');
+    this.alertService.clear();
   }
 }

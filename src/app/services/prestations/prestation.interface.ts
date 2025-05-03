@@ -12,21 +12,15 @@ export interface IPrestationService {
    * @param prestation prestation to create or to update
    * @returns Promise<Prestation>
    */
-  createPrestation(
+  createOrUpdatePrestation(
     prestation: Partial<Prestation>,
     siret: string,
     templateChoice: boolean,
     moisFactureId: number
   ): Observable<Prestation>;
 
-  /**
-   * Modify prestation for the current project or update it if already exists
-   *
-   * @param prestation prestation to create or to update
-   * @returns Promise<Prestation>
-   */
-  updatePrestation(
-    prestation: Partial<Prestation>,
+  updateDatePrestation(
+    prestation: Prestation,
     siret: string
   ): Observable<Prestation>;
 
