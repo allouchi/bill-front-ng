@@ -72,6 +72,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       this.filtredFactures = this.factures.filter(
         (facture) => facture.dateFacturation.substring(6) == selectedValue
       );
+    } else {
+      this.filtredFactures = this.factures;
     }
   }
 
