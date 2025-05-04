@@ -4,16 +4,18 @@ import { TvaService } from '../../../services/tva/tva-service';
 import { AlertService } from '../../../services/alert/alert.service';
 import { env } from '../../../../environments/env';
 import Exercise from '../../../models/Exercise';
+import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 
 @Component({
   selector: 'bill-tva-read',
-  imports: [],
+  imports: [WaitingComponent],
   templateUrl: './tva-read.component.html',
   styleUrl: './tva-read.component.css',
 })
 export class TvaReadComponent implements OnInit, OnDestroy {
   isLoaded = true;
   tvas: Tva[] = [];
+  filtredTvas: Tva[] = []; 
   exercises: Exercise[] = [];
 
   constructor(
@@ -42,20 +44,26 @@ export class TvaReadComponent implements OnInit, OnDestroy {
 
   setYearValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
-    if (this.factures && selectedValue !== 'Tous') {
-      this.filtredFactures = this.factures.filter(
-        (facture) => facture.dateFacturation.substring(6) == selectedValue
+    if (this.tvas && selectedValue !== 'Tous') {
+      this.filtredTvas = this.tvas.filter(
+        (tva) => tva.exercise == selectedValue
       );
     }
   }
 
+
+  updateTva(tva: Tva) {
+
+  }
+
+  deleteTva(tva: Tva) {
+
+  }
   private loadTva() {
     this.tvaService.findByExercise(env.siret, '2024').subscribe({
       next: (tvas) => {
-        setTimeout(() => {
-          this.tvas = tvas;
-          this.isLoaded = true;
-        }, 500);
+        this.tvas = tvas;
+        this.isLoaded = true;
       },
       error: (err) => {
         this.onError(err);
