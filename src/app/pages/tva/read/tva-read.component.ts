@@ -31,10 +31,8 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   private loadExercicesRef() {
     this.tvaService.findExercisesRef().subscribe({
       next: (exercises) => {
-        setTimeout(() => {
-          this.exercises = exercises;
-          this.isLoaded = true;
-        }, 500);
+        this.exercises = exercises;
+        this.isLoaded = true;
       },
       error: (err) => {
         this.onError(err);
@@ -48,6 +46,8 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       this.filtredTvas = this.tvas.filter(
         (tva) => tva.exercise == selectedValue
       );
+    }else{
+      this.filtredTvas = this.tvas;
     }
   }
 

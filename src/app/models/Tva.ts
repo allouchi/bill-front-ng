@@ -5,4 +5,5 @@ export default interface Tva {
   montantPayment: number;
   exercise: string;
   siret: string;
+  month: string;
 }

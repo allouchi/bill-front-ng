@@ -20,11 +20,13 @@
         </div>
     </div>
 
-
     <table class="table table-success table-striped">
         <thead class="table-dark">
             <tr>
-                <th scope="col">Numéro Facture</th>
+                <th scope="col">Exercice</th>
+                <th scope="col">Mois TVA</th>
+                <th scope="col">Date de paiement</th>
+                <th scope="col">Montant</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
@@ -32,7 +34,10 @@
             @for (tva of filtredTvas; track tva.id) {
             <tr>
                 <td align="centre">{{ tva.exercise }}</td>
-
+                <td align="centre">{{ tva.month }}</td>
+                <td align="centre">{{ tva.datePayment }}</td>
+                <td align="centre">{{ tva.montantPayment }}</td>
+               
                 <td>
                     <button class="btn btn-outline-primary btn-sm me-2" (click)="updateTva(tva)" title="Modifier TVA">
                         <i class="bi bi-pencil"></i>
@@ -43,6 +48,9 @@
                 </td>
             </tr>
             }
+            @empty {
+                <p>Aucun TVA trouvé</p>
+              }
         </tbody>
     </table>
 </div>
