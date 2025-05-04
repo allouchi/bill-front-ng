@@ -1,17 +1,13 @@
-<style>
-  .btn-add {
-    background-color: #28a745; /* vert Bootstrap */
-    color: white;
-  }
-  .btn-add:hover {
-    background-color: #218838;
-  }
-</style>
 
 @if(isLoaded){
 
 <div class="mt-4 mx-5">
-  <table class="table table-success">
+  <div class="text-end mb-2 me-3">
+    <button class="btn btn-pink" title="Nouveau">
+      Ajouter
+    </button>
+  </div>
+  <table class="table table-success table-striped">
     <thead class="table-dark">
       <tr>
         <th scope="col">Numéro de commande</th>

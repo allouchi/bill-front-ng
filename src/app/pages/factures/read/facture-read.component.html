@@ -1,9 +1,8 @@
 @if(isLoaded){
 
 <div class="mt-4 mx-5">
-
-  <div class="mb-3">
-    <label for="monthSelect" class="form-label">Exercice</label>
+  <div class="mb-3" style="width: 100px;">
+    <label for="monthSelect" class="form-label  fw-bold">Exercice</label>
     <select  (change)="setYearValue($event)" 
       class="form-select"
       id="yearSelect"     
@@ -14,7 +13,7 @@
     </select>
   </div>
 
-  <table class="table table-success">
+  <table class="table table-success table-striped">
     <thead class="table-dark">
       <tr>
         <th scope="col">Numéro Facture</th>

@@ -72,8 +72,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       this.filtredFactures = this.factures.filter(
         (facture) => facture.dateFacturation.substring(6) == selectedValue
       );
-    } else {
-      this.filtredFactures = this.factures;
     }
   }
 
@@ -125,7 +123,13 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   private onError(error: any) {
     this.isLoaded = true;
-    this.alertService.show('Une erreur est survenue.', 'error');
+    const message : string = error.message;
+   
+    if(message.includes("Http failure")){
+      this.alertService.show('Problème serveur', 'error');
+    }else{
+      this.alertService.show(message, 'error');
+    }   
   }
 
   ngOnDestroy(): void {

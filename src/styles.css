@@ -1,0 +1,17 @@
+.btn-add {
+    background-color: #28a745; /* vert Bootstrap */
+    color: white;
+  }
+  .btn-add:hover {
+    background-color: #218838;
+  }
+
+  .btn-pink {
+    background-color: #e83e8c;
+    color: white;
+    border: none;
+  }
+
+  .btn-pink:hover {
+    background-color: #d63384;
+  }
