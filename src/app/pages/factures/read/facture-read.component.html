@@ -1,6 +1,19 @@
 @if(isLoaded){
 
 <div class="mt-4 mx-5">
+
+  <div class="mb-3">
+    <label for="monthSelect" class="form-label">Exercice</label>
+    <select  (change)="setYearValue($event)" 
+      class="form-select"
+      id="yearSelect"     
+    >
+      @for (year of exercises; track year.id) {
+      <option value="{{ year.id }}" [value]="year.exercise">{{ year.exercise }}</option>
+      }
+    </select>
+  </div>
+
   <table class="table table-success">
     <thead class="table-dark">
       <tr>
@@ -17,7 +30,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (facture of factures; track facture.id) {
+      @for (facture of filtredFactures; track facture.id) {
       <tr>
         <td align="centre">{{ facture.numeroFacture }}</td>
         <td>{{ facture.moisFacture }}</td>        

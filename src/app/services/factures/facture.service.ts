@@ -4,6 +4,7 @@ import { IFactureService } from "./facture.interface";
 import { HttpClient } from "@angular/common/http";
 import { env } from "../../../environments/env";
 import { Injectable } from "@angular/core";
+import Exercise from '../../models/Exercise';
 
 /**
  * Adapter for IFactureService
@@ -14,9 +15,11 @@ import { Injectable } from "@angular/core";
 @Injectable({ providedIn: 'root' })
 export class FactureService implements IFactureService {
   private readonly apiURL = env.apiURL;
-  private readonly FACTURES_PATH: string = `${this.apiURL}` + "/factures";
+  private readonly FACTURES_PATH: string = `${this.apiURL}` + '/factures';
+  private readonly EXERCISE_PATH: string =
+    `${this.apiURL}` + '/tvas/exerciceRef';
 
-  constructor(private readonly http: HttpClient) { }
+  constructor(private readonly http: HttpClient) {}
 
   updateFacture(facture: Facture): Observable<Facture> {
     return this.http.put<Facture>(this.FACTURES_PATH, facture);
@@ -26,15 +29,20 @@ export class FactureService implements IFactureService {
     siret: string,
     prestationId: number
   ): Observable<Facture> {
-    return this.http.post<Facture>(`${this.FACTURES_PATH}/${siret}/${prestationId}`,
-      facture);
+    return this.http.post<Facture>(
+      `${this.FACTURES_PATH}/${siret}/${prestationId}`,
+      facture
+    );
   }
 
   findFacturesBySiret(siret: string): Observable<Facture[]> {
-    return this.http.get<Facture[]>(`${this.FACTURES_PATH}/${siret}`
-    );
+    return this.http.get<Facture[]>(`${this.FACTURES_PATH}/${siret}`);
   }
   deleteFactureById(factureId: number): Observable<string> {
-    return this.http.delete<string>(`${this.FACTURES_PATH}/${factureId}`)
+    return this.http.delete<string>(`${this.FACTURES_PATH}/${factureId}`);
+  }
+
+  findExercisesRef(): Observable<Exercise[]> {
+    return this.http.get<Exercise[]>(`${this.EXERCISE_PATH}`);
   }
 }

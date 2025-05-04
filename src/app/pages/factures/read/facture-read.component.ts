@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AlertService } from '../../../services/alert/alert.service';
 import { env } from '../../../../environments/env';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
+import Exercise from '../../../models/Exercise';
 
 @Component({
   selector: 'bill-facture-read',
@@ -15,6 +16,8 @@ import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 })
 export default class FactureReadComponent implements OnInit, OnDestroy {
   factures: Facture[] = [];
+  filtredFactures: Facture[] = [];
+  exercises: Exercise[] = [];
   isLoaded = false;
   private readonly router = inject(Router);
 
@@ -25,6 +28,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadFactures();
+    this.loadExercisesRef();
   }
 
   private loadFactures() {
@@ -32,6 +36,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       next: (factures) => {
         setTimeout(() => {
           this.factures = factures;
+          this.filtredFactures = factures;
           this.isLoaded = true;
         }, 500);
       },
@@ -42,6 +47,32 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
         console.log('Requête terminée.');
       },
     });
+  }
+
+  private loadExercisesRef() {
+    this.factureService.findExercisesRef().subscribe({
+      next: (exercises) => {
+        setTimeout(() => {
+          this.exercises = exercises;
+          this.isLoaded = true;
+        }, 500);
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+      complete: () => {
+        console.log('Requête terminée.');
+      },
+    });
+  }
+
+  setYearValue(event: Event) {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    if (this.factures && selectedValue !== 'Tous') {
+      this.filtredFactures = this.factures.filter(
+        (facture) => facture.dateFacturation.substring(6) == selectedValue
+      );
+    }
   }
 
   deleteFactue(facture: Facture) {
