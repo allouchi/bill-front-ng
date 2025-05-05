@@ -1,1 +1,41 @@
-<p>tva-edit works!</p>
+<form [formGroup]="formTva" #form="ngForm" (ngSubmit)="addTva(form.value)" class="p-4 border rounded">
+    <div class="mb-3">
+        <label class="form-label">Société</label>
+        <select class="form-select" name="societe" formControlName="company">
+            <option value="" disabled selected>Choisir une spécialité</option>
+            <option value="maths">Mathématiques</option>
+            <option value="physique">Physique</option>
+            <option value="svt">SVT</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="monthSelect" class="form-label">Exercice *</label>
+        <select (change)="setMonthValue($event)" class="form-select" id="monthSelect" formControlName="exercise">
+            @for (exo of exercises; track exo.id) {
+            <option value="{{ exo.exercise }}">{{ exo.exercise }}</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Date de Paiement</label>
+        <input type="date" id="dateInput" class="form-control" formControlName="datePayment" />
+
+        <div class=" mb-3"> <label class="form-label">Montant TVA</label>
+            <input type="text" class="form-control" name="prenom" formControlName="montantPayment" />
+        </div>
+
+        <div class="mb-3">
+            <label for="monthSelect" class="form-label">Mois TVA *</label>
+            <select (change)="setMonthValue($event)" class="form-select" id="monthSelect" formControlName="month">
+                @for (month of monthYear; track month.id) {
+                <option value="{{ month.label }}">{{ month.label }}</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Valider</button>
+
+</form>

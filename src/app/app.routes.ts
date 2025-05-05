@@ -26,8 +26,7 @@ export const BILLING_ROUTE: Routes = [
     component: DashboardComponent,
   },
   {
-    path: 'companies',
-    component: CompanyReadComponent,
+    path: 'companies',    
     children: [
       {
         path: 'read',
@@ -40,8 +39,7 @@ export const BILLING_ROUTE: Routes = [
     ],
   },
   {
-    path: 'factures',
-    component: FactureReadComponent,
+    path: 'factures',    
     children: [
       {
         path: 'read',
@@ -54,8 +52,7 @@ export const BILLING_ROUTE: Routes = [
     ],
   },
   {
-    path: 'clients',
-    component: ClientReadComponent,
+    path: 'clients',    
     children: [
       {
         path: 'read',
@@ -69,8 +66,7 @@ export const BILLING_ROUTE: Routes = [
   },
 
   {
-    path: 'prestations',
-    component: PrestationReadComponent,
+    path: 'prestations',    
     children: [
       {
         path: 'read',
@@ -84,8 +80,7 @@ export const BILLING_ROUTE: Routes = [
   },
 
   {
-    path: 'consultants',
-    component: ConsultantReadComponent,
+    path: 'consultants',    
     children: [
       {
         path: 'read',
@@ -98,12 +93,15 @@ export const BILLING_ROUTE: Routes = [
     ],
   },
   {
-    path: 'tvas',
-    component: TvaReadComponent,
+    path: 'tvas',    
     children: [
       {
         path: 'read',
         loadComponent: () => TvaReadComponent,
+      },
+      {
+        path: 'add',
+        loadComponent: () => TvaEditComponent,
       },
       {
         path: 'edit/:id',

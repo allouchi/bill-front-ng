@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class SharedService {
-  private dataSource = new BehaviorSubject<string>('');  // ou autre type
+  dataSource = new BehaviorSubject<string>('');  // ou autre type
   data$ = this.dataSource.asObservable();
 
   updateData(newValue: string) {

@@ -1,10 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import Tva from '../../../models/Tva';
 import { TvaService } from '../../../services/tva/tva-service';
 import { AlertService } from '../../../services/alert/alert.service';
 import { env } from '../../../../environments/env';
 import Exercise from '../../../models/Exercise';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
+import { SharedDataService } from '../../../services/shared/sharedDataService';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'bill-tva-read',
@@ -18,9 +20,23 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   filtredTvas: Tva[] = []; 
   exercises: Exercise[] = [];
 
+  data: Exercise[] = [{
+    id: 1,
+    exercise: '2022'
+  }, {
+    id: 2,
+    exercise: '2023'
+  }, {
+    id: 3,
+    exercise: '2024'
+  }];
+
+  router = inject(Router);
+
   constructor(
     private readonly tvaService: TvaService,
-    private readonly alertService: AlertService
+    private readonly alertService: AlertService,
+    private readonly sharedDataService: SharedDataService
   ) {}
 
   ngOnInit(): void {
@@ -29,10 +45,12 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   }
 
   private loadExercicesRef() {
+    this.exercises = this.data;
+    this.isLoaded = true;
+
     this.tvaService.findExercisesRef().subscribe({
       next: (exercises) => {
-        this.exercises = exercises;
-        this.isLoaded = true;
+
       },
       error: (err) => {
         this.onError(err);
@@ -51,6 +69,11 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     }
   }
 
+  addTva() {
+    this.sharedDataService.setData(this.exercises);
+    console.log("send : ", this.exercises)
+    this.router.navigate(['/tvas/add']);
+  }
 
   updateTva(tva: Tva) {
 

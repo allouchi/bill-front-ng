@@ -42,20 +42,15 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.onError(err);
-      },
-      complete: () => {
-        console.log('Requête terminée.');
-      },
+      }      
     });
   }
 
   private loadExercisesRef() {
     this.factureService.findExercisesRef().subscribe({
       next: (exercises) => {
-        setTimeout(() => {
-          this.exercises = exercises;
-          this.isLoaded = true;
-        }, 500);
+        this.exercises = exercises;
+        this.isLoaded = true;
       },
       error: (err) => {
         this.onError(err);
@@ -89,10 +84,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.onError(err);
-        },
-        complete: () => {
-          console.log('Requête terminée.');
-        },
+        }
       });
     }
   }
