@@ -62,7 +62,8 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   }
 
   updateTva(tva: Tva) {
-    console.log(tva);
+    const data: Map<string, any[]> = new Map();
+    data.set('tva', tva);
     this.sharedDataService.setData(this.exercises);
     this.router.navigate(['/tvas/add']);
   }
