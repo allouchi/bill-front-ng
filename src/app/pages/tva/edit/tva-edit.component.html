@@ -1,41 +1,62 @@
-<form [formGroup]="formTva" #form="ngForm" (ngSubmit)="addTva(form.value)" class="p-4 border rounded">
-    <div class="mb-3">
-        <label class="form-label">Société</label>
-        <select class="form-select" name="societe" formControlName="company">
-            <option value="" disabled selected>Séléctionner une société</option>
-            <option value="maths">Mathématiques</option>
-            <option value="physique">Physique</option>
-            <option value="svt">SVT</option>
-        </select>
-    </div>
+<form
+  [formGroup]="formTva"
+  #form="ngForm"
+  (ngSubmit)="addTva()"
+  class="p-4 border rounded"
+>
+<div class="mb-3">
+  <label class="form-label">Siret</label>
+  <input
+    type="number"
+    id="siretInput"
+    class="form-control"
+    formControlName="siret"
+  />
+</div>
 
-    <div class="mb-3">
-        <label for="monthSelect" class="form-label">Exercice *</label>
-        <select (change)="setMonthValue($event)" class="form-select" id="monthSelect" formControlName="exercise">
-            @for (exo of exercises; track exo.id) {
-            <option value="{{ exo.exercise }}">{{ exo.exercise }}</option>
-            }
-        </select>
-    </div>
+<div class="mb-3">
+  <label class="form-label">Excercice</label>
+  <input
+    type="text"
+    id="exercicetInput"
+    class="form-control"
+    formControlName="exercise"
+  />
+</div>
+  <div class="mb-3">
+    <label class="form-label">Date de Paiement</label>
+    <input
+      type="date"
+      id="dateInput"
+      class="form-control"
+      value={{tva.datePayment}}
+      formControlName="datePayment"
+    />
+  </div>
+  
+  <div class="mb-3">
+    <label class="form-label">Montant Paiement</label>
+    <input
+      type="number"
+      id="montantInput"
+      class="form-control"
+      formControlName="montantPayment"
+    />
+  </div>
 
-    <div class="mb-3">
-        <label class="form-label">Date de Paiement</label>
-        <input type="date" id="dateInput" class="form-control" formControlName="datePayment" />
-
-        <div class=" mb-3"> <label class="form-label">Montant TVA</label>
-            <input type="text" class="form-control" name="prenom" formControlName="montantPayment" />
-        </div>
-
-        <div class="mb-3">
-            <label for="monthSelect" class="form-label">Mois TVA *</label>
-            <select (change)="setMonthValue($event)" class="form-select" id="monthSelect" formControlName="month">
-                @for (month of monthYear; track month.id) {
-                <option value="{{ month.label }}">{{ month.label }}</option>
-                }
-            </select>
-        </div>
-    </div>
-
-    <button class="btn btn-primary" type="submit">Valider</button>
-
+  <div class="mb-3">
+    <label for="monthSelect" class="form-label">Mois TVA *</label>
+    <select
+      (change)="setMonthValue($event)"
+      class="form-select"
+      id="monthSelect"
+      formControlName="month"
+    >
+      @for (month of monthYear; track month.id) {
+      <option value="{{ month.label }}">{{ month.label }}</option>
+      }
+    </select>
+  </div>
+  <button class="btn btn-primary" (click)="cancel()">Annuler</button>
+  <button class="btn btn-primary" type="submit">Valider</button>
 </form>

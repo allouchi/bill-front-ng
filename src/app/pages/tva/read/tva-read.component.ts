@@ -7,6 +7,8 @@ import Exercise from '../../../models/Exercise';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/sharedDataService';
 import { Router } from '@angular/router';
+import { CompanyService } from '../../../services/company/company-service';
+import Company from '../../../models/Company';
 
 @Component({
   selector: 'bill-tva-read',
@@ -15,10 +17,11 @@ import { Router } from '@angular/router';
   styleUrl: './tva-read.component.css',
 })
 export class TvaReadComponent implements OnInit, OnDestroy {
-  isLoaded = true;
+  isLoaded = false;
   tvas: Tva[] = [];
   filtredTvas: Tva[] = [];
   exercises: Exercise[] = [];
+  data: Map<string, any> = new Map();
 
   router = inject(Router);
 
@@ -45,6 +48,27 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     });
   }
 
+  private loadTva() {
+    this.tvaService.findTvaByExercise(env.siret, 'Tous').subscribe({
+      next: (tvas) => {
+        this.tvas = tvas;
+        if (tvas) {
+          tvas.forEach((tva) => {
+            let date = tva.datePayment.split('/');
+            tva.datePayment = date[2] + '-' + date[1] + '-' + date[0];
+          });
+        }
+        setTimeout(() => {
+          this.filtredTvas = tvas;
+          this.isLoaded = true;
+        }, 500);
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
   setYearValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
     if (this.tvas && selectedValue !== 'Tous') {
@@ -57,29 +81,18 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   }
 
   addTva() {
-    this.sharedDataService.setData(this.exercises);
+    this.data.set('exercice', this.exercises);
+    this.sharedDataService.setData(this.data);
     this.router.navigate(['/tvas/add']);
   }
 
   updateTva(tva: Tva) {
-    const data: Map<string, any[]> = new Map();
-    data.set('tva', tva);
-    this.sharedDataService.setData(this.exercises);
+    this.data.set('tva', tva);
+    this.sharedDataService.setData(this.data);
     this.router.navigate(['/tvas/add']);
   }
 
   deleteTva(tva: Tva) {}
-  private loadTva() {
-    this.tvaService.findByExercise(env.siret, '2024').subscribe({
-      next: (tvas) => {
-        this.tvas = tvas;
-        this.isLoaded = true;
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
 
   private onSuccess(respSuccess: any) {
     this.alertService.show('Opération réussie !', 'success');

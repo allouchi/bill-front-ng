@@ -4,8 +4,8 @@ import { Injectable } from "@angular/core";
 export class SharedDataService {
   //private data: any;
 
-  data: Map<string, any[]> = new Map();
-  setData(data: Map<string, any[]>) {
+  data: Map<string, any> = new Map();
+  setData(data: Map<string, any>) {
     this.data = data;
   }
   getData() {

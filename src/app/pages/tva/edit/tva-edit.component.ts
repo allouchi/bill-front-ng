@@ -1,8 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { SharedDataService } from '../../../services/shared/sharedDataService';
-import Exercise from '../../../models/Exercise';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import Tva from '../../../models/Tva';
+import { TvaService } from '../../../services/tva/tva-service';
+import { Router } from '@angular/router';
+import { AlertService } from '../../../services/alert/alert.service';
 
 @Component({
   selector: 'bill-tva-edit',
@@ -11,8 +20,8 @@ import Tva from '../../../models/Tva';
   styleUrl: './tva-edit.component.css',
 })
 export class TvaEditComponent implements OnInit {
-  exercises: Exercise[] = [];
   formTva!: FormGroup;
+  tva!: Tva;
 
   monthYear = [
     { id: 0, label: '' },
@@ -30,34 +39,77 @@ export class TvaEditComponent implements OnInit {
     { id: 12, label: 'Décembre' },
   ];
 
+  router = inject(Router);
+
   constructor(
     private readonly sharedDataService: SharedDataService,
+    private readonly tvaService: TvaService,
+    private readonly alertService: AlertService,
     private readonly fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.formTva = this.fb.group({
-      company: ['', Validators.required],
+      siret: ['', Validators.required],
       exercise: ['', Validators.required],
       datePayment: ['', Validators.required],
       montantPayment: ['', Validators.required],
       month: ['', Validators.required],
     });
     const maMap = this.sharedDataService.getData();
-    const exercice = maMap.get('exercice');
-    const tva = maMap.get('tva');
+    this.tva = maMap.get('tva');
+
+    if (this.tva) {
+      this.formTva.patchValue({
+        month: this.tva.month,
+        exercise: this.tva.exercise,
+        datePayment: this.tva.datePayment,
+        montantPayment: this.tva.montantPayment,
+        siret: this.tva.siret,
+      });
+    }
+
+    //console.log(this.formTva.value);
   }
 
   setMonthValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
-    console.log(selectedValue);
-
     this.formTva.patchValue({
       month: selectedValue,
     });
   }
 
-  addTva(form: any) {
-    console.log(form);
+  addTva() {
+    if (this.formTva.valid) {
+      let tvaModif: Tva = {
+        id: this.tva.id,
+        month: this.formTva.get('month')?.value,
+        exercise: this.formTva.get('moexercisenth')?.value,
+        datePayment: this.formTva.get('datePayment')?.value,
+        montantPayment: this.formTva.get('montantPayment')?.value,
+        siret: this.formTva.get('siret')?.value,
+      };
+      this.tvaService.createOrUpdateTva(tvaModif);
+
+      this.tvaService.createOrUpdateTva(tvaModif).subscribe({
+        next: () => {
+          this.onSuccess('updated');
+          this.router.navigate(['/tvas/read']);
+        },
+        error: (err) => {
+          this.onError(err);
+        },
+      });
+    }
+  }
+
+  cancel() {}
+
+  private onSuccess(respSuccess: any) {
+    this.alertService.show('Opération réussie !', 'success');
+  }
+
+  private onError(error: any) {
+    this.alertService.show('Une erreur est survenue.', 'error');
   }
 }

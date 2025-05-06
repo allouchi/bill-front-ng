@@ -27,8 +27,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.loadFactures();
     this.loadExercisesRef();
+    this.loadFactures();
   }
 
   private loadFactures() {
@@ -38,11 +38,11 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
           this.factures = factures;
           this.filtredFactures = factures;
           this.isLoaded = true;
-        }, 500);
+        }, 1000);
       },
       error: (err) => {
         this.onError(err);
-      }      
+      },
     });
   }
 
@@ -84,7 +84,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.onError(err);
-        }
+        },
       });
     }
   }
@@ -115,13 +115,13 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   private onError(error: any) {
     this.isLoaded = true;
-    const message : string = error.message;
-   
-    if(message.includes("Http failure")){
+    const message: string = error.message;
+
+    if (message.includes('Http failure')) {
       this.alertService.show('Problème serveur', 'error');
-    }else{
+    } else {
       this.alertService.show(message, 'error');
-    }   
+    }
   }
 
   ngOnDestroy(): void {

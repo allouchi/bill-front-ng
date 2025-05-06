@@ -37,10 +37,7 @@ export class ClientReadComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.onError(err);
-      },
-      complete: () => {
-        console.log('Requête terminée.');
-      },
+      }
     });
   }
 

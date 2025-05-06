@@ -24,7 +24,7 @@ export interface ITvaService {
    * @param Tva Tva name
    * @returns Observable<Tva>
    */
-  findByExercise(siret: string, exercise: string): Observable<Tva[]>;
+  findTvaByExercise(siret: string, exercise: string): Observable<Tva[]>;
 
   /**
    * Get all schemas if no project or all schemas for project name in otherwise
