@@ -2,15 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { SharedDataService } from '../../../services/shared/sharedDataService';
 import Exercise from '../../../models/Exercise';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import Tva from '../../../models/Tva';
 
 @Component({
   selector: 'bill-tva-edit',
   imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './tva-edit.component.html',
-  styleUrl: './tva-edit.component.css'
+  styleUrl: './tva-edit.component.css',
 })
 export class TvaEditComponent implements OnInit {
-
   exercises: Exercise[] = [];
   formTva!: FormGroup;
 
@@ -30,9 +30,10 @@ export class TvaEditComponent implements OnInit {
     { id: 12, label: 'Décembre' },
   ];
 
-  constructor(private readonly sharedDataService: SharedDataService, private readonly fb: FormBuilder) {
-  }
-
+  constructor(
+    private readonly sharedDataService: SharedDataService,
+    private readonly fb: FormBuilder
+  ) {}
 
   ngOnInit(): void {
     this.formTva = this.fb.group({
@@ -42,23 +43,21 @@ export class TvaEditComponent implements OnInit {
       montantPayment: ['', Validators.required],
       month: ['', Validators.required],
     });
-
-    this.exercises = this.sharedDataService.getData();
-    console.log("read :", this.exercises)
+    const maMap = this.sharedDataService.getData();
+    const exercice = maMap.get('exercice');
+    const tva = maMap.get('tva');
   }
 
   setMonthValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
-    console.log(selectedValue)
+    console.log(selectedValue);
 
     this.formTva.patchValue({
       month: selectedValue,
     });
-
   }
 
   addTva(form: any) {
-
+    console.log(form);
   }
-
 }

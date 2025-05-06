@@ -17,19 +17,8 @@ import { Router } from '@angular/router';
 export class TvaReadComponent implements OnInit, OnDestroy {
   isLoaded = true;
   tvas: Tva[] = [];
-  filtredTvas: Tva[] = []; 
+  filtredTvas: Tva[] = [];
   exercises: Exercise[] = [];
-
-  data: Exercise[] = [{
-    id: 1,
-    exercise: '2022'
-  }, {
-    id: 2,
-    exercise: '2023'
-  }, {
-    id: 3,
-    exercise: '2024'
-  }];
 
   router = inject(Router);
 
@@ -45,12 +34,10 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   }
 
   private loadExercicesRef() {
-    this.exercises = this.data;
-    this.isLoaded = true;
-
     this.tvaService.findExercisesRef().subscribe({
       next: (exercises) => {
-
+        this.exercises = exercises;
+        this.isLoaded = true;
       },
       error: (err) => {
         this.onError(err);
@@ -64,24 +51,23 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       this.filtredTvas = this.tvas.filter(
         (tva) => tva.exercise == selectedValue
       );
-    }else{
+    } else {
       this.filtredTvas = this.tvas;
     }
   }
 
   addTva() {
     this.sharedDataService.setData(this.exercises);
-    console.log("send : ", this.exercises)
     this.router.navigate(['/tvas/add']);
   }
 
   updateTva(tva: Tva) {
-
+    console.log(tva);
+    this.sharedDataService.setData(this.exercises);
+    this.router.navigate(['/tvas/add']);
   }
 
-  deleteTva(tva: Tva) {
-
-  }
+  deleteTva(tva: Tva) {}
   private loadTva() {
     this.tvaService.findByExercise(env.siret, '2024').subscribe({
       next: (tvas) => {
