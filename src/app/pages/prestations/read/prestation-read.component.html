@@ -95,7 +95,7 @@
               id="monthSelect"
               formControlName="month"
             >
-              @for (month of monthYear; track month.id) {
+              @for (month of monthsYear; track month.id) {
               <option value="{{ month.id }}">{{ month.label }}</option>
               }
             </select>

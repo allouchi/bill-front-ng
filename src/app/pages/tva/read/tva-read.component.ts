@@ -7,6 +7,7 @@ import Exercise from '../../../models/Exercise';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/sharedDataService';
 import { Router } from '@angular/router';
+import GetMonthsOfYear from '../../../shared/utils/month-year';
 import { CompanyService } from '../../../services/company/company-service';
 import Company from '../../../models/Company';
 
@@ -20,27 +21,47 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   isLoaded = false;
   tvas: Tva[] = [];
   filtredTvas: Tva[] = [];
+  companies: Company[] = [];
   exercises: Exercise[] = [];
   data: Map<string, any> = new Map();
+  monthsYear: any;
+  CONTEXT = 'edit';
 
   router = inject(Router);
 
   constructor(
     private readonly tvaService: TvaService,
     private readonly alertService: AlertService,
-    private readonly sharedDataService: SharedDataService
+    private readonly sharedDataService: SharedDataService,
+    private readonly companyService: CompanyService
   ) {}
 
   ngOnInit(): void {
+    this.loadCompanies();
+    this.loadMonthYear();
     this.loadExercicesRef();
     this.loadTva();
+  }
+
+  private loadCompanies() {
+    this.companyService.findCompanies().subscribe({
+      next: (companies) => {
+        this.companies = companies;
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
+  private loadMonthYear() {
+    this.monthsYear = GetMonthsOfYear();
   }
 
   private loadExercicesRef() {
     this.tvaService.findExercisesRef().subscribe({
       next: (exercises) => {
         this.exercises = exercises;
-        this.isLoaded = true;
       },
       error: (err) => {
         this.onError(err);
@@ -81,7 +102,10 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   }
 
   addTva() {
-    this.data.set('exercice', this.exercises);
+    this.data.set('exercices', this.exercises);
+    this.data.set('months', this.monthsYear);
+    this.data.set('companies', this.companies);
+    this.data.set('CONTEXT', 'add');
     this.sharedDataService.setData(this.data);
     this.router.navigate(['/tvas/add']);
   }

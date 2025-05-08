@@ -24,6 +24,7 @@ import {
 import { CommonModule } from '@angular/common';
 import JoursOuvres from '../../../shared/utils/time-calcul';
 import { SharedService } from '../../../services/shared/shared.service';
+import GetMonthsOfYear from '../../../shared/utils/month-year';
 
 declare var window: any;
 
@@ -53,22 +54,7 @@ export class PrestationReadComponent
 
   formFacture!: FormGroup;
   formPresta!: FormGroup;
-
-  monthYear = [
-    { id: 0, label: '' },
-    { id: 1, label: 'Janvier' },
-    { id: 2, label: 'Février' },
-    { id: 3, label: 'Mars' },
-    { id: 4, label: 'Avril' },
-    { id: 5, label: 'Mai' },
-    { id: 6, label: 'Juin' },
-    { id: 7, label: 'Juillet' },
-    { id: 8, label: 'Août' },
-    { id: 9, label: 'Septembre' },
-    { id: 10, label: 'Octobre' },
-    { id: 11, label: 'Novembre' },
-    { id: 12, label: 'Décembre' },
-  ];
+  monthsYear: any;
 
   private readonly router = inject(Router);
   constructor(
@@ -87,7 +73,7 @@ export class PrestationReadComponent
   }
 
   ngOnInit(): void {
-    // Initialisation du formulaire réactif
+    this.monthsYear = GetMonthsOfYear();
     this.formFacture = this.fb.group({
       month: ['', Validators.required],
       numeroCommande: ['', Validators.required],
@@ -111,7 +97,7 @@ export class PrestationReadComponent
       },
       error: (err) => {
         this.onError(err);
-      }      
+      },
     });
   }
 
@@ -129,7 +115,7 @@ export class PrestationReadComponent
         },
         error: (err) => {
           this.onError(err);
-        }
+        },
       });
     }
   }
