@@ -38,7 +38,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
           this.factures = factures;
           this.filtredFactures = factures;
           this.isLoaded = true;
-        }, 1000);
+        }, 500);
       },
       error: (err) => {
         this.onError(err);
@@ -49,15 +49,11 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   private loadExercisesRef() {
     this.factureService.findExercisesRef().subscribe({
       next: (exercises) => {
-        this.exercises = exercises;
-        this.isLoaded = true;
+        this.exercises = exercises;       
       },
       error: (err) => {
         this.onError(err);
-      },
-      complete: () => {
-        console.log('Requête terminée.');
-      },
+      }
     });
   }
 
@@ -101,16 +97,13 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.onError(err);
-        },
-        complete: () => {
-          console.log('Requête terminée.');
-        },
+        }
       });
     }
   }
 
   private onSuccess(respSuccess: any) {
-    this.alertService.show('Opération réussie !', 'success');
+    this.alertService.show('La facture est supprimée avec succès !', 'success');
   }
 
   private onError(error: any) {

@@ -191,10 +191,7 @@ export class PrestationReadComponent
           error: (err) => {
             this.onError(err);
             this.closeFactureModal();
-          },
-          complete: () => {
-            console.log('Requête terminée.');
-          },
+          }
         });
     }
   }
@@ -213,10 +210,7 @@ export class PrestationReadComponent
         error: (err) => {
           this.onError(err);
           this.closePrestaModal();
-        },
-        complete: () => {
-          console.log('Requête terminée.');
-        },
+        }
       });
   }
   addFacture() {

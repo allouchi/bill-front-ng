@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CompanyService } from '../../../services/company/company-service';
 import { AlertService } from '../../../services/alert/alert.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
+import { SharedService } from '../../../services/shared/shared.service';
 
 @Component({
   selector: 'company-read',
@@ -19,7 +20,8 @@ export default class CompanyReadComponent implements OnInit {
   constructor(
     private readonly companyService: CompanyService,
     private readonly alertService: AlertService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly sharedService: SharedService
   ) {}
 
   ngOnInit(): void {
@@ -37,9 +39,6 @@ export default class CompanyReadComponent implements OnInit {
       error: (err) => {
         this.onError(err);
         this.isLoaded = true;
-      },
-      complete: () => {
-        console.log('Requête terminée.');
       },
     });
   }
@@ -69,6 +68,11 @@ export default class CompanyReadComponent implements OnInit {
     if (ok) {
       console.log(company.socialReason);
     }
+  }
+
+  addCampany() {
+    this.sharedService.updateData('Ajout Société');
+    this.router.navigate(['/companies/add']);
   }
 
   ngOnDestroy(): void {

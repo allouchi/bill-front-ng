@@ -4,68 +4,146 @@
   (ngSubmit)="addTva()"
   class="p-4 border rounded"
 >
-  <div class="mb-3">
-    <label for="companySelect" class="form-label fw-bold">Société</label>
-    <select formControlName="company"
-      (change)="setCompanyValue($event)"
-      class="form-select"
-      id="companySelect"
-    >
-      @for (company of companies; track company.id) {
-      <option value="{{ company.id }}" [value]="company.siret">
-        {{ company!.socialReason }}
-      </option>
-      }
-    </select>
+  <div class="row">
+    <!-- Colonne gauche -->
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="companySelect" class="form-label fw-bold">Société</label>
+        <select
+          formControlName="company"
+          [class.is-invalid]="
+            formTva.get('company')?.invalid && formTva.get('company')?.touched
+          "
+          (change)="setCompanyValue($event)"
+          class="form-select"
+          id="companySelect"
+        >
+          @for (company of companies; track company.id) {
+          <option value="{{ company.id }}" [value]="company.socialReason">
+            {{ company!.socialReason }}
+          </option>
+          }
+        </select>
+
+        <div
+          *ngIf="
+            formTva.get('company')?.invalid && formTva.get('company')?.touched
+          "
+          class="text-danger"
+        >
+          Ce champ est requis.
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="monthSelect" class="form-label">Mois TVA *</label>
+        <select
+          (change)="setMonthValue($event)"
+          class="form-select"
+          id="monthSelect"
+          formControlName="month"
+          [class.is-invalid]="
+            formTva.get('month')?.invalid && formTva.get('month')?.touched
+          "
+        >
+          @for (month of monthsYear; track month.id) {
+          <option value="{{ month.label }}" [value]="month.label">
+            {{ month.label }}
+          </option>
+          }
+        </select>
+
+        <div
+          *ngIf="formTva.get('month')?.invalid && formTva.get('month')?.touched"
+          class="text-danger"
+        >
+          Ce champ est requis.
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Montant Paiement</label>
+        <input
+          type="text"
+          id="montantInput"
+          class="form-control"
+          formControlName="montantPayment"
+          [class.is-invalid]="
+            formTva.get('montantPayment')?.invalid &&
+            formTva.get('montantPayment')?.touched
+          "
+        />
+
+        <div
+          *ngIf="
+            formTva.get('montantPayment')?.invalid &&
+            formTva.get('montantPayment')?.touched
+          "
+          class="text-danger"
+        >
+          Ce champ est requis.
+        </div>
+      </div>
+    </div>
+
+    <!-- Colonne droite -->
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="exerciceSelect" class="form-label fw-bold">Exercice</label>
+        <select
+          formControlName="exercise"
+          [class.is-invalid]="
+            formTva.get('exercise')?.invalid && formTva.get('exercise')?.touched
+          "
+          (change)="setExerciceValue($event)"
+          class="form-select"
+          id="exerciceSelect"
+        >
+          @for (exercice of exercices; track exercice.id) {
+          <option value="{{ exercice.exercise }}" [value]="exercice.exercise">
+            {{ exercice.exercise }}
+          </option>
+          }
+        </select>
+
+        <div
+          *ngIf="
+            formTva.get('exercise')?.invalid && formTva.get('exercise')?.touched
+          "
+          class="text-danger"
+        >
+          Ce champ est requis.
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Date de Paiement</label>
+        <input
+          type="date"
+          id="dateInput"
+          class="form-control"
+          formControlName="datePayment"
+          [class.is-invalid]="
+            formTva.get('datePayment')?.invalid &&
+            formTva.get('datePayment')?.touched
+          "
+        />
+
+        <div
+          *ngIf="
+            formTva.get('datePayment')?.invalid &&
+            formTva.get('datePayment')?.touched
+          "
+          class="text-danger"
+        >
+          Ce champ est requis.
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="mb-3">
-    <label for="exerciceSelect" class="form-label fw-bold">Exercice</label>
-    <select formControlName="exercise"
-      (change)="setExerciceValue($event)"
-      class="form-select"
-      id="exerciceSelect"
-    >
-      @for (exercice of exercices; track exercice.id) {
-      <option value="{{ exercice!.id }}" [value]="exercice.exercise">
-        {{ exercice.exercise}}
-      </option>
-      }
-    </select>
+  <div class="d-flex justify-content-center gap-3">
+    <button class="btn btn-secondary me-2" (click)="cancel()">Annuler</button>
+    <button class="btn btn-primary" type="submit">Valider</button>
   </div>
-  <div class="mb-3">
-    <label class="form-label">Date de Paiement</label>
-    <input
-      type="date"
-      id="dateInput"
-      class="form-control"      
-      formControlName="datePayment"
-    />
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">Montant Paiement</label>
-    <input
-      type="number"
-      id="montantInput"
-      class="form-control"
-      formControlName="montantPayment"
-    />
-  </div>
-
-  <div class="mb-3">
-    <label for="monthSelect" class="form-label">Mois TVA *</label>
-    <select
-      (change)="setMonthValue($event)"
-      class="form-select"
-      id="monthSelect"
-      formControlName="month"
-    >
-      @for (month of monthsYear; track month.id) {
-      <option value="{{ month.label }}">{{ month.label }}</option>
-      }
-    </select>
-  </div>
-  <button class="btn btn-primary" (click)="cancel()">Annuler</button>
-  <button class="btn btn-primary" type="submit">Valider</button>
 </form>

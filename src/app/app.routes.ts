@@ -26,74 +26,93 @@ export const BILLING_ROUTE: Routes = [
     component: DashboardComponent,
   },
   {
-    path: 'companies',    
+    path: 'companies',
     children: [
       {
         path: 'read',
         loadComponent: () => CompanyReadComponent,
       },
       {
-        path: 'edit/:id',
+        path: 'edit',
+        loadComponent: () => CompanyEditComponent,
+      },
+      {
+        path: 'add',
         loadComponent: () => CompanyEditComponent,
       },
     ],
   },
   {
-    path: 'factures',    
+    path: 'factures',
     children: [
       {
         path: 'read',
         loadComponent: () => FactureReadComponent,
       },
       {
-        path: 'edit/:id',
+        path: 'edit',
+        loadComponent: () => FactureEditComponent,
+      },
+
+      {
+        path: 'add',
         loadComponent: () => FactureEditComponent,
       },
     ],
   },
   {
-    path: 'clients',    
+    path: 'clients',
     children: [
       {
         path: 'read',
         loadComponent: () => ClientReadComponent,
       },
       {
-        path: 'edit/:id',
+        path: 'edit',
+        loadComponent: () => ClientEditComponent,
+      },
+
+      {
+        path: 'add',
         loadComponent: () => ClientEditComponent,
       },
     ],
   },
 
   {
-    path: 'prestations',    
+    path: 'prestations',
     children: [
       {
         path: 'read',
         loadComponent: () => PrestationReadComponent,
       },
       {
-        path: 'edit/:id',
+        path: 'edit',
+        loadComponent: () => PrestationEditComponent,
+      },
+
+      {
+        path: 'add',
         loadComponent: () => PrestationEditComponent,
       },
     ],
   },
 
   {
-    path: 'consultants',    
+    path: 'consultants',
     children: [
       {
         path: 'read',
         loadComponent: () => ConsultantReadComponent,
       },
       {
-        path: 'edit/:id',
+        path: 'edit',
         loadComponent: () => ConsultantEditComponent,
       },
     ],
   },
   {
-    path: 'tvas',    
+    path: 'tvas',
     children: [
       {
         path: 'read',
@@ -104,7 +123,7 @@ export const BILLING_ROUTE: Routes = [
         loadComponent: () => TvaEditComponent,
       },
       {
-        path: 'edit/:id',
+        path: 'edit',
         loadComponent: () => TvaEditComponent,
       },
     ],

@@ -2,49 +2,49 @@
 
 <div class="mt-4 mx-5">
   <div class="text-end mb-2 me-3">
-    <button class="btn btn-pink" title="Nouveau">
-      Ajouter
-    </button>
+    <button class="btn btn-pink" title="Nouveau">Ajouter</button>
   </div>
-  <table class="table table-success table-striped">
-    <thead class="table-dark">
-      <tr>
-        <th scope="col">Prénm</th>
-        <th scope="col">Nom</th>
-        <th scope="col">Fonction</th>
-        <th scope="col">Adresse Email</th>
-        <th scope="col">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (consultant of consultants; track consultant.id) {
-      <tr>
-        <td align="centre">{{ consultant.firstName }}</td>
-        <td>{{ consultant.lastName }}</td>
-        <td>{{ consultant.fonction }}</td>
-        <td>{{ consultant.email }}</td>
+  <div class="table-responsive">
+    <table class="table table-success table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">Prénm</th>
+          <th scope="col">Nom</th>
+          <th scope="col">Fonction</th>
+          <th scope="col">Adresse Email</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (consultant of consultants; track consultant.id) {
+        <tr>
+          <td align="centre">{{ consultant.firstName }}</td>
+          <td>{{ consultant.lastName }}</td>
+          <td>{{ consultant.fonction }}</td>
+          <td>{{ consultant.email }}</td>
 
-        <td>
-          <button
-            class="btn btn-outline-primary btn-sm"
-            (click)="updateConsultant(consultant)"
-            title="Modifier Consultant"
-          >
-            <i class="bi bi-pencil"></i>
-          </button>
+          <td>
+            <button
+              class="btn btn-outline-primary btn-sm me-2"
+              (click)="updateConsultant(consultant)"
+              title="Modifier Consultant"
+            >
+              <i class="bi bi-pencil"></i>
+            </button>
 
-          <button
-            class="btn btn-outline-danger btn-sm me-2"
-            (click)="deleteConsultant(consultant)"
-            title="Supprimer Consultant"
-          >
-            <i class="bi bi-trash"></i>
-          </button>
-        </td>
-      </tr>
-      }
-    </tbody>
-  </table>
+            <button
+              class="btn btn-outline-danger btn-sm me-2"
+              (click)="deleteConsultant(consultant)"
+              title="Supprimer Consultant"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </div>
 }@else {
 <bill-waiting></bill-waiting>

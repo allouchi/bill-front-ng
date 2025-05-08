@@ -10,10 +10,11 @@ import { Router } from '@angular/router';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
 import { CompanyService } from '../../../services/company/company-service';
 import Company from '../../../models/Company';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'bill-tva-read',
-  imports: [WaitingComponent],
+  imports: [WaitingComponent, ReactiveFormsModule],
   templateUrl: './tva-read.component.html',
   styleUrl: './tva-read.component.css',
 })
@@ -112,14 +113,32 @@ export class TvaReadComponent implements OnInit, OnDestroy {
 
   updateTva(tva: Tva) {
     this.data.set('tva', tva);
+    this.data.set('exercices', this.exercises);
+    this.data.set('months', this.monthsYear);
+    this.data.set('companies', this.companies);
     this.sharedDataService.setData(this.data);
     this.router.navigate(['/tvas/add']);
   }
 
-  deleteTva(tva: Tva) {}
+  deleteTva(tva: Tva) {
+    const ok = confirm(
+      `Voulez-vous vraiment supprimer la TVA de ${tva.month} ?`
+    );
+    if (ok) {
+      this.tvaService.deleteTvaById(tva.id).subscribe({
+        next: () => {
+          this.filtredTvas = this.tvas.filter((t) => t.id !== tva.id);
+          this.onSuccess('La Tva est supprimée avec succès !');
+        },
+        error: (err) => {
+          this.onError(err);
+        },
+      });
+    }
+  }
 
   private onSuccess(respSuccess: any) {
-    this.alertService.show('Opération réussie !', 'success');
+    this.alertService.show(respSuccess, 'success');
   }
 
   private onError(error: any) {

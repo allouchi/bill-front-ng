@@ -1,17 +1,49 @@
+.btn-pink {
+  background-color: #f78fb3;
+  color: white;
+}
+
+.btn-pink:hover {
+  background-color: #f368e0;
+  color: white;
+}
+
 .btn-add {
-    background-color: #28a745; /* vert Bootstrap */
-    color: white;
-  }
-  .btn-add:hover {
-    background-color: #218838;
-  }
+  background-color: #00cec9;
+  color: white;
+}
 
-  .btn-pink {
-    background-color: #e83e8c;
-    color: white;
-    border: none;
-  }
+.btn-add:hover {
+  background-color: #00b894;
+  color: white;
+}
 
-  .btn-pink:hover {
-    background-color: #d63384;
-  }
+.table-success {
+  background-color: #f0fdf4 !important;
+}
+
+.table, .modal-content, .form-control, .btn {
+  border-radius: 10px;
+}
+
+.modal-content {
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+
+
+.table-striped tbody tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+th, td {
+  vertical-align: middle;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+
+.btn-sm i {
+  margin-right: 4px;
+}

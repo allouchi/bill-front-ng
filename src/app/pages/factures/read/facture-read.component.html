@@ -1,66 +1,65 @@
 @if(isLoaded){
 
 <div class="mt-4 mx-5">
-  <div class="mb-3" style="width: 100px;">
-    <label for="monthSelect" class="form-label  fw-bold">Exercice</label>
-    <select  (change)="setYearValue($event)" 
-      class="form-select"
-      id="yearSelect"     
-    >
+  <div class="mb-3" style="width: 100px">
+    <label for="monthSelect" class="form-label fw-bold">Exercice</label>
+    <select (change)="setYearValue($event)" class="form-select" id="yearSelect">
       @for (year of exercises; track year.id) {
-      <option value="{{ year.id }}" [value]="year.exercise">{{ year.exercise }}</option>
+      <option value="{{ year.id }}" [value]="year.exercise">
+        {{ year.exercise }}
+      </option>
       }
     </select>
   </div>
-
-  <table class="table table-success table-striped">
-    <thead class="table-dark">
-      <tr>
-        <th scope="col">Numéro Facture</th>
-        <th scope="col">Mois Facture</th>
-        <th scope="col">Tarif HT</th>
-        <th scope="col">Quantité</th>
-        <th scope="col">Prix Total HT</th>
-        <th scope="col">Prix Total TTC</th>
-        <th scope="col">Total TVA</th>
-        <th scope="col">Total Net TVA</th>
-        <th scope="col">Date d'Echéance</th>
-        <th scope="col">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (facture of filtredFactures; track facture.id) {
-      <tr>
-        <td align="centre">{{ facture.numeroFacture }}</td>
-        <td>{{ facture.moisFacture }}</td>        
-        <td>{{ facture.tarifHT }}</td>
-        <td>{{ facture.quantite }}</td>
-        <td>{{ facture.prixTotalHT }}</td>
-        <td>{{ facture.prixTotalTTC }}</td>
-        <td>{{ facture.montantTVA }}</td>
-        <td>{{ facture.montantNetTVA }}</td>
-        <td>{{ facture.dateEcheance }}</td>
-        <td>          
-
-          <button
-            class="btn btn-outline-primary btn-sm me-2"
-            (click)="updateFacture(facture)"
-            title="Modifier Facture"
-          >
-            <i class="bi bi-pencil"></i>
-          </button>
-          <button
-            class="btn btn-outline-danger btn-sm me-2"
-            (click)="deleteFactue(facture)"
-            title="Supprimer Facture"
-          >
-            <i class="bi bi-trash"></i>
-          </button>
-        </td>
-      </tr>
-      }
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table class="table table-success table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">Numéro Facture</th>
+          <th scope="col">Mois Facture</th>
+          <th scope="col">Tarif HT</th>
+          <th scope="col">Quantité</th>
+          <th scope="col">Prix Total HT</th>
+          <th scope="col">Prix Total TTC</th>
+          <th scope="col">Total TVA</th>
+          <th scope="col">Total Net TVA</th>
+          <th scope="col">Date d'Echéance</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (facture of filtredFactures; track facture.id) {
+        <tr>
+          <td align="centre">{{ facture.numeroFacture }}</td>
+          <td>{{ facture.moisFacture }}</td>
+          <td>{{ facture.tarifHT }}</td>
+          <td>{{ facture.quantite }}</td>
+          <td>{{ facture.prixTotalHT }}</td>
+          <td>{{ facture.prixTotalTTC }}</td>
+          <td>{{ facture.montantTVA }}</td>
+          <td>{{ facture.montantNetTVA }}</td>
+          <td>{{ facture.dateEcheance }}</td>
+          <td>
+            <button
+              class="btn btn-outline-primary btn-sm me-2"
+              (click)="updateFacture(facture)"
+              title="Modifier Facture"
+            >
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button
+              class="btn btn-outline-danger btn-sm me-2"
+              (click)="deleteFactue(facture)"
+              title="Supprimer Facture"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </div>
 
 } @else {

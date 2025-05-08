@@ -1,63 +1,62 @@
-
 @if(isLoaded){
 
 <div class="mt-4 mx-5">
   <div class="text-end mb-2 me-3">
-    <button class="btn btn-pink" title="Nouveau">
-      Ajouter
-    </button>
+    <button class="btn btn-pink" title="Nouveau">Ajouter</button>
   </div>
-  <table class="table table-success table-striped">
-    <thead class="table-dark">
-      <tr>
-        <th scope="col">Numéro de commande</th>
-        <th scope="col">Date début</th>
-        <th scope="col">Date fin</th>
-        <th scope="col">Tarif HT</th>
-        <th scope="col">Délai de paiement</th>
-        <th scope="col">Consultant</th>
-        <th scope="col">Client</th>
-        <th scope="col">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (prestation of prestations; track prestation.id) {
-      <tr>
-        <td align="centre">{{ prestation.numeroCommande }}</td>
-        <td>{{ prestation.dateDebut }}</td>
-        <td>{{ prestation.dateFin }}</td>
-        <td>{{ prestation.tarifHT }}</td>
-        <td>{{ prestation.delaiPaiement }}</td>
-        <td>{{ prestation.consultant! | consultantPipe }}</td>
-        <td>{{ prestation.client! | clientPipe }}</td>
-        <td>
-          <button
-            class="btn btn-outline-primary btn-sm me-2"
-            (click)="openModalFacture(prestation)"
-            title="Ajouter Facture"
-          >
-            <i class="bi bi-pencil"></i>
-          </button>
+  <div class="table-responsive">
+    <table class="table table-success table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">Numéro de commande</th>
+          <th scope="col">Date début</th>
+          <th scope="col">Date fin</th>
+          <th scope="col">Tarif HT</th>
+          <th scope="col">Délai de paiement</th>
+          <th scope="col">Consultant</th>
+          <th scope="col">Client</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (prestation of prestations; track prestation.id) {
+        <tr>
+          <td align="centre">{{ prestation.numeroCommande }}</td>
+          <td>{{ prestation.dateDebut }}</td>
+          <td>{{ prestation.dateFin }}</td>
+          <td>{{ prestation.tarifHT }}</td>
+          <td>{{ prestation.delaiPaiement }}</td>
+          <td>{{ prestation.consultant! | consultantPipe }}</td>
+          <td>{{ prestation.client! | clientPipe }}</td>
+          <td>
+            <button
+              class="btn btn-outline-primary btn-sm me-2"
+              (click)="openModalFacture(prestation)"
+              title="Ajouter Facture"
+            >
+              <i class="bi bi-pencil"></i>
+            </button>
 
-          <button
-            class="btn btn-outline-danger btn-sm me-2"
-            (click)="deletePrestation(prestation)"
-            title="Supprimer Prestation"
-          >
-            <i class="bi bi-trash"></i>
-          </button>
-          <button
-            class="btn btn-add btn-sm me-2"
-            (click)="openModalPrestation(prestation)"
-            title="Prolonger la Prestation"
-          >
-            <i class="bi bi-plus"></i>
-          </button>
-        </td>
-      </tr>
-      }
-    </tbody>
-  </table>
+            <button
+              class="btn btn-outline-danger btn-sm me-2"
+              (click)="deletePrestation(prestation)"
+              title="Supprimer Prestation"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+            <button
+              class="btn btn-add btn-sm me-2"
+              (click)="openModalPrestation(prestation)"
+              title="Prolonger la Prestation"
+            >
+              <i class="bi bi-plus"></i>
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </div>
 } @else {
 <bill-waiting></bill-waiting>
@@ -68,7 +67,7 @@
   class="modal fade"
   id="factureModal"
   tabindex="-1"
-  aria-labelledby="factureModalLabel"  
+  aria-labelledby="factureModalLabel"
 >
   <div class="modal-dialog">
     <div class="modal-content">
@@ -89,8 +88,11 @@
         <form [formGroup]="formFacture">
           <!-- Combo Box (Select) -->
           <div class="mb-3">
-            <label for="monthSelect" class="form-label">Mois de la Facture *</label>
-            <select  (change)="setMonthValue($event)"
+            <label for="monthSelect" class="form-label"
+              >Mois de la Facture *</label
+            >
+            <select
+              (change)="setMonthValue($event)"
               class="form-select"
               id="monthSelect"
               formControlName="month"
@@ -102,7 +104,10 @@
           </div>
 
           <div
-            *ngIf="formFacture.get('month')?.invalid && formFacture.get('month')?.touched"
+            *ngIf="
+              formFacture.get('month')?.invalid &&
+              formFacture.get('month')?.touched
+            "
             class="text-danger"
           >
             Ce champ est requis.
@@ -141,7 +146,8 @@
             />
             <div
               *ngIf="
-                formFacture.get('quantite')?.invalid && formFacture.get('quantite')?.touched
+                formFacture.get('quantite')?.invalid &&
+                formFacture.get('quantite')?.touched
               "
               class="text-danger"
             >
@@ -191,13 +197,12 @@
   </div>
 </div>
 
-
 <!-- Modal Mise à jour date prestation HTML -->
 <div
   class="modal fade"
   id="PrestaModal"
   tabindex="-1"
-  aria-labelledby="PrestaModalLabel"  
+  aria-labelledby="PrestaModalLabel"
 >
   <div class="modal-dialog">
     <div class="modal-content">
@@ -218,7 +223,12 @@
         <form [formGroup]="formPresta">
           <div class="mb-3">
             <label for="dateInput" class="form-label">Choisir une date</label>
-            <input type="date" id="dateInput" class="form-control"  formControlName="prestaDateFin">
+            <input
+              type="date"
+              id="dateInput"
+              class="form-control"
+              formControlName="prestaDateFin"
+            />
           </div>
         </form>
 
@@ -231,7 +241,11 @@
           >
             Annuler
           </button>
-          <button type="button" class="btn btn-primary" (click)="updatePrestaDateFin()">
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="updatePrestaDateFin()"
+          >
             Valider
           </button>
         </div>
