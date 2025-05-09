@@ -46,7 +46,7 @@ export class PrestationReadComponent
   implements OnInit, OnDestroy, AfterViewInit
 {
   prestations!: Prestation[];
-  isLoaded = false;
+  isLoaded = true;
   siret: string = '';
   selectedPrestation!: Prestation;
   selectedMonth: number = 0;
@@ -106,7 +106,7 @@ export class PrestationReadComponent
       `Voulez-vous vraiment supprimer "${prestation.numeroCommande}" ?`
     );
     if (ok) {
-      this.prestationService.deletePrestationById(prestation.id).subscribe({
+      this.prestationService.deletePrestationById(prestation.id!).subscribe({
         next: () => {
           this.onSuccess('deleted');
           this.prestations = this.prestations.filter(
@@ -213,6 +213,7 @@ export class PrestationReadComponent
         }
       });
   }
+
   addFacture() {
     if (this.formFacture.valid) {
       this.selectedPrestation.quantite =
@@ -223,13 +224,16 @@ export class PrestationReadComponent
         this.formFacture.get('clientPrestation')?.value;
       this.updatePrestation(this.selectedPrestation);
     } else {
-      console.log('Formulaire non valade');
       for (const [key, control] of Object.entries(this.formFacture.controls)) {
         if (control.invalid) {
           control.markAsTouched();
         }
       }
     }
+  }
+
+  addPrestation() {
+    this.router.navigate(['/prestations/add']);
   }
 
   private onSuccess(respSuccess: any) {

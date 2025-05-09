@@ -17,7 +17,7 @@ export class PrestationService implements IPrestationService {
     prestation: Partial<Prestation>,
     siret: string,
     templateChoice: boolean,
-    moisFactureId: number
+    moisFactureId: number | null
   ): Observable<Prestation> {
     const isNew: boolean = !prestation.id || prestation.id === 0;
 

@@ -19,7 +19,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   styleUrl: './tva-read.component.css',
 })
 export class TvaReadComponent implements OnInit, OnDestroy {
-  isLoaded = false;
+  isLoaded = true;
   tvas: Tva[] = [];
   filtredTvas: Tva[] = [];
   companies: Company[] = [];
@@ -125,7 +125,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       `Voulez-vous vraiment supprimer la TVA de ${tva.month} ?`
     );
     if (ok) {
-      this.tvaService.deleteTvaById(tva.id).subscribe({
+      this.tvaService.deleteTvaById(tva.id!).subscribe({
         next: () => {
           this.filtredTvas = this.tvas.filter((t) => t.id !== tva.id);
           this.onSuccess('La Tva est supprimée avec succès !');

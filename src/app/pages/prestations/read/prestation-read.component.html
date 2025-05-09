@@ -2,7 +2,7 @@
 
 <div class="mt-4 mx-5">
   <div class="text-end mb-2 me-3">
-    <button class="btn btn-pink" title="Nouveau">Ajouter</button>
+    <button class="btn btn-pink" (click)="addPrestation()" title="Nouveau">Ajouter</button>
   </div>
   <div class="table-responsive">
     <table class="table table-success table-striped">
@@ -21,7 +21,7 @@
       <tbody>
         @for (prestation of prestations; track prestation.id) {
         <tr>
-          <td align="centre">{{ prestation.numeroCommande }}</td>
+          <td style="text-align: center;">{{ prestation.numeroCommande }}</td>
           <td>{{ prestation.dateDebut }}</td>
           <td>{{ prestation.dateFin }}</td>
           <td>{{ prestation.tarifHT }}</td>

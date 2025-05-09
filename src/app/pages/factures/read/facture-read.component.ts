@@ -18,7 +18,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   factures: Facture[] = [];
   filtredFactures: Facture[] = [];
   exercises: Exercise[] = [];
-  isLoaded = false;
+  isLoaded = true;
   private readonly router = inject(Router);
 
   constructor(
@@ -71,7 +71,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       `Voulez-vous vraiment supprimer "${facture.numeroFacture}" ?`
     );
     if (ok) {
-      this.factureService.deleteFactureById(facture.id).subscribe({
+      this.factureService.deleteFactureById(facture.id!).subscribe({
         next: () => {
           this.onSuccess('deleted');
           this.factures = this.factures.filter(

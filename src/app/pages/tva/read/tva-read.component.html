@@ -16,8 +16,8 @@
     </div>
 
     <div>
-      <label class="form-label invisible">Ajouter</label>
-      <button class="btn btn-pink" (click)="addTva()" title="Nouveau">
+      <label class="form-label invisible" for="add">Ajouter</label>
+      <button id="add" class="btn btn-pink" (click)="addTva()" title="Nouveau">
         <i class="bi bi-plus-circle me-1"></i>
         Ajouter
       </button>
@@ -37,10 +37,10 @@
       <tbody>
         @for (tva of filtredTvas; track tva.id) {
         <tr>
-          <td align="centre">{{ tva.exercise }}</td>
-          <td align="centre">{{ tva.month }}</td>
-          <td align="centre">{{ tva.datePayment }}</td>
-          <td align="centre">{{ tva.montantPayment }}</td>
+          <td style="text-align: center;">{{ tva.exercise }}</td>
+          <td style="text-align: center;">{{ tva.month }}</td>
+          <td style="text-align: center;">{{ tva.datePayment }}</td>
+          <td style="text-align: center;">{{ tva.montantPayment }}</td>
 
           <td>
             <button

@@ -1,5 +1,5 @@
 export default interface Adresse {
-  id: number;
+  id: number | null;
   numero: string;
   rue: string;
   codePostal: string;

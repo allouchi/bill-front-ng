@@ -3,7 +3,7 @@ import Consultant from "./Consultant";
 import Facture from "./Facture";
 
 export default interface Prestation {
-  id: number;
+  id: number | null;
   tarifHT?: number;
   delaiPaiement?: number;
   consultant?: Consultant;

@@ -1,7 +1,6 @@
-import Prestation from "./Prestation";
 
 export default interface Facture {
-  id: number;
+  id: number | null;
   numeroFacture: string;
   dateFacturation: string;
   dateEcheance: string;

@@ -2,7 +2,7 @@
 
 <div class="mt-4 mx-5">
   <div class="text-end mb-2 me-3">
-    <button class="btn btn-pink" title="Nouveau">Ajouter</button>
+    <button class="btn btn-pink" (click)="AddConsultant()" title="Nouveau">Ajouter</button>
   </div>
   <div class="table-responsive">
     <table class="table table-success table-striped">
@@ -18,7 +18,7 @@
       <tbody>
         @for (consultant of consultants; track consultant.id) {
         <tr>
-          <td align="centre">{{ consultant.firstName }}</td>
+          <td style="text-align: center;">{{ consultant.firstName }}</td>
           <td>{{ consultant.lastName }}</td>
           <td>{{ consultant.fonction }}</td>
           <td>{{ consultant.email }}</td>

@@ -15,7 +15,7 @@ import { env } from '../../../../environments/env';
 })
 export class ConsultantReadComponent {
   consultants: Consultant[] = [];
-  isLoaded = false;
+  isLoaded = true;
 
   constructor(
     private readonly consultantService: ConsultantService,
@@ -37,10 +37,7 @@ export class ConsultantReadComponent {
       },
       error: (err) => {
         this.onError(err);
-      },
-      complete: () => {
-        console.log('Requête terminée.');
-      },
+      }
     });
   }
 
@@ -50,7 +47,7 @@ export class ConsultantReadComponent {
     );
     if (ok) {
       this.consultantService
-        .deleteConsultantById(consultant.id, env.siret)
+        .deleteConsultantById(consultant.id!, env.siret)
         .subscribe({
           next: () => {
             this.onSuccess('deleted');
@@ -60,12 +57,13 @@ export class ConsultantReadComponent {
           },
           error: (err) => {
             this.onError(err);
-          },
-          complete: () => {
-            console.log('Requête terminée.');
-          },
+          }
         });
     }
+  }
+
+  AddConsultant() {
+    this.router.navigate(['/consultants/add'])
   }
 
   updateConsultant(consultant: Consultant) {
@@ -82,10 +80,7 @@ export class ConsultantReadComponent {
           },
           error: (err) => {
             this.onError(err);
-          },
-          complete: () => {
-            console.log('Requête terminée.');
-          },
+          }
         });
     }
   }

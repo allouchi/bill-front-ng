@@ -1,6 +1,6 @@
 
 export default interface Tva {
-  id: number;
+  id: number | null;
   datePayment: string;
   montantPayment: number;
   exercise: string;

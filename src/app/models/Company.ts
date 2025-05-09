@@ -9,7 +9,7 @@ import Prestation from "./Prestation";
  * @author M.ALIANE
  */
 export default interface Company {
-  id: number;
+  id: number | null;
   socialReason: string;
   status: string;
   siret: string;
@@ -19,9 +19,9 @@ export default interface Company {
   numeroIban: string;
   numeroBic: string;
   companyAdresse: Adresse;
-  users: Partial<User[]>;
+  users?: Partial<User[]>;
   clients?: Client[];
   consultants?: Consultant[];
   prestations?: Prestation[];
-  checked: boolean;
+  checked?: boolean;
 }

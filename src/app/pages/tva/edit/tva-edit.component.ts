@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { SharedDataService } from '../../../services/shared/sharedDataService';
 
 import {
@@ -23,7 +23,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './tva-edit.component.html',
   styleUrl: './tva-edit.component.css',
 })
-export class TvaEditComponent implements OnInit {
+export class TvaEditComponent implements OnInit, OnDestroy {
   formTva!: FormGroup;
   tva!: Tva;
   monthsYear!: any;
@@ -39,6 +39,7 @@ export class TvaEditComponent implements OnInit {
     private readonly alertService: AlertService,
     private readonly fb: FormBuilder
   ) {}
+
 
   ngOnInit(): void {
     const maMap = this.sharedDataService.getData();
@@ -101,9 +102,7 @@ export class TvaEditComponent implements OnInit {
 
       const selectedSiret = this.companies.find(
         (c) => c.socialReason == selectedRaisonSocial
-      )?.siret;
-
-      console.log(selectedRaisonSocial);
+      )?.siret;     
 
       let tvaModif: Tva = {
         id: this.tva.id,
@@ -112,9 +111,7 @@ export class TvaEditComponent implements OnInit {
         datePayment: this.formTva.get('datePayment')?.value,
         montantPayment: this.formTva.get('montantPayment')?.value,
         siret: selectedSiret!,
-      };
-
-      console.log(tvaModif);
+      };     
 
       this.tvaService.createOrUpdateTva(tvaModif).subscribe({
         next: () => {
@@ -144,5 +141,10 @@ export class TvaEditComponent implements OnInit {
 
   private onError(error: any) {
     this.alertService.show('Une erreur est survenue.', 'error');
+  }
+
+
+  ngOnDestroy(): void {
+    console.log("ngOnDestroy")
   }
 }

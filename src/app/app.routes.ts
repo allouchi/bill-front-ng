@@ -109,6 +109,10 @@ export const BILLING_ROUTE: Routes = [
         path: 'edit',
         loadComponent: () => ConsultantEditComponent,
       },
+      {
+        path: 'add',
+        loadComponent: () => ConsultantEditComponent,
+      },
     ],
   },
   {

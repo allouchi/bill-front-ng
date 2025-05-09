@@ -15,7 +15,7 @@ import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 })
 export class ClientReadComponent implements OnInit, OnDestroy {
   clients: Client[] = [];
-  isLoaded = false;
+  isLoaded = true;
 
   constructor(
     private readonly clientService: ClientService,
@@ -57,6 +57,10 @@ export class ClientReadComponent implements OnInit, OnDestroy {
     if (ok) {
       console.log(client.socialReason);
     }
+  }
+
+  addClient() {
+    this.router.navigate(['clients/add']);
   }
 
   private onSuccess(respSuccess: any) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import Company from '../../../models/Company';
 import { Router } from '@angular/router';
 import { CompanyService } from '../../../services/company/company-service';
@@ -13,9 +13,9 @@ import { SharedService } from '../../../services/shared/shared.service';
   templateUrl: './company-read.component.html',
   styleUrls: ['./company-read.component.scss'],
 })
-export default class CompanyReadComponent implements OnInit {
+export default class CompanyReadComponent implements OnInit, OnDestroy {
   companies: Company[] = [];
-  isLoaded = false;
+  isLoaded = true;
 
   constructor(
     private readonly companyService: CompanyService,
@@ -70,8 +70,7 @@ export default class CompanyReadComponent implements OnInit {
     }
   }
 
-  addCampany() {
-    this.sharedService.updateData('Ajout Société');
+  addCampany() {   
     this.router.navigate(['/companies/add']);
   }
 

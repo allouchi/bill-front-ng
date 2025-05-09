@@ -2,7 +2,7 @@
 
 <div class="mt-4 mx-5">
   <div class="text-end mb-2 me-3">
-    <button class="btn btn-pink" title="Nouveau">
+    <button class="btn btn-pink" (click)="addClient()" title="Nouveau">
       Ajouter
     </button>
   </div>
@@ -18,7 +18,7 @@
     <tbody>
       @for (client of clients; track client.id) {
       <tr>
-        <td align="centre">{{ client.socialReason }}</td>
+        <td style="text-align: center;">{{ client.socialReason }}</td>
         <td>{{ client.email }}</td>
         <td>{{ client.adresseClient | adresseClientPipe }}</td>
 

@@ -1,21 +1,146 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { PrestationService } from '../../../services/prestations/prestation.service';
+import { AlertService } from '../../../services/alert/alert.service';
+import Prestation from '../../../models/Prestation';
+import { env } from '../../../../environments/env';
+import Consultant from '../../../models/Consultant';
+import Client from '../../../models/Client';
+import { ClientService } from '../../../services/clients/client-service';
+import { ConsultantService } from '../../../services/consultants/consultant-service';
+import { CommonModule } from '@angular/common';
 
-
-declare var window: any; // Déclarer globalement la fenêtre si besoin
 
 @Component({
   selector: 'bill-prestation-edit',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: 'prestation-edit.component.html',
   styleUrl: './prestation-edit.component.css',
 })
-export class PrestationEditComponent {
-  openModal() {
-    // Utilise le mécanisme Bootstrap pour ouvrir le modal
-    const modal = new window.bootstrap.Modal(
-      document.getElementById('exampleModal')
-    );
-    modal.show();
+export class PrestationEditComponent implements OnInit, OnDestroy {
+  formPrestation!: FormGroup;
+  selectedClient: string = '';
+  selectedConsultant: string = '';
+
+  consultants: Consultant[] = [];
+  clients: Client[] = [];
+
+  CONTEXT = '';
+
+  router = inject(Router);
+
+  constructor(
+    private readonly prestationService: PrestationService,
+    private readonly alertService: AlertService,
+    private readonly clientService: ClientService,
+    private readonly consultantService: ConsultantService,
+    private readonly fb: FormBuilder
+  ) { }
+
+
+  ngOnInit(): void {
+
+    this.formPrestation = this.fb.group({
+      client: ['', Validators.required],
+      consultant: ['', Validators.required],
+      tarifHT: ['', Validators.required],
+      numeroCommande: ['', Validators.required],
+      delaiPaiement: ['', Validators.required],
+      dateDebut: ['', Validators.required],
+      dateFin: ['', Validators.required]
+    });
+
+    this.loadClients();
+    this.loadConsultants();
+  }
+
+  private loadClients() {
+    this.clientService.findClients().subscribe({
+      next: (clients) => {
+        this.clients = clients;
+      },
+      error: (err) => {
+        this.onError(err);
+      }
+    });
+  }
+
+  private loadConsultants() {
+    this.consultantService.findConsultants().subscribe({
+      next: (consultants) => {
+        this.consultants = consultants;
+      },
+      error: (err) => {
+        this.onError(err);
+      }
+    });
+  }
+
+  setClientValue(event: Event) {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    console.log(selectedValue)
+    this.formPrestation.patchValue({
+      client: selectedValue,
+    });
+  }
+
+  setConsultantValue(event: Event) {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    console.log(selectedValue)
+    this.formPrestation.patchValue({
+      consultant: selectedValue,
+    });
+  }
+
+
+  addPrestation() {
+    if (this.formPrestation.valid) {
+
+      let prestation: Prestation = {
+        id: 0,
+        client: this.formPrestation.get('company')?.value,
+        consultant: this.formPrestation.get('company')?.value,
+        tarifHT: this.formPrestation.get('tarifHT')?.value,
+        numeroCommande: this.formPrestation.get('numeroCommande')?.value,
+        delaiPaiement: this.formPrestation.get('delaiPaiement')?.value,
+        dateFin: this.formPrestation.get('dateFin')?.value,
+        dateDebut: this.formPrestation.get('dateDebut')?.value
+      };
+
+      this.prestationService.createOrUpdatePrestation(prestation, env.siret, false, null).subscribe({
+        next: () => {
+          this.onSuccess('updated');
+          this.router.navigate(['/prestations/read']);
+        },
+        error: (err) => {
+          this.onError(err);
+        },
+      });
+    } else {
+      for (const [key, control] of Object.entries(this.formPrestation.controls)) {
+        if (control.invalid) {
+          control.markAsTouched();
+        }
+      }
+    }
+  }
+
+  cancel() {
+    this.router.navigate(['/prestations/read']);
+  }
+
+  private onSuccess(respSuccess: any) {
+    this.alertService.show('Opération réussie !', 'success');
+  }
+
+  private onError(error: any) {
+    this.alertService.show('Une erreur est survenue.', 'error');
+  }
+
+
+  ngOnDestroy(): void {
+    console.log("ngOnDestroy")
   }
 }

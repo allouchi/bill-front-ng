@@ -1,1 +1,82 @@
-<p>consultant-edit works!</p>
+<form [formGroup]="formConsultant" #form="ngForm" (ngSubmit)="addConsultant()" class="p-4 border rounded">
+    <div class="row">
+
+        <div class="mb-3 fw-bold">Informations Consultant :</div>
+
+        <!-- Colonne gauche -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label" htmlFor="firstName">Nom</label>
+                <input type="text" id="firstName" class="form-control" formControlName="firstName" [class.is-invalid]="
+            formConsultant.get('firstName')?.invalid &&
+            formConsultant.get('firstName')?.touched
+          " />
+                <div *ngIf="
+            formConsultant.get('firstName')?.invalid &&
+            formConsultant.get('firstName')?.touched
+          " class="text-danger">
+                    Ce champ est requis.
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne droite -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label" htmlFor="lastName">Prénom</label>
+                <input type="text" id="lastName" class="form-control" formControlName="lastName" [class.is-invalid]="
+            formConsultant.get('lastName')?.invalid &&
+            formConsultant.get('lastName')?.touched
+          " />
+
+                <div *ngIf="
+            formConsultant.get('lastName')?.invalid &&
+            formConsultant.get('lastName')?.touched
+          " class="text-danger">
+                    Ce champ est requis.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3 fw-bold">Adresse Consultant :</div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label" htmlFor="email">Email</label>
+                <input type="text" id="email" class="form-control" formControlName="email" [class.is-invalid]="
+                    formConsultant.get('email')?.invalid &&
+                    formConsultant.get('email')?.touched
+                  " />
+                <div *ngIf="
+                    formConsultant.get('email')?.invalid &&
+                    formConsultant.get('email')?.touched
+                  " class="text-danger">
+                    Ce champ est requis.
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label" htmlFor="rue">fonction</label>
+                <input type="text" id="fonction" class="form-control" formControlName="fonction" [class.is-invalid]="
+                            formConsultant.get('fonction')?.invalid &&
+                            formConsultant.get('fonction')?.touched
+                          " />
+                <div *ngIf="
+                            formConsultant.get('fonction')?.invalid &&
+                            formConsultant.get('fonction')?.touched
+                          " class="text-danger">
+                    Ce champ est requis.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3">
+        <button class="btn btn-secondary me-2" (click)="cancel()">Annuler</button>
+        <button class="btn btn-primary" type="submit">Valider</button>
+    </div>
+    </form>

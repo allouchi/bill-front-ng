@@ -1,20 +1,128 @@
-<!-- Lien pour ouvrir le modal -->
-<a href="#" (click)="openModal()" class="btn btn-primary">Ouvrir le popup</a>
-<!-- Modal Bootstrap -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Titre du Modal</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<form [formGroup]="formPrestation" #form="ngForm" (ngSubmit)="addPrestation()" class="p-4 border rounded">
+  <div class="row">
+    <!-- Colonne gauche -->
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="clientSelect" class="form-label">Client *</label>
+        <select formControlName="client" [class.is-invalid]="
+            formPrestation.get('client')?.invalid && formPrestation.get('client')?.touched
+          " (change)="setClientValue($event)" class="form-select" id="companySelect">
+          @for (client of clients; track client.id) {
+          <option value="{{ client.id }}" [value]="client.socialReason">
+            {{ client!.socialReason }}
+          </option>
+          }
+        </select>
+
+        <div *ngIf="
+            formPrestation.get('client')?.invalid && formPrestation.get('client')?.touched
+          " class="text-danger">
+          Ce champ est requis.
+        </div>
       </div>
-      <div class="modal-body">
-        Ceci est un contenu de popup !
+
+      <div class="mb-3">
+        <label for="consultantSelect" class="form-label">Consultant *</label>
+        <select (change)="setConsultantValue($event)" class="form-select" id="consultantSelect"
+          formControlName="consultant" [class.is-invalid]="
+            formPrestation.get('consusltant')?.invalid && formPrestation.get('consultant')?.touched
+          ">
+          @for (consultant of consultants; track consultant.id) {
+          <option value="{{ consultant.firstName }}" [value]="consultant.firstName">
+            {{ consultant.firstName }}
+          </option>
+          }
+        </select>
+
+        <div *ngIf="formPrestation.get('consultant')?.invalid && formPrestation.get('consultant')?.touched"
+          class="text-danger">
+          Ce champ est requis.
+        </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-        <button type="button" class="btn btn-primary">Sauvegarder</button>
+    </div>
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label class="form-label" htmlFor="tarifHT">Tarrif HT *</label>
+        <input type="text" id="montantInput" class="form-control" formControlName="tarifHT" [class.is-invalid]="
+            formPrestation.get('tarifHT')?.invalid &&
+            formPrestation.get('tarifHT')?.touched
+          " />
+
+        <div *ngIf="
+            formPrestation.get('tarifHT')?.invalid &&
+            formPrestation.get('tarifHT')?.touched
+          " class="text-danger">
+          Ce champ est requis.
+        </div>
       </div>
+
+      <div class="mb-3">
+        <label class="form-label" htmlFor="numeroCommande">Numéro de commande</label>
+        <input type="text" id="numeroCommande" class="form-control" formControlName="numeroCommande" [class.is-invalid]="
+                      formPrestation.get('numeroCommande')?.invalid &&
+                      formPrestation.get('numeroCommande')?.touched
+                    " />
+
+        <div *ngIf="
+                      formPrestation.get('numeroCommande')?.invalid &&
+                      formPrestation.get('numeroCommande')?.touched
+                    " class="text-danger">
+          Ce champ est requis.
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label class="form-label" htmlFor="delaiPaiement">Délai de paiement</label>
+        <input type="text" id="delaiPaiement" class="form-control" formControlName="delaiPaiement" [class.is-invalid]="
+                  formPrestation.get('delaiPaiement')?.invalid &&
+                  formPrestation.get('delaiPaiement')?.touched
+                " />
+
+        <div *ngIf="
+                  formPrestation.get('delaiPaiement')?.invalid &&
+                  formPrestation.get('delaiPaiement')?.touched
+                " class="text-danger">
+          Ce champ est requis.
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" htmlFor="dateDebut">Date Début</label>
+        <input type="date" id="dateDebut" class="form-control" formControlName="dateDebut" [class.is-invalid]="
+                          formPrestation.get('dateDebut')?.invalid &&
+                          formPrestation.get('dateDebut')?.touched
+                        " />
+
+        <div *ngIf="
+                          formPrestation.get('dateDebut')?.invalid &&
+                          formPrestation.get('dateDebut')?.touched
+                        " class="text-danger">
+          Ce champ est requis.
+        </div>
+      </div>
+      </div>
+<div class="col-md-6">
+  <div class="mb-3">
+    <label class="form-label" htmlFor="dateFin">Date Fin</label>
+    <input type="date" id="dateFin" class="form-control" formControlName="dateFin" [class.is-invalid]="
+                                      formPrestation.get('dateFin')?.invalid &&
+                                      formPrestation.get('dateFin')?.touched
+                                    " />
+
+    <div *ngIf="
+                                      formPrestation.get('dateFin')?.invalid &&
+                                      formPrestation.get('dateFin')?.touched
+                                    " class="text-danger">
+      Ce champ est requis.
     </div>
   </div>
 </div>
+
+  </div>
+
+  <div class="d-flex justify-content-center gap-3">
+    <button class="btn btn-secondary me-2" (click)="cancel()">Annuler</button>
+    <button class="btn btn-primary" type="submit">Valider</button>
+  </div>
+  </form>

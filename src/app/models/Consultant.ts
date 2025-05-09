@@ -1,5 +1,5 @@
 export default interface Consultant {
-  id: number;
+  id: number | null;
   firstName: string;
   lastName: string;
   fonction: string;
