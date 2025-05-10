@@ -23,8 +23,7 @@ export class ClientService implements IClientService {
 
 
   createOrUpdateClient(client: Client, siret: string): Observable<Client> {
-    const isNew: boolean = !client.id || client.id === 0;
-    console.log(client)
+    const isNew: boolean = !client.id || client.id === 0;   
     if (isNew) {
       return this.http.post<Client>(
         `${this.CLIENT_PATH}/${siret}`,

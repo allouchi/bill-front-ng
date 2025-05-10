@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AdresseClientPipe } from '../../../shared/pipes/clientAdresse-pipe';
 import { AlertService } from '../../../services/alert/alert.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
+import { SharedDataService } from '../../../services/shared/sharedDataService';
 
 @Component({
   selector: 'bill-client-read',
@@ -15,12 +16,14 @@ import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 })
 export class ClientReadComponent implements OnInit, OnDestroy {
   clients: Client[] = [];
-  isLoaded = true;
+  filtredClients: Client[] = [];
+  isLoaded = false;
 
   constructor(
     private readonly clientService: ClientService,
     private readonly alertService: AlertService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly sharedDataService: SharedDataService
   ) {}
 
   ngOnInit(): void {
@@ -32,12 +35,13 @@ export class ClientReadComponent implements OnInit, OnDestroy {
       next: (clients) => {
         setTimeout(() => {
           this.clients = clients;
+          this.filtredClients = this.clients;
           this.isLoaded = true;
         }, 500);
       },
       error: (err) => {
         this.onError(err);
-      }
+      },
     });
   }
 
@@ -46,7 +50,17 @@ export class ClientReadComponent implements OnInit, OnDestroy {
       `Voulez-vous vraiment supprimer "${client.socialReason}" ?`
     );
     if (ok) {
-      console.log(client.socialReason);
+      this.clientService.deleteClientById(client.id!).subscribe({
+        next: () => {
+          this.filtredClients = this.clients.filter(
+            (item) => item.id !== client.id
+          );
+          this.onSuccess('DELETE,CLIENT');
+        },
+        error: (err) => {
+          this.onError(err);
+        },
+      });
     }
   }
 
@@ -55,24 +69,34 @@ export class ClientReadComponent implements OnInit, OnDestroy {
       `Voulez-vous vraiment mettre à jour "${client.socialReason}" ?`
     );
     if (ok) {
-      console.log(client.socialReason);
+      const data: Map<string, any> = new Map();
+      data.set('client', client);
+      this.sharedDataService.setData(data);
+      this.router.navigate(['clients/edit']);
     }
   }
 
   addClient() {
+    this.sharedDataService.clearData();
     this.router.navigate(['clients/add']);
   }
 
   private onSuccess(respSuccess: any) {
-    this.alertService.show('Opération réussie !', 'success');
+    this.alertService.show(respSuccess, 'success');
   }
 
   private onError(error: any) {
     this.isLoaded = true;
-    this.alertService.show('Une erreur est survenue.', 'error');
+    const message: string = error.message;
+
+    if (message.includes('Http failure')) {
+      this.alertService.show('Problème serveur', 'error');
+    } else {
+      this.alertService.show(message, 'error');
+    }
   }
 
   ngOnDestroy(): void {
-    console.log('Method not implemented.');
+    console.log('');
   }
 }

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { CompanyService } from '../../../services/company/company-service';
 import { AlertService } from '../../../services/alert/alert.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
-import { SharedService } from '../../../services/shared/shared.service';
+import { SharedDataService } from '../../../services/shared/sharedDataService';
 
 @Component({
   selector: 'company-read',
@@ -15,13 +15,14 @@ import { SharedService } from '../../../services/shared/shared.service';
 })
 export default class CompanyReadComponent implements OnInit, OnDestroy {
   companies: Company[] = [];
-  isLoaded = true;
+  filtredCompanies: Company[] = [];
+  isLoaded = false;
 
   constructor(
     private readonly companyService: CompanyService,
     private readonly alertService: AlertService,
     private readonly router: Router,
-    private readonly sharedService: SharedService
+    private readonly sharedDataService: SharedDataService
   ) {}
 
   ngOnInit(): void {
@@ -33,6 +34,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
       next: (companies) => {
         setTimeout(() => {
           this.companies = companies;
+          this.filtredCompanies = this.companies;
           this.isLoaded = true;
         }, 500);
       },
@@ -43,21 +45,23 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     });
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show('Opération réussie !', 'success');
-  }
-
-  private onError(error: any) {
-    this.isLoaded = true;
-    this.alertService.show('Une erreur est survenue.', 'error');
-  }
-
   deleteCompany(company: Company) {
     const ok = confirm(
       `Voulez-vous vraiment supprimer "${company.socialReason}" ?`
     );
     if (ok) {
-      console.log(company.socialReason);
+      this.companyService.deleteCompanyById(company.id!).subscribe({
+        next: () => {
+          this.onSuccess('DELETE,SOCIETE');
+          this.filtredCompanies = this.companies.filter(
+            (item) => item.id !== company.id
+          );
+        },
+        error: (err) => {
+          this.onError(err);
+          this.isLoaded = true;
+        },
+      });
     }
   }
 
@@ -66,15 +70,34 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
       `Voulez-vous vraiment mettre à jour "${company.socialReason}" ?`
     );
     if (ok) {
-      console.log(company.socialReason);
+      const data: Map<string, any> = new Map();
+      data.set('company', company);
+      this.sharedDataService.setData(data);
+      this.router.navigate(['/companies/edit']);
     }
   }
 
-  addCampany() {   
+  addCampany() {
+    this.sharedDataService.clearData();
     this.router.navigate(['/companies/add']);
   }
 
+  private onSuccess(respSuccess: any) {
+    this.alertService.show(respSuccess, 'success');
+  }
+
+  private onError(error: any) {
+    this.isLoaded = true;
+    const message: string = error.message;
+
+    if (message.includes('Http failure')) {
+      this.alertService.show('Problème serveur', 'error');
+    } else {
+      this.alertService.show(message, 'error');
+    }
+  }
+
   ngOnDestroy(): void {
-    console.log('Method not implemented.');
+    console.log();
   }
 }

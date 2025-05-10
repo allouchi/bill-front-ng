@@ -1,1 +1,38 @@
-<p>factures edit works</p>
+
+
+<form [formGroup]="formFacture" #form="ngForm"
+  (ngSubmit)="updateFacture()"
+  class="p-4 border rounded"
+>
+  <div class="row"> 
+      <div class="mb-3">
+        <label class="form-label">Date d'Encaissment</label>
+        <input
+          type="date"
+          id="dateEncaissement"
+          class="form-control"
+          formControlName="dateEncaissement"
+          [class.is-invalid]="
+            formFacture.get('dateEncaissement')?.invalid &&
+            formFacture.get('dateEncaissement')?.touched
+          "
+        />
+
+        <div
+          *ngIf="
+            formFacture.get('dateEncaissement')?.invalid &&
+            formFacture.get('dateEncaissement')?.touched
+          "
+          class="text-danger"
+        >
+          Ce champ est requis.
+        </div>
+      </div>
+    </div>
+  
+
+  <div class="d-flex justify-content-center gap-3">
+    <button class="btn btn-secondary me-2" (click)="cancel()">Annuler</button>
+    <button class="btn btn-primary" type="submit">Valider</button>
+  </div>
+</form>

@@ -3,29 +3,36 @@ import { ConsultantService } from '../../../services/consultants/consultant-serv
 import { AlertService } from '../../../services/alert/alert.service';
 import Consultant from '../../../models/Consultant';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { env } from '../../../../environments/env';
 import { CommonModule } from '@angular/common';
+import { SharedDataService } from '../../../services/shared/sharedDataService';
 
 @Component({
   selector: 'bill-consultant-edit',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './consultant-edit.component.html',
-  styleUrl: './consultant-edit.component.css'
+  styleUrl: './consultant-edit.component.css',
 })
 export class ConsultantEditComponent implements OnInit, OnDestroy {
-
-
   formConsultant!: FormGroup;
+  consultant!: Consultant;
+  consultantId: number | null = null;
 
-  constructor(private readonly fb: FormBuilder,
+  constructor(
+    private readonly fb: FormBuilder,
     private readonly consultantService: ConsultantService,
     private readonly alertService: AlertService,
+    private readonly sharedDataService: SharedDataService,
     private readonly router: Router
-  ) {
-
-  }
+  ) {}
 
   ngOnInit(): void {
     this.formConsultant = this.fb.group({
@@ -34,51 +41,74 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
       email: ['', Validators.required],
       fonction: ['', Validators.required],
     });
+
+    const maMap = this.sharedDataService.getData();
+    this.consultant = maMap.get('consultant');
+    if (this.consultant) {
+      this.consultantId = this.consultant.id;
+      this.formConsultant.patchValue({
+        firstName: this.consultant.firstName,
+        lastName: this.consultant.lastName,
+        email: this.consultant.email,
+        fonction: this.consultant.fonction,
+      });
+    }
   }
 
   addConsultant() {
     if (this.formConsultant.valid) {
       let consultant: Consultant = {
-        id: 0,
+        id: this.consultantId,
         firstName: this.formConsultant.get('firstName')?.value,
         email: this.formConsultant.get('email')?.value,
         lastName: this.formConsultant.get('lastName')?.value,
         fonction: this.formConsultant.get('fonction')?.value,
       };
 
-      this.consultantService.createOrUpdateConsultant(consultant, env.siret).subscribe({
-        next: (Consultant) => {
-          this.onSuccess("Le Consultant " + Consultant.firstName + " a été ajouté !")
-          this.router.navigate(['/consultants/read'])
-        },
-        error: (err) => {
-          this.onError(err);
-        }
-      });
-
+      this.consultantService
+        .createOrUpdateConsultant(consultant, env.siret)
+        .subscribe({
+          next: () => {
+            if (this.consultantId) {
+              this.onSuccess('UPDATE,CONSULTANT');
+            } else {
+              this.onSuccess('ADD,CONSULTANT');
+            }
+            this.router.navigate(['/consultants/read']);
+          },
+          error: (err) => {
+            this.onError(err);
+          },
+        });
     } else {
-      for (const [key, control] of Object.entries(this.formConsultant.controls)) {
+      for (const [key, control] of Object.entries(
+        this.formConsultant.controls
+      )) {
         if (control.invalid) {
           control.markAsTouched();
         }
       }
     }
-
   }
 
   cancel() {
+    this.router.navigate(['/consultants/read']);
   }
-
 
   private onSuccess(respSuccess: any) {
     this.alertService.show(respSuccess, 'success');
   }
 
   private onError(error: any) {
+    const message: string = error.message;
 
-    this.alertService.show('Une erreur est survenue.', 'error');
+    if (message.includes('Http failure')) {
+      this.alertService.show('Problème serveur', 'error');
+    } else {
+      this.alertService.show(message, 'error');
+    }
   }
   ngOnDestroy(): void {
-    console.log("");
+    console.log('');
   }
 }

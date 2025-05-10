@@ -19,7 +19,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   styleUrl: './tva-read.component.css',
 })
 export class TvaReadComponent implements OnInit, OnDestroy {
-  isLoaded = true;
+  isLoaded = false;
   tvas: Tva[] = [];
   filtredTvas: Tva[] = [];
   companies: Company[] = [];
@@ -106,7 +106,6 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     this.data.set('exercices', this.exercises);
     this.data.set('months', this.monthsYear);
     this.data.set('companies', this.companies);
-    this.data.set('CONTEXT', 'add');
     this.sharedDataService.setData(this.data);
     this.router.navigate(['/tvas/add']);
   }
@@ -117,7 +116,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     this.data.set('months', this.monthsYear);
     this.data.set('companies', this.companies);
     this.sharedDataService.setData(this.data);
-    this.router.navigate(['/tvas/add']);
+    this.router.navigate(['/tvas/edit']);
   }
 
   deleteTva(tva: Tva) {
@@ -128,7 +127,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       this.tvaService.deleteTvaById(tva.id!).subscribe({
         next: () => {
           this.filtredTvas = this.tvas.filter((t) => t.id !== tva.id);
-          this.onSuccess('La Tva est supprimée avec succès !');
+          this.onSuccess('DELETE,TVA');
         },
         error: (err) => {
           this.onError(err);
@@ -143,7 +142,13 @@ export class TvaReadComponent implements OnInit, OnDestroy {
 
   private onError(error: any) {
     this.isLoaded = true;
-    this.alertService.show('Une erreur est survenue.', 'error');
+    const message: string = error.message;
+
+    if (message.includes('Http failure')) {
+      this.alertService.show('Problème serveur', 'error');
+    } else {
+      this.alertService.show(message, 'error');
+    }
   }
 
   ngOnDestroy(): void {

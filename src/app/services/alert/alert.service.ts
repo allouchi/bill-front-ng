@@ -1,18 +1,42 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, OnInit } from '@angular/core';
+
 import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AlertService implements OnDestroy {
+export class AlertService implements OnInit, OnDestroy {
   private alertSubject = new Subject<{
     message: string;
     type: 'success' | 'error';
   }>();
   alerts$ = this.alertSubject.asObservable();
+  message: string = '';
 
-  show(message: string, type: 'success' | 'error' = 'success') {
-    this.alertSubject.next({ message, type });
+  ngOnInit(): void {}
+
+  show(param: string, message: string, type: 'success' | 'error' = 'success') {
+    console.log(param, message, type);
+    if (message === 'error') {
+      message = param;
+      type = 'error';
+      this.alertSubject.next({ message, type });
+      return;
+    }
+    const p = param.split(',');
+    let action = p[0];
+    if (action == 'DELETE') {
+      action = ' été supprimée avec succès !';
+    }
+    if (action == 'ADD') {
+      action = ' été ajoutée avec succès !';
+    }
+    if (action == 'UPDATE') {
+      action = ' été mise à jour avec succès !';
+    }
+    this.message = "L'Entité " + `${p[1]}` + action;
+    message = this.message;
+    this.alertSubject.next({ message, type: 'success' });
   }
 
   clear() {

@@ -23,11 +23,8 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
   formPrestation!: FormGroup;
   selectedClient: string = '';
   selectedConsultant: string = '';
-
   consultants: Consultant[] = [];
   clients: Client[] = [];
-
-  CONTEXT = '';
 
   router = inject(Router);
 
@@ -37,11 +34,9 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
     private readonly clientService: ClientService,
     private readonly consultantService: ConsultantService,
     private readonly fb: FormBuilder
-  ) { }
-
+  ) {}
 
   ngOnInit(): void {
-
     this.formPrestation = this.fb.group({
       client: ['', Validators.required],
       consultant: ['', Validators.required],
@@ -49,7 +44,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
       numeroCommande: ['', Validators.required],
       delaiPaiement: ['', Validators.required],
       dateDebut: ['', Validators.required],
-      dateFin: ['', Validators.required]
+      dateFin: ['', Validators.required],
     });
 
     this.loadClients();
@@ -63,7 +58,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.onError(err);
-      }
+      },
     });
   }
 
@@ -74,13 +69,12 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.onError(err);
-      }
+      },
     });
   }
 
   setClientValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
-    console.log(selectedValue)
     this.formPrestation.patchValue({
       client: selectedValue,
     });
@@ -88,16 +82,13 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
 
   setConsultantValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
-    console.log(selectedValue)
     this.formPrestation.patchValue({
       consultant: selectedValue,
     });
   }
 
-
   addPrestation() {
     if (this.formPrestation.valid) {
-
       let prestation: Prestation = {
         id: 0,
         client: this.formPrestation.get('company')?.value,
@@ -106,20 +97,24 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
         numeroCommande: this.formPrestation.get('numeroCommande')?.value,
         delaiPaiement: this.formPrestation.get('delaiPaiement')?.value,
         dateFin: this.formPrestation.get('dateFin')?.value,
-        dateDebut: this.formPrestation.get('dateDebut')?.value
+        dateDebut: this.formPrestation.get('dateDebut')?.value,
       };
 
-      this.prestationService.createOrUpdatePrestation(prestation, env.siret, false, null).subscribe({
-        next: () => {
-          this.onSuccess('updated');
-          this.router.navigate(['/prestations/read']);
-        },
-        error: (err) => {
-          this.onError(err);
-        },
-      });
+      this.prestationService
+        .createOrUpdatePrestation(prestation, env.siret, false, null)
+        .subscribe({
+          next: () => {
+            this.onSuccess('ADD,PRESTATION');
+            this.router.navigate(['/prestations/read']);
+          },
+          error: (err) => {
+            this.onError(err);
+          },
+        });
     } else {
-      for (const [key, control] of Object.entries(this.formPrestation.controls)) {
+      for (const [key, control] of Object.entries(
+        this.formPrestation.controls
+      )) {
         if (control.invalid) {
           control.markAsTouched();
         }
@@ -132,15 +127,20 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
   }
 
   private onSuccess(respSuccess: any) {
-    this.alertService.show('Opération réussie !', 'success');
+    this.alertService.show(respSuccess, 'success');
   }
 
   private onError(error: any) {
-    this.alertService.show('Une erreur est survenue.', 'error');
+    const message: string = error.message;
+
+    if (message.includes('Http failure')) {
+      this.alertService.show('Problème serveur', 'error');
+    } else {
+      this.alertService.show(message, 'error');
+    }
   }
 
-
   ngOnDestroy(): void {
-    console.log("ngOnDestroy")
+    console.log('ngOnDestroy');
   }
 }

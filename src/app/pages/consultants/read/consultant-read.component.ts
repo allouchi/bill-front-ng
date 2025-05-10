@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AlertService } from '../../../services/alert/alert.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { env } from '../../../../environments/env';
+import { SharedDataService } from '../../../services/shared/sharedDataService';
 
 @Component({
   selector: 'bill-consultant-read',
@@ -15,11 +16,12 @@ import { env } from '../../../../environments/env';
 })
 export class ConsultantReadComponent {
   consultants: Consultant[] = [];
-  isLoaded = true;
+  isLoaded = false;
 
   constructor(
     private readonly consultantService: ConsultantService,
     private readonly alertService: AlertService,
+    private readonly sharedDataService: SharedDataService,
     private readonly router: Router
   ) {}
 
@@ -37,7 +39,7 @@ export class ConsultantReadComponent {
       },
       error: (err) => {
         this.onError(err);
-      }
+      },
     });
   }
 
@@ -50,48 +52,48 @@ export class ConsultantReadComponent {
         .deleteConsultantById(consultant.id!, env.siret)
         .subscribe({
           next: () => {
-            this.onSuccess('deleted');
+            this.onSuccess('DELETE,CONSULTANT');
             this.consultants = this.consultants.filter(
               (item) => item.id !== consultant.id
             );
           },
           error: (err) => {
             this.onError(err);
-          }
+          },
         });
     }
   }
 
   AddConsultant() {
-    this.router.navigate(['/consultants/add'])
+    this.sharedDataService.clearData();
+    this.router.navigate(['/consultants/add']);
   }
 
   updateConsultant(consultant: Consultant) {
     const ok = confirm(
-      `Voulez-vous vraiment mettre à jour "${consultant.firstName}" ?`
+      `Voulez-vous vraiment mettre à jour "${consultant.firstName} ${consultant.lastName}" ?`
     );
     if (ok) {
-      this.consultantService
-        .createOrUpdateConsultant(consultant, env.siret)
-        .subscribe({
-          next: () => {
-            this.onSuccess('updated');
-            this.loadConsultants();
-          },
-          error: (err) => {
-            this.onError(err);
-          }
-        });
+      const data: Map<string, any> = new Map();
+      data.set('consultant', consultant);
+      this.sharedDataService.setData(data);
+      this.router.navigate(['consultants/edit']);
     }
   }
 
   private onSuccess(respSuccess: any) {
-    this.alertService.show('Opération réussie !', 'success');
+    this.alertService.show(respSuccess, 'success');
   }
 
   private onError(error: any) {
     this.isLoaded = true;
-    this.alertService.show('Une erreur est survenue.', 'error');
+    const message: string = error.message;
+
+    if (message.includes('Http failure')) {
+      this.alertService.show('Problème serveur', 'error');
+    } else {
+      this.alertService.show(message, 'error');
+    }
   }
 
   ngOnDestroy(): void {

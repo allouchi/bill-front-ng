@@ -6,6 +6,7 @@ import { AlertService } from '../../../services/alert/alert.service';
 import { env } from '../../../../environments/env';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import Exercise from '../../../models/Exercise';
+import { SharedDataService } from '../../../services/shared/sharedDataService';
 
 @Component({
   selector: 'bill-facture-read',
@@ -18,12 +19,13 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   factures: Facture[] = [];
   filtredFactures: Facture[] = [];
   exercises: Exercise[] = [];
-  isLoaded = true;
+  isLoaded = false;
   private readonly router = inject(Router);
 
   constructor(
     private readonly factureService: FactureService,
-    private readonly alertService: AlertService
+    private readonly alertService: AlertService,
+    private readonly sharedDataService: SharedDataService
   ) {}
 
   ngOnInit(): void {
@@ -49,11 +51,11 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   private loadExercisesRef() {
     this.factureService.findExercisesRef().subscribe({
       next: (exercises) => {
-        this.exercises = exercises;       
+        this.exercises = exercises;
       },
       error: (err) => {
         this.onError(err);
-      }
+      },
     });
   }
 
@@ -63,18 +65,20 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       this.filtredFactures = this.factures.filter(
         (facture) => facture.dateFacturation.substring(6) == selectedValue
       );
+    } else {
+      this.filtredFactures = this.factures;
     }
   }
 
-  deleteFactue(facture: Facture) {
+  deleteFacture(facture: Facture) {
     const ok = confirm(
       `Voulez-vous vraiment supprimer "${facture.numeroFacture}" ?`
     );
     if (ok) {
       this.factureService.deleteFactureById(facture.id!).subscribe({
         next: () => {
-          this.onSuccess('deleted');
-          this.factures = this.factures.filter(
+          this.onSuccess('DELETE,FACTURE');
+          this.filtredFactures = this.factures.filter(
             (item) => item.id !== facture.id
           );
         },
@@ -90,20 +94,15 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       `Voulez-vous vraiment mettre à jour "${facture.numeroFacture}" ?`
     );
     if (ok) {
-      this.factureService.updateFacture(facture).subscribe({
-        next: () => {
-          this.onSuccess('updated');
-          this.loadFactures();
-        },
-        error: (err) => {
-          this.onError(err);
-        }
-      });
+      const data: Map<string, any> = new Map();
+      data.set('facture', facture);
+      this.sharedDataService.setData(data);
+      this.router.navigate(['factures/edit']);
     }
   }
 
   private onSuccess(respSuccess: any) {
-    this.alertService.show('La facture est supprimée avec succès !', 'success');
+    this.alertService.show(respSuccess, 'success');
   }
 
   private onError(error: any) {

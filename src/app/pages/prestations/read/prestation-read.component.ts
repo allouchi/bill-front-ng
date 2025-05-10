@@ -46,7 +46,7 @@ export class PrestationReadComponent
   implements OnInit, OnDestroy, AfterViewInit
 {
   prestations!: Prestation[];
-  isLoaded = true;
+  isLoaded = false;
   siret: string = '';
   selectedPrestation!: Prestation;
   selectedMonth: number = 0;
@@ -185,13 +185,13 @@ export class PrestationReadComponent
           next: () => {
             this.closeFactureModal();
             this.router.navigate(['/factures/read']);
-            this.onSuccess('updated');
+            this.onSuccess('UPDATE,PRESTATION');
             this.sharedService.updateData('Liste des Factures');
           },
           error: (err) => {
             this.onError(err);
             this.closeFactureModal();
-          }
+          },
         });
     }
   }
@@ -210,7 +210,7 @@ export class PrestationReadComponent
         error: (err) => {
           this.onError(err);
           this.closePrestaModal();
-        }
+        },
       });
   }
 
@@ -237,12 +237,18 @@ export class PrestationReadComponent
   }
 
   private onSuccess(respSuccess: any) {
-    this.alertService.show('Opération réussie !', 'success');
+    this.alertService.show(respSuccess, 'success');
   }
 
   private onError(error: any) {
     this.isLoaded = true;
-    this.alertService.show('Une erreur est survenue.', 'error');
+    const message: string = error.message;
+
+    if (message.includes('Http failure')) {
+      this.alertService.show('Problème serveur', 'error');
+    } else {
+      this.alertService.show(message, 'error');
+    }
   }
 
   ngOnDestroy(): void {

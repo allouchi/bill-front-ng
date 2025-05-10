@@ -29,7 +29,7 @@ export class TvaEditComponent implements OnInit, OnDestroy {
   monthsYear!: any;
   companies: Company[] = [];
   exercices: Exercise[] = [];
-  CONTEXT = '';
+  tvaId!: number | null;
 
   router = inject(Router);
 
@@ -40,14 +40,7 @@ export class TvaEditComponent implements OnInit, OnDestroy {
     private readonly fb: FormBuilder
   ) {}
 
-
   ngOnInit(): void {
-    const maMap = this.sharedDataService.getData();
-    this.tva = maMap.get('tva');
-    this.monthsYear = maMap.get('months');
-    this.companies = maMap.get('companies');
-    this.exercices = maMap.get('exercices');
-
     this.formTva = this.fb.group({
       company: ['', Validators.required],
       exercise: ['', Validators.required],
@@ -56,7 +49,14 @@ export class TvaEditComponent implements OnInit, OnDestroy {
       month: ['', Validators.required],
     });
 
+    const maMap = this.sharedDataService.getData();
+    this.tva = maMap.get('tva');
+    this.monthsYear = maMap.get('months');
+    this.companies = maMap.get('companies');
+    this.exercices = maMap.get('exercices');
+
     if (this.tva) {
+      this.tvaId = this.tva.id;
       const selectedCompany = this.companies.find(
         (c) => c.siret == this.tva.siret
       )?.socialReason;
@@ -102,20 +102,25 @@ export class TvaEditComponent implements OnInit, OnDestroy {
 
       const selectedSiret = this.companies.find(
         (c) => c.socialReason == selectedRaisonSocial
-      )?.siret;     
+      )?.siret;
 
       let tvaModif: Tva = {
-        id: this.tva.id,
+        id: this.tvaId,
         month: this.formTva.get('month')?.value,
         exercise: this.formTva.get('exercise')?.value,
         datePayment: this.formTva.get('datePayment')?.value,
         montantPayment: this.formTva.get('montantPayment')?.value,
         siret: selectedSiret!,
-      };     
+      };
 
       this.tvaService.createOrUpdateTva(tvaModif).subscribe({
         next: () => {
-          this.onSuccess('updated');
+          if (this.tvaId) {
+            this.onSuccess('UPDATE,TVA');
+          } else {
+            this.onSuccess('ADD,TVA');
+          }
+
           this.router.navigate(['/tvas/read']);
         },
         error: (err) => {
@@ -136,15 +141,20 @@ export class TvaEditComponent implements OnInit, OnDestroy {
   }
 
   private onSuccess(respSuccess: any) {
-    this.alertService.show('Opération réussie !', 'success');
+    this.alertService.show(respSuccess, 'success');
   }
 
   private onError(error: any) {
-    this.alertService.show('Une erreur est survenue.', 'error');
+    const message: string = error.message;
+
+    if (message.includes('Http failure')) {
+      this.alertService.show('Problème serveur', 'error');
+    } else {
+      this.alertService.show(message, 'error');
+    }
   }
 
-
   ngOnDestroy(): void {
-    console.log("ngOnDestroy")
+    console.log('ngOnDestroy');
   }
 }

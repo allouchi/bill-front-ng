@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NgbCollapseModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { CompanyService } from '../../../services/company/company-service';
@@ -9,29 +15,35 @@ import { Router } from '@angular/router';
 import Adresse from '../../../models/Adresse';
 import Company from '../../../models/Company';
 import { env } from '../../../../environments/env';
-
+import { SharedDataService } from '../../../services/shared/sharedDataService';
 
 @Component({
   selector: 'company-edit',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule,  NgbModule, NgScrollbarModule, NgbCollapseModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgbModule,
+    NgScrollbarModule,
+    NgbCollapseModule,
+  ],
   templateUrl: './company-edit.component.html',
-  styleUrls: ['./company-edit.component.scss']
+  styleUrls: ['./company-edit.component.scss'],
 })
 export default class CompanyEditComponent implements OnInit, OnDestroy {
-
   formCompany!: FormGroup;
+  company!: Company;
+  companyId!: number | null;
+  adresseId!: number | null;
 
-  constructor(private readonly fb: FormBuilder,
+  constructor(
+    private readonly fb: FormBuilder,
     private readonly companyService: CompanyService,
     private readonly alertService: AlertService,
+    private readonly sharedDataService: SharedDataService,
     private readonly router: Router
-  ) {
-
-  }
-
-
-
+  ) {}
   ngOnInit(): void {
     this.formCompany = this.fb.group({
       socialReason: ['', Validators.required],
@@ -49,21 +61,43 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
       pays: ['', Validators.required],
     });
 
+    const maMap = this.sharedDataService.getData();
+    this.company = maMap.get('company');
+    if (this.company) {
+      this.companyId = this.company.id;
+      this.adresseId = this.company.companyAdresse.id;
+
+      this.formCompany.patchValue({
+        socialReason: this.company.socialReason,
+        status: this.company.status,
+        siret: this.company.siret,
+        rcsName: this.company.rcsName,
+        numeroTva: this.company.numeroTva,
+        codeApe: this.company.codeApe,
+        numeroIban: this.company.numeroIban,
+        numeroBic: this.company.numeroBic,
+        numero: this.company.companyAdresse.numero,
+        rue: this.company.companyAdresse.rue,
+        codePostal: this.company.companyAdresse.codePostal,
+        localite: this.company.companyAdresse.localite,
+        pays: this.company.companyAdresse.pays,
+      });
+    }
   }
 
   addCompany() {
     if (this.formCompany.valid) {
       let adresseCompany: Adresse = {
-        id: 0,
+        id: this.adresseId,
         numero: this.formCompany.get('numero')?.value,
         rue: this.formCompany.get('rue')?.value,
         codePostal: this.formCompany.get('codePostal')?.value,
         localite: this.formCompany.get('localite')?.value,
         pays: this.formCompany.get('pays')?.value,
-      }
+      };
 
       let company: Company = {
-        id: 0,
+        id: this.companyId,
         socialReason: this.formCompany.get('socialReason')?.value,
         status: this.formCompany.get('status')?.value,
         siret: this.formCompany.get('siret')?.value,
@@ -73,19 +107,22 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
         numeroIban: this.formCompany.get('numeroIban')?.value,
         numeroBic: this.formCompany.get('numeroBic')?.value,
         companyAdresse: adresseCompany,
-
       };
 
       this.companyService.createOrUpdateCompany(company).subscribe({
-        next: (company) => {
-          this.onSuccess("La Société " + company.socialReason + " a été ajouté avec succès !")
-          this.router.navigate(['/companies/read'])
+        next: () => {
+          if (this.companyId) {
+            this.onSuccess('UPDATE,SOCIETE');
+          } else {
+            this.onSuccess('ADD,SOCIETE');
+          }
+
+          this.router.navigate(['/companies/read']);
         },
         error: (err) => {
           this.onError(err);
-        }
+        },
       });
-
     } else {
       for (const [key, control] of Object.entries(this.formCompany.controls)) {
         if (control.invalid) {
@@ -93,23 +130,26 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
         }
       }
     }
-
   }
 
   cancel() {
-    this.router.navigate(['/companies/read'])
+    this.router.navigate(['/companies/read']);
   }
-
 
   private onSuccess(respSuccess: any) {
     this.alertService.show(respSuccess, 'success');
   }
 
   private onError(error: any) {
+    const message: string = error.message;
 
-    this.alertService.show('Une erreur est survenue.', 'error');
+    if (message.includes('Http failure')) {
+      this.alertService.show('Problème serveur', 'error');
+    } else {
+      this.alertService.show(message, 'error');
+    }
   }
   ngOnDestroy(): void {
-    console.log("");
+    console.log('');
   }
 }
