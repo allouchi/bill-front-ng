@@ -11,6 +11,7 @@ import GetMonthsOfYear from '../../../shared/utils/month-year';
 import { CompanyService } from '../../../services/company/company-service';
 import Company from '../../../models/Company';
 import { ReactiveFormsModule } from '@angular/forms';
+import TvaInfos from '../../../models/TvaInfos';
 
 @Component({
   selector: 'bill-tva-read',
@@ -24,9 +25,12 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   filtredTvas: Tva[] = [];
   companies: Company[] = [];
   exercises: Exercise[] = [];
+  tvaInfos!: TvaInfos;
+  tvaInfosFilterd!: TvaInfos;
   data: Map<string, any> = new Map();
   monthsYear: any;
-  CONTEXT = 'edit';
+  selectedExercice: string = 'Tous';
+  siret: string = '';
 
   router = inject(Router);
 
@@ -38,16 +42,32 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    const maMap = this.sharedDataService.getData();
+    this.siret = maMap.get('siret');
     this.loadCompanies();
     this.loadMonthYear();
     this.loadExercicesRef();
-    this.loadTva();
+    this.loadTva('Tous');
+    this.loadTvaInfo('Tous');
   }
 
   private loadCompanies() {
     this.companyService.findCompanies().subscribe({
       next: (companies) => {
         this.companies = companies;
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
+  loadTvaInfo(exercice: string) {
+    this.tvaService.findTvaInfoByExercise(this.siret, exercice).subscribe({
+      next: (tvaInfos) => {
+        this.tvaInfos = tvaInfos;
+        this.tvaInfosFilterd = tvaInfos;
+        console.log();
       },
       error: (err) => {
         this.onError(err);
@@ -70,14 +90,14 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     });
   }
 
-  private loadTva() {
-    this.tvaService.findTvaByExercise(env.siret, 'Tous').subscribe({
+  private loadTva(exercice: string) {
+    this.tvaService.findTvaByExercise(this.siret, exercice).subscribe({
       next: (tvas) => {
         this.tvas = tvas;
         if (tvas) {
           tvas.forEach((tva) => {
             let date = tva.datePayment.split('/');
-            tva.datePayment = date[2] + '-' + date[1] + '-' + date[0];
+            //tva.datePayment = date[2] + '-' + date[1] + '-' + date[0];
           });
         }
         setTimeout(() => {
@@ -100,6 +120,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     } else {
       this.filtredTvas = this.tvas;
     }
+    this.loadTvaInfo(selectedValue);
   }
 
   addTva() {

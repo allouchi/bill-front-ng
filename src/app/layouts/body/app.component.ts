@@ -5,6 +5,9 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { HeaderComponent } from '../header/header.component';
+import { CompanyService } from '../../services/company/company-service';
+import Company from '../../models/Company';
+import { SharedDataService } from '../../services/shared/sharedDataService';
 
 @Component({
   selector: 'bill-root',
@@ -15,9 +18,23 @@ import { HeaderComponent } from '../header/header.component';
 })
 export class AppComponent {
   title = 'bill-front-ng';
+  selectedCompany!: Company | undefined;
 
-  private readonly router = inject(Router);
+  constructor(
+    private readonly companyService: CompanyService,
+    private readonly sharedDataService: SharedDataService
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.companyService.findCompanies().subscribe((companies) => {
+      this.selectedCompany = companies.find(
+        (company) => company.checked == true
+      );
+      const data: Map<string, any> = new Map();
+      data.set('siret', this.selectedCompany?.siret);
+      console.log('debut : ', this.selectedCompany?.siret);
+      this.sharedDataService.setData(data);
+    });
+  }
 }
 

@@ -7,6 +7,7 @@ import { env } from '../../../../environments/env';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import Exercise from '../../../models/Exercise';
 import { SharedDataService } from '../../../services/shared/sharedDataService';
+import Company from '../../../models/Company';
 
 @Component({
   selector: 'bill-facture-read',
@@ -19,6 +20,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   factures: Facture[] = [];
   filtredFactures: Facture[] = [];
   exercises: Exercise[] = [];
+  siret: string = '';
   isLoaded = false;
   private readonly router = inject(Router);
 
@@ -29,12 +31,14 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    const maMap = this.sharedDataService.getData();
+    this.siret = maMap.get('siret');
     this.loadExercisesRef();
     this.loadFactures();
   }
 
   private loadFactures() {
-    this.factureService.findFacturesBySiret(env.siret).subscribe({
+    this.factureService.findFacturesBySiret(this.siret).subscribe({
       next: (factures) => {
         setTimeout(() => {
           this.factures = factures;

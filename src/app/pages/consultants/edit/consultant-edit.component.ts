@@ -25,6 +25,7 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
   formConsultant!: FormGroup;
   consultant!: Consultant;
   consultantId: number | null = null;
+  siret: string = '';
 
   constructor(
     private readonly fb: FormBuilder,
@@ -44,6 +45,7 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
 
     const maMap = this.sharedDataService.getData();
     this.consultant = maMap.get('consultant');
+    this.siret = maMap.get('siret');
     if (this.consultant) {
       this.consultantId = this.consultant.id;
       this.formConsultant.patchValue({
@@ -66,7 +68,7 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
       };
 
       this.consultantService
-        .createOrUpdateConsultant(consultant, env.siret)
+        .createOrUpdateConsultant(consultant, this.siret)
         .subscribe({
           next: () => {
             if (this.consultantId) {

@@ -27,6 +27,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
   client!: Client;
   clientId: number | null = null;
   addresseId: number | null = null;
+  siret: string = '';
 
   constructor(
     private readonly fb: FormBuilder,
@@ -48,6 +49,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     });
     const maMap = this.sharedDataService.getData();
     this.client = maMap.get('client');
+    this.siret = maMap.get('siret');
     if (this.client) {
       this.clientId = this.client.id;
       this.addresseId = this.client.adresseClient.id;
@@ -82,7 +84,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
         adresseClient: adresseClient,
       };
 
-      this.clientService.createOrUpdateClient(client, env.siret).subscribe({
+      this.clientService.createOrUpdateClient(client, this.siret).subscribe({
         next: () => {
           if (this.clientId) {
             this.onSuccess('UPDATE,CLIENT');

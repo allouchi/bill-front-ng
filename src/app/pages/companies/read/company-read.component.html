@@ -1,8 +1,25 @@
-@if(isLoaded){
-
+@if(isLoaded){ 
 <div class="mt-4 mx-5">
-  <div class="text-end mb-2 me-3">
-    <button class="btn btn-pink" title="Nouveau" (click)="addCampany()">Ajouter</button>
+  <div class="d-flex justify-content-between align-items-end">
+    <div class="mb-3 me-2" style="width: 200px">
+      <label for="companySelect" class="form-label fw-bold">Société</label>
+      <select
+        (change)="setCompanyValue($event)"
+        class="form-select"
+        id="companySelect"
+      >
+        @for (company of companies; track company.id) {
+        <option value="{{ company.siret }}" [value]="company.siret">
+          {{ company.socialReason }}
+        </option>
+        }
+      </select>
+    </div>
+    <div class="mb-3">
+      <button class="btn btn-pink" title="Nouveau" (click)="addCampany()">
+        Ajouter
+      </button>
+    </div>
   </div>
   <div class="table-responsive">
     <table class="table table-success table-striped">
@@ -19,7 +36,7 @@
       <tbody>
         @for (company of filtredCompanies; track company.id) {
         <tr>
-          <td style="text-align: center;">{{ company.socialReason }}</td>
+          <td style="text-align: center">{{ company.socialReason }}</td>
           <td>{{ company.siret }}</td>
           <td>{{ company.rcsName }}</td>
           <td>{{ company.numeroTva }}</td>

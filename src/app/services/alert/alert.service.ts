@@ -16,7 +16,6 @@ export class AlertService implements OnInit, OnDestroy {
   ngOnInit(): void {}
 
   show(param: string, message: string, type: 'success' | 'error' = 'success') {
-    console.log(param, message, type);
     if (message === 'error') {
       message = param;
       type = 'error';

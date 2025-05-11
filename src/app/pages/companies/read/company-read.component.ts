@@ -65,6 +65,36 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     }
   }
 
+  setCompanyValue(event: Event) {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+
+    const company = this.companies.find(
+      (company) => company.siret === selectedValue
+    );
+    company!.checked = true;
+
+    const data: Map<string, any> = new Map();
+    data.set('siret', company!.siret);
+    this.sharedDataService.setData(data);
+
+    this.companyService.createOrUpdateCompany(company!).subscribe({
+      next: () => {
+        this.onSuccess('UPDATE,SOCIETE');
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+
+    if (this.companies) {
+      this.filtredCompanies = this.companies.filter(
+        (company) => company.siret == selectedValue
+      );
+    } else {
+      this.filtredCompanies = this.companies;
+    }
+  }
+
   updateCompany(company: Company) {
     const ok = confirm(
       `Voulez-vous vraiment mettre à jour "${company.socialReason}" ?`

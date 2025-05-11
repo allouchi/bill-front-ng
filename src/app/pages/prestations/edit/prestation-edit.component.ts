@@ -10,7 +10,7 @@ import Client from '../../../models/Client';
 import { ClientService } from '../../../services/clients/client-service';
 import { ConsultantService } from '../../../services/consultants/consultant-service';
 import { CommonModule } from '@angular/common';
-
+import { SharedDataService } from '../../../services/shared/sharedDataService';
 
 @Component({
   selector: 'bill-prestation-edit',
@@ -25,6 +25,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
   selectedConsultant: string = '';
   consultants: Consultant[] = [];
   clients: Client[] = [];
+  siret: string = '';
 
   router = inject(Router);
 
@@ -33,7 +34,8 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly clientService: ClientService,
     private readonly consultantService: ConsultantService,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly sharedDataService: SharedDataService
   ) {}
 
   ngOnInit(): void {
@@ -47,6 +49,8 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
       dateFin: ['', Validators.required],
     });
 
+    const maMap = this.sharedDataService.getData();
+    this.siret = maMap.get('siret');
     this.loadClients();
     this.loadConsultants();
   }
@@ -101,7 +105,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
       };
 
       this.prestationService
-        .createOrUpdatePrestation(prestation, env.siret, false, null)
+        .createOrUpdatePrestation(prestation, this.siret, false, null)
         .subscribe({
           next: () => {
             this.onSuccess('ADD,PRESTATION');

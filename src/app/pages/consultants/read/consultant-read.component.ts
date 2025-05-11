@@ -17,6 +17,7 @@ import { SharedDataService } from '../../../services/shared/sharedDataService';
 export class ConsultantReadComponent {
   consultants: Consultant[] = [];
   isLoaded = false;
+  siret: string = '';
 
   constructor(
     private readonly consultantService: ConsultantService,
@@ -26,6 +27,8 @@ export class ConsultantReadComponent {
   ) {}
 
   ngOnInit(): void {
+    const maMap = this.sharedDataService.getData();
+    this.siret = maMap.get('siret');
     this.loadConsultants();
   }
 
@@ -49,7 +52,7 @@ export class ConsultantReadComponent {
     );
     if (ok) {
       this.consultantService
-        .deleteConsultantById(consultant.id!, env.siret)
+        .deleteConsultantById(consultant.id!, this.siret)
         .subscribe({
           next: () => {
             this.onSuccess('DELETE,CONSULTANT');

@@ -11,7 +11,6 @@ import Prestation from '../../../models/Prestation';
 import { ConsultantNamePipe } from '../../../shared/pipes/consultantName-pipe';
 import { ClientNamePipe } from '../../../shared/pipes/clientName-pipe';
 import { AlertService } from '../../../services/alert/alert.service';
-import { env } from '../../../../environments/env';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import {
   FormBuilder,
@@ -25,6 +24,7 @@ import { CommonModule } from '@angular/common';
 import JoursOuvres from '../../../shared/utils/time-calcul';
 import { SharedService } from '../../../services/shared/shared.service';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
+import { SharedDataService } from '../../../services/shared/sharedDataService';
 
 declare var window: any;
 
@@ -61,10 +61,9 @@ export class PrestationReadComponent
     private readonly prestationService: PrestationService,
     private readonly alertService: AlertService,
     private readonly fb: FormBuilder,
-    private readonly sharedService: SharedService
-  ) {
-    this.siret = env.siret;
-  }
+    private readonly sharedService: SharedService,
+    private readonly sharedDataService: SharedDataService
+  ) {}
   ngAfterViewInit(): void {
     // Initialisation du modal après le rendu de la vue
     const modal = new window.bootstrap.Modal(
@@ -84,14 +83,19 @@ export class PrestationReadComponent
     this.formPresta = this.fb.group({
       prestaDateFin: ['', Validators.required],
     });
+
+    const maMap = this.sharedDataService.getData();
+    this.siret = maMap.get('siret');
+
     this.loadPrestations();
   }
 
   loadPrestations() {
-    this.prestationService.getPrestationsBySiret(env.siret).subscribe({
+    this.prestationService.getPrestationsBySiret(this.siret).subscribe({
       next: (prestations) => {
         setTimeout(() => {
           this.prestations = prestations;
+          console.log(this.siret, prestations);
           this.isLoaded = true;
         }, 500);
       },
@@ -200,7 +204,7 @@ export class PrestationReadComponent
     const dateFin = this.formPresta.get('prestaDateFin')?.value;
     this.selectedPrestation.dateFin = dateFin;
     this.prestationService
-      .updateDatePrestation(this.selectedPrestation, env.siret)
+      .updateDatePrestation(this.selectedPrestation, this.siret)
       .subscribe({
         next: () => {
           this.closePrestaModal();

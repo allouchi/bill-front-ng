@@ -15,6 +15,24 @@
       </select>
     </div>
 
+     <div>
+      <table class="table">
+        <thead>
+        <tr>
+          <th scope="col">TOTAL TTC</th>
+          <th scope="col">TOTAL TVA REGLEE</th>
+          <th scope="col">AVOIR TVA</th>          
+        </tr>
+      </thead>
+      <tbody>
+         <tr>
+          <td style="text-align: center;">{{tvaInfosFilterd.totalTTC}}</td>
+           <td style="text-align: center;">{{tvaInfosFilterd.totalTvaPaye}}</td>
+            <td style="text-align: center;">{{tvaInfosFilterd.totalTvaRestant}}</td>
+         </tr>
+      </tbody>
+      </table>
+    </div>
     <div>
       <label class="form-label invisible" for="add">Ajouter</label>
       <button id="add" class="btn btn-pink" (click)="addTva()" title="Nouveau">
