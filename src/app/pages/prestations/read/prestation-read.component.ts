@@ -25,6 +25,7 @@ import JoursOuvres from '../../../shared/utils/time-calcul';
 import { SharedService } from '../../../services/shared/shared.service';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
 import { SharedDataService } from '../../../services/shared/sharedDataService';
+import { SiretDataService } from '../../../services/shared/siret-save-service';
 
 declare var window: any;
 
@@ -62,7 +63,8 @@ export class PrestationReadComponent
     private readonly alertService: AlertService,
     private readonly fb: FormBuilder,
     private readonly sharedService: SharedService,
-    private readonly sharedDataService: SharedDataService
+    private readonly sharedDataService: SharedDataService,
+    private readonly siretDataService: SiretDataService
   ) {}
   ngAfterViewInit(): void {
     // Initialisation du modal après le rendu de la vue
@@ -84,13 +86,12 @@ export class PrestationReadComponent
       prestaDateFin: ['', Validators.required],
     });
 
-    const maMap = this.sharedDataService.getData();
-    this.siret = maMap.get('siret');
-
+    this.siret = this.siretDataService.getSiret();
     this.loadPrestations();
   }
 
   loadPrestations() {
+    console.log('siret pres', this.siret);
     this.prestationService.getPrestationsBySiret(this.siret).subscribe({
       next: (prestations) => {
         setTimeout(() => {

@@ -5,6 +5,7 @@ import { CompanyService } from '../../../services/company/company-service';
 import { AlertService } from '../../../services/alert/alert.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/sharedDataService';
+import { SiretDataService } from '../../../services/shared/siret-save-service';
 
 @Component({
   selector: 'company-read',
@@ -22,10 +23,13 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     private readonly companyService: CompanyService,
     private readonly alertService: AlertService,
     private readonly router: Router,
-    private readonly sharedDataService: SharedDataService
+    private readonly sharedDataService: SharedDataService,
+    private readonly siretDataService: SiretDataService
   ) {}
 
   ngOnInit(): void {
+    const siret = this.siretDataService.getSiret();
+    console.log('siret : ', siret);
     this.loadCompanies();
   }
 
