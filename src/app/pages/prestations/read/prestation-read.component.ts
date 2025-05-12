@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   inject,
   OnDestroy,
@@ -21,13 +20,10 @@ import {
 } from '@angular/forms';
 
 import { CommonModule } from '@angular/common';
-import JoursOuvres from '../../../shared/utils/time-calcul';
-import { SharedService } from '../../../services/shared/shared.service';
-import GetMonthsOfYear from '../../../shared/utils/month-year';
-import { SharedDataService } from '../../../services/shared/sharedDataService';
-import { SiretDataService } from '../../../services/shared/siret-save-service';
+import { SiretService } from '../../../services/shared/siret-service';
+import { SharedDataService } from '../../../services/shared/shared-service';
+import { SharedMessagesService } from '../../../services/shared/messages.service';
 
-declare var window: any;
 
 @Component({
   selector: 'bill-prestation-read',
@@ -44,16 +40,13 @@ declare var window: any;
   styleUrl: './prestation-read.component.css',
 })
 export class PrestationReadComponent
-  implements OnInit, OnDestroy, AfterViewInit
-{
+  implements OnInit, OnDestroy {
   prestations!: Prestation[];
-  isLoaded = false;
+  isLoaded = true;
   siret: string = '';
   selectedPrestation!: Prestation;
   selectedMonth: number = 0;
-  selectedDate: Date = new Date();
-
-  formFacture!: FormGroup;
+  selectedDate: Date = new Date();  
   formPresta!: FormGroup;
   monthsYear: any;
 
@@ -62,41 +55,27 @@ export class PrestationReadComponent
     private readonly prestationService: PrestationService,
     private readonly alertService: AlertService,
     private readonly fb: FormBuilder,
-    private readonly sharedService: SharedService,
-    private readonly sharedDataService: SharedDataService,
-    private readonly siretDataService: SiretDataService
-  ) {}
-  ngAfterViewInit(): void {
-    // Initialisation du modal après le rendu de la vue
-    const modal = new window.bootstrap.Modal(
-      document.getElementById('factureModal')
-    );
-  }
+    private readonly sharedDataService: SharedDataService,   
+    private readonly siretService: SiretService,
+    private readonly sharedMessagesService: SharedMessagesService
+  ) { }
 
-  ngOnInit(): void {
-    this.monthsYear = GetMonthsOfYear();
-    this.formFacture = this.fb.group({
-      month: ['', Validators.required],
-      numeroCommande: ['', Validators.required],
-      quantite: ['', Validators.required],
-      clientPrestation: ['', Validators.required],
-    });
 
+  ngOnInit(): void {    
     this.formPresta = this.fb.group({
       prestaDateFin: ['', Validators.required],
     });
 
-    this.siret = this.siretDataService.getSiret();
+    this.siret = this.siretService.getSiret();
+    console.log('PrestationReadComponent : ', this.siret);
     this.loadPrestations();
   }
 
-  loadPrestations() {
-    console.log('siret pres', this.siret);
+  loadPrestations() {   
     this.prestationService.getPrestationsBySiret(this.siret).subscribe({
       next: (prestations) => {
         setTimeout(() => {
-          this.prestations = prestations;
-          console.log(this.siret, prestations);
+          this.prestations = prestations;         
           this.isLoaded = true;
         }, 500);
       },
@@ -113,7 +92,7 @@ export class PrestationReadComponent
     if (ok) {
       this.prestationService.deletePrestationById(prestation.id!).subscribe({
         next: () => {
-          this.onSuccess('deleted');
+          this.onSuccess("DELETE,PRESTATION");
           this.prestations = this.prestations.filter(
             (item) => item.id !== prestation.id
           );
@@ -123,83 +102,7 @@ export class PrestationReadComponent
         },
       });
     }
-  }
-
-  setMonthValue(event: Event) {
-    const selectedValue = (event.target as HTMLSelectElement).value;
-    const nbJoursOuvres = JoursOuvres(selectedValue);
-    this.selectedMonth = +selectedValue;
-    this.formFacture.patchValue({
-      quantite: nbJoursOuvres,
-    });
-  }
-
-  closeFactureModal() {
-    const modalElement = document.getElementById('factureModal');
-    const modalBootstrap = window.bootstrap.Modal.getInstance(modalElement!);
-    modalBootstrap?.hide();
-  }
-
-  closePrestaModal() {
-    const modalElement = document.getElementById('PrestaModal');
-    const modalBootstrap = window.bootstrap.Modal.getInstance(modalElement!);
-    modalBootstrap?.hide();
-  }
-
-  openModalFacture(prestation: Prestation) {
-    this.selectedPrestation = prestation;
-    setTimeout(() => {
-      const modalElement = document.getElementById('factureModal');
-      if (modalElement) {
-        const modal = new window.bootstrap.Modal(modalElement);
-        modal.show();
-        this.formFacture.patchValue({
-          numeroCommande: prestation.numeroCommande,
-          clientPrestation: prestation.clientPrestation,
-        });
-      } else {
-        console.error('Modal non trouvé');
-      }
-    }, 100); // Attends 100ms pour que le DOM soit bien chargé
-  }
-
-  openModalPrestation(prestation: Prestation) {
-    this.selectedPrestation = prestation;
-    setTimeout(() => {
-      const modalElement = document.getElementById('PrestaModal');
-      if (modalElement) {
-        const modal = new window.bootstrap.Modal(modalElement);
-        modal.show();
-      } else {
-        console.error('Modal non trouvé');
-      }
-    }, 100); // Attends 100ms pour que le DOM soit bien chargé
-  }
-
-  private updatePrestation(prestation: Prestation) {
-    const ok = confirm(`Voulez-vous éditer la facture ?`);
-    if (ok) {
-      this.prestationService
-        .createOrUpdatePrestation(
-          prestation,
-          this.siret,
-          false,
-          this.selectedMonth
-        )
-        .subscribe({
-          next: () => {
-            this.closeFactureModal();
-            this.router.navigate(['/factures/read']);
-            this.onSuccess('UPDATE,PRESTATION');
-            this.sharedService.updateData('Liste des Factures');
-          },
-          error: (err) => {
-            this.onError(err);
-            this.closeFactureModal();
-          },
-        });
-    }
-  }
+  }  
 
   updatePrestaDateFin() {
     const dateFin = this.formPresta.get('prestaDateFin')?.value;
@@ -207,38 +110,33 @@ export class PrestationReadComponent
     this.prestationService
       .updateDatePrestation(this.selectedPrestation, this.siret)
       .subscribe({
-        next: () => {
-          this.closePrestaModal();
-          this.onSuccess('updated');
-          this.sharedService.updateData('Liste des Prestations');
+        next: () => {          
+          this.onSuccess('UPDATE,PRESTATION');          
         },
         error: (err) => {
-          this.onError(err);
-          this.closePrestaModal();
+          this.onError(err);          
         },
       });
   }
 
-  addFacture() {
-    if (this.formFacture.valid) {
-      this.selectedPrestation.quantite =
-        this.formFacture.get('quantite')?.value;
-      this.selectedPrestation.numeroCommande =
-        this.formFacture.get('numeroCommande')?.value;
-      this.selectedPrestation.clientPrestation =
-        this.formFacture.get('clientPrestation')?.value;
-      this.updatePrestation(this.selectedPrestation);
-    } else {
-      for (const [key, control] of Object.entries(this.formFacture.controls)) {
-        if (control.invalid) {
-          control.markAsTouched();
-        }
-      }
-    }
+  addPrestation() {
+    this.sharedMessagesService.setMessage("Ajout d'une Prestation");
+    this.router.navigate(['/prestations/add']);
   }
 
-  addPrestation() {
-    this.router.navigate(['/prestations/add']);
+  addNewFacture(prestation: Prestation) {
+    const data: Map<string, any> = new Map();
+    data.set('prestation', prestation);
+    this.sharedDataService.setData(data);
+    this.router.navigate(['/factures/add']);
+  }
+
+  openModalPrestation(prestation: Prestation) {
+
+  }
+
+  openModalFacture(prestation: Prestation) {
+
   }
 
   private onSuccess(respSuccess: any) {

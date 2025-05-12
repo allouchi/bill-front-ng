@@ -1,8 +1,10 @@
 import {  Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
-export class SiretDataService {
+export class SiretService {
   siret: string = '';
+
+
   setSiret(siret: string) {
     this.siret = siret;
   }

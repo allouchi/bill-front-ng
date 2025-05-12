@@ -1,0 +1,60 @@
+<form [formGroup]="formFacture" (onSubmit)="addFacture()">
+    <!-- Combo Box (Select) -->
+    <div class="mb-3">
+        <label for="monthSelect" class="form-label">Mois de la Facture *</label>
+        <select (change)="setMonthValue($event)" class="form-select" id="monthSelect" formControlName="month">
+            @for (month of monthsYear; track month.id) {
+            <option value="{{ month.id }}">{{ month.label }}</option>
+            }
+        </select>
+    </div>
+
+    <div *ngIf="
+        formFacture.get('month')?.invalid &&
+        formFacture.get('month')?.touched
+      " class="text-danger">
+        Ce champ est requis.
+    </div>
+
+    <!-- Champ de saisie -->
+    <div class="mb-3">
+        <label for="exampleInput" class="form-label">Numéro de commande *
+        </label>
+        <input formControlName="numeroCommande" type="text" class="form-control" id="numeroCommande"
+            placeholder="Entrez Numéro de commande" />
+        <div *ngIf="
+          formFacture.get('numeroCommande')?.invalid &&
+          formFacture.get('numeroCommande')?.touched
+        " class="text-danger">
+            Ce champ est requis.
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="exampleInput" class="form-label">Quantité *</label>
+        <input formControlName="quantite" type="text" class="form-control" id="quantite"
+            placeholder="Séléctionner Mois Facture" />
+        <div *ngIf="
+          formFacture.get('quantite')?.invalid &&
+          formFacture.get('quantite')?.touched
+        " class="text-danger">
+            Ce champ est requis.
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="exampleInput" class="form-label">Client Prestation *</label>
+        <input formControlName="clientPrestation" type="text" class="form-control" id="clientPrestation"
+            placeholder="Entrez Client Prestation" />
+
+        <div *ngIf="
+          formFacture.get('clientPrestation')?.invalid &&
+          formFacture.get('clientPrestation')?.touched
+        " class="text-danger">
+            Ce champ est requis.
+        </div>
+    </div>
+    <div class="d-flex justify-content-center gap-3">
+        <button class="btn btn-secondary me-2" (click)="cancel()">Annuler</button>
+        <button class="btn btn-primary" type="submit">Valider</button>
+    </div>
+</form>

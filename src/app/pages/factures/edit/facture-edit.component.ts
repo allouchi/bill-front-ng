@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 import { FactureService } from '../../../services/factures/facture.service';
 import { AlertService } from '../../../services/alert/alert.service';
 import Facture from '../../../models/Facture';
-import { SharedDataService } from '../../../services/shared/sharedDataService';
+import { SharedDataService } from '../../../services/shared/shared-service';
 
 @Component({
   selector: 'bill-facture-edit',

@@ -1,29 +1,33 @@
 // app-init.service.ts
 import { Injectable } from '@angular/core';
 import { CompanyService } from '../company/company-service';
-import { SiretDataService } from './siret-save-service';
+import { SiretService } from './siret-service';
+import { SharedDataService } from './shared-service';
+import Company from '../../models/Company';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppInitService {
   
-  selectedSiret: string = '';
+  selectedCompany!: Company;
 
   constructor(
     private readonly companyService: CompanyService,
-    private readonly siretDataService: SiretDataService) {}
+    private readonly siretService: SiretService,
+    private readonly sharedDataService: SharedDataService) { }
 
-  // Pas de return de Promise ici
   initAppWithSubscribe(): void {
   
     this.companyService.findCompanies().subscribe((companies) => {
-      this.selectedSiret = companies.find(
-        (company) => company.checked == true
-      )?.siret!;
+      this.selectedCompany = companies.find(
+        (company) => company.checked === true
+      )!;      
       
-      console.log('debut : ', this.selectedSiret);
-      this.siretDataService.setSiret(this.selectedSiret);
+      const data: Map<string, any> = new Map();
+      data.set('company', this.selectedCompany);
+      this.sharedDataService.setData(data);
+      this.siretService.setSiret(this.selectedCompany.siret);
     });   
   }
 }

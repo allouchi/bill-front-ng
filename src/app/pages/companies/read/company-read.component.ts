@@ -4,8 +4,9 @@ import { Router } from '@angular/router';
 import { CompanyService } from '../../../services/company/company-service';
 import { AlertService } from '../../../services/alert/alert.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
-import { SharedDataService } from '../../../services/shared/sharedDataService';
-import { SiretDataService } from '../../../services/shared/siret-save-service';
+import { SharedDataService } from '../../../services/shared/shared-service';
+import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { SiretService } from '../../../services/shared/siret-service';
 
 @Component({
   selector: 'company-read',
@@ -17,19 +18,20 @@ import { SiretDataService } from '../../../services/shared/siret-save-service';
 export default class CompanyReadComponent implements OnInit, OnDestroy {
   companies: Company[] = [];
   filtredCompanies: Company[] = [];
-  isLoaded = false;
+  isLoaded = true;
 
   constructor(
     private readonly companyService: CompanyService,
     private readonly alertService: AlertService,
     private readonly router: Router,
     private readonly sharedDataService: SharedDataService,
-    private readonly siretDataService: SiretDataService
+    private readonly siretService: SiretService,
+    private readonly sharedMessagesService: SharedMessagesService
   ) {}
 
   ngOnInit(): void {
-    const siret = this.siretDataService.getSiret();
-    console.log('siret : ', siret);
+    const siret = this.siretService.getSiret();
+    console.log('CompanyReadComponent : ', siret);
     this.loadCompanies();
   }
 
@@ -77,9 +79,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     );
     company!.checked = true;
 
-    const data: Map<string, any> = new Map();
-    data.set('siret', company!.siret);
-    this.sharedDataService.setData(data);
+
 
     this.companyService.createOrUpdateCompany(company!).subscribe({
       next: () => {
@@ -112,7 +112,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   }
 
   addCampany() {
-    this.sharedDataService.clearData();
+    this.sharedMessagesService.setMessage("Ajout d'une Société");
     this.router.navigate(['/companies/add']);
   }
 

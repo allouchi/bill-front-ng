@@ -11,9 +11,9 @@ import { ClientService } from '../../../services/clients/client-service';
 import { AlertService } from '../../../services/alert/alert.service';
 import Client from '../../../models/Client';
 import Adresse from '../../../models/Adresse';
-import { env } from '../../../../environments/env';
 import { Router } from '@angular/router';
-import { SharedDataService } from '../../../services/shared/sharedDataService';
+import { SharedDataService } from '../../../services/shared/shared-service';
+import { SiretService } from '../../../services/shared/siret-service';
 
 @Component({
   selector: 'bill-client-edit',
@@ -34,7 +34,8 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     private readonly clientService: ClientService,
     private readonly alertService: AlertService,
     private readonly router: Router,
-    private readonly sharedDataService: SharedDataService
+    private readonly sharedDataService: SharedDataService,
+    private readonly siretService: SiretService
   ) {}
 
   ngOnInit(): void {
@@ -49,7 +50,8 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     });
     const maMap = this.sharedDataService.getData();
     this.client = maMap.get('client');
-    this.siret = maMap.get('siret');
+    this.siret = this.siretService.getSiret();
+    console.log('ClientEditComponent : ', this.siret);
     if (this.client) {
       this.clientId = this.client.id;
       this.addresseId = this.client.adresseClient.id;

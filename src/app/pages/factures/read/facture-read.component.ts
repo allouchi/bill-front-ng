@@ -3,11 +3,12 @@ import { FactureService } from '../../../services/factures/facture.service';
 import Facture from '../../../models/Facture';
 import { Router } from '@angular/router';
 import { AlertService } from '../../../services/alert/alert.service';
-import { env } from '../../../../environments/env';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import Exercise from '../../../models/Exercise';
-import { SharedDataService } from '../../../services/shared/sharedDataService';
-import Company from '../../../models/Company';
+import { SharedDataService } from '../../../services/shared/shared-service';
+import { SiretService } from '../../../services/shared/siret-service';
+
+
 
 @Component({
   selector: 'bill-facture-read',
@@ -21,18 +22,20 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   filtredFactures: Facture[] = [];
   exercises: Exercise[] = [];
   siret: string = '';
-  isLoaded = false;
+  isLoaded = true;
   private readonly router = inject(Router);
 
   constructor(
     private readonly factureService: FactureService,
     private readonly alertService: AlertService,
-    private readonly sharedDataService: SharedDataService
+    private readonly sharedDataService: SharedDataService,
+    private readonly siretService: SiretService
+
   ) {}
 
   ngOnInit(): void {
-    const maMap = this.sharedDataService.getData();
-    this.siret = maMap.get('siret');
+    this.siret = this.siretService.getSiret();
+    console.log('FactureReadComponent : ', this.siret);
     this.loadExercisesRef();
     this.loadFactures();
   }

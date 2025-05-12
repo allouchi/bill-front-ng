@@ -2,16 +2,17 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import Tva from '../../../models/Tva';
 import { TvaService } from '../../../services/tva/tva-service';
 import { AlertService } from '../../../services/alert/alert.service';
-import { env } from '../../../../environments/env';
 import Exercise from '../../../models/Exercise';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
-import { SharedDataService } from '../../../services/shared/sharedDataService';
+import { SharedDataService } from '../../../services/shared/shared-service';
 import { Router } from '@angular/router';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
 import { CompanyService } from '../../../services/company/company-service';
 import Company from '../../../models/Company';
 import { ReactiveFormsModule } from '@angular/forms';
 import TvaInfos from '../../../models/TvaInfos';
+import { SiretService } from '../../../services/shared/siret-service';
+import { SharedMessagesService } from '../../../services/shared/messages.service';
 
 @Component({
   selector: 'bill-tva-read',
@@ -20,7 +21,7 @@ import TvaInfos from '../../../models/TvaInfos';
   styleUrl: './tva-read.component.css',
 })
 export class TvaReadComponent implements OnInit, OnDestroy {
-  isLoaded = false;
+  isLoaded = true;
   tvas: Tva[] = [];
   filtredTvas: Tva[] = [];
   companies: Company[] = [];
@@ -38,12 +39,15 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     private readonly tvaService: TvaService,
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
-    private readonly companyService: CompanyService
+    private readonly siretService: SiretService,
+    private readonly companyService: CompanyService,
+    private readonly sharedMessagesService: SharedMessagesService
+
   ) {}
 
-  ngOnInit(): void {
-    const maMap = this.sharedDataService.getData();
-    this.siret = maMap.get('siret');
+  ngOnInit(): void {    
+    this.siret = this.siretService.getSiret();
+    console.log('TvaReadComponent : ', this.siret);
     this.loadCompanies();
     this.loadMonthYear();
     this.loadExercicesRef();
@@ -128,6 +132,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     this.data.set('months', this.monthsYear);
     this.data.set('companies', this.companies);
     this.sharedDataService.setData(this.data);
+    this.sharedMessagesService.setMessage("Ajout d'une TVA");
     this.router.navigate(['/tvas/add']);
   }
 

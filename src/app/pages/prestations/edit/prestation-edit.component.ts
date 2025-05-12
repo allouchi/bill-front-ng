@@ -4,13 +4,13 @@ import { Router } from '@angular/router';
 import { PrestationService } from '../../../services/prestations/prestation.service';
 import { AlertService } from '../../../services/alert/alert.service';
 import Prestation from '../../../models/Prestation';
-import { env } from '../../../../environments/env';
 import Consultant from '../../../models/Consultant';
 import Client from '../../../models/Client';
 import { ClientService } from '../../../services/clients/client-service';
 import { ConsultantService } from '../../../services/consultants/consultant-service';
 import { CommonModule } from '@angular/common';
-import { SharedDataService } from '../../../services/shared/sharedDataService';
+import { SiretService } from '../../../services/shared/siret-service';
+
 
 @Component({
   selector: 'bill-prestation-edit',
@@ -35,7 +35,8 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
     private readonly clientService: ClientService,
     private readonly consultantService: ConsultantService,
     private readonly fb: FormBuilder,
-    private readonly sharedDataService: SharedDataService
+    private readonly siretService: SiretService
+
   ) {}
 
   ngOnInit(): void {
@@ -49,8 +50,8 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
       dateFin: ['', Validators.required],
     });
 
-    const maMap = this.sharedDataService.getData();
-    this.siret = maMap.get('siret');
+    this.siret = this.siretService.getSiret();
+    console.log('PrestationEditComponent : ', this.siret);
     this.loadClients();
     this.loadConsultants();
   }

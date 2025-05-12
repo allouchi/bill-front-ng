@@ -4,8 +4,9 @@ import { ConsultantService } from '../../../services/consultants/consultant-serv
 import { Router } from '@angular/router';
 import { AlertService } from '../../../services/alert/alert.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
-import { env } from '../../../../environments/env';
-import { SharedDataService } from '../../../services/shared/sharedDataService';
+import { SharedDataService } from '../../../services/shared/shared-service';
+import { SiretService } from '../../../services/shared/siret-service';
+import { SharedMessagesService } from '../../../services/shared/messages.service';
 
 @Component({
   selector: 'bill-consultant-read',
@@ -16,19 +17,21 @@ import { SharedDataService } from '../../../services/shared/sharedDataService';
 })
 export class ConsultantReadComponent {
   consultants: Consultant[] = [];
-  isLoaded = false;
+  isLoaded = true;
   siret: string = '';
 
   constructor(
     private readonly consultantService: ConsultantService,
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
+    private readonly siretService: SiretService,
+    private readonly sharedMessagesService: SharedMessagesService,
     private readonly router: Router
   ) {}
 
-  ngOnInit(): void {
-    const maMap = this.sharedDataService.getData();
-    this.siret = maMap.get('siret');
+  ngOnInit(): void {    
+    this.siret = this.siretService.getSiret();
+    console.log('ConsultantEditComponent : ', this.siret);
     this.loadConsultants();
   }
 
@@ -68,7 +71,7 @@ export class ConsultantReadComponent {
   }
 
   AddConsultant() {
-    this.sharedDataService.clearData();
+    this.sharedMessagesService.setMessage("Ajout d'un Consultant");
     this.router.navigate(['/consultants/add']);
   }
 

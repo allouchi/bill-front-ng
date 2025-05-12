@@ -1,5 +1,5 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { SharedDataService } from '../../../services/shared/sharedDataService';
+import { SharedDataService } from '../../../services/shared/shared-service';
 
 import {
   FormBuilder,

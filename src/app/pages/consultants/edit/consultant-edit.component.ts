@@ -10,9 +10,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { env } from '../../../../environments/env';
+
 import { CommonModule } from '@angular/common';
-import { SharedDataService } from '../../../services/shared/sharedDataService';
+import { SharedDataService } from '../../../services/shared/shared-service';
+import { SiretService } from '../../../services/shared/siret-service';
+
 
 @Component({
   selector: 'bill-consultant-edit',
@@ -32,6 +34,7 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
     private readonly consultantService: ConsultantService,
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
+    private readonly siretService: SiretService,
     private readonly router: Router
   ) {}
 
@@ -44,8 +47,9 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
     });
 
     const maMap = this.sharedDataService.getData();
-    this.consultant = maMap.get('consultant');
-    this.siret = maMap.get('siret');
+    this.consultant = maMap.get('consultant');   
+    this.siret = this.siretService.getSiret();
+    console.log('ConsultantEditComponent : ', this.siret);
     if (this.consultant) {
       this.consultantId = this.consultant.id;
       this.formConsultant.patchValue({

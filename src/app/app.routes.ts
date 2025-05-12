@@ -13,6 +13,7 @@ import { NotFoundErrorComponent } from './layouts/error/not-found-error.componen
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { TvaReadComponent } from './pages/tva/read/tva-read.component';
 import { TvaEditComponent } from './pages/tva/edit/tva-edit.component';
+import { FactureAddComponent } from './pages/factures/add/facture-add.component';
 
 
 
@@ -56,7 +57,7 @@ export const BILLING_ROUTE: Routes = [
 
       {
         path: 'add',
-        loadComponent: () => FactureEditComponent,
+        loadComponent: () => FactureAddComponent,
       },
     ],
   },

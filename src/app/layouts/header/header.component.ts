@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { SharedService } from '../../services/shared/shared.service';
+import { SharedMessagesService } from '../../services/shared/messages.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -13,11 +13,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   observableEvent$ = new Subscription();
 
-  constructor(private sharedService: SharedService) {}
+  constructor(private readonly sharedMessagesService: SharedMessagesService) { }
 
   ngOnInit(): void {
-    this.observableEvent$ = this.sharedService.data$.subscribe((value) => {
-      this.selectedItem = value;
+    this.observableEvent$ = this.sharedMessagesService.getMessageObservable().subscribe((message) => {
+      this.selectedItem = message;
     });
   }
 

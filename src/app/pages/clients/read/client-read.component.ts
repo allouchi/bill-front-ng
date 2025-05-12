@@ -5,7 +5,8 @@ import { Router } from '@angular/router';
 import { AdresseClientPipe } from '../../../shared/pipes/clientAdresse-pipe';
 import { AlertService } from '../../../services/alert/alert.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
-import { SharedDataService } from '../../../services/shared/sharedDataService';
+import { SharedDataService } from '../../../services/shared/shared-service';
+import { SharedMessagesService } from '../../../services/shared/messages.service';
 
 @Component({
   selector: 'bill-client-read',
@@ -17,13 +18,14 @@ import { SharedDataService } from '../../../services/shared/sharedDataService';
 export class ClientReadComponent implements OnInit, OnDestroy {
   clients: Client[] = [];
   filtredClients: Client[] = [];
-  isLoaded = false;
+  isLoaded = true;
 
   constructor(
     private readonly clientService: ClientService,
     private readonly alertService: AlertService,
     private readonly router: Router,
-    private readonly sharedDataService: SharedDataService
+    private readonly sharedDataService: SharedDataService,
+    private readonly sharedMessagesService: SharedMessagesService
   ) {}
 
   ngOnInit(): void {
@@ -77,7 +79,7 @@ export class ClientReadComponent implements OnInit, OnDestroy {
   }
 
   addClient() {
-    this.sharedDataService.clearData();
+    this.sharedMessagesService.setMessage("Ajout d'un Client");
     this.router.navigate(['clients/add']);
   }
 
