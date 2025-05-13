@@ -33,7 +33,6 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const siret = this.siretService.getSiret();
-    console.log('CompanyReadComponent : ', siret);
     this.loadCompanies();
   }
 
@@ -75,11 +74,22 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
 
   setCompanyValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
+   
 
     const company = this.companies.find(
       (company) => company.siret === selectedValue
     );
-    company!.checked = true;
+
+     
+     this.companies.forEach((item) => {
+       if (company && item.siret === company.siret) {
+         company!.checked = true;
+       } else {
+         company!.checked = false;
+       }
+     });
+
+     console.log(company);
 
     this.libelleCompanyService.setMessage(company?.socialReason!);
 
