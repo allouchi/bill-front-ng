@@ -10,7 +10,7 @@ import { ClientService } from '../../../services/clients/client-service';
 import { ConsultantService } from '../../../services/consultants/consultant-service';
 import { CommonModule } from '@angular/common';
 import { SiretService } from '../../../services/shared/siret-service';
-
+import { SharedDataService } from '../../../services/shared/shared-service';
 
 @Component({
   selector: 'bill-prestation-edit',
@@ -21,8 +21,10 @@ import { SiretService } from '../../../services/shared/siret-service';
 })
 export class PrestationEditComponent implements OnInit, OnDestroy {
   formPrestation!: FormGroup;
-  selectedClient: string = '';
-  selectedConsultant: string = '';
+  selectedClient!: Client;
+  selectedConsultant!: Consultant;
+  selectedPrestation!: Prestation;
+
   consultants: Consultant[] = [];
   clients: Client[] = [];
   siret: string = '';
@@ -30,13 +32,13 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
   router = inject(Router);
 
   constructor(
+    private readonly fb: FormBuilder,
     private readonly prestationService: PrestationService,
     private readonly alertService: AlertService,
     private readonly clientService: ClientService,
     private readonly consultantService: ConsultantService,
-    private readonly fb: FormBuilder,
-    private readonly siretService: SiretService
-
+    private readonly siretService: SiretService,
+    private readonly sharedDataService: SharedDataService
   ) {}
 
   ngOnInit(): void {
@@ -51,7 +53,10 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
     });
 
     this.siret = this.siretService.getSiret();
-    console.log('PrestationEditComponent : ', this.siret);
+    this.selectedPrestation = this.sharedDataService
+      .getData()
+      .get('prestation');
+
     this.loadClients();
     this.loadConsultants();
   }
@@ -80,6 +85,11 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
 
   setClientValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
+    this.selectedClient = this.clients.find(
+      (c) => c.socialReason == selectedValue
+    )!;
+
+    console.log(this.selectedClient);
     this.formPrestation.patchValue({
       client: selectedValue,
     });
@@ -87,22 +97,34 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
 
   setConsultantValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
+    this.selectedConsultant = this.consultants.find(
+      (c) => c.firstName === selectedValue
+    )!;
+
     this.formPrestation.patchValue({
       consultant: selectedValue,
     });
   }
 
   addPrestation() {
+    let prestationId: number | null = null;
+    if (this.selectedPrestation) {
+      prestationId = this.selectedPrestation.id;
+    }
+
     if (this.formPrestation.valid) {
       let prestation: Prestation = {
-        id: 0,
-        client: this.formPrestation.get('company')?.value,
-        consultant: this.formPrestation.get('company')?.value,
+        id: prestationId,
+        client: this.selectedClient,
+        consultant: this.selectedConsultant,
         tarifHT: this.formPrestation.get('tarifHT')?.value,
         numeroCommande: this.formPrestation.get('numeroCommande')?.value,
         delaiPaiement: this.formPrestation.get('delaiPaiement')?.value,
         dateFin: this.formPrestation.get('dateFin')?.value,
         dateDebut: this.formPrestation.get('dateDebut')?.value,
+        clientPrestation: '',
+        designation: '',
+        quantite: 0,
       };
 
       this.prestationService

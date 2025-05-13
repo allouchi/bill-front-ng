@@ -1,4 +1,4 @@
-@if(isLoaded){ 
+@if(isLoaded){
 <div class="mt-4 mx-5">
   <div class="d-flex justify-content-between align-items-end">
     <div class="mb-3 me-2" style="width: 200px">
@@ -43,6 +43,14 @@
           <td>{{ company.codeApe }}</td>
 
           <td>
+            <label>
+              <input
+                class="form-check-input custom-checkbox me-4"
+                type="checkbox"
+                [checked]="company.checked"
+                disabled
+              />
+            </label>
             <button
               class="btn btn-outline-danger btn-sm me-2"
               (click)="deleteCompany(company)"

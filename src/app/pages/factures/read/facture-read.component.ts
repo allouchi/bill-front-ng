@@ -22,7 +22,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   filtredFactures: Facture[] = [];
   exercises: Exercise[] = [];
   siret: string = '';
-  isLoaded = true;
+  isLoaded = false;
   private readonly router = inject(Router);
 
   constructor(
@@ -30,7 +30,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
     private readonly siretService: SiretService
-
   ) {}
 
   ngOnInit(): void {

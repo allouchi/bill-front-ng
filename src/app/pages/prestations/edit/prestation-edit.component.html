@@ -6,7 +6,7 @@
         <label for="clientSelect" class="form-label">Client *</label>
         <select formControlName="client" [class.is-invalid]="
             formPrestation.get('client')?.invalid && formPrestation.get('client')?.touched
-          " (change)="setClientValue($event)" class="form-select" id="companySelect">
+          "(change)="setClientValue($event)" class="form-select" id="companySelect">
           @for (client of clients; track client.id) {
           <option value="{{ client.id }}" [value]="client.socialReason">
             {{ client!.socialReason }}
@@ -28,8 +28,8 @@
             formPrestation.get('consusltant')?.invalid && formPrestation.get('consultant')?.touched
           ">
           @for (consultant of consultants; track consultant.id) {
-          <option value="{{ consultant.firstName }}" [value]="consultant.firstName">
-            {{ consultant.firstName }}
+          <option value="{{ consultant.id }}" [value]="consultant.firstName">
+            {{ consultant.firstName }} {{consultant.lastName}}
           </option>
           }
         </select>
@@ -73,30 +73,30 @@
     </div>
     <div class="col-md-6">
       <div class="mb-3">
-        <label class="form-label" htmlFor="delaiPaiement">Délai de paiement</label>
-        <input type="text" id="delaiPaiement" class="form-control" formControlName="delaiPaiement" [class.is-invalid]="
-                  formPrestation.get('delaiPaiement')?.invalid &&
-                  formPrestation.get('delaiPaiement')?.touched
+        <label class="form-label" htmlFor="dateDebut">Date Début</label>
+        <input type="date" id="dateDebut" class="form-control" formControlName="dateDebut" [class.is-invalid]="
+                  formPrestation.get('dateDebut')?.invalid &&
+                  formPrestation.get('dateDebut')?.touched
                 " />
 
         <div *ngIf="
-                  formPrestation.get('delaiPaiement')?.invalid &&
-                  formPrestation.get('delaiPaiement')?.touched
+                  formPrestation.get('dateDebut')?.invalid &&
+                  formPrestation.get('dateDebut')?.touched
                 " class="text-danger">
           Ce champ est requis.
         </div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label" htmlFor="dateDebut">Date Début</label>
-        <input type="date" id="dateDebut" class="form-control" formControlName="dateDebut" [class.is-invalid]="
-                          formPrestation.get('dateDebut')?.invalid &&
-                          formPrestation.get('dateDebut')?.touched
+        <label class="form-label" htmlFor="dateFin">Date Fin</label>
+        <input type="date" id="dateFin" class="form-control" formControlName="dateFin" [class.is-invalid]="
+                          formPrestation.get('dateFin')?.invalid &&
+                          formPrestation.get('dateFin')?.touched
                         " />
 
         <div *ngIf="
-                          formPrestation.get('dateDebut')?.invalid &&
-                          formPrestation.get('dateDebut')?.touched
+                          formPrestation.get('dateFin')?.invalid &&
+                          formPrestation.get('dateFin')?.touched
                         " class="text-danger">
           Ce champ est requis.
         </div>
@@ -104,15 +104,15 @@
       </div>
 <div class="col-md-6">
   <div class="mb-3">
-    <label class="form-label" htmlFor="dateFin">Date Fin</label>
-    <input type="date" id="dateFin" class="form-control" formControlName="dateFin" [class.is-invalid]="
-                                      formPrestation.get('dateFin')?.invalid &&
-                                      formPrestation.get('dateFin')?.touched
+    <label class="form-label" htmlFor="delaiPaiement">Délai de paiement</label>
+    <input type="text" id="delaiPaiement" class="form-control" formControlName="delaiPaiement" [class.is-invalid]="
+                                      formPrestation.get('delaiPaiement')?.invalid &&
+                                      formPrestation.get('delaiPaiement')?.touched
                                     " />
 
     <div *ngIf="
-                                      formPrestation.get('dateFin')?.invalid &&
-                                      formPrestation.get('dateFin')?.touched
+                                      formPrestation.get('delaiPaiement')?.invalid &&
+                                      formPrestation.get('delaiPaiement')?.touched
                                     " class="text-danger">
       Ce champ est requis.
     </div>

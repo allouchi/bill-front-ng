@@ -39,14 +39,13 @@ import { SharedMessagesService } from '../../../services/shared/messages.service
   templateUrl: './prestation-read.component.html',
   styleUrl: './prestation-read.component.css',
 })
-export class PrestationReadComponent
-  implements OnInit, OnDestroy {
+export class PrestationReadComponent implements OnInit, OnDestroy {
   prestations!: Prestation[];
-  isLoaded = true;
+  isLoaded = false;
   siret: string = '';
   selectedPrestation!: Prestation;
   selectedMonth: number = 0;
-  selectedDate: Date = new Date();  
+  selectedDate: Date = new Date();
   formPresta!: FormGroup;
   monthsYear: any;
 
@@ -55,13 +54,12 @@ export class PrestationReadComponent
     private readonly prestationService: PrestationService,
     private readonly alertService: AlertService,
     private readonly fb: FormBuilder,
-    private readonly sharedDataService: SharedDataService,   
+    private readonly sharedDataService: SharedDataService,
     private readonly siretService: SiretService,
     private readonly sharedMessagesService: SharedMessagesService
-  ) { }
+  ) {}
 
-
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.formPresta = this.fb.group({
       prestaDateFin: ['', Validators.required],
     });
@@ -71,11 +69,11 @@ export class PrestationReadComponent
     this.loadPrestations();
   }
 
-  loadPrestations() {   
+  loadPrestations() {
     this.prestationService.getPrestationsBySiret(this.siret).subscribe({
       next: (prestations) => {
         setTimeout(() => {
-          this.prestations = prestations;         
+          this.prestations = prestations;
           this.isLoaded = true;
         }, 500);
       },
@@ -92,7 +90,7 @@ export class PrestationReadComponent
     if (ok) {
       this.prestationService.deletePrestationById(prestation.id!).subscribe({
         next: () => {
-          this.onSuccess("DELETE,PRESTATION");
+          this.onSuccess('DELETE,PRESTATION');
           this.prestations = this.prestations.filter(
             (item) => item.id !== prestation.id
           );
@@ -102,7 +100,7 @@ export class PrestationReadComponent
         },
       });
     }
-  }  
+  }
 
   updatePrestaDateFin() {
     const dateFin = this.formPresta.get('prestaDateFin')?.value;
@@ -110,11 +108,11 @@ export class PrestationReadComponent
     this.prestationService
       .updateDatePrestation(this.selectedPrestation, this.siret)
       .subscribe({
-        next: () => {          
-          this.onSuccess('UPDATE,PRESTATION');          
+        next: () => {
+          this.onSuccess('UPDATE,PRESTATION');
         },
         error: (err) => {
-          this.onError(err);          
+          this.onError(err);
         },
       });
   }
@@ -131,13 +129,9 @@ export class PrestationReadComponent
     this.router.navigate(['/factures/add']);
   }
 
-  openModalPrestation(prestation: Prestation) {
+  prolongerPrestation(prestation: Prestation) {}
 
-  }
-
-  openModalFacture(prestation: Prestation) {
-
-  }
+  openModalFacture(prestation: Prestation) {}
 
   private onSuccess(respSuccess: any) {
     this.alertService.show(respSuccess, 'success');

@@ -7,6 +7,7 @@ import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { SiretService } from '../../../services/shared/siret-service';
+import { LibelleCompanyService } from '../../../services/shared/libelle-company-service';
 
 @Component({
   selector: 'company-read',
@@ -18,7 +19,7 @@ import { SiretService } from '../../../services/shared/siret-service';
 export default class CompanyReadComponent implements OnInit, OnDestroy {
   companies: Company[] = [];
   filtredCompanies: Company[] = [];
-  isLoaded = true;
+  isLoaded = false;
 
   constructor(
     private readonly companyService: CompanyService,
@@ -26,7 +27,8 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly sharedDataService: SharedDataService,
     private readonly siretService: SiretService,
-    private readonly sharedMessagesService: SharedMessagesService
+    private readonly sharedMessagesService: SharedMessagesService,
+    private readonly libelleCompanyService: LibelleCompanyService
   ) {}
 
   ngOnInit(): void {
@@ -79,7 +81,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     );
     company!.checked = true;
 
-
+    this.libelleCompanyService.setMessage(company?.socialReason!);
 
     this.companyService.createOrUpdateCompany(company!).subscribe({
       next: () => {
@@ -89,14 +91,6 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
         this.onError(err);
       },
     });
-
-    if (this.companies) {
-      this.filtredCompanies = this.companies.filter(
-        (company) => company.siret == selectedValue
-      );
-    } else {
-      this.filtredCompanies = this.companies;
-    }
   }
 
   updateCompany(company: Company) {

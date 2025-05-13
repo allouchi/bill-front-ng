@@ -21,7 +21,7 @@ import { SharedMessagesService } from '../../../services/shared/messages.service
   styleUrl: './tva-read.component.css',
 })
 export class TvaReadComponent implements OnInit, OnDestroy {
-  isLoaded = true;
+  isLoaded = false;
   tvas: Tva[] = [];
   filtredTvas: Tva[] = [];
   companies: Company[] = [];
@@ -42,10 +42,9 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     private readonly siretService: SiretService,
     private readonly companyService: CompanyService,
     private readonly sharedMessagesService: SharedMessagesService
-
   ) {}
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.siret = this.siretService.getSiret();
     console.log('TvaReadComponent : ', this.siret);
     this.loadCompanies();

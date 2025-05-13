@@ -17,7 +17,7 @@ import { SharedMessagesService } from '../../../services/shared/messages.service
 })
 export class ConsultantReadComponent {
   consultants: Consultant[] = [];
-  isLoaded = true;
+  isLoaded = false;
   siret: string = '';
 
   constructor(
@@ -29,7 +29,7 @@ export class ConsultantReadComponent {
     private readonly router: Router
   ) {}
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.siret = this.siretService.getSiret();
     console.log('ConsultantEditComponent : ', this.siret);
     this.loadConsultants();
