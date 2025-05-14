@@ -14,7 +14,6 @@ import { AlertService } from '../../../services/alert/alert.service';
 import { Router } from '@angular/router';
 import Adresse from '../../../models/Adresse';
 import Company from '../../../models/Company';
-import { env } from '../../../../environments/env';
 import { SharedDataService } from '../../../services/shared/shared-service';
 
 @Component({
@@ -82,6 +81,17 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
         localite: this.company.companyAdresse.localite,
         pays: this.company.companyAdresse.pays,
       });
+    }
+  }
+
+  get f() {
+    return this.formCompany?.controls;
+  }
+
+  allowOnlyNumbers(event: KeyboardEvent) {
+    const charCode = event.key;
+    if (!/^\d$/.test(charCode)) {
+      event.preventDefault();
     }
   }
 

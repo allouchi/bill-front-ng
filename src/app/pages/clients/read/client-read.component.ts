@@ -18,7 +18,7 @@ import { SharedMessagesService } from '../../../services/shared/messages.service
 export class ClientReadComponent implements OnInit, OnDestroy {
   clients: Client[] = [];
   filtredClients: Client[] = [];
-  isLoaded = false;
+  isLoaded = true;
 
   constructor(
     private readonly clientService: ClientService,

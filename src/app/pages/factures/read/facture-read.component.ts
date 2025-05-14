@@ -22,7 +22,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   filtredFactures: Facture[] = [];
   exercises: Exercise[] = [];
   siret: string = '';
-  isLoaded = false;
+  isLoaded = true;
   private readonly router = inject(Router);
 
   constructor(

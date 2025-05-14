@@ -8,7 +8,7 @@
     <!-- Colonne gauche -->
     <div class="col-md-6">
       <div class="mb-3">
-        <label for="companySelect" class="form-label fw-bold">Société</label>
+        <label for="companySelect" class="form-label fw-bold">Société *</label>
         <select
           formControlName="company"
           [class.is-invalid]="
@@ -62,7 +62,7 @@
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Montant Paiement</label>
+        <label class="form-label" for="montantInput">Montant Paiement *</label>
         <input
           type="text"
           id="montantInput"
@@ -89,7 +89,7 @@
     <!-- Colonne droite -->
     <div class="col-md-6">
       <div class="mb-3">
-        <label for="exerciceSelect" class="form-label fw-bold">Exercice</label>
+        <label for="exerciceSelect" class="form-label fw-bold">Exercice *</label>
         <select
           formControlName="exercise"
           [class.is-invalid]="
@@ -117,10 +117,10 @@
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Date de Paiement</label>
+        <label class="form-label" for="datePayment">Date de Paiement *</label>
         <input
           type="date"
-          id="dateInput"
+          id="datePayment"
           class="form-control"
           formControlName="datePayment"
           [class.is-invalid]="

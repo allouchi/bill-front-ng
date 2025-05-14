@@ -19,7 +19,7 @@ import { LibelleCompanyService } from '../../../services/shared/libelle-company-
 export default class CompanyReadComponent implements OnInit, OnDestroy {
   companies: Company[] = [];
   filtredCompanies: Company[] = [];
-  isLoaded = false;
+  isLoaded = true;
 
   constructor(
     private readonly companyService: CompanyService,

@@ -17,7 +17,7 @@ import { SharedMessagesService } from '../../../services/shared/messages.service
 })
 export class ConsultantReadComponent {
   consultants: Consultant[] = [];
-  isLoaded = false;
+  isLoaded = true;
   siret: string = '';
 
   constructor(
