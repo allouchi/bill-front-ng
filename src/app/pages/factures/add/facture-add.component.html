@@ -1,7 +1,7 @@
-<form [formGroup]="formFacture" (onSubmit)="addFacture()">
+<form [formGroup]="formFacture" (ngSubmit)="addFacture()">
     <!-- Combo Box (Select) -->
     <div class="mb-3">
-        <label for="monthSelect" class="form-label">Mois de la Facture *</label>
+        <label for="monthSelect" class="form-label">Mois de la Facture : *</label>
         <select (change)="setMonthValue($event)" class="form-select" id="monthSelect" formControlName="month">
             @for (month of monthsYear; track month.id) {
             <option value="{{ month.id }}">{{ month.label }}</option>
@@ -18,7 +18,7 @@
 
     <!-- Champ de saisie -->
     <div class="mb-3">
-        <label for="exampleInput" class="form-label">Numéro de commande *
+        <label for="exampleInput" class="form-label">Numéro de commande : *
         </label>
         <input formControlName="numeroCommande" type="text" class="form-control" id="numeroCommande"
             placeholder="Entrez Numéro de commande" />
@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="mb-3">
-        <label for="exampleInput" class="form-label">Quantité *</label>
+        <label for="exampleInput" class="form-label">Quantité : *</label>
         <input formControlName="quantite" type="text" class="form-control" id="quantite"
             placeholder="Séléctionner Mois Facture" />
         <div *ngIf="
@@ -42,7 +42,7 @@
     </div>
 
     <div class="mb-3">
-        <label for="exampleInput" class="form-label">Client Prestation *</label>
+        <label for="exampleInput" class="form-label">Client Prestation : *</label>
         <input formControlName="clientPrestation" type="text" class="form-control" id="clientPrestation"
             placeholder="Entrez Client Prestation" />
 

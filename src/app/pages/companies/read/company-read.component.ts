@@ -74,28 +74,25 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
 
   setCompanyValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
-   
+
+    this.companies.forEach((item) => {
+      if (item.siret === selectedValue) {
+        item!.checked = true;
+        console.log('checked = true', item);
+      } else {
+        item!.checked = false;
+        console.log('checked = false', item);
+      }
+    });
 
     const company = this.companies.find(
       (company) => company.siret === selectedValue
     );
 
-     
-     this.companies.forEach((item) => {
-       if (company && item.siret === company.siret) {
-         company!.checked = true;
-       } else {
-         company!.checked = false;
-       }
-     });
-
-     console.log(company);
-
-    this.libelleCompanyService.setMessage(company?.socialReason!);
-
     this.companyService.createOrUpdateCompany(company!).subscribe({
       next: () => {
         this.onSuccess('UPDATE,SOCIETE');
+        this.libelleCompanyService.setMessage(company?.socialReason!);
       },
       error: (err) => {
         this.onError(err);
