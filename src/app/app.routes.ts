@@ -14,6 +14,7 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { TvaReadComponent } from './pages/tva/read/tva-read.component';
 import { TvaEditComponent } from './pages/tva/edit/tva-edit.component';
 import { FactureAddComponent } from './pages/factures/add/facture-add.component';
+import { SigninComponent } from './authentification/signin/signin.component';
 
 
 
@@ -25,6 +26,11 @@ export const BILLING_ROUTE: Routes = [
   {
     path: 'bill-dashboard',
     component: DashboardComponent,
+  },
+
+  {
+    path: 'login',
+    component: SigninComponent
   },
   {
     path: 'companies',

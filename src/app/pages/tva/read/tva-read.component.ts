@@ -21,7 +21,7 @@ import { SharedMessagesService } from '../../../services/shared/messages.service
   styleUrl: './tva-read.component.css',
 })
 export class TvaReadComponent implements OnInit, OnDestroy {
-  isLoaded = false;
+  isLoaded = true;
   tvas: Tva[] = [];
   filtredTvas: Tva[] = [];
   companies: Company[] = [];

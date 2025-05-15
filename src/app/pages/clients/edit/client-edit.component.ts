@@ -68,6 +68,13 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     }
   }
 
+  allowOnlyNumbers(event: KeyboardEvent) {
+    const charCode = event.key;
+    if (!/^\d$/.test(charCode)) {
+      event.preventDefault(); // bloque la touche si ce n'est pas un chiffre
+    }
+  }
+
   addClient() {
     if (this.formClient.valid) {
       let adresseClient: Adresse = {

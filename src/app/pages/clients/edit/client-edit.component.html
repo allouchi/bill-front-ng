@@ -6,7 +6,7 @@
         <!-- Colonne gauche -->
         <div class="col-md-6">
             <div class="mb-3">
-                <label class="form-label" htmlFor="socialReason">Raison Social</label>
+                <label class="form-label" htmlFor="socialReason">Raison Social *</label>
                 <input type="text" id="socialReason" class="form-control" formControlName="socialReason"
                     [class.is-invalid]="
             formClient.get('socialReason')?.invalid &&
@@ -24,7 +24,7 @@
         <!-- Colonne droite -->
         <div class="col-md-6">
             <div class="mb-3">
-                <label class="form-label" htmlFor="email">EMail</label>
+                <label class="form-label" htmlFor="email">EMail *</label>
                 <input type="text" id="email" class="form-control" formControlName="email" [class.is-invalid]="
             formClient.get('email')?.invalid &&
             formClient.get('email')?.touched
@@ -45,7 +45,7 @@
     <div class="row">
         <div class="col-md-6">
             <div class="mb-3">
-                <label class="form-label" htmlFor="numero">Numéro</label>
+                <label class="form-label" htmlFor="numero">Numéro *</label>
                 <input type="text" id="numero" class="form-control" formControlName="numero" [class.is-invalid]="
                     formClient.get('numero')?.invalid &&
                     formClient.get('numero')?.touched
@@ -61,7 +61,7 @@
 
         <div class="col-md-6">
             <div class="mb-3">
-                <label class="form-label" htmlFor="rue">Rue</label>
+                <label class="form-label" htmlFor="rue">Rue *</label>
                 <input type="text" id="rue" class="form-control" formControlName="rue" [class.is-invalid]="
                             formClient.get('rue')?.invalid &&
                             formClient.get('rue')?.touched
@@ -78,8 +78,9 @@
 
         <div class="col-md-6">
             <div class="mb-3">
-                <label class="form-label" htmlFor="codePostal">Code Postal</label>
-                <input type="text" id="codePostal" class="form-control" formControlName="codePostal" [class.is-invalid]="
+                <label class="form-label" htmlFor="codePostal">Code Postal *</label>
+                <input type="text" id="codePostal" class="form-control" formControlName="codePostal"
+                    (keypress)="allowOnlyNumbers($event)" [class.is-invalid]="
                                     formClient.get('codePostal')?.invalid &&
                                     formClient.get('codePostal')?.touched
                                   " />
@@ -94,7 +95,7 @@
 
         <div class="col-md-6">
             <div class="mb-3">
-                <label class="form-label" htmlFor="localite">Commune</label>
+                <label class="form-label" htmlFor="localite">Commune *</label>
                 <input type="text" id="localite" class="form-control" formControlName="localite" [class.is-invalid]="
                                             formClient.get('localite')?.invalid &&
                                             formClient.get('localite')?.touched
@@ -109,7 +110,7 @@
         </div>
         <div>
             <div class="mb-3">
-                <label class="form-label" htmlFor="pays">Pays</label>
+                <label class="form-label" htmlFor="pays">Pays *</label>
                 <input type="text" id="pays" class="form-control" formControlName="pays" [class.is-invalid]="
                                                     formClient.get('pays')?.invalid &&
                                                     formClient.get('pays')?.touched

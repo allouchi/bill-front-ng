@@ -41,7 +41,7 @@ import { SharedMessagesService } from '../../../services/shared/messages.service
 })
 export class PrestationReadComponent implements OnInit, OnDestroy {
   prestations!: Prestation[];
-  isLoaded = false;
+  isLoaded = true;
   siret: string = '';
   selectedPrestation!: Prestation;
   selectedMonth: number = 0;
