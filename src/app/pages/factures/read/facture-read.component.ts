@@ -7,6 +7,7 @@ import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import Exercise from '../../../models/Exercise';
 import { SharedDataService } from '../../../services/shared/shared-service';
 import { SiretService } from '../../../services/shared/siret-service';
+import { Subscription } from 'rxjs';
 
 
 
@@ -23,6 +24,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   exercises: Exercise[] = [];
   siret: string = '';
   isLoaded = true;
+  observableEvent$ = new Subscription();
   private readonly router = inject(Router);
 
   constructor(
@@ -33,7 +35,9 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.siret = this.siretService.getSiret();
+    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
+      this.siret = siret;
+    });
     console.log('FactureReadComponent : ', this.siret);
     this.loadExercisesRef();
     this.loadFactures();

@@ -1,6 +1,6 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { IPrestationService } from './prestation.interface';
 import Prestation from '../../models/Prestation';
 import { env } from '../../../environments/env';

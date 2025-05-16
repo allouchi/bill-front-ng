@@ -11,6 +11,7 @@ import { ConsultantService } from '../../../services/consultants/consultant-serv
 import { CommonModule } from '@angular/common';
 import { SiretService } from '../../../services/shared/siret-service';
 import { SharedDataService } from '../../../services/shared/shared-service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'bill-prestation-edit',
@@ -28,6 +29,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
   consultants: Consultant[] = [];
   clients: Client[] = [];
   siret: string = '';
+  observableEvent$ = new Subscription();
 
   router = inject(Router);
 
@@ -52,7 +54,9 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
       dateFin: ['', Validators.required],
     });
 
-    this.siret = this.siretService.getSiret();
+    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
+      this.siret = siret;
+    });
     this.selectedPrestation = this.sharedDataService
       .getData()
       .get('prestation');

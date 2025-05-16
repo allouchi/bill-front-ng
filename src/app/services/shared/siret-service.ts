@@ -1,18 +1,17 @@
 import {  Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class SiretService {
-  siret: string = '';
 
+  siret$ = new BehaviorSubject<string>('');
 
-  setSiret(siret: string) {
-    this.siret = siret;
-  }
-  getSiret() {
-    return this.siret;
+  getSiretObservable(): Observable<string> {
+    return this.siret$.asObservable(); // expose la donnée en lecture seule
   }
 
-  clearSiret() {
-    this.siret = '';
+  setSiret(data: string) {
+    console.log("received data : ", data);
+    this.siret$.next(data);
   }
 }

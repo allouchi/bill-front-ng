@@ -23,6 +23,7 @@ import { CommonModule } from '@angular/common';
 import { SiretService } from '../../../services/shared/siret-service';
 import { SharedDataService } from '../../../services/shared/shared-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -48,6 +49,7 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
   selectedDate: Date = new Date();
   formPresta!: FormGroup;
   monthsYear: any;
+  observableEvent$ = new Subscription();
 
   private readonly router = inject(Router);
   constructor(
@@ -64,8 +66,11 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
       prestaDateFin: ['', Validators.required],
     });
 
-    this.siret = this.siretService.getSiret();
-    console.log('PrestationReadComponent : ', this.siret);
+    this.observableEvent$ = this.siretService.getSiretObservable().subscribe((siret) => {
+      this.siret = siret;
+      console.log('PrestationReadComponent : ', this.siret);
+    });
+
     this.loadPrestations();
   }
 
@@ -150,5 +155,8 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.alertService.clear();
+    if (this.observableEvent$) {
+      this.observableEvent$.unsubscribe();
+    }
   }
 }

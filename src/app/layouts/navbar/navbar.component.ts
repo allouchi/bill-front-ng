@@ -16,6 +16,7 @@ import { LibelleCompanyService } from '../../services/shared/libelle-company-ser
 export class NavbarComponent implements OnInit, OnDestroy {
   selectedSocialReason: string = 'SBATEC CONSULTING';
   observableEvent$ = new Subscription();
+  authenticated: boolean = false;
 
   constructor(
     private readonly sharedMessagesService: SharedMessagesService,

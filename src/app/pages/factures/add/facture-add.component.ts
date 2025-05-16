@@ -9,6 +9,7 @@ import GetMonthsOfYear from '../../../shared/utils/month-year';
 import { SharedDataService } from '../../../services/shared/shared-service';
 import { SiretService } from '../../../services/shared/siret-service';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'bill-facture-add',
@@ -22,6 +23,7 @@ export class FactureAddComponent implements OnInit {
   selectedMonth: number = 0;
   monthsYear: any;
   siret: string = '';
+  observableEvent$ = new Subscription();
 
   constructor(
     private readonly router: Router,
@@ -40,7 +42,9 @@ export class FactureAddComponent implements OnInit {
       clientPrestation: ['', Validators.required],
     });
 
-    this.siret = this.siretService.getSiret();
+    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
+      this.siret = siret;
+    });
     const mapData = this.sharedDataService.getData();
     this.selectedPrestation = mapData.get('prestation');
     this.monthsYear = GetMonthsOfYear();

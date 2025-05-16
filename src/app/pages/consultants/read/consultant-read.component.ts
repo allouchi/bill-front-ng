@@ -7,6 +7,7 @@ import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-service';
 import { SiretService } from '../../../services/shared/siret-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'bill-consultant-read',
@@ -19,6 +20,7 @@ export class ConsultantReadComponent {
   consultants: Consultant[] = [];
   isLoaded = true;
   siret: string = '';
+  observableEvent$ = new Subscription();
 
   constructor(
     private readonly consultantService: ConsultantService,
@@ -30,7 +32,9 @@ export class ConsultantReadComponent {
   ) {}
 
   ngOnInit(): void {
-    this.siret = this.siretService.getSiret();
+    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
+      this.siret = siret;
+    });
     console.log('ConsultantEditComponent : ', this.siret);
     this.loadConsultants();
   }

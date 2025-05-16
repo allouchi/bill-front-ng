@@ -16,7 +16,7 @@ import { AppInitService } from '../../services/shared/app-init-service';
 export class AppComponent {
   title = 'bill-front-ng';
 
-  constructor(private initService: AppInitService) {}
+  constructor(private readonly initService: AppInitService) {}
 
   ngOnInit() {
     this.initService.initAppWithSubscribe();

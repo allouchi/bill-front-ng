@@ -8,6 +8,7 @@ import { SharedDataService } from '../../../services/shared/shared-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { SiretService } from '../../../services/shared/siret-service';
 import { LibelleCompanyService } from '../../../services/shared/libelle-company-service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'company-read',
@@ -20,6 +21,8 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   companies: Company[] = [];
   filtredCompanies: Company[] = [];
   isLoaded = true;
+  observableEvent$ = new Subscription();
+  siret: string = '';
 
   constructor(
     private readonly companyService: CompanyService,
@@ -32,7 +35,9 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    const siret = this.siretService.getSiret();
+    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
+      this.siret = siret;
+    });
     this.loadCompanies();
   }
 

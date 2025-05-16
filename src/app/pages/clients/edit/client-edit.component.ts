@@ -14,6 +14,7 @@ import Adresse from '../../../models/Adresse';
 import { Router } from '@angular/router';
 import { SharedDataService } from '../../../services/shared/shared-service';
 import { SiretService } from '../../../services/shared/siret-service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'bill-client-edit',
@@ -28,6 +29,8 @@ export class ClientEditComponent implements OnInit, OnDestroy {
   clientId: number | null = null;
   addresseId: number | null = null;
   siret: string = '';
+
+  observableEvent$ = new Subscription();
 
   constructor(
     private readonly fb: FormBuilder,
@@ -50,7 +53,11 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     });
     const maMap = this.sharedDataService.getData();
     this.client = maMap.get('client');
-    this.siret = this.siretService.getSiret();
+
+    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
+      this.siret = siret;
+    });
+
     console.log('ClientEditComponent : ', this.siret);
     if (this.client) {
       this.clientId = this.client.id;

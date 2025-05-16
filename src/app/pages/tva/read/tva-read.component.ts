@@ -13,6 +13,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import TvaInfos from '../../../models/TvaInfos';
 import { SiretService } from '../../../services/shared/siret-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'bill-tva-read',
@@ -32,6 +33,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   monthsYear: any;
   selectedExercice: string = 'Tous';
   siret: string = '';
+  observableEvent$ = new Subscription();
 
   router = inject(Router);
 
@@ -45,7 +47,9 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.siret = this.siretService.getSiret();
+    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
+      this.siret = siret;
+    });
     console.log('TvaReadComponent : ', this.siret);
     this.loadCompanies();
     this.loadMonthYear();

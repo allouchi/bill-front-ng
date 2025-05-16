@@ -14,6 +14,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { SharedDataService } from '../../../services/shared/shared-service';
 import { SiretService } from '../../../services/shared/siret-service';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -28,6 +29,7 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
   consultant!: Consultant;
   consultantId: number | null = null;
   siret: string = '';
+  observableEvent$ = new Subscription();
 
   constructor(
     private readonly fb: FormBuilder,
@@ -48,7 +50,9 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
 
     const maMap = this.sharedDataService.getData();
     this.consultant = maMap.get('consultant');   
-    this.siret = this.siretService.getSiret();
+    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
+      this.siret = siret;
+    });
     console.log('ConsultantEditComponent : ', this.siret);
     if (this.consultant) {
       this.consultantId = this.consultant.id;
