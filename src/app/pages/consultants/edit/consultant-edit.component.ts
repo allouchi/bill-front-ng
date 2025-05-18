@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ConsultantService } from '../../../services/consultants/consultant-service';
-import { AlertService } from '../../../services/alert/alert.service';
+import { AlertService } from '../../../services/alert/alert-messages.service';
 import Consultant from '../../../models/Consultant';
 import { Router } from '@angular/router';
 import {
@@ -12,7 +12,7 @@ import {
 } from '@angular/forms';
 
 import { CommonModule } from '@angular/common';
-import { SharedDataService } from '../../../services/shared/shared-service';
+import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SiretService } from '../../../services/shared/siret-service';
 import { Subscription } from 'rxjs';
 

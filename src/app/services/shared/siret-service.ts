@@ -3,7 +3,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class SiretService {
-
   siret$ = new BehaviorSubject<string>('');
 
   getSiretObservable(): Observable<string> {
@@ -11,7 +10,6 @@ export class SiretService {
   }
 
   setSiret(data: string) {
-    console.log("received data : ", data);
     this.siret$.next(data);
   }
 }

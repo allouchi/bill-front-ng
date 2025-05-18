@@ -1,10 +1,10 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import Tva from '../../../models/Tva';
 import { TvaService } from '../../../services/tva/tva-service';
-import { AlertService } from '../../../services/alert/alert.service';
+import { AlertService } from '../../../services/alert/alert-messages.service';
 import Exercise from '../../../models/Exercise';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
-import { SharedDataService } from '../../../services/shared/shared-service';
+import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { Router } from '@angular/router';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
 import { CompanyService } from '../../../services/company/company-service';
@@ -22,7 +22,7 @@ import { Subscription } from 'rxjs';
   styleUrl: './tva-read.component.css',
 })
 export class TvaReadComponent implements OnInit, OnDestroy {
-  isLoaded = true;
+  isLoaded = false;
   tvas: Tva[] = [];
   filtredTvas: Tva[] = [];
   companies: Company[] = [];
@@ -47,9 +47,11 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
-      this.siret = siret;
-    });
+    this.observableEvent$ = this.siretService
+      .getSiretObservable()
+      .subscribe((siret) => {
+        this.siret = siret;
+      });
     console.log('TvaReadComponent : ', this.siret);
     this.loadCompanies();
     this.loadMonthYear();

@@ -2,7 +2,7 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PrestationService } from '../../../services/prestations/prestation.service';
-import { AlertService } from '../../../services/alert/alert.service';
+import { AlertService } from '../../../services/alert/alert-messages.service';
 import Prestation from '../../../models/Prestation';
 import Consultant from '../../../models/Consultant';
 import Client from '../../../models/Client';
@@ -10,7 +10,7 @@ import { ClientService } from '../../../services/clients/client-service';
 import { ConsultantService } from '../../../services/consultants/consultant-service';
 import { CommonModule } from '@angular/common';
 import { SiretService } from '../../../services/shared/siret-service';
-import { SharedDataService } from '../../../services/shared/shared-service';
+import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { Subscription } from 'rxjs';
 
 @Component({

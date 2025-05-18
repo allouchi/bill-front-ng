@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import Prestation from '../../../models/Prestation';
 import { ConsultantNamePipe } from '../../../shared/pipes/consultantName-pipe';
 import { ClientNamePipe } from '../../../shared/pipes/clientName-pipe';
-import { AlertService } from '../../../services/alert/alert.service';
+import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import {
   FormBuilder,
@@ -21,10 +21,9 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { SiretService } from '../../../services/shared/siret-service';
-import { SharedDataService } from '../../../services/shared/shared-service';
+import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { Subscription } from 'rxjs';
-
 
 @Component({
   selector: 'bill-prestation-read',
@@ -42,7 +41,7 @@ import { Subscription } from 'rxjs';
 })
 export class PrestationReadComponent implements OnInit, OnDestroy {
   prestations!: Prestation[];
-  isLoaded = true;
+  isLoaded = false;
   siret: string = '';
   selectedPrestation!: Prestation;
   selectedMonth: number = 0;
@@ -66,10 +65,11 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
       prestaDateFin: ['', Validators.required],
     });
 
-    this.observableEvent$ = this.siretService.getSiretObservable().subscribe((siret) => {
-      this.siret = siret;
-      console.log('PrestationReadComponent : ', this.siret);
-    });
+    this.observableEvent$ = this.siretService
+      .getSiretObservable()
+      .subscribe((siret) => {
+        this.siret = siret;
+      });
 
     this.loadPrestations();
   }
@@ -128,10 +128,14 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
   }
 
   addNewFacture(prestation: Prestation) {
-    const data: Map<string, any> = new Map();
-    data.set('prestation', prestation);
-    this.sharedDataService.setData(data);
-    this.router.navigate(['/factures/add']);
+    console.log(prestation);
+    const ok = confirm(`Voulez-vous éditer la facture ?`);
+    if (ok) {
+      const data: Map<string, any> = new Map();
+      data.set('prestation', prestation);
+      this.sharedDataService.setData(data);
+      this.router.navigate(['/factures/add']);
+    }
   }
 
   prolongerPrestation(prestation: Prestation) {}

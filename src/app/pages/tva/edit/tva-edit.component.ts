@@ -1,5 +1,5 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { SharedDataService } from '../../../services/shared/shared-service';
+import { SharedDataService } from '../../../services/shared/shared-data-service';
 
 import {
   FormBuilder,
@@ -11,7 +11,7 @@ import {
 import Tva from '../../../models/Tva';
 import { TvaService } from '../../../services/tva/tva-service';
 import { Router } from '@angular/router';
-import { AlertService } from '../../../services/alert/alert.service';
+import { AlertService } from '../../../services/alert/alert-messages.service';
 
 import Company from '../../../models/Company';
 import Exercise from '../../../models/Exercise';

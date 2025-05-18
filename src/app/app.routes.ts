@@ -14,26 +14,33 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { TvaReadComponent } from './pages/tva/read/tva-read.component';
 import { TvaEditComponent } from './pages/tva/edit/tva-edit.component';
 import { FactureAddComponent } from './pages/factures/add/facture-add.component';
-import { LoginComponent } from './authentification/signin/login.component';
 
-
+import { AuthGuard } from './services/auth/auth-guard';
+import { LoginComponent } from './authentification/login/login.component';
+import { LogoutComponent } from './authentification/logout/logout.component';
 
 export const BILLING_ROUTE: Routes = [
   {
+    path: 'login',
+    component: LoginComponent,
+  },
+  {
+    path: 'logout',
+    component: LogoutComponent,
+  },
+  {
     path: '',
     component: DashboardComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: 'bill-dashboard',
     component: DashboardComponent,
-  },
-
-  {
-    path: 'login',
-    component: LoginComponent
+    canActivate: [AuthGuard],
   },
   {
     path: 'companies',
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'read',
@@ -51,6 +58,7 @@ export const BILLING_ROUTE: Routes = [
   },
   {
     path: 'factures',
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'read',
@@ -88,6 +96,7 @@ export const BILLING_ROUTE: Routes = [
 
   {
     path: 'prestations',
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'read',
@@ -97,7 +106,6 @@ export const BILLING_ROUTE: Routes = [
         path: 'edit',
         loadComponent: () => PrestationEditComponent,
       },
-
       {
         path: 'add',
         loadComponent: () => PrestationEditComponent,
@@ -107,6 +115,7 @@ export const BILLING_ROUTE: Routes = [
 
   {
     path: 'consultants',
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'read',
@@ -124,6 +133,7 @@ export const BILLING_ROUTE: Routes = [
   },
   {
     path: 'tvas',
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'read',

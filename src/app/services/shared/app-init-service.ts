@@ -2,28 +2,24 @@
 import { Injectable } from '@angular/core';
 import { CompanyService } from '../company/company-service';
 import { SiretService } from './siret-service';
-import { SharedDataService } from './shared-service';
+import { SharedDataService } from './shared-data-service';
 import Company from '../../models/Company';
-import { AlertService } from '../alert/alert.service';
-import { env } from '../../../environments/env';
+import { AlertService } from '../alert/alert-messages.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AppInitService {
-  
   selectedCompany!: Company;
 
   constructor(
     private readonly companyService: CompanyService,
     private readonly siretService: SiretService,
     private readonly alertService: AlertService,
-    private readonly sharedDataService: SharedDataService) { }
+    private readonly sharedDataService: SharedDataService
+  ) {}
 
   initAppWithSubscribe(): void {
-
-    this.siretService.setSiret(env.siret);
-
     this.companyService.findCompanies().subscribe({
       next: (companies) => {
         this.onSuccess(companies);
@@ -32,7 +28,6 @@ export class AppInitService {
         this.onError(err);
       },
     });
-
   }
 
   private onSuccess(companies: Company[]) {
@@ -48,7 +43,6 @@ export class AppInitService {
   }
 
   private onError(error: any) {
-
     const message: string = error.message;
 
     if (message.includes('Http failure')) {

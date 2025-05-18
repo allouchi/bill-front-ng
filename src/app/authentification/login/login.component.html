@@ -15,7 +15,7 @@
 </style>
 
 <main class="form-signin">
-    <form  [formGroup]="formLogin" #form="ngForm" (ngSubmit)="valider()">
+    <form  [formGroup]="formLogin" #form="ngForm" (ngSubmit)="authenticate()">
         <img class="mb-4" src="../assets/bootstrap-logo.svg" alt="" width="72" height="57">
         <h1 class="h3 mb-3 fw-normal">Veuillez vous connecter</h1>
 
@@ -33,6 +33,6 @@
                 <input type="checkbox" value="remember-me"> Remember me
             </label>
         </div>
-        <button class="w-100 btn btn-lg btn-primary" type="submit" (click)="valider()">Valider</button>
+        <button class="w-100 btn btn-lg btn-primary" type="submit" (click)="authenticate()">Valider</button>
         <p class="mt-5 mb-3 text-muted text-center">&copy; Copyright SBATEC Consulting 2025</p>
         </form>

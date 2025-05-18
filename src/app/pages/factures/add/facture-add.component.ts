@@ -1,12 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import JoursOuvres from '../../../shared/utils/time-calcul';
 import Prestation from '../../../models/Prestation';
 import { PrestationService } from '../../../services/prestations/prestation.service';
 import { Router } from '@angular/router';
-import { AlertService } from '../../../services/alert/alert.service';
+import { AlertService } from '../../../services/alert/alert-messages.service';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
-import { SharedDataService } from '../../../services/shared/shared-service';
+import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SiretService } from '../../../services/shared/siret-service';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -42,22 +48,14 @@ export class FactureAddComponent implements OnInit {
       clientPrestation: ['', Validators.required],
     });
 
-    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
-      this.siret = siret;
-    });
+    this.observableEvent$ = this.siretService
+      .getSiretObservable()
+      .subscribe((siret) => {
+        this.siret = siret;
+      });
     const mapData = this.sharedDataService.getData();
     this.selectedPrestation = mapData.get('prestation');
     this.monthsYear = GetMonthsOfYear();
-    let formatDateDebut = this.selectedPrestation.dateDebut?.split('/');
-    const dateDebut =
-      formatDateDebut![2] +
-      '-' +
-      formatDateDebut![1] +
-      '-' +
-      formatDateDebut![0];
-    let formatDateFin = this.selectedPrestation.dateFin?.split('/');
-    const dateFin =
-      formatDateFin![2] + '-' + formatDateFin![1] + '-' + formatDateFin![0];
 
     this.formFacture.patchValue({
       id: this.selectedPrestation.id,
@@ -70,8 +68,8 @@ export class FactureAddComponent implements OnInit {
       numeroCommande: this.selectedPrestation.numeroCommande,
       clientPrestation: this.selectedPrestation.clientPrestation,
       quantite: this.selectedPrestation.quantite,
-      dateDebut: dateDebut,
-      dateFin: dateFin,
+      dateDebut: this.selectedPrestation.dateDebut,
+      dateFin: this.selectedPrestation.dateFin,
       siret: this.selectedPrestation.siret,
     });
   }
@@ -86,25 +84,37 @@ export class FactureAddComponent implements OnInit {
   }
 
   private addNewFacture(prestation: Prestation) {
-    const ok = confirm(`Voulez-vous éditer la facture ?`);
-    if (ok) {
-      this.prestationService
-        .createOrUpdatePrestation(
-          prestation,
-          this.siret,
-          false,
-          this.selectedMonth
-        )
-        .subscribe({
-          next: () => {
-            this.router.navigate(['/factures/read']);
-            this.onSuccess('ADD,FACTURE');
-          },
-          error: (err) => {
-            this.onError(err);
-          },
-        });
-    }
+    let formatDateDebut = prestation.dateDebut?.split('/');
+    const dateDebut =
+      formatDateDebut![2] +
+      '-' +
+      formatDateDebut![1] +
+      '-' +
+      formatDateDebut![0];
+    let formatDateFin = prestation.dateFin?.split('/');
+    const dateFin =
+      formatDateFin![2] + '-' + formatDateFin![1] + '-' + formatDateFin![0];
+    prestation.id = this.selectedPrestation.id;
+    prestation.dateDebut = dateDebut;
+    prestation.dateFin = dateFin;
+    console.log('avant : ', prestation);
+
+    this.prestationService
+      .createOrUpdatePrestation(
+        prestation,
+        this.siret,
+        false,
+        this.selectedMonth
+      )
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/factures/read']);
+          this.onSuccess('ADD,FACTURE');
+        },
+        error: (err) => {
+          this.onError(err);
+        },
+      });
   }
 
   addFacture() {

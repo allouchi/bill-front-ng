@@ -8,11 +8,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { ClientService } from '../../../services/clients/client-service';
-import { AlertService } from '../../../services/alert/alert.service';
+import { AlertService } from '../../../services/alert/alert-messages.service';
 import Client from '../../../models/Client';
 import Adresse from '../../../models/Adresse';
 import { Router } from '@angular/router';
-import { SharedDataService } from '../../../services/shared/shared-service';
+import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SiretService } from '../../../services/shared/siret-service';
 import { Subscription } from 'rxjs';
 

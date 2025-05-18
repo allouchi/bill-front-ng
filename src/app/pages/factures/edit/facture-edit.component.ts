@@ -9,9 +9,9 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FactureService } from '../../../services/factures/facture.service';
-import { AlertService } from '../../../services/alert/alert.service';
+import { AlertService } from '../../../services/alert/alert-messages.service';
 import Facture from '../../../models/Facture';
-import { SharedDataService } from '../../../services/shared/shared-service';
+import { SharedDataService } from '../../../services/shared/shared-data-service';
 
 @Component({
   selector: 'bill-facture-edit',

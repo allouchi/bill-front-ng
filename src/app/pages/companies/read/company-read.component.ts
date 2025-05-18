@@ -2,25 +2,27 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import Company from '../../../models/Company';
 import { Router } from '@angular/router';
 import { CompanyService } from '../../../services/company/company-service';
-import { AlertService } from '../../../services/alert/alert.service';
+import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
-import { SharedDataService } from '../../../services/shared/shared-service';
+import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { SiretService } from '../../../services/shared/siret-service';
 import { LibelleCompanyService } from '../../../services/shared/libelle-company-service';
 import { Subscription } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'company-read',
   standalone: true,
-  imports: [WaitingComponent],
+  imports: [WaitingComponent, FormsModule],
   templateUrl: './company-read.component.html',
   styleUrls: ['./company-read.component.scss'],
 })
 export default class CompanyReadComponent implements OnInit, OnDestroy {
   companies: Company[] = [];
   filtredCompanies: Company[] = [];
-  isLoaded = true;
+  isLoaded = false;
+  selectedCompany: string = '';
   observableEvent$ = new Subscription();
   siret: string = '';
 
@@ -35,9 +37,11 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
-      this.siret = siret;
-    });
+    this.observableEvent$ = this.siretService
+      .getSiretObservable()
+      .subscribe((siret) => {
+        this.siret = siret;
+      });
     this.loadCompanies();
   }
 
@@ -48,6 +52,9 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
           this.companies = companies;
           this.filtredCompanies = this.companies;
           this.isLoaded = true;
+          this.selectedCompany = this.companies.find(
+            (company) => company.checked === true
+          )?.siret!;
         }, 500);
       },
       error: (err) => {
@@ -83,10 +90,8 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     this.companies.forEach((item) => {
       if (item.siret === selectedValue) {
         item!.checked = true;
-        console.log('checked = true', item);
       } else {
         item!.checked = false;
-        console.log('checked = false', item);
       }
     });
 
@@ -94,8 +99,11 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
       (company) => company.siret === selectedValue
     );
 
+    this.selectedCompany = selectedValue;
+
     this.companyService.createOrUpdateCompany(company!).subscribe({
       next: () => {
+        this.siretService.setSiret(company!.siret);
         this.onSuccess('UPDATE,SOCIETE');
         this.libelleCompanyService.setMessage(company?.socialReason!);
       },

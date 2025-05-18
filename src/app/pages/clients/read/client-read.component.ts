@@ -3,9 +3,9 @@ import Client from '../../../models/Client';
 import { ClientService } from '../../../services/clients/client-service';
 import { Router } from '@angular/router';
 import { AdresseClientPipe } from '../../../shared/pipes/clientAdresse-pipe';
-import { AlertService } from '../../../services/alert/alert.service';
+import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
-import { SharedDataService } from '../../../services/shared/shared-service';
+import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 
 @Component({
@@ -18,7 +18,7 @@ import { SharedMessagesService } from '../../../services/shared/messages.service
 export class ClientReadComponent implements OnInit, OnDestroy {
   clients: Client[] = [];
   filtredClients: Client[] = [];
-  isLoaded = true;
+  isLoaded = false;
 
   constructor(
     private readonly clientService: ClientService,

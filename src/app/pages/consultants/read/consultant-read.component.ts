@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import Consultant from '../../../models/Consultant';
 import { ConsultantService } from '../../../services/consultants/consultant-service';
 import { Router } from '@angular/router';
-import { AlertService } from '../../../services/alert/alert.service';
+import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
-import { SharedDataService } from '../../../services/shared/shared-service';
+import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SiretService } from '../../../services/shared/siret-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { Subscription } from 'rxjs';
@@ -18,7 +18,7 @@ import { Subscription } from 'rxjs';
 })
 export class ConsultantReadComponent {
   consultants: Consultant[] = [];
-  isLoaded = true;
+  isLoaded = false;
   siret: string = '';
   observableEvent$ = new Subscription();
 
@@ -32,9 +32,11 @@ export class ConsultantReadComponent {
   ) {}
 
   ngOnInit(): void {
-    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
-      this.siret = siret;
-    });
+    this.observableEvent$ = this.siretService
+      .getSiretObservable()
+      .subscribe((siret) => {
+        this.siret = siret;
+      });
     console.log('ConsultantEditComponent : ', this.siret);
     this.loadConsultants();
   }

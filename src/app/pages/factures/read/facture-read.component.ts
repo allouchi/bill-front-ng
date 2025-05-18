@@ -2,14 +2,12 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FactureService } from '../../../services/factures/facture.service';
 import Facture from '../../../models/Facture';
 import { Router } from '@angular/router';
-import { AlertService } from '../../../services/alert/alert.service';
+import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import Exercise from '../../../models/Exercise';
-import { SharedDataService } from '../../../services/shared/shared-service';
+import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SiretService } from '../../../services/shared/siret-service';
 import { Subscription } from 'rxjs';
-
-
 
 @Component({
   selector: 'bill-facture-read',
@@ -23,7 +21,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   filtredFactures: Facture[] = [];
   exercises: Exercise[] = [];
   siret: string = '';
-  isLoaded = true;
+  isLoaded = false;
   observableEvent$ = new Subscription();
   private readonly router = inject(Router);
 
@@ -35,10 +33,11 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
-      this.siret = siret;
-    });
-    console.log('FactureReadComponent : ', this.siret);
+    this.observableEvent$ = this.siretService
+      .getSiretObservable()
+      .subscribe((siret) => {
+        this.siret = siret;
+      });
     this.loadExercisesRef();
     this.loadFactures();
   }

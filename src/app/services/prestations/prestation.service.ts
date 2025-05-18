@@ -14,13 +14,13 @@ export class PrestationService implements IPrestationService {
 
   constructor(private readonly http: HttpClient) {}
   createOrUpdatePrestation(
-    prestation: Partial<Prestation>,
+    prestation: Prestation,
     siret: string,
     templateChoice: boolean,
     moisFactureId: number | null
   ): Observable<Prestation> {
-    const isNew: boolean = !prestation.id || prestation.id === 0;
-
+    const isNew: boolean = prestation.id === 0 || prestation.id === null;
+    console.log(isNew, prestation);
     if (isNew) {
       return this.http.post<Prestation>(
         `${this.PRESTATION_PATH}/${siret}`,
