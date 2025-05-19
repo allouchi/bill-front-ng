@@ -1,6 +1,6 @@
 // app-init.service.ts
 import { Injectable } from '@angular/core';
-import { CompanyService } from '../company/company-service';
+import { CompanyService } from '../companies/company-service';
 import { SiretService } from './siret-service';
 import { SharedDataService } from './shared-data-service';
 import Company from '../../models/Company';

@@ -7,7 +7,7 @@ import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { Router } from '@angular/router';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
-import { CompanyService } from '../../../services/company/company-service';
+import { CompanyService } from '../../../services/companies/company-service';
 import Company from '../../../models/Company';
 import { ReactiveFormsModule } from '@angular/forms';
 import TvaInfos from '../../../models/TvaInfos';

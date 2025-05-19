@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import Company from '../../../models/Company';
 import { Router } from '@angular/router';
-import { CompanyService } from '../../../services/company/company-service';
+import { CompanyService } from '../../../services/companies/company-service';
 import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';

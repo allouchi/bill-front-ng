@@ -18,6 +18,8 @@ import { FactureAddComponent } from './pages/factures/add/facture-add.component'
 import { AuthGuard } from './services/auth/auth-guard';
 import { LoginComponent } from './authentification/login/login.component';
 import { LogoutComponent } from './authentification/logout/logout.component';
+import { AddUserComponent } from './pages/users/add/add.component';
+import { EditUserComponent } from './pages/users/edit/edit.component';
 
 export const BILLING_ROUTE: Routes = [
   {
@@ -113,7 +115,6 @@ export const BILLING_ROUTE: Routes = [
       },
     ],
   },
-
   {
     path: 'consultants',
     canActivate: [AuthGuard],
@@ -147,6 +148,21 @@ export const BILLING_ROUTE: Routes = [
       {
         path: 'edit',
         loadComponent: () => TvaEditComponent,
+      },
+    ],
+  },
+
+  {
+    path: 'users',
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'edit',
+        loadComponent: () => EditUserComponent,
+      },
+      {
+        path: 'add',
+        loadComponent: () => AddUserComponent,
       },
     ],
   },

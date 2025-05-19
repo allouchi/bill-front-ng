@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 import { NgbCollapseModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-import { CompanyService } from '../../../services/company/company-service';
+import { CompanyService } from '../../../services/companies/company-service';
 import { AlertService } from '../../../services/alert/alert-messages.service';
 import { Router } from '@angular/router';
 import Adresse from '../../../models/Adresse';
