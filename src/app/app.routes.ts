@@ -77,6 +77,7 @@ export const BILLING_ROUTE: Routes = [
   },
   {
     path: 'clients',
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'read',
