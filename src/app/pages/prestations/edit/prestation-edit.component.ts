@@ -93,7 +93,6 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
       (c) => c.socialReason == selectedValue
     )!;
 
-    console.log(this.selectedClient);
     this.formPrestation.patchValue({
       client: selectedValue,
     });

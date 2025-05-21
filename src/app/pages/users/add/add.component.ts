@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import Company from '../../../models/Company';
 import { CompanyService } from '../../../services/companies/company-service';
 import RolesRef from '../../../models/RolesRef';
+import User from '../../../models/User';
 
 @Component({
   selector: 'bill-user-add',
@@ -31,7 +32,7 @@ export class AddUserComponent implements OnInit {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       siret: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(3)]],
       role: ['', Validators.required],
     });
 
@@ -56,7 +57,6 @@ export class AddUserComponent implements OnInit {
       next: (roles) => {
         this.roles = roles;
         this.selectedRole = roles.find((r) => r.id == 1)?.role!;
-        console.log(this.selectedRole);
       },
       error: (err) => {
         this.onError(err);
@@ -80,7 +80,18 @@ export class AddUserComponent implements OnInit {
 
   addUser(): void {
     if (this.userForm.valid) {
-      this.userService.createUser(this.userForm.value).subscribe({
+      let user: User = {
+        id: null,
+        email: this.userForm.get('email')?.value,
+        firstName: this.userForm.get('firstName')?.value,
+        lastName: this.userForm.get('lastName')?.value,
+        siret: this.userForm.get('siret')?.value,
+        password: this.userForm.get('password')?.value,
+        role: this.userForm.get('role')?.value,
+        activated: true,
+      };
+
+      this.userService.createUser(user).subscribe({
         next: () => alert('Utilisateur ajouté avec succès !'),
         error: () => alert("Erreur lors de l'ajout."),
       });
