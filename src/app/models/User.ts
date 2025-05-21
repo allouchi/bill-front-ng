@@ -6,6 +6,6 @@ export default interface User {
   firstName?: string;
   lastName?: string;
   password: string;
-  company?: Partial<Company>;
+  siret?: string;
   roles?: Role[];
 }

@@ -4,40 +4,37 @@ import User from "../../models/User";
 import { IUserService } from "./user.interface";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-
+import { IRolesService } from './roles.interface';
+import RolesRef from '../../models/RolesRef';
 
 @Injectable({ providedIn: 'root' })
-export class UserService implements IUserService {
-  
-    private readonly apiURL = env.apiURL;
-    private readonly USER_PATH: string = `${this.apiURL}` + '/users';
+export class UserService implements IUserService, IRolesService {
+  private readonly apiURL = env.apiURL;
+  private readonly USER_PATH: string = `${this.apiURL}` + '/users';
 
-    constructor(private readonly http: HttpClient){
+  private readonly ROLES_PATH: string = `${this.apiURL}` + '/roles';
 
-    }
+  constructor(private readonly http: HttpClient) {}
 
-   login(user: User): Observable<User> {    
-      return this.http.get<User>(
-        `${this.USER_PATH}/${user.userName}/${user.password}`
-      );    
-    
+  login(user: User): Observable<User> {
+    return this.http.get<User>(
+      `${this.USER_PATH}/${user.userName}/${user.password}`
+    );
   }
 
   logout(): Observable<string> {
-    return this.http.get<string>(
-        `${this.USER_PATH}/logout`
-      );
+    return this.http.get<string>(`${this.USER_PATH}/logout`);
   }
 
-   createUser(user: User): Observable<User> {    
-       return this.http.post<User>(
-        `${this.USER_PATH}`,
-        user
-      );
-     
-    }  
-   findByEmailAndPassword(email: string, password: string): Observable<User> {    
-      return this.http.get<User>(`${this.USER_PATH}/${email}/${password}`)     
+  createUser(user: User): Observable<User> {
+    console.log(user);
+    return this.http.post<User>(`${this.USER_PATH}`, user);
+  }
+  findByEmailAndPassword(email: string, password: string): Observable<User> {
+    return this.http.get<User>(`${this.USER_PATH}/${email}/${password}`);
   }
 
+  getRoles(): Observable<RolesRef[]> {
+    return this.http.get<RolesRef[]>(`${this.ROLES_PATH}`);
+  }
 }
