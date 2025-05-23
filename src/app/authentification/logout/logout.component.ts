@@ -3,8 +3,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-import { isAuthService } from '../../services/shared/islogin-service';
+
 import { Subscription } from 'rxjs';
+import { IsAuthService } from '../../services/shared/islogin-service';
 
 @Component({
   selector: 'bill-login',
@@ -15,9 +16,7 @@ import { Subscription } from 'rxjs';
 export class LogoutComponent implements OnInit, OnDestroy {
   authenticated$ = new Subscription();
   isAuth = false;
-  constructor(private readonly isAuthService: isAuthService
-    
-  ) {}
+  constructor(private readonly isAuthService: IsAuthService) {}
 
   ngOnInit(): void {
     this.isAuthService.setIsAuth(false);

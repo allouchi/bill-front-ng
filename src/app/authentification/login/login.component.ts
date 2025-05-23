@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AlertService } from '../../services/alert/alert-messages.service';
-import { isAuthService } from '../../services/shared/islogin-service';
+import { IsAuthService } from '../../services/shared/islogin-service';
 
 @Component({
   selector: 'bill-login',
@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly fb: FormBuilder,
     private readonly alertService: AlertService,
-    private readonly isAuthService: isAuthService
+    private readonly isAuthService: IsAuthService
   ) {}
 
   ngOnInit(): void {
@@ -48,6 +48,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   private onSuccess(jwt: any) {
     //this.alertService.show(respSuccess, 'success');
     this.authService.saveToken(jwt);
+    this.alertService.show('AUTHENT', 'success');
     this.router.navigate(['bill-dashboard']);
   }
 

@@ -52,9 +52,12 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
           this.companies = companies;
           this.filtredCompanies = this.companies;
           this.isLoaded = true;
-          this.selectedCompany = this.companies.find(
+          const company = this.companies.find(
             (company) => company.checked === true
-          )?.siret!;
+          );
+           this.libelleCompanyService.setMessage(company!.socialReason!);
+           this.selectedCompany = company!.siret;
+
         }, 500);
       },
       error: (err) => {
@@ -104,7 +107,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     this.companyService.createOrUpdateCompany(company!).subscribe({
       next: () => {
         this.siretService.setSiret(company!.siret);
-        this.onSuccess('UPDATE,SOCIETE');
+        //this.onSuccess('UPDATE,SOCIETE');
         this.libelleCompanyService.setMessage(company?.socialReason!);
       },
       error: (err) => {

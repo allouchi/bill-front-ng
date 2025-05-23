@@ -7,11 +7,11 @@ import { SharedDataService } from '../../services/shared/shared-data-service';
 import { Subscription } from 'rxjs';
 import { LibelleCompanyService } from '../../services/shared/libelle-company-service';
 import { CommonModule } from '@angular/common';
-import { isAuthService } from '../../services/shared/islogin-service';
 import { FormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
+
 import { AuthService } from '../../services/auth/auth-service';
 import { UserService } from '../../services/user/user-service';
+import { IsAuthService } from '../../services/shared/islogin-service';
 
 @Component({
   selector: 'bill-navbar',
@@ -35,7 +35,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly sharedDataService: SharedDataService,
     private readonly libelleCompanyService: LibelleCompanyService,
-    private readonly isAuthService: isAuthService,
+    private readonly isAuthService: IsAuthService,
     private readonly router: Router,
     private readonly authService: AuthService,
     private readonly userService: UserService
@@ -51,7 +51,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.observableEvent$ = this.libelleCompanyService
       .getLibelleObservable()
       .subscribe((message) => {
-        this.selectedSocialReason = message;
+        if (this.isAuth) {
+          this.selectedSocialReason = message;
+        } else {
+          this.selectedSocialReason = '';
+        }
       });
 
     const mapData = this.sharedDataService.getData();
@@ -61,6 +65,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   clicked(event: MouseEvent) {
+    if (!this.isAuth) {
+      this.sharedMessagesService.setMessage('');
+      return;
+    }
     event.preventDefault();
     const link = event.target as HTMLAnchorElement;
     if (link.textContent) {
@@ -71,9 +79,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   logout() {
     this.isAuthService.setIsAuth(false);
     this.authService.logout();
-    this.userService.logout().subscribe((response) => {
-      console.log(response);
-    });
+    this.sharedMessagesService.setMessage('');
+    this.userService.logout().subscribe((response) => {});
     this.router.navigate(['/logout']);
   }
 
