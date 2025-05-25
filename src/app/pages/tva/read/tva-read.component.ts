@@ -11,7 +11,6 @@ import { CompanyService } from '../../../services/companies/company-service';
 import Company from '../../../models/Company';
 import { ReactiveFormsModule } from '@angular/forms';
 import TvaInfos from '../../../models/TvaInfos';
-import { SiretService } from '../../../services/shared/siret-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { Subscription } from 'rxjs';
 
@@ -34,25 +33,18 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   selectedExercice: string = 'Tous';
   siret: string = '';
   observableEvent$ = new Subscription();
-
   router = inject(Router);
 
   constructor(
     private readonly tvaService: TvaService,
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
-    private readonly siretService: SiretService,
     private readonly companyService: CompanyService,
     private readonly sharedMessagesService: SharedMessagesService
   ) {}
 
   ngOnInit(): void {
-    this.observableEvent$ = this.siretService
-      .getSiretObservable()
-      .subscribe((siret) => {
-        this.siret = siret;
-      });
-    console.log('TvaReadComponent : ', this.siret);
+    this.siret = this.sharedDataService.getSiret();
     this.loadCompanies();
     this.loadMonthYear();
     this.loadExercicesRef();
@@ -76,7 +68,6 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       next: (tvaInfos) => {
         this.tvaInfos = tvaInfos;
         this.tvaInfosFilterd = tvaInfos;
-        console.log();
       },
       error: (err) => {
         this.onError(err);
@@ -133,26 +124,24 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   }
 
   addTva() {
-    this.data.set('exercices', this.exercises);
-    this.data.set('months', this.monthsYear);
-    this.data.set('companies', this.companies);
-    this.sharedDataService.setData(this.data);
     this.sharedMessagesService.setMessage("Ajout d'une TVA");
+    this.sharedDataService.setSelectedTva(null);
+    this.sharedDataService.setCompanies(this.companies);
+    this.sharedDataService.setExercices(this.exercises);
     this.router.navigate(['/tvas/add']);
   }
 
   updateTva(tva: Tva) {
-    this.data.set('tva', tva);
-    this.data.set('exercices', this.exercises);
-    this.data.set('months', this.monthsYear);
-    this.data.set('companies', this.companies);
-    this.sharedDataService.setData(this.data);
+    this.sharedDataService.setSelectedTva(tva);
+    this.sharedMessagesService.setMessage("Mise à jour d'une TVA");
+    this.sharedDataService.setExercices(this.exercises);
+    this.sharedDataService.setCompanies(this.companies);
     this.router.navigate(['/tvas/edit']);
   }
 
   deleteTva(tva: Tva) {
     const ok = confirm(
-      `Voulez-vous vraiment supprimer la TVA de ${tva.month} ?`
+      `Voulez-vous vraiment supprimer la TVA de ${tva.monthPayment} ?`
     );
     if (ok) {
       this.tvaService.deleteTvaById(tva.id!).subscribe({

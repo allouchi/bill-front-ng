@@ -71,9 +71,7 @@ export class ClientReadComponent implements OnInit, OnDestroy {
       `Voulez-vous vraiment mettre à jour "${client.socialReason}" ?`
     );
     if (ok) {
-      const data: Map<string, any> = new Map();
-      data.set('client', client);
-      this.sharedDataService.setData(data);
+      this.sharedDataService.setSelectedClient(client);
       this.router.navigate(['clients/edit']);
     }
   }

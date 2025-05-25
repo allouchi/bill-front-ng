@@ -1,8 +1,13 @@
+
+
+
+@if(isUpload){
+
 <form [formGroup]="formFacture" (ngSubmit)="addFacture()">
     <!-- Combo Box (Select) -->
     <div class="mb-3">
         <label for="monthSelect" class="form-label">Mois de la Facture : *</label>
-        <select (change)="setMonthValue($event)" class="form-select" id="monthSelect" formControlName="month">
+        <select (change)="setMonthValue($event)" class="form-select" id="monthSelect" formControlName="monthFacture">
             @for (month of monthsYear; track month.id) {
             <option value="{{ month.id }}">{{ month.label }}</option>
             }
@@ -10,8 +15,8 @@
     </div>
 
     <div *ngIf="
-        formFacture.get('month')?.invalid &&
-        formFacture.get('month')?.touched
+        formFacture.get('monthFacture')?.invalid &&
+        formFacture.get('monthFacture')?.touched
       " class="text-danger">
         Ce champ est requis.
     </div>
@@ -58,3 +63,7 @@
         <button class="btn btn-primary" type="submit">Valider</button>
     </div>
 </form>
+
+ } @else {
+<bill-waiting></bill-waiting>
+}

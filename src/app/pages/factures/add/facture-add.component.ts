@@ -13,64 +13,58 @@ import { Router } from '@angular/router';
 import { AlertService } from '../../../services/alert/alert-messages.service';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
-import { SiretService } from '../../../services/shared/siret-service';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 
 @Component({
   selector: 'bill-facture-add',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, WaitingComponent],
   templateUrl: './facture-add.component.html',
   styleUrl: './facture-add.component.css',
 })
 export class FactureAddComponent implements OnInit {
   formFacture!: FormGroup;
-  selectedPrestation!: Prestation;
+  selectedPrestation: Prestation | null = null;
   selectedMonth: number = 0;
   monthsYear: any;
   siret: string = '';
+  isUpload: boolean = true;
   observableEvent$ = new Subscription();
 
   constructor(
     private readonly router: Router,
     private readonly fb: FormBuilder,
     private readonly prestationService: PrestationService,
-    private readonly siretService: SiretService,
     private readonly sharedDataService: SharedDataService,
     private readonly alertService: AlertService
   ) {}
 
   ngOnInit(): void {
     this.formFacture = this.fb.group({
-      month: ['', Validators.required],
+      monthFacture: ['', Validators.required],
       numeroCommande: ['', Validators.required],
       quantite: ['', Validators.required],
       clientPrestation: ['', Validators.required],
     });
 
-    this.observableEvent$ = this.siretService
-      .getSiretObservable()
-      .subscribe((siret) => {
-        this.siret = siret;
-      });
-    const mapData = this.sharedDataService.getData();
-    this.selectedPrestation = mapData.get('prestation');
+    this.selectedPrestation = this.sharedDataService.getSelectedPrestation();
     this.monthsYear = GetMonthsOfYear();
-
+    this.siret = this.sharedDataService.getSiret();
     this.formFacture.patchValue({
-      id: this.selectedPrestation.id,
-      tarifHT: this.selectedPrestation.tarifHT,
-      delaiPaiement: this.selectedPrestation.delaiPaiement,
-      consultant: this.selectedPrestation.consultant,
-      client: this.selectedPrestation.client,
-      facture: this.selectedPrestation.facture,
-      designation: this.selectedPrestation.designation,
-      numeroCommande: this.selectedPrestation.numeroCommande,
-      clientPrestation: this.selectedPrestation.clientPrestation,
-      quantite: this.selectedPrestation.quantite,
-      dateDebut: this.selectedPrestation.dateDebut,
-      dateFin: this.selectedPrestation.dateFin,
-      siret: this.selectedPrestation.siret,
+      id: this.selectedPrestation!.id,
+      tarifHT: this.selectedPrestation!.tarifHT,
+      delaiPaiement: this.selectedPrestation!.delaiPaiement,
+      consultant: this.selectedPrestation!.consultant,
+      client: this.selectedPrestation!.client,
+      facture: this.selectedPrestation!.facture,
+      designation: this.selectedPrestation!.designation,
+      numeroCommande: this.selectedPrestation!.numeroCommande,
+      clientPrestation: this.selectedPrestation!.clientPrestation,
+      quantite: this.selectedPrestation!.quantite,
+      dateDebut: this.selectedPrestation!.dateDebut,
+      dateFin: this.selectedPrestation!.dateFin,
+      siret: this.selectedPrestation!.siret,
     });
   }
 
@@ -84,21 +78,10 @@ export class FactureAddComponent implements OnInit {
   }
 
   private addNewFacture(prestation: Prestation) {
-    let formatDateDebut = prestation.dateDebut?.split('/');
-    const dateDebut =
-      formatDateDebut![2] +
-      '-' +
-      formatDateDebut![1] +
-      '-' +
-      formatDateDebut![0];
-    let formatDateFin = prestation.dateFin?.split('/');
-    const dateFin =
-      formatDateFin![2] + '-' + formatDateFin![1] + '-' + formatDateFin![0];
-    prestation.id = this.selectedPrestation.id;
-    prestation.dateDebut = dateDebut;
-    prestation.dateFin = dateFin;
-    console.log('avant : ', prestation);
-
+    prestation.id = this.selectedPrestation!.id;
+    prestation.dateDebut = prestation.dateDebut;
+    prestation.dateFin = prestation.dateFin;
+    this.isUpload = false;
     this.prestationService
       .createOrUpdatePrestation(
         prestation,
@@ -110,8 +93,10 @@ export class FactureAddComponent implements OnInit {
         next: () => {
           this.router.navigate(['/factures/read']);
           this.onSuccess('ADD,FACTURE');
+          this.isUpload = true;
         },
         error: (err) => {
+          this.isUpload = true;
           this.onError(err);
         },
       });
@@ -125,13 +110,13 @@ export class FactureAddComponent implements OnInit {
         numeroCommande: this.formFacture.get('numeroCommande')?.value,
         clientPrestation: this.formFacture.get('clientPrestation')?.value,
         designation: 'La Prestation est réalisée pour le compte de ',
-        tarifHT: this.selectedPrestation.tarifHT,
-        delaiPaiement: this.selectedPrestation.delaiPaiement,
-        consultant: this.selectedPrestation.consultant,
-        client: this.selectedPrestation.client,
-        dateFin: this.selectedPrestation.dateFin,
-        dateDebut: this.selectedPrestation.dateDebut,
-        siret: this.selectedPrestation.siret,
+        tarifHT: this.selectedPrestation!.tarifHT,
+        delaiPaiement: this.selectedPrestation!.delaiPaiement,
+        consultant: this.selectedPrestation!.consultant,
+        client: this.selectedPrestation!.client,
+        dateFin: this.selectedPrestation!.dateFin,
+        dateDebut: this.selectedPrestation!.dateDebut,
+        siret: this.selectedPrestation!.siret,
       };
 
       this.addNewFacture(prestation);

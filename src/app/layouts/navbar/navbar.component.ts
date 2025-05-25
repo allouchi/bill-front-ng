@@ -26,7 +26,7 @@ import { IsAuthService } from '../../services/shared/islogin-service';
   styleUrl: './navbar.component.css',
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  selectedSocialReason: string = 'SBATEC CONSULTING';
+  selectedInfos: string = '';
   observableEvent$ = new Subscription();
   authenticated$ = new Subscription();
   isAuth = false;
@@ -37,7 +37,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly isAuthService: IsAuthService,
     private readonly router: Router,
-    private readonly authService: AuthService,
+    public readonly authService: AuthService,
     private readonly userService: UserService
   ) {}
 
@@ -52,25 +52,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
       .getLibelleObservable()
       .subscribe((message) => {
         if (this.isAuth) {
-          this.selectedSocialReason = message;
+          this.selectedInfos = message;
         } else {
-          this.selectedSocialReason = '';
+          this.selectedInfos = '';
         }
       });
-
-    const mapData = this.sharedDataService.getData();
-    if (mapData && mapData.get('company')) {
-      this.selectedSocialReason = mapData.get('company').socialReason;
-    }
   }
 
   clicked(event: MouseEvent) {
-    if (!this.isAuth) {
+    event.preventDefault();
+    const link = event.target as HTMLAnchorElement;
+    if (!this.isAuth || link.textContent == 'ADMIN') {
       this.sharedMessagesService.setMessage('');
       return;
     }
-    event.preventDefault();
-    const link = event.target as HTMLAnchorElement;
+
     if (link.textContent) {
       this.sharedMessagesService.setMessage('LISTE DES ' + link.textContent);
     }
@@ -80,7 +76,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.isAuthService.setIsAuth(false);
     this.authService.logout();
     this.sharedMessagesService.setMessage('');
-    this.userService.logout().subscribe((response) => {});
+    this.libelleCompanyService.setMessage('');
+    //this.userService.logout().subscribe((response) => {});
     this.router.navigate(['/logout']);
   }
 

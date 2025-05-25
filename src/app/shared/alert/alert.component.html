@@ -1,12 +1,50 @@
-<div *ngIf="message" 
-class="alert position-fixed text-center" 
+<div *ngIf="message && type =='success'"
+     class="alert position-fixed text-center"
      [ngClass]="{
-       'alert-success': type === 'success',
-       'alert-danger': type === 'error',
        'fade': true,
        'show': true
      }"
-    style="top: 15%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; min-width: 250px;"
+     style="
+       top: 12%;
+       left: 50%;
+       transform: translate(-50%, -50%);
+       z-index: 2000;
+       min-width: 250px;
+       max-width: 80%;
+       padding: 1rem 1.5rem;
+       border-radius: 30px;
+       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+       background-color: #d4edda;
+       color: #155724;
+       border: 1px solid #c3e6cb;
+       font-weight: bold;
+     "
      role="alert">
   {{ message }}
 </div>
+
+<div *ngIf="message && type == 'error'"
+     class="alert position-fixed text-center"
+     [ngClass]="{
+       'fade': true,
+       'show': true
+     }"
+     style="
+       top: 12%;
+       left: 50%;
+       transform: translate(-50%, -50%);
+       z-index: 2000;
+       min-width: 250px;
+       max-width: 80%;
+       padding: 1rem 1.5rem;
+       border-radius: 30px;
+       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+       background-color: #f8d7da;     /* rouge clair */
+       color: #721c24;                /* rouge foncé pour le texte */
+       border: 1px solid #f5c6cb;     /* bordure rouge */
+       font-weight: bold;
+     "
+     role="alert">
+  {{ message }}
+</div>
+

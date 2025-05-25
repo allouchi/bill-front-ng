@@ -19,7 +19,7 @@ export class AppComponent {
   constructor(private readonly initService: AppInitService) {}
 
   ngOnInit() {
-    this.initService.initAppWithSubscribe();
+    //this.initService.initAppWithSubscribe();
   }
 }
 

@@ -19,7 +19,7 @@ export class CompanyService implements ICompanyService {
   constructor(private readonly http: HttpClient) {}
 
   createOrUpdateCompany(company: Company): Observable<Company> {
-    const isNew: boolean = !company.id || company.id === 0;
+    const isNew: boolean = !company.id || company.id === null;
     if (isNew) {
       return this.http.post<Company>(this.COMPNAY_PATH, company);
     } else {

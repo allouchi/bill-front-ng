@@ -27,7 +27,6 @@ export class UserService implements IUserService, IRolesService {
   }
 
   createUser(user: User): Observable<User> {
-    console.log(user);
     return this.http.post<User>(`${this.USER_PATH}/add`, user);
   }
   findByEmailAndPassword(email: string, password: string): Observable<User> {

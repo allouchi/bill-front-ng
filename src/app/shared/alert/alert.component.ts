@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AlertService } from '../../services/alert/alert-messages.service';
 import { CommonModule } from '@angular/common';
 
@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   templateUrl: './alert.component.html',
 })
-export class AlertComponent implements OnInit {
+export class AlertComponent implements OnInit, OnDestroy {
   message: string | null = null;
   type: 'success' | 'error' = 'success';
 
@@ -17,9 +17,16 @@ export class AlertComponent implements OnInit {
     this.alertService.alerts$.subscribe((alert) => {
       this.message = alert.message;
       this.type = alert.type;
+
       if (this.type === 'success') {
         setTimeout(() => (this.message = null), 10000);
+      } else if (this.type === 'error') {
+        console.log('error');
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.message = null;
   }
 }

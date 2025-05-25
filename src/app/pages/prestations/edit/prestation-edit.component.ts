@@ -9,9 +9,9 @@ import Client from '../../../models/Client';
 import { ClientService } from '../../../services/clients/client-service';
 import { ConsultantService } from '../../../services/consultants/consultant-service';
 import { CommonModule } from '@angular/common';
-import { SiretService } from '../../../services/shared/siret-service';
-import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../../../services/auth/auth-service';
+import { SharedDataService } from '../../../services/shared/shared-data-service';
 
 @Component({
   selector: 'bill-prestation-edit',
@@ -22,9 +22,9 @@ import { Subscription } from 'rxjs';
 })
 export class PrestationEditComponent implements OnInit, OnDestroy {
   formPrestation!: FormGroup;
-  selectedClient!: Client;
-  selectedConsultant!: Consultant;
-  selectedPrestation!: Prestation;
+  selectedClient: Client | null = null;
+  selectedConsultant: Consultant | null = null;
+  selectedPrestation: Prestation | null = null;
 
   consultants: Consultant[] = [];
   clients: Client[] = [];
@@ -39,7 +39,6 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly clientService: ClientService,
     private readonly consultantService: ConsultantService,
-    private readonly siretService: SiretService,
     private readonly sharedDataService: SharedDataService
   ) {}
 
@@ -54,13 +53,8 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
       dateFin: ['', Validators.required],
     });
 
-    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
-      this.siret = siret;
-    });
-    this.selectedPrestation = this.sharedDataService
-      .getData()
-      .get('prestation');
-
+    this.siret = this.sharedDataService.getSiret();
+    this.selectedPrestation = this.sharedDataService.getSelectedPrestation();
     this.loadClients();
     this.loadConsultants();
   }
@@ -118,8 +112,8 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
     if (this.formPrestation.valid) {
       let prestation: Prestation = {
         id: prestationId,
-        client: this.selectedClient,
-        consultant: this.selectedConsultant,
+        client: this.selectedClient!,
+        consultant: this.selectedConsultant!,
         tarifHT: this.formPrestation.get('tarifHT')?.value,
         numeroCommande: this.formPrestation.get('numeroCommande')?.value,
         delaiPaiement: this.formPrestation.get('delaiPaiement')?.value,

@@ -32,9 +32,9 @@ import { SharedDataService } from '../../../services/shared/shared-data-service'
 })
 export default class CompanyEditComponent implements OnInit, OnDestroy {
   formCompany!: FormGroup;
-  company!: Company;
-  companyId!: number | null;
-  adresseId!: number | null;
+  company: Company | null = null;
+  companyId: number | null = null;
+  adresseId: number | null = null;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -60,12 +60,11 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
       pays: ['', Validators.required],
     });
 
-    const maMap = this.sharedDataService.getData();
-    this.company = maMap.get('company');
+    this.company = this.sharedDataService.getSelectedCompany();
+
     if (this.company) {
       this.companyId = this.company.id;
       this.adresseId = this.company.companyAdresse.id;
-
       this.formCompany.patchValue({
         socialReason: this.company.socialReason,
         status: this.company.status,
@@ -108,6 +107,7 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
 
       let company: Company = {
         id: this.companyId,
+        checked: this.company!.checked,
         socialReason: this.formCompany.get('socialReason')?.value,
         status: this.formCompany.get('status')?.value,
         siret: this.formCompany.get('siret')?.value,
@@ -117,6 +117,7 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
         numeroIban: this.formCompany.get('numeroIban')?.value,
         numeroBic: this.formCompany.get('numeroBic')?.value,
         companyAdresse: adresseCompany,
+        prestations: this.company?.prestations,
       };
 
       this.companyService.createOrUpdateCompany(company).subscribe({
@@ -126,7 +127,6 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
           } else {
             this.onSuccess('ADD,SOCIETE');
           }
-
           this.router.navigate(['/companies/read']);
         },
         error: (err) => {

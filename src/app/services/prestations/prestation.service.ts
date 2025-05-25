@@ -19,8 +19,7 @@ export class PrestationService implements IPrestationService {
     templateChoice: boolean,
     moisFactureId: number | null
   ): Observable<Prestation> {
-    const isNew: boolean = prestation.id === 0 || prestation.id === null;
-    console.log(isNew, prestation);
+    const isNew: boolean = prestation.id === 0 || prestation.id === null;  
     if (isNew) {
       return this.http.post<Prestation>(
         `${this.PRESTATION_PATH}/${siret}`,

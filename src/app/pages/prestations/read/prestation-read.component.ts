@@ -20,10 +20,9 @@ import {
 } from '@angular/forms';
 
 import { CommonModule } from '@angular/common';
-import { SiretService } from '../../../services/shared/siret-service';
-import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { Subscription } from 'rxjs';
+import { SharedDataService } from '../../../services/shared/shared-data-service';
 
 @Component({
   selector: 'bill-prestation-read',
@@ -52,25 +51,18 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
 
   private readonly router = inject(Router);
   constructor(
+    private readonly fb: FormBuilder,
     private readonly prestationService: PrestationService,
     private readonly alertService: AlertService,
-    private readonly fb: FormBuilder,
-    private readonly sharedDataService: SharedDataService,
-    private readonly siretService: SiretService,
-    private readonly sharedMessagesService: SharedMessagesService
+    private readonly sharedMessagesService: SharedMessagesService,
+    private readonly sharedDataService: SharedDataService
   ) {}
 
   ngOnInit(): void {
     this.formPresta = this.fb.group({
       prestaDateFin: ['', Validators.required],
     });
-
-    this.observableEvent$ = this.siretService
-      .getSiretObservable()
-      .subscribe((siret) => {
-        this.siret = siret;
-      });
-
+    this.siret = this.sharedDataService.getSiret();
     this.loadPrestations();
   }
 
@@ -128,19 +120,12 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
   }
 
   addNewFacture(prestation: Prestation) {
-    console.log(prestation);
     const ok = confirm(`Voulez-vous éditer la facture ?`);
     if (ok) {
-      const data: Map<string, any> = new Map();
-      data.set('prestation', prestation);
-      this.sharedDataService.setData(data);
+      this.sharedDataService.setSelectedPrestation(prestation);
       this.router.navigate(['/factures/add']);
     }
   }
-
-  prolongerPrestation(prestation: Prestation) {}
-
-  openModalFacture(prestation: Prestation) {}
 
   private onSuccess(respSuccess: any) {
     this.alertService.show(respSuccess, 'success');
@@ -156,6 +141,10 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
       this.alertService.show(message, 'error');
     }
   }
+
+  prolongerPrestation(prestation: Prestation) {}
+
+  openModalFacture(prestation: Prestation) {}
 
   ngOnDestroy(): void {
     this.alertService.clear();

@@ -13,9 +13,7 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
-import { SiretService } from '../../../services/shared/siret-service';
 import { Subscription } from 'rxjs';
-
 
 @Component({
   selector: 'bill-consultant-edit',
@@ -26,7 +24,7 @@ import { Subscription } from 'rxjs';
 })
 export class ConsultantEditComponent implements OnInit, OnDestroy {
   formConsultant!: FormGroup;
-  consultant!: Consultant;
+  consultant: Consultant | null = null;
   consultantId: number | null = null;
   siret: string = '';
   observableEvent$ = new Subscription();
@@ -36,7 +34,6 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
     private readonly consultantService: ConsultantService,
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
-    private readonly siretService: SiretService,
     private readonly router: Router
   ) {}
 
@@ -48,12 +45,9 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
       fonction: ['', Validators.required],
     });
 
-    const maMap = this.sharedDataService.getData();
-    this.consultant = maMap.get('consultant');   
-    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
-      this.siret = siret;
-    });
-    console.log('ConsultantEditComponent : ', this.siret);
+    this.consultant = this.sharedDataService.getSelectedConsultant();
+    this.siret = this.sharedDataService.getSiret();
+
     if (this.consultant) {
       this.consultantId = this.consultant.id;
       this.formConsultant.patchValue({

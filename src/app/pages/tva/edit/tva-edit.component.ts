@@ -16,6 +16,7 @@ import { AlertService } from '../../../services/alert/alert-messages.service';
 import Company from '../../../models/Company';
 import Exercise from '../../../models/Exercise';
 import { CommonModule } from '@angular/common';
+import GetMonthsOfYear from '../../../shared/utils/month-year';
 
 @Component({
   selector: 'bill-tva-edit',
@@ -25,10 +26,11 @@ import { CommonModule } from '@angular/common';
 })
 export class TvaEditComponent implements OnInit, OnDestroy {
   formTva!: FormGroup;
-  tva!: Tva;
+  tva: Tva | null = null;
   monthsYear!: any;
-  companies: Company[] = [];
-  exercices: Exercise[] = [];
+  companies: Company[] | null = [];
+  exercices: Exercise[] | null = [];
+  selectedExercise: Exercise | null = null;
   tvaId!: number | null;
 
   router = inject(Router);
@@ -46,39 +48,59 @@ export class TvaEditComponent implements OnInit, OnDestroy {
       exercise: ['', Validators.required],
       datePayment: ['', Validators.required],
       montantPayment: ['', Validators.required],
-      month: ['', Validators.required],
+      monthPayment: ['', Validators.required],
     });
 
-    const maMap = this.sharedDataService.getData();
-    this.tva = maMap.get('tva');
-    this.monthsYear = maMap.get('months');
-    this.companies = maMap.get('companies');
-    this.exercices = maMap.get('exercices');
+    this.loadMonthYear();
+    this.loadExercicesRef();
+
+    this.companies = this.sharedDataService.getCompanies();
+    this.tva = this.sharedDataService.getSelectedTva();
+    this.exercices = this.sharedDataService.getExercices();
 
     if (this.tva) {
       this.tvaId = this.tva.id;
-      const selectedCompany = this.companies.find(
-        (c) => c.siret == this.tva.siret
+      const selectedCompany = this.companies!.find(
+        (c) => c.siret == this.tva!.siret
       )?.socialReason;
 
-      const selectedExercice = this.exercices.find(
-        (c) => c.exercise == this.tva.exercise
+      const selectedExercice = this.exercices!.find(
+        (c) => c.exercise == this.tva!.exercise
       )?.exercise;
 
+      //25/05/2025
+      const datePaiement = this.tva.datePayment.split('/');
+      let formatedDate =
+        datePaiement[2] + '-' + datePaiement[1] + '-' + datePaiement[0];
       this.formTva.patchValue({
-        month: this.tva.month,
+        monthPayment: this.tva.monthPayment,
         exercise: selectedExercice,
-        datePayment: this.tva.datePayment,
+        datePayment: formatedDate,
         montantPayment: this.tva.montantPayment,
         company: selectedCompany,
       });
     }
   }
 
+  private loadMonthYear() {
+    this.monthsYear = GetMonthsOfYear();
+  }
+
+  private loadExercicesRef() {
+    this.tvaService.findExercisesRef().subscribe({
+      next: (exercises) => {
+        this.exercices = exercises;
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
   setMonthValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
     this.formTva.patchValue({
-      month: selectedValue,
+      monthPayment: selectedValue,
     });
   }
 
@@ -99,14 +121,13 @@ export class TvaEditComponent implements OnInit, OnDestroy {
   addTva() {
     if (this.formTva.valid) {
       const selectedRaisonSocial = this.formTva.get('company')?.value;
-
-      const selectedSiret = this.companies.find(
+      const selectedSiret = this.companies!.find(
         (c) => c.socialReason == selectedRaisonSocial
       )?.siret;
 
       let tvaModif: Tva = {
         id: this.tvaId,
-        month: this.formTva.get('month')?.value,
+        monthPayment: this.formTva.get('monthPayment')?.value,
         exercise: this.formTva.get('exercise')?.value,
         datePayment: this.formTva.get('datePayment')?.value,
         montantPayment: this.formTva.get('montantPayment')?.value,
@@ -120,7 +141,6 @@ export class TvaEditComponent implements OnInit, OnDestroy {
           } else {
             this.onSuccess('ADD,TVA');
           }
-
           this.router.navigate(['/tvas/read']);
         },
         error: (err) => {

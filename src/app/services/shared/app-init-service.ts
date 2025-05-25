@@ -1,8 +1,6 @@
 // app-init.service.ts
 import { Injectable } from '@angular/core';
 import { CompanyService } from '../companies/company-service';
-import { SiretService } from './siret-service';
-import { SharedDataService } from './shared-data-service';
 import Company from '../../models/Company';
 import { AlertService } from '../alert/alert-messages.service';
 
@@ -14,9 +12,7 @@ export class AppInitService {
 
   constructor(
     private readonly companyService: CompanyService,
-    private readonly siretService: SiretService,
-    private readonly alertService: AlertService,
-    private readonly sharedDataService: SharedDataService
+    private readonly alertService: AlertService
   ) {}
 
   initAppWithSubscribe(): void {
@@ -35,11 +31,6 @@ export class AppInitService {
     this.selectedCompany = companies.find(
       (company) => company.checked === true
     )!;
-
-    const data: Map<string, any> = new Map();
-    data.set('company', this.selectedCompany);
-    this.sharedDataService.setData(data);
-    this.siretService.setSiret(this.selectedCompany.siret);
   }
 
   private onError(error: any) {

@@ -16,7 +16,8 @@
     "moduleResolution": "bundler",
     "importHelpers": true,
     "target": "ES2022",
-    "module": "ES2022"
+    "module": "ES2022",
+    "types": ["jspdf", "html2canvas"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

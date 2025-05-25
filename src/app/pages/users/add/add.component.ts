@@ -6,6 +6,9 @@ import Company from '../../../models/Company';
 import { CompanyService } from '../../../services/companies/company-service';
 import RolesRef from '../../../models/RolesRef';
 import User from '../../../models/User';
+import { Router } from '@angular/router';
+import { AlertService } from '../../../services/alert/alert-messages.service';
+import GetMessagesEroor from '../../../shared/utils/messages-error';
 
 @Component({
   selector: 'bill-user-add',
@@ -23,7 +26,9 @@ export class AddUserComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private readonly companyService: CompanyService
+    private readonly companyService: CompanyService,
+    private readonly alertService: AlertService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -92,8 +97,8 @@ export class AddUserComponent implements OnInit {
       };
 
       this.userService.createUser(user).subscribe({
-        next: () => alert('Utilisateur ajouté avec succès !'),
-        error: () => alert("Erreur lors de l'ajout."),
+        next: () => this.onSuccess('ADD,USER'),
+        error: (err) => this.onError(err),
       });
     } else {
       for (const [key, control] of Object.entries(this.userForm.controls)) {
@@ -106,7 +111,13 @@ export class AddUserComponent implements OnInit {
 
   cancel() {}
 
+  private onSuccess(respSuccess: any) {
+    this.router.navigate(['bill-dashboard']);
+    this.alertService.show(respSuccess, 'success');
+  }
+
   private onError(error: any) {
-    const message: string = error.message;
+    const message = GetMessagesEroor(error);
+    this.alertService.show(message, 'error');
   }
 }

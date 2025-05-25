@@ -13,7 +13,6 @@ import Client from '../../../models/Client';
 import Adresse from '../../../models/Adresse';
 import { Router } from '@angular/router';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
-import { SiretService } from '../../../services/shared/siret-service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -25,7 +24,7 @@ import { Subscription } from 'rxjs';
 })
 export class ClientEditComponent implements OnInit, OnDestroy {
   formClient!: FormGroup;
-  client!: Client;
+  client: Client | null = null;
   clientId: number | null = null;
   addresseId: number | null = null;
   siret: string = '';
@@ -37,8 +36,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     private readonly clientService: ClientService,
     private readonly alertService: AlertService,
     private readonly router: Router,
-    private readonly sharedDataService: SharedDataService,
-    private readonly siretService: SiretService
+    private readonly sharedDataService: SharedDataService
   ) {}
 
   ngOnInit(): void {
@@ -51,14 +49,10 @@ export class ClientEditComponent implements OnInit, OnDestroy {
       localite: ['', Validators.required],
       pays: ['', Validators.required],
     });
-    const maMap = this.sharedDataService.getData();
-    this.client = maMap.get('client');
 
-    this.observableEvent$ = this.siretService.getSiretObservable().subscribe(siret => {
-      this.siret = siret;
-    });
+    this.client = this.sharedDataService.getSelectedClient();
+    this.siret = this.sharedDataService.getSiret();
 
-    console.log('ClientEditComponent : ', this.siret);
     if (this.client) {
       this.clientId = this.client.id;
       this.addresseId = this.client.adresseClient.id;

@@ -1,17 +1,28 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { env } from '../../../environments/env';
+import { AuthResponse } from '../../models/AuthResponse';
+import User from '../../models/User';
+import { LibelleCompanyService } from '../shared/libelle-company-service';
+import { SharedDataService } from '../shared/shared-data-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   url = env.apiURL + '/users/login';
+  userRole: string = '';
+  user!: User | null;
+  libelleHeader: string = '';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly libelleCompanyService: LibelleCompanyService,
+    private readonly sharedDataService: SharedDataService
+  ) {}
 
   login(credentials: { username: string; password: string }) {
-    return this.http.post<any>(this.url, credentials);
+    return this.http.post<AuthResponse>(this.url, credentials);
   }
 
   saveToken(token: string) {
@@ -28,5 +39,48 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('jwt');
+  }
+
+  getRole(): string {
+    return this.userRole;
+  }
+
+  setUser(authResponse: AuthResponse) {
+    this.user = authResponse.user;
+    this.userRole = authResponse.user.role!.substring(
+      5,
+      authResponse.user.role?.length
+    );
+
+    let libelleHeader = '';
+    if (authResponse.user) {
+      libelleHeader =
+        authResponse.socialReason +
+        ' (' +
+        authResponse.user.firstName +
+        ' ' +
+        authResponse.user.lastName +
+        ')';
+    }
+    this.libelleHeader = libelleHeader;
+    this.libelleCompanyService.setMessage(libelleHeader);
+    this.sharedDataService.setSelectCompany(authResponse.company!);
+  }
+
+  getUser(): User | null {
+    return this.user;
+  }
+
+  hasRole(expectedRole: string): boolean {
+    return this.userRole === expectedRole;
+  }
+
+  // Pour plusieurs rôles autorisés :
+  hasAnyRole(roles: string[]): boolean {
+    return roles.includes(this.userRole);
+  }
+
+  getLibelleHeader() {
+    return this.libelleHeader;
   }
 }

@@ -6,10 +6,11 @@ import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
-import { SiretService } from '../../../services/shared/siret-service';
 import { LibelleCompanyService } from '../../../services/shared/libelle-company-service';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../../services/auth/auth-service';
+import User from '../../../models/User';
 
 @Component({
   selector: 'company-read',
@@ -22,7 +23,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   companies: Company[] = [];
   filtredCompanies: Company[] = [];
   isLoaded = false;
-  selectedCompany: string = '';
+  selectedSiret: string = '';
   observableEvent$ = new Subscription();
   siret: string = '';
 
@@ -31,17 +32,13 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly router: Router,
     private readonly sharedDataService: SharedDataService,
-    private readonly siretService: SiretService,
     private readonly sharedMessagesService: SharedMessagesService,
-    private readonly libelleCompanyService: LibelleCompanyService
+    private readonly libelleCompanyService: LibelleCompanyService,
+    private readonly authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.observableEvent$ = this.siretService
-      .getSiretObservable()
-      .subscribe((siret) => {
-        this.siret = siret;
-      });
+    this.siret = this.sharedDataService.getSiret();
     this.loadCompanies();
   }
 
@@ -50,14 +47,17 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
       next: (companies) => {
         setTimeout(() => {
           this.companies = companies;
+          console.log(this.companies);
           this.filtredCompanies = this.companies;
           this.isLoaded = true;
           const company = this.companies.find(
             (company) => company.checked === true
           );
-           this.libelleCompanyService.setMessage(company!.socialReason!);
-           this.selectedCompany = company!.siret;
-
+          this.libelleCompanyService.setMessage(
+            this.authService.getLibelleHeader()
+          );
+          this.selectedSiret = company!.siret;
+          this.sharedDataService.setSelectCompany(company!);
         }, 500);
       },
       error: (err) => {
@@ -89,7 +89,6 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
 
   setCompanyValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
-
     this.companies.forEach((item) => {
       if (item.siret === selectedValue) {
         item!.checked = true;
@@ -102,11 +101,11 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
       (company) => company.siret === selectedValue
     );
 
-    this.selectedCompany = selectedValue;
-
+    this.sharedDataService.setSelectCompany(company!);
+    this.sharedDataService.setPrestations(company!.prestations!);
+    this.libelleCompanyService.setMessage(this.authService.getLibelleHeader());
     this.companyService.createOrUpdateCompany(company!).subscribe({
       next: () => {
-        this.siretService.setSiret(company!.siret);
         //this.onSuccess('UPDATE,SOCIETE');
         this.libelleCompanyService.setMessage(company?.socialReason!);
       },
@@ -121,9 +120,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
       `Voulez-vous vraiment mettre à jour "${company.socialReason}" ?`
     );
     if (ok) {
-      const data: Map<string, any> = new Map();
-      data.set('company', company);
-      this.sharedDataService.setData(data);
+      this.sharedDataService.setSelectCompany(company!);
       this.router.navigate(['/companies/edit']);
     }
   }

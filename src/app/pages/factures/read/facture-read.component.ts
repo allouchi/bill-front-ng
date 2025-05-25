@@ -6,7 +6,6 @@ import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import Exercise from '../../../models/Exercise';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
-import { SiretService } from '../../../services/shared/siret-service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -28,16 +27,11 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   constructor(
     private readonly factureService: FactureService,
     private readonly alertService: AlertService,
-    private readonly sharedDataService: SharedDataService,
-    private readonly siretService: SiretService
+    private readonly sharedDataService: SharedDataService
   ) {}
 
   ngOnInit(): void {
-    this.observableEvent$ = this.siretService
-      .getSiretObservable()
-      .subscribe((siret) => {
-        this.siret = siret;
-      });
+    this.siret = this.sharedDataService.getSiret();
     this.loadExercisesRef();
     this.loadFactures();
   }
@@ -103,9 +97,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       `Voulez-vous vraiment mettre à jour "${facture.numeroFacture}" ?`
     );
     if (ok) {
-      const data: Map<string, any> = new Map();
-      data.set('facture', facture);
-      this.sharedDataService.setData(data);
+      this.sharedDataService.setSelectedFacture(facture);
       this.router.navigate(['factures/edit']);
     }
   }

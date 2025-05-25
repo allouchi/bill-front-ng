@@ -41,9 +41,9 @@
           (change)="setMonthValue($event)"
           class="form-select"
           id="monthSelect"
-          formControlName="month"
+          formControlName="monthPayment"
           [class.is-invalid]="
-            formTva.get('month')?.invalid && formTva.get('month')?.touched
+            formTva.get('monthPayment')?.invalid && formTva.get('monthPayment')?.touched
           "
         >
           @for (month of monthsYear; track month.id) {
@@ -54,7 +54,7 @@
         </select>
 
         <div
-          *ngIf="formTva.get('month')?.invalid && formTva.get('month')?.touched"
+          *ngIf="formTva.get('monthPayment')?.invalid && formTva.get('monthPayment')?.touched"
           class="text-danger"
         >
           Ce champ est requis.

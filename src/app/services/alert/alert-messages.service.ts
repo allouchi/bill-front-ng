@@ -33,13 +33,13 @@ export class AlertService implements OnInit, OnDestroy {
     if (action == 'UPDATE') {
       action = ' été mise à jour avec succès !';
     }
-     if (action == 'AUTHENT') {
-       action = 'Vous êtes authentifié avec succès !!!';
-       this.message = action;
-     } else {
-       this.message = "L'Entité " + `${p[1]}` + action;
-     }
-   
+    if (action == 'AUTHENT') {
+      action = "Bienvenue sur l'application de facturation";
+      this.message = action;
+    } else {
+      this.message = "L'Entité " + `${p[1]}` + action;
+    }
+
     message = this.message;
     this.alertSubject.next({ message, type: 'success' });
   }

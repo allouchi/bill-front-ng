@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
-import { SiretService } from '../../../services/shared/siret-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { Subscription } from 'rxjs';
 
@@ -26,18 +25,11 @@ export class ConsultantReadComponent {
     private readonly consultantService: ConsultantService,
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
-    private readonly siretService: SiretService,
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly router: Router
   ) {}
 
   ngOnInit(): void {
-    this.observableEvent$ = this.siretService
-      .getSiretObservable()
-      .subscribe((siret) => {
-        this.siret = siret;
-      });
-    console.log('ConsultantEditComponent : ', this.siret);
     this.loadConsultants();
   }
 
@@ -86,9 +78,7 @@ export class ConsultantReadComponent {
       `Voulez-vous vraiment mettre à jour "${consultant.firstName} ${consultant.lastName}" ?`
     );
     if (ok) {
-      const data: Map<string, any> = new Map();
-      data.set('consultant', consultant);
-      this.sharedDataService.setData(data);
+      this.sharedDataService.setSelectedConsultant(consultant);
       this.router.navigate(['consultants/edit']);
     }
   }
