@@ -23,6 +23,7 @@
     "@popperjs/core": "^2.11.8",
     "apexcharts": "^4.7.0",
     "bootstrap": "^5.3.5",
+    "g": "^2.0.1",
     "html2canvas": "^1.4.1",
     "json-server": "^0.17.4",
     "jspdf": "^3.0.1",

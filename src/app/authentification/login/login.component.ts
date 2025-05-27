@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { AlertService } from '../../services/alert/alert-messages.service';
 import { IsAuthService } from '../../services/shared/islogin-service';
 import { AuthResponse } from '../../models/AuthResponse';
-import { SharedDataService } from '../../services/shared/shared-data-service';
+
 
 @Component({
   selector: 'bill-login',
@@ -22,8 +22,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly fb: FormBuilder,
     private readonly alertService: AlertService,
-    private readonly isAuthService: IsAuthService,
-    private readonly sharedDataService: SharedDataService
+    private readonly isAuthService: IsAuthService
+
   ) {}
 
   ngOnInit(): void {
@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.router.navigate(['bill-dashboard']);
   }
 
-  private onError(error: any) {
+  private onError(error: any) {    
     this.isAuthService.setIsAuth(false);
     this.authService.logout();
     this.formLogin.patchValue({
@@ -64,15 +64,22 @@ export class LoginComponent implements OnInit, OnDestroy {
       password: '',
     });
 
-    const message: string = error.error;
-    switch (message) {
+    const code: string = error.code;
+    switch (code) {
       case 'Http failure': {
         this.alertService.show('Problème de connextion au serveur', 'error');
         break;
       }
-      case 'Forbidden': {
+      case 'RESOURCE_NOT_FOUND': {
         this.alertService.show(
-          "Vos identifiants de connexion sont incorrects ou votre compte n'est plus valide",
+          "Vos identifiants sont incorrects ou votre compte n'est plus valide",
+          'error'
+        );
+        break;
+      }
+      case 'ACCESS_DENIED': {
+        this.alertService.show(
+          "Vous n'êtes pas autorisé à accéder à cette ressource",
           'error'
         );
         break;

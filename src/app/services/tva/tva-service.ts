@@ -1,4 +1,4 @@
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import Tva from "../../models/Tva";
 import { ITvaService } from "./tva.interface";
 import { HttpClient } from "@angular/common/http";
@@ -50,6 +50,6 @@ export class TvaService implements ITvaService {
   }
 
   deleteTvaById(id: number): Observable<string> {
-    return this.http.delete<string>(`${this.TVA_PATH}/${id}`);
+    return this.http.delete<string>(`${this.TVA_PATH}/${id}`);   
   }
 }

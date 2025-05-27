@@ -13,6 +13,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import TvaInfos from '../../../models/TvaInfos';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { Subscription } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmModalComponent } from '../../../shared/modal/confirm-modal.component';
 
 @Component({
   selector: 'bill-tva-read',
@@ -40,7 +42,8 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
     private readonly companyService: CompanyService,
-    private readonly sharedMessagesService: SharedMessagesService
+    private readonly sharedMessagesService: SharedMessagesService,
+    private readonly modalService: NgbModal,
   ) {}
 
   ngOnInit(): void {
@@ -139,22 +142,16 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     this.router.navigate(['/tvas/edit']);
   }
 
-  deleteTva(tva: Tva) {
-    const ok = confirm(
-      `Voulez-vous vraiment supprimer la TVA de ${tva.monthPayment} ?`
-    );
-    if (ok) {
-      this.tvaService.deleteTvaById(tva.id!).subscribe({
-        next: () => {
-          this.filtredTvas = this.tvas.filter((t) => t.id !== tva.id);
-          this.onSuccess('DELETE,TVA');
-        },
-        error: (err) => {
-          this.onError(err);
-        },
-      });
-    }
-  }
+
+  deleteTva(event: Event, tva: Tva) {
+    event.preventDefault();
+    const modal = this.modalService.open(ConfirmModalComponent, { size: 'lg', backdrop: 'static' });
+    modal.componentInstance.item = "Tva";
+    modal.componentInstance.composant = tva
+
+    this.filtredTvas = this.tvas.filter((t) => t.id !== tva.id);
+  } 
+
 
   private onSuccess(respSuccess: any) {
     this.alertService.show(respSuccess, 'success');

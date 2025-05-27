@@ -1,0 +1,36 @@
+<div class="p-4">
+    <!-- Header -->
+    <div class="modal-header border-0 pb-0">
+        <h4 class="modal-title text-danger fw-bold">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirmer la suppression
+        </h4>
+        <button type="button" class="btn-close" aria-label="Close" data-bs-toggle="tooltip" data-bs-placement="bottom"
+            title="Fermer" (click)="cancel()"></button>
+    </div>
+
+    <!-- Body -->
+
+    <div class="modal-body mt-3">
+        <div  *ngIf="item && item === 'Tva'">
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <div>
+                    La facture concernant l'exercice <strong>{{ composant.exercise }}</strong>,
+                    d'un montant de <strong>{{ composant.montantPayment | currency:'EUR' }}</strong>,
+                    payée le <strong>{{ composant.datePayment }}</strong> va être supprimée.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer border-0 pt-0 justify-content-end">
+        <button type="button" class="btn btn-secondary px-4" (click)="cancel()">
+            <i class="bi bi-x-circle me-1"></i> Annuler
+        </button>
+        <button type="button" class="btn btn-danger px-4" (click)="confirmDelete()">
+            <i class="bi bi-trash me-1"></i> Confirmer
+        </button>
+    </div>
+</div>
