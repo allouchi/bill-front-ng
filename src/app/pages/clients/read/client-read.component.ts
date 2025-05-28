@@ -7,6 +7,9 @@ import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmModalComponent } from '../../../shared/modal/confirm-modal.component';
+import { AuthService } from '../../../services/auth/auth-service';
 
 @Component({
   selector: 'bill-client-read',
@@ -19,16 +22,20 @@ export class ClientReadComponent implements OnInit, OnDestroy {
   clients: Client[] = [];
   filtredClients: Client[] = [];
   isLoaded = false;
+  isAdmin = false;
 
   constructor(
+    private readonly modalService: NgbModal,
     private readonly clientService: ClientService,
     private readonly alertService: AlertService,
     private readonly router: Router,
     private readonly sharedDataService: SharedDataService,
-    private readonly sharedMessagesService: SharedMessagesService
+    private readonly sharedMessagesService: SharedMessagesService,
+    private readonly authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.isAdmin();
     this.loadClients();
   }
 
@@ -47,23 +54,28 @@ export class ClientReadComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteClient(client: Client) {
-    const ok = confirm(
-      `Voulez-vous vraiment supprimer "${client.socialReason}" ?`
-    );
-    if (ok) {
-      this.clientService.deleteClientById(client.id!).subscribe({
-        next: () => {
+  deleteClient(event: Event, client: Client) {
+
+    event.preventDefault();
+    const modal = this.modalService.open(ConfirmModalComponent, { size: 'lg', backdrop: 'static' });
+    modal.componentInstance.item = "Client";
+    modal.componentInstance.composant = client;
+
+    modal.result
+      .then((result) => {
+        if (result === 'confirm') {
+          this.onSuccess('DELETE,CLIENT');
           this.filtredClients = this.clients.filter(
             (item) => item.id !== client.id
           );
-          this.onSuccess('DELETE,CLIENT');
-        },
-        error: (err) => {
-          this.onError(err);
-        },
+          this.clients = this.filtredClients;
+          console.log(this.filtredClients)
+        }
+      })
+      .catch(() => {
+        console.log("Annulé")
       });
-    }
+
   }
 
   updateClient(client: Client) {

@@ -11,16 +11,73 @@
     <!-- Body -->
 
     <div class="modal-body mt-3">
+        <div *ngIf="item && item === 'Prestation'">
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <div>
+                    La prestation numéro <strong>{{ composant.numeroCommande }}</strong> en faveur du client <strong>{{
+                        composant.client.socialReason }}</strong> va être supprimée.
+                </div>
+            </div>
+        </div>
+
+    <div class="modal-body mt-3">
         <div  *ngIf="item && item === 'Tva'">
             <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
                 <i class="bi bi-info-circle-fill fs-5"></i>
                 <div>
-                    La facture concernant l'exercice <strong>{{ composant.exercise }}</strong>,
+                    La Tva concernant l'exercice <strong>{{ composant.exercise }}</strong>,
                     d'un montant de <strong>{{ composant.montantPayment | currency:'EUR' }}</strong>,
                     payée le <strong>{{ composant.datePayment }}</strong> va être supprimée.
                 </div>
             </div>
-
+        </div>
+        <div *ngIf="item && item === 'User'">
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <div>
+                    L'utilisateur <strong>{{ composant.exercise }}</strong>,
+                    d'un montant de <strong>{{ composant.montantPayment | currency:'EUR' }}</strong>
+                    payée le <strong>{{ composant.datePayment }}</strong> va être supprimé !!!
+                </div>
+            </div>
+        </div>
+        
+        <div *ngIf="item && item === 'Consultant'">
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <div>
+                    Le consultant <strong>{{ composant.firstName }} {{ composant.lastName }} </strong>va être supprimé !!!
+                </div>
+            </div>
+        </div>
+        <div *ngIf="item && item === 'Client'">
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <div>
+                    Le client <strong>{{ composant.socialReason }}</strong> va être supprimé !!!
+                </div>
+            </div>
+        </div>
+        
+        <div *ngIf="item && item === 'Company'">
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <div>
+                    La société <strong>{{ composant.socialReason }}</strong> va être supprimée !!!
+                </div>
+            </div>
+        </div>
+        
+        <div *ngIf="item && item === 'Facture'">
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <div>
+                    La facture numéro <strong>{{ composant.numeroFacture }}</strong>,
+                    d'un montant de <strong>{{ composant.prixTotalTTC | currency:'EUR' }}</strong>
+                    va être supprimée !!!
+                </div>
+            </div>
         </div>
     </div>
 

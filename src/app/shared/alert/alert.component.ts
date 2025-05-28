@@ -11,7 +11,7 @@ export class AlertComponent implements OnInit, OnDestroy {
   message: string | null = null;
   type: 'success' | 'error' = 'success';
 
-  constructor(private alertService: AlertService) {}
+  constructor(private readonly alertService: AlertService) { }
 
   ngOnInit() {
     this.alertService.alerts$.subscribe((alert) => {
@@ -19,7 +19,7 @@ export class AlertComponent implements OnInit, OnDestroy {
       this.type = alert.type;
 
       if (this.type === 'success') {
-        setTimeout(() => (this.message = null), 10000);
+        setTimeout(() => (this.message = null), 5000);
       } else if (this.type === 'error') {
         console.log('error');
       }

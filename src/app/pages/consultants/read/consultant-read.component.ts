@@ -7,6 +7,9 @@ import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { Subscription } from 'rxjs';
+import { ConfirmModalComponent } from '../../../shared/modal/confirm-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from '../../../services/auth/auth-service';
 
 @Component({
   selector: 'bill-consultant-read',
@@ -20,13 +23,16 @@ export class ConsultantReadComponent {
   isLoaded = false;
   siret: string = '';
   observableEvent$ = new Subscription();
+  isAdmin = false;
 
   constructor(
+    private readonly modalService: NgbModal,
     private readonly consultantService: ConsultantService,
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
     private readonly sharedMessagesService: SharedMessagesService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -47,25 +53,31 @@ export class ConsultantReadComponent {
     });
   }
 
-  deleteConsultant(consultant: Consultant) {
-    const ok = confirm(
-      `Voulez-vous vraiment supprimer "${consultant.firstName}" ?`
-    );
-    if (ok) {
-      this.consultantService
-        .deleteConsultantById(consultant.id!, this.siret)
-        .subscribe({
-          next: () => {
-            this.onSuccess('DELETE,CONSULTANT');
-            this.consultants = this.consultants.filter(
-              (item) => item.id !== consultant.id
-            );
-          },
-          error: (err) => {
-            this.onError(err);
-          },
-        });
-    }
+  deleteConsultant(event: Event, consultant: Consultant) {
+
+    event.preventDefault();
+    const modal = this.modalService.open(ConfirmModalComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false,
+      centered: true
+    });
+
+    modal.componentInstance.item = "Consultant";
+    modal.componentInstance.composant = consultant;
+
+    modal.result
+      .then((result) => {
+        if (result === 'confirm') {
+          this.onSuccess('DELETE,CONSULTANT');
+          this.consultants = this.consultants.filter(
+            (item) => item.id !== consultant.id
+          );
+        }
+      })
+      .catch(() => {
+        console.log("Annulé")
+      });
   }
 
   AddConsultant() {

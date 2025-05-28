@@ -15,6 +15,7 @@ import { SharedMessagesService } from '../../../services/shared/messages.service
 import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from '../../../shared/modal/confirm-modal.component';
+import { AuthService } from '../../../services/auth/auth-service';
 
 @Component({
   selector: 'bill-tva-read',
@@ -36,6 +37,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   siret: string = '';
   observableEvent$ = new Subscription();
   router = inject(Router);
+  isAdmin = false;
 
   constructor(
     private readonly tvaService: TvaService,
@@ -44,15 +46,17 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     private readonly companyService: CompanyService,
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly modalService: NgbModal,
+    private readonly authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.siret = this.sharedDataService.getSiret();
+    this.isAdmin = this.authService.isAdmin();   
     this.loadCompanies();
     this.loadMonthYear();
     this.loadExercicesRef();
     this.loadTva('Tous');
-    this.loadTvaInfo('Tous');
+    this.loadTvaInfo('Tous');    
   }
 
   private loadCompanies() {
@@ -147,9 +151,18 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     event.preventDefault();
     const modal = this.modalService.open(ConfirmModalComponent, { size: 'lg', backdrop: 'static' });
     modal.componentInstance.item = "Tva";
-    modal.componentInstance.composant = tva
+    modal.componentInstance.composant = tva    
 
-    this.filtredTvas = this.tvas.filter((t) => t.id !== tva.id);
+    modal.result
+      .then((result) => {
+        if (result === 'confirm') {          
+          this.filtredTvas = this.tvas.filter((t) => t.id !== tva.id);
+          this.tvas = this.filtredTvas;
+        }
+      })
+      .catch(() => {
+        console.log("Annulé")
+      });
   } 
 
 

@@ -32,15 +32,16 @@
             <button
               class="btn btn-outline-primary btn-sm me-2"
               (click)="addNewFacture(prestation)"
-              title="Ajouter Facture"
+              title="Editer Facture"
             >
               <i class="bi bi-pencil"></i>
             </button>
 
             <button
               class="btn btn-outline-danger btn-sm me-2"
-              (click)="deletePrestation(prestation)"
+              (click)="deletePrestation($event, prestation)"
               title="Supprimer Prestation"
+              [disabled]="!isAdmin"
             >
               <i class="bi bi-trash"></i>
             </button>

@@ -43,9 +43,9 @@ export class FactureAddComponent implements OnInit {
   ngOnInit(): void {
     this.formFacture = this.fb.group({
       monthFacture: ['', Validators.required],
-      numeroCommande: ['', Validators.required],
+      numeroCommande: [{ value: '', disabled: true }],
       quantite: ['', Validators.required],
-      clientPrestation: ['', Validators.required],
+      clientPrestation: [{ value: '', disabled: true }],
     });
 
     this.selectedPrestation = this.sharedDataService.getSelectedPrestation();
@@ -78,9 +78,7 @@ export class FactureAddComponent implements OnInit {
   }
 
   private addNewFacture(prestation: Prestation) {
-    prestation.id = this.selectedPrestation!.id;
-    prestation.dateDebut = prestation.dateDebut;
-    prestation.dateFin = prestation.dateFin;
+    prestation.id = this.selectedPrestation!.id;    
     this.isUpload = false;
     this.prestationService
       .createOrUpdatePrestation(

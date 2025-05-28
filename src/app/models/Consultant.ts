@@ -1,4 +1,3 @@
-import Company from './Company';
 
 export default interface Consultant {
   id: number | null;

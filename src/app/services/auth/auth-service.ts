@@ -49,9 +49,9 @@ export class AuthService {
     this.user = authResponse.user;
     this.userRole = authResponse.user.role!.substring(
       5,
-      authResponse.user.role?.length
-    );
 
+      authResponse.user.role?.length
+    ); 
     let libelleHeader = '';
     if (authResponse.user) {
       libelleHeader =
@@ -83,4 +83,12 @@ export class AuthService {
   getLibelleHeader() {
     return this.libelleHeader;
   }
+
+  isAdmin(): boolean {
+    if (this.hasRole("ADMIN")) {
+      return true;
+    }
+    return false;
+  }
+
 }

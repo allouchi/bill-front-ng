@@ -22,7 +22,7 @@ export interface IConsultantService {
    *
    * @param id facture id to delete
    */
-  deleteConsultantById(id: number, siret: string): Observable<string>;
+  deleteConsultantById(id: number): Observable<string>;
 
   /**
    * Get all schemas if no project or all schemas for project name in otherwise

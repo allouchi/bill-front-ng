@@ -13,12 +13,17 @@ import { UnsplashService } from '../../services/unsplash/unsplash.service';
 export class DashboardComponent implements OnInit {
   photos: any[] = [];
   query = 'nature';
+  photoUrl: string | null = null;
 
-  constructor(private unsplashService: UnsplashService) {}
+  constructor(private readonly unsplashService: UnsplashService) { }
 
   ngOnInit() {
     this.unsplashService.searchPhotos(this.query).subscribe((data: any) => {
       this.photos = data.results;
+    });
+
+    this.unsplashService.getRandomPhoto('nature').subscribe((data) => {
+      this.photoUrl = data.urls.regular;
     });
   }
 }

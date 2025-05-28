@@ -11,6 +11,8 @@ import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth-service';
 import User from '../../../models/User';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmModalComponent } from '../../../shared/modal/confirm-modal.component';
 
 @Component({
   selector: 'company-read',
@@ -26,8 +28,10 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   selectedSiret: string = '';
   observableEvent$ = new Subscription();
   siret: string = '';
+  isAdmin = false;
 
   constructor(
+    private readonly modalService: NgbModal,
     private readonly companyService: CompanyService,
     private readonly alertService: AlertService,
     private readonly router: Router,
@@ -35,9 +39,11 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly authService: AuthService
+
   ) {}
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
     this.loadCompanies();
   }
@@ -46,8 +52,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     this.companyService.findCompanies().subscribe({
       next: (companies) => {
         setTimeout(() => {
-          this.companies = companies;
-          console.log(this.companies);
+          this.companies = companies;        
           this.filtredCompanies = this.companies;
           this.isLoaded = true;
           const company = this.companies.find(
@@ -67,25 +72,35 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteCompany(company: Company) {
-    const ok = confirm(
-      `Voulez-vous vraiment supprimer "${company.socialReason}" ?`
-    );
-    if (ok) {
-      this.companyService.deleteCompanyById(company.id!).subscribe({
-        next: () => {
-          this.onSuccess('DELETE,SOCIETE');
+
+  deleteCompany(event: Event, company: Company) {
+
+    event.preventDefault();
+    const modal = this.modalService.open(ConfirmModalComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false,
+      centered: true
+    });
+
+    modal.componentInstance.item = "Company";
+    modal.componentInstance.composant = company;
+
+    modal.result
+      .then((result) => {
+        if (result === 'confirm') {
+          this.onSuccess('DELETE,COMPANY');
           this.filtredCompanies = this.companies.filter(
             (item) => item.id !== company.id
           );
-        },
-        error: (err) => {
-          this.onError(err);
-          this.isLoaded = true;
-        },
+          this.companies = this.filtredCompanies;
+        }
+      })
+      .catch(() => {
+        console.log("Annulé")
       });
-    }
   }
+
 
   setCompanyValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;

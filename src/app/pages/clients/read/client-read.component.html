@@ -33,8 +33,9 @@
 
           <button
             class="btn btn-outline-danger btn-sm me-2"
-            (click)="deleteClient(client)"
+            (click)="deleteClient($event, client)"
             title="Supprimer Client"
+            [disabled]="!isAdmin"
           >
             <i class="bi bi-trash"></i>
           </button>

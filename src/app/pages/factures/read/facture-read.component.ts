@@ -7,6 +7,9 @@ import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import Exercise from '../../../models/Exercise';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { Subscription } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmModalComponent } from '../../../shared/modal/confirm-modal.component';
+import { AuthService } from '../../../services/auth/auth-service';
 
 @Component({
   selector: 'bill-facture-read',
@@ -21,16 +24,20 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   exercises: Exercise[] = [];
   siret: string = '';
   isLoaded = false;
+  isAdmin = false;
   observableEvent$ = new Subscription();
   private readonly router = inject(Router);
 
   constructor(
     private readonly factureService: FactureService,
     private readonly alertService: AlertService,
-    private readonly sharedDataService: SharedDataService
+    private readonly sharedDataService: SharedDataService,
+    private readonly modalService: NgbModal,
+    public readonly authService: AuthService,
   ) {}
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
     this.loadExercisesRef();
     this.loadFactures();
@@ -73,24 +80,31 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteFacture(facture: Facture) {
-    const ok = confirm(
-      `Voulez-vous vraiment supprimer "${facture.numeroFacture}" ?`
-    );
-    if (ok) {
-      this.factureService.deleteFactureById(facture.id!).subscribe({
-        next: () => {
+  deleteFacture(event: Event, facture: Facture) {
+    event.preventDefault();
+    const modal = this.modalService.open(ConfirmModalComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false,
+      centered: true
+    });
+    modal.componentInstance.item = "Facture";
+    modal.componentInstance.composant = facture
+
+    modal.result
+      .then((result) => {
+        if (result === 'confirm') {
           this.onSuccess('DELETE,FACTURE');
           this.filtredFactures = this.factures.filter(
             (item) => item.id !== facture.id
           );
-        },
-        error: (err) => {
-          this.onError(err);
-        },
+          this.factures = this.filtredFactures;
+        }
+      })
+      .catch(() => {
+        console.log("Annulé")
       });
-    }
-  }
+  } 
 
   updateFacture(facture: Facture) {
     const ok = confirm(

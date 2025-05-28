@@ -23,6 +23,9 @@ import { CommonModule } from '@angular/common';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { Subscription } from 'rxjs';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmModalComponent } from '../../../shared/modal/confirm-modal.component';
+import { AuthService } from '../../../services/auth/auth-service';
 
 @Component({
   selector: 'bill-prestation-read',
@@ -48,6 +51,7 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
   formPresta!: FormGroup;
   monthsYear: any;
   observableEvent$ = new Subscription();
+  isAdmin = false;
 
   private readonly router = inject(Router);
   constructor(
@@ -55,10 +59,13 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
     private readonly prestationService: PrestationService,
     private readonly alertService: AlertService,
     private readonly sharedMessagesService: SharedMessagesService,
-    private readonly sharedDataService: SharedDataService
+    private readonly sharedDataService: SharedDataService,
+    private readonly modalService: NgbModal,
+    private readonly authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.isAdmin();
     this.formPresta = this.fb.group({
       prestaDateFin: ['', Validators.required],
     });
@@ -78,26 +85,24 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
         this.onError(err);
       },
     });
-  }
+  }  
 
-  deletePrestation(prestation: Prestation) {
-    const ok = confirm(
-      `Voulez-vous vraiment supprimer "${prestation.numeroCommande}" ?`
-    );
-    if (ok) {
-      this.prestationService.deletePrestationById(prestation.id!).subscribe({
-        next: () => {
-          this.onSuccess('DELETE,PRESTATION');
-          this.prestations = this.prestations.filter(
-            (item) => item.id !== prestation.id
-          );
-        },
-        error: (err) => {
-          this.onError(err);
-        },
+  deletePrestation(event: Event, prestation: Prestation) {
+    event.preventDefault();
+    const modal = this.modalService.open(ConfirmModalComponent, { size: 'lg', backdrop: 'static' });
+    modal.componentInstance.item = "Prestation";
+    modal.componentInstance.composant = prestation
+
+    modal.result
+      .then((result) => {
+        if (result === 'confirm') {
+          this.prestations = this.prestations.filter((t) => t.id !== prestation.id);
+        }
+      })
+      .catch(() => {
+        console.log("Annulé")
       });
-    }
-  }
+  } 
 
   updatePrestaDateFin() {
     const dateFin = this.formPresta.get('prestaDateFin')?.value;

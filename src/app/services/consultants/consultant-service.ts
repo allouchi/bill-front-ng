@@ -51,9 +51,9 @@ export class ConsultantService implements IConsultantService {
 
   }
 
-  deleteConsultantById(id: number, siret: string): Observable<string> {
+  deleteConsultantById(id: number): Observable<string> {
     return this.http.delete<string>(
-      `${this.CONSULTANT_PATH}/${siret}/${id}`
+      `${this.CONSULTANT_PATH}/${id}`
     );
 
   }

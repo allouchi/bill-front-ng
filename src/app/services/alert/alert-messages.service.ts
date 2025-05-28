@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
   providedIn: 'root',
 })
 export class AlertService implements OnInit, OnDestroy {
-  private alertSubject = new Subject<{
+  private readonly alertSubject = new Subject<{
     message: string;
     type: 'success' | 'error';
   }>();
