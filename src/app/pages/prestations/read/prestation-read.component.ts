@@ -24,8 +24,9 @@ import { SharedMessagesService } from '../../../services/shared/messages.service
 import { Subscription } from 'rxjs';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmModalComponent } from '../../../shared/modal/confirm-modal.component';
+import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
+import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 
 @Component({
   selector: 'bill-prestation-read',
@@ -85,24 +86,29 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
         this.onError(err);
       },
     });
-  }  
+  }
 
   deletePrestation(event: Event, prestation: Prestation) {
     event.preventDefault();
-    const modal = this.modalService.open(ConfirmModalComponent, { size: 'lg', backdrop: 'static' });
-    modal.componentInstance.item = "Prestation";
-    modal.componentInstance.composant = prestation
+    const modal = this.modalService.open(ConfirmDeleteComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+    modal.componentInstance.item = 'Prestation';
+    modal.componentInstance.composant = prestation;
 
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.prestations = this.prestations.filter((t) => t.id !== prestation.id);
+          this.prestations = this.prestations.filter(
+            (t) => t.id !== prestation.id
+          );
         }
       })
       .catch(() => {
-        console.log("Annulé")
+        console.log('Annulé');
       });
-  } 
+  }
 
   updatePrestaDateFin() {
     const dateFin = this.formPresta.get('prestaDateFin')?.value;
@@ -124,12 +130,23 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
     this.router.navigate(['/prestations/add']);
   }
 
-  addNewFacture(prestation: Prestation) {
-    const ok = confirm(`Voulez-vous éditer la facture ?`);
-    if (ok) {
-      this.sharedDataService.setSelectedPrestation(prestation);
-      this.router.navigate(['/factures/add']);
-    }
+  editNewFacture(event: Event, prestation: Prestation) {
+    event.preventDefault();
+    const modal = this.modalService.open(ConfirmEditComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+    modal.componentInstance.item = 'Prestation';
+    modal.componentInstance.composant = prestation;
+
+    modal.result
+      .then((result) => {
+        this.sharedDataService.setSelectedPrestation(prestation);
+        this.router.navigate(['/factures/add']);
+      })
+      .catch(() => {
+        console.log('Annulé');
+      });
   }
 
   private onSuccess(respSuccess: any) {
@@ -147,9 +164,11 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
     }
   }
 
-  prolongerPrestation(prestation: Prestation) {}
+  prolongerPrestation(prestation: Prestation) {
+     this.sharedDataService.setSelectedPrestation(prestation);
+     this.router.navigate(['/prestations/extend']);
+  }
 
-  openModalFacture(prestation: Prestation) {}
 
   ngOnDestroy(): void {
     this.alertService.clear();

@@ -1,0 +1,93 @@
+<div class="p-4">
+    <!-- Header -->
+    <div class="modal-header border-0 pb-0">
+        <h4 class="modal-title text-danger fw-bold">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirmer la mise à jour
+        </h4>
+        <button type="button" class="btn-close" aria-label="Close" data-bs-toggle="tooltip" data-bs-placement="bottom"
+            title="Fermer" (click)="cancel()"></button>
+    </div>
+
+    <!-- Body -->
+
+    <div class="modal-body mt-3">
+        <div *ngIf="item && item === 'Prestation'">
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <div>
+                    La prestation numéro <strong>{{ composant.numeroCommande }}</strong> en faveur du client <strong>{{
+                        composant.client.socialReason }}</strong> va être mise à jour.
+                </div>
+            </div>
+        </div>
+
+    <div class="modal-body mt-3">
+        <div  *ngIf="item && item === 'Tva'">
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <div>
+                    La Tva concernant l'exercice <strong>{{ composant.exercise }}</strong>,
+                    d'un montant de <strong>{{ composant.montantPayment | currency:'EUR' }}</strong>,
+                    payée le <strong>{{ composant.datePayment }}</strong> va être mise à jour !!!
+                </div>
+            </div>
+        </div>
+        <div *ngIf="item && item === 'User'">
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <div>
+                    L'utilisateur <strong>{{ composant.exercise }}</strong>,
+                    d'un montant de <strong>{{ composant.montantPayment | currency:'EUR' }}</strong>
+                    payée le <strong>{{ composant.datePayment }}</strong> va être mis à jour !!!
+                </div>
+            </div>
+        </div>
+        
+        <div *ngIf="item && item === 'Consultant'">
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <div>
+                    Le consultant <strong>{{ composant.firstName }} {{ composant.lastName }} </strong>va être mis à jour !!!
+                </div>
+            </div>
+        </div>
+        <div *ngIf="item && item === 'Client'">
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <div>
+                    Le client <strong>{{ composant.socialReason }}</strong> va être mis à jour !!!
+                </div>
+            </div>
+        </div>
+        
+        <div *ngIf="item && item === 'Company'">
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <div>
+                    La société <strong>{{ composant.socialReason }}</strong> va être mis à jour !!!
+                </div>
+            </div>
+        </div>
+        
+        <div *ngIf="item && item === 'Facture'">
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <div>
+                    La facture numéro <strong>{{ composant.numeroFacture }}</strong>,
+                    d'un montant de <strong>{{ composant.prixTotalTTC | currency:'EUR' }}</strong>
+                    va être mise à jour !!!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer border-0 pt-0 justify-content-end">
+        <button type="button" class="btn btn-secondary px-4" (click)="cancel()">
+            <i class="bi bi-x-circle me-1"></i> Annuler
+        </button>
+        <button type="button" class="btn btn-danger px-4" (click)="confirmEdit()">
+            <i class="bi bi-pencil me-1"></i> Confirmer
+        </button>
+    </div>
+</div>

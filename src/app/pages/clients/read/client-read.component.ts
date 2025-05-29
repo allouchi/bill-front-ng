@@ -8,8 +8,9 @@ import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmModalComponent } from '../../../shared/modal/confirm-modal.component';
+import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
+import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 
 @Component({
   selector: 'bill-client-read',
@@ -55,10 +56,12 @@ export class ClientReadComponent implements OnInit, OnDestroy {
   }
 
   deleteClient(event: Event, client: Client) {
-
     event.preventDefault();
-    const modal = this.modalService.open(ConfirmModalComponent, { size: 'lg', backdrop: 'static' });
-    modal.componentInstance.item = "Client";
+    const modal = this.modalService.open(ConfirmDeleteComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+    modal.componentInstance.item = 'Client';
     modal.componentInstance.composant = client;
 
     modal.result
@@ -69,23 +72,36 @@ export class ClientReadComponent implements OnInit, OnDestroy {
             (item) => item.id !== client.id
           );
           this.clients = this.filtredClients;
-          console.log(this.filtredClients)
+          console.log(this.filtredClients);
         }
       })
       .catch(() => {
-        console.log("Annulé")
+        console.log('Annulé');
       });
-
   }
 
-  updateClient(client: Client) {
-    const ok = confirm(
-      `Voulez-vous vraiment mettre à jour "${client.socialReason}" ?`
-    );
-    if (ok) {
-      this.sharedDataService.setSelectedClient(client);
-      this.router.navigate(['clients/edit']);
-    }
+  editClient(event: Event, client: Client) {
+    event.preventDefault();
+    const modal = this.modalService.open(ConfirmEditComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false,
+      centered: true,
+    });
+
+    modal.componentInstance.item = 'Client';
+    modal.componentInstance.composant = client;
+
+    modal.result
+      .then((result) => {
+        if (result === 'confirm') {
+          this.sharedDataService.setSelectedClient(client);
+          this.router.navigate(['clients/edit']);
+        }
+      })
+      .catch(() => {
+        console.log('Annulé');
+      });
   }
 
   addClient() {

@@ -7,9 +7,9 @@ import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { Subscription } from 'rxjs';
-import { ConfirmModalComponent } from '../../../shared/modal/confirm-modal.component';
+import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AuthService } from '../../../services/auth/auth-service';
+import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 
 @Component({
   selector: 'bill-consultant-read',
@@ -31,8 +31,7 @@ export class ConsultantReadComponent {
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
     private readonly sharedMessagesService: SharedMessagesService,
-    private readonly router: Router,
-    private readonly authService: AuthService
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -54,16 +53,15 @@ export class ConsultantReadComponent {
   }
 
   deleteConsultant(event: Event, consultant: Consultant) {
-
     event.preventDefault();
-    const modal = this.modalService.open(ConfirmModalComponent, {
+    const modal = this.modalService.open(ConfirmDeleteComponent, {
       size: 'lg',
       backdrop: 'static',
       keyboard: false,
-      centered: true
+      centered: true,
     });
 
-    modal.componentInstance.item = "Consultant";
+    modal.componentInstance.item = 'Consultant';
     modal.componentInstance.composant = consultant;
 
     modal.result
@@ -76,7 +74,7 @@ export class ConsultantReadComponent {
         }
       })
       .catch(() => {
-        console.log("Annulé")
+        console.log('Annulé');
       });
   }
 
@@ -93,6 +91,30 @@ export class ConsultantReadComponent {
       this.sharedDataService.setSelectedConsultant(consultant);
       this.router.navigate(['consultants/edit']);
     }
+  }
+
+  editConsultant(event: Event, consultant: Consultant) {
+    event.preventDefault();
+    const modal = this.modalService.open(ConfirmEditComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false,
+      centered: true,
+    });
+
+    modal.componentInstance.item = 'Consultant';
+    modal.componentInstance.composant = consultant;
+
+    modal.result
+      .then((result) => {
+        if (result === 'confirm') {
+          this.sharedDataService.setSelectedConsultant(consultant);
+          this.router.navigate(['consultants/edit']);
+        }
+      })
+      .catch(() => {
+        console.log('Annulé');
+      });
   }
 
   private onSuccess(respSuccess: any) {

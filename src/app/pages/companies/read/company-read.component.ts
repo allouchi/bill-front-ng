@@ -12,7 +12,8 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth-service';
 import User from '../../../models/User';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmModalComponent } from '../../../shared/modal/confirm-modal.component';
+import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
+import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 
 @Component({
   selector: 'company-read',
@@ -39,7 +40,6 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly authService: AuthService
-
   ) {}
 
   ngOnInit(): void {
@@ -52,7 +52,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     this.companyService.findCompanies().subscribe({
       next: (companies) => {
         setTimeout(() => {
-          this.companies = companies;        
+          this.companies = companies;
           this.filtredCompanies = this.companies;
           this.isLoaded = true;
           const company = this.companies.find(
@@ -72,18 +72,16 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     });
   }
 
-
   deleteCompany(event: Event, company: Company) {
-
     event.preventDefault();
-    const modal = this.modalService.open(ConfirmModalComponent, {
+    const modal = this.modalService.open(ConfirmDeleteComponent, {
       size: 'lg',
       backdrop: 'static',
       keyboard: false,
-      centered: true
+      centered: true,
     });
 
-    modal.componentInstance.item = "Company";
+    modal.componentInstance.item = 'Company';
     modal.componentInstance.composant = company;
 
     modal.result
@@ -97,10 +95,9 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
         }
       })
       .catch(() => {
-        console.log("Annulé")
+        console.log('Annulé');
       });
   }
-
 
   setCompanyValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
@@ -130,14 +127,28 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateCompany(company: Company) {
-    const ok = confirm(
-      `Voulez-vous vraiment mettre à jour "${company.socialReason}" ?`
-    );
-    if (ok) {
-      this.sharedDataService.setSelectCompany(company!);
-      this.router.navigate(['/companies/edit']);
-    }
+  editCompany(event: Event, company: Company) {
+    event.preventDefault();
+    const modal = this.modalService.open(ConfirmEditComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false,
+      centered: true,
+    });
+
+    modal.componentInstance.item = 'Company';
+    modal.componentInstance.composant = company;
+
+    modal.result
+      .then((result) => {
+        if (result === 'confirm') {
+          this.sharedDataService.setSelectCompany(company!);
+          this.router.navigate(['/companies/edit']);
+        }
+      })
+      .catch(() => {
+        console.log('Annulé');
+      });
   }
 
   addCampany() {

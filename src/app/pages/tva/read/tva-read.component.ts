@@ -14,7 +14,7 @@ import TvaInfos from '../../../models/TvaInfos';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmModalComponent } from '../../../shared/modal/confirm-modal.component';
+import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
 
 @Component({
@@ -51,12 +51,12 @@ export class TvaReadComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.siret = this.sharedDataService.getSiret();
-    this.isAdmin = this.authService.isAdmin();   
+    this.isAdmin = this.authService.isAdmin();
     this.loadCompanies();
     this.loadMonthYear();
     this.loadExercicesRef();
     this.loadTva('Tous');
-    this.loadTvaInfo('Tous');    
+    this.loadTvaInfo('Tous');
   }
 
   private loadCompanies() {
@@ -146,25 +146,26 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     this.router.navigate(['/tvas/edit']);
   }
 
-
   deleteTva(event: Event, tva: Tva) {
     event.preventDefault();
-    const modal = this.modalService.open(ConfirmModalComponent, { size: 'lg', backdrop: 'static' });
-    modal.componentInstance.item = "Tva";
-    modal.componentInstance.composant = tva    
+    const modal = this.modalService.open(ConfirmDeleteComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+    modal.componentInstance.item = 'Tva';
+    modal.componentInstance.composant = tva;
 
     modal.result
       .then((result) => {
-        if (result === 'confirm') {          
+        if (result === 'confirm') {
           this.filtredTvas = this.tvas.filter((t) => t.id !== tva.id);
           this.tvas = this.filtredTvas;
         }
       })
       .catch(() => {
-        console.log("Annulé")
+        console.log('Annulé');
       });
-  } 
-
+  }
 
   private onSuccess(respSuccess: any) {
     this.alertService.show(respSuccess, 'success');

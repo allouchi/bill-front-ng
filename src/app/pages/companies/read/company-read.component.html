@@ -51,22 +51,22 @@
                 disabled
               />
             </label>
+
+             <button
+              class="btn btn-outline-primary btn-sm me-2"
+              (click)="editCompany($event,company)"
+              title="Modifier Company"
+            >
+              <i class="bi bi-pencil"></i>
+            </button>
             <button
-              class="btn btn-outline-danger btn-sm me-2"
+              class="btn btn-outline-danger btn-sm"
               (click)="deleteCompany($event,company)"
               title="Supprimer Company"
               [disabled]="!isAdmin"
             >
               <i class="bi bi-trash"></i>
-            </button>
-
-            <button
-              class="btn btn-outline-primary btn-sm"
-              (click)="updateCompany(company)"
-              title="Modifier Company"
-            >
-              <i class="bi bi-pencil"></i>
-            </button>
+            </button>           
           </td>
         </tr>
         }

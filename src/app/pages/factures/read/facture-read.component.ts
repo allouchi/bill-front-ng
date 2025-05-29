@@ -8,7 +8,7 @@ import Exercise from '../../../models/Exercise';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmModalComponent } from '../../../shared/modal/confirm-modal.component';
+import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
 
 @Component({
@@ -33,7 +33,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
     private readonly modalService: NgbModal,
-    public readonly authService: AuthService,
+    public readonly authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -82,14 +82,14 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   deleteFacture(event: Event, facture: Facture) {
     event.preventDefault();
-    const modal = this.modalService.open(ConfirmModalComponent, {
+    const modal = this.modalService.open(ConfirmDeleteComponent, {
       size: 'lg',
       backdrop: 'static',
       keyboard: false,
-      centered: true
+      centered: true,
     });
-    modal.componentInstance.item = "Facture";
-    modal.componentInstance.composant = facture
+    modal.componentInstance.item = 'Facture';
+    modal.componentInstance.composant = facture;
 
     modal.result
       .then((result) => {
@@ -102,9 +102,9 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
         }
       })
       .catch(() => {
-        console.log("Annulé")
+        console.log('Annulé');
       });
-  } 
+  }
 
   updateFacture(facture: Facture) {
     const ok = confirm(

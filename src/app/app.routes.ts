@@ -20,6 +20,7 @@ import { LoginComponent } from './authentification/login/login.component';
 import { LogoutComponent } from './authentification/logout/logout.component';
 import { AddUserComponent } from './pages/users/add/add.component';
 import { EditUserComponent } from './pages/users/edit/edit.component';
+import PrestationExtendComponent from './pages/prestations/add/prestation-extend.component';
 
 export const BILLING_ROUTE: Routes = [
   {
@@ -112,6 +113,10 @@ export const BILLING_ROUTE: Routes = [
       {
         path: 'add',
         loadComponent: () => PrestationEditComponent,
+      },
+      {
+        path: 'extend',
+        loadComponent: () => PrestationExtendComponent,
       },
     ],
   },

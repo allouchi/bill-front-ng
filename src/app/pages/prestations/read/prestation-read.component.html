@@ -31,10 +31,18 @@
           <td>
             <button
               class="btn btn-outline-primary btn-sm me-2"
-              (click)="addNewFacture(prestation)"
+              (click)="editNewFacture($event, prestation)"
               title="Editer Facture"
             >
               <i class="bi bi-pencil"></i>
+            </button>
+
+             <button
+              class="btn btn-add btn-sm me-2"
+              (click)="prolongerPrestation(prestation)"
+              title="Prolonger la Prestation"
+            >
+              <i class="bi bi-plus"></i>
             </button>
 
             <button
@@ -44,14 +52,7 @@
               [disabled]="!isAdmin"
             >
               <i class="bi bi-trash"></i>
-            </button>
-            <button
-              class="btn btn-add btn-sm me-2"
-              (click)="prolongerPrestation(prestation)"
-              title="Prolonger la Prestation"
-            >
-              <i class="bi bi-plus"></i>
-            </button>
+            </button>           
           </td>
         </tr>
         }
