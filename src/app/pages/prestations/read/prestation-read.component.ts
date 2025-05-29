@@ -114,7 +114,7 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
     const dateFin = this.formPresta.get('prestaDateFin')?.value;
     this.selectedPrestation.dateFin = dateFin;
     this.prestationService
-      .updateDatePrestation(this.selectedPrestation, this.siret)
+      .updateDatePrestation(this.selectedPrestation)
       .subscribe({
         next: () => {
           this.onSuccess('UPDATE,PRESTATION');

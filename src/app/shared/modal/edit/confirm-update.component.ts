@@ -21,16 +21,7 @@ export class ConfirmEditComponent implements OnInit {
   composant: any;
   state: boolean = false;
 
-  constructor(
-    private readonly activeModal: NgbActiveModal,
-    private readonly alertService: AlertService,
-    private readonly tvaService: TvaService,
-    private readonly factureService: FactureService,
-    private readonly clientService: ClientService,
-    private readonly consultantService: ConsultantService,
-    private readonly companyService: CompanyService,
-    private readonly prestationService: PrestationService
-  ) {}
+  constructor(private readonly activeModal: NgbActiveModal) {}
 
   ngOnInit() {
     // setTimeout(() => this.confirmBtn.nativeElement.focus(), 0);
@@ -42,106 +33,44 @@ export class ConfirmEditComponent implements OnInit {
 
   confirmEdit(): void {
     if (this.item == 'Company') {
-      this.deleteCompany(this.composant.id);
+      this.editCompany(this.composant);
     }
 
     if (this.item == 'Prestation') {
-      this.deletePrestation(this.composant.id);
+      this.editPrestation(this.composant);
     }
 
     if (this.item == 'Facture') {
-      this.deleteFacture(this.composant.id);
+      this.editFacture(this.composant);
     }
 
     if (this.item == 'Consultant') {
-      this.deleteConsultant(this.composant.id);
+      this.editConsultant(this.composant);
     }
 
     if (this.item == 'Client') {
-      this.deleteClient(this.composant.id);
+      this.editClient(this.composant);
     }
 
     if (this.item == 'Tva') {
-      this.deleteTva(this.composant.id);
+      this.editTva(this.composant);
     }
 
     if (this.item == 'User') {
-      this.deleteFacture(this.composant.id);
+      this.editFacture(this.composant);
     }
     this.activeModal.close('confirm');
   }
 
-  deleteCompany(id: number) {
-    this.companyService.deleteCompanyById(id).subscribe({
-      next: () => {
-        this.onSuccess('DELETE,COMPANY');
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
+  editCompany(composant: any) {}
 
-  deletePrestation(id: number) {
-    this.prestationService.deletePrestationById(id).subscribe({
-      next: () => {
-        this.onSuccess('DELETE,PRESTATION');
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
+  editPrestation(composant: any) {}
 
-  deleteFacture(id: number) {
-    this.factureService.deleteFactureById(id).subscribe({
-      next: () => {
-        this.onSuccess('DELETE,FACTURE');
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
+  editFacture(composant: any) {}
 
-  deleteConsultant(id: number) {
-    this.consultantService.deleteConsultantById(id).subscribe({
-      next: () => {
-        this.onSuccess('DELETE,CONSULTANT');
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
+  editConsultant(composant: any) {}
 
-  deleteClient(id: number) {
-    this.clientService.deleteClientById(id).subscribe({
-      next: () => {
-        this.onSuccess('DELETE,CLIENT');
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
+  editClient(composant: any) {}
 
-  deleteTva(id: number) {
-    this.tvaService.deleteTvaById(id).subscribe({
-      next: () => {
-        this.onSuccess('DELETE,TVA');
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
-
-
-
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
-
-  private onError(error: any) {}
+  editTva(composant: any) {}
 }

@@ -19,7 +19,7 @@ export class PrestationService implements IPrestationService {
     templateChoice: boolean,
     moisFactureId: number | null
   ): Observable<Prestation> {
-    const isNew: boolean = prestation.id === 0 || prestation.id === null;  
+    const isNew: boolean = prestation.id === 0 || prestation.id === null;
     if (isNew) {
       return this.http.post<Prestation>(
         `${this.PRESTATION_PATH}/${siret}`,
@@ -33,14 +33,8 @@ export class PrestationService implements IPrestationService {
     }
   }
 
-  updateDatePrestation(
-    prestation: Prestation,
-    siret: string
-  ): Observable<Prestation> {
-    return this.http.put<Prestation>(
-      `${this.PRESTATION_PATH}/${siret}`,
-      prestation
-    );
+  updateDatePrestation(prestation: Prestation): Observable<Prestation> {
+    return this.http.put<Prestation>(`${this.PRESTATION_PATH}`, prestation);
   }
 
   deletePrestationById(id: number): Observable<string> {

@@ -23,7 +23,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     private readonly fb: FormBuilder,
     private readonly alertService: AlertService,
     private readonly isAuthService: IsAuthService
-
   ) {}
 
   ngOnInit(): void {
@@ -44,19 +43,22 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.onSuccess(response);
           this.isAuthService.setIsAuth(true);
         },
-        error: (err) => this.onError(err.error),
+        error: (err) => this.onError(err),
       });
   }
 
   private onSuccess(authResponse: AuthResponse) {
-    //this.alertService.show(respSuccess, 'success');
     this.authService.saveToken(authResponse.jwt);
     this.authService.setUser(authResponse);
     this.alertService.show('AUTHENT', 'success');
     this.router.navigate(['bill-dashboard']);
   }
 
-  private onError(error: any) {    
+  private onError(error: any) {
+    console.log(error);
+    console.log(error.message); // Ton message d'erreur
+    console.log(error.code); // Le code personnalisé
+
     this.isAuthService.setIsAuth(false);
     this.authService.logout();
     this.formLogin.patchValue({

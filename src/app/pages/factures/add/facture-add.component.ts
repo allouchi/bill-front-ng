@@ -77,8 +77,8 @@ export class FactureAddComponent implements OnInit {
     });
   }
 
-  private addNewFacture(prestation: Prestation) {
-    prestation.id = this.selectedPrestation!.id;    
+  private editFacture(prestation: Prestation) {
+    prestation.id = this.selectedPrestation!.id;
     this.isUpload = false;
     this.prestationService
       .createOrUpdatePrestation(
@@ -117,7 +117,7 @@ export class FactureAddComponent implements OnInit {
         siret: this.selectedPrestation!.siret,
       };
 
-      this.addNewFacture(prestation);
+      this.editFacture(prestation);
     } else {
       for (const [key, control] of Object.entries(this.formFacture.controls)) {
         if (control.invalid) {
@@ -141,7 +141,9 @@ export class FactureAddComponent implements OnInit {
     }
   }
 
-  cancel() {}
+  cancel() {
+    this.router.navigate(['/factures/read']);
+  }
 
   ngOnDestroy(): void {
     this.alertService.clear();

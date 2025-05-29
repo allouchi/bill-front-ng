@@ -25,8 +25,6 @@ import { PrestationService } from '../../../services/prestations/prestation.serv
 export default class PrestationExtendComponent implements OnInit {
   formPrestation!: FormGroup;
   prestation: Prestation | null = null;
-  siret: string = '';
-
   constructor(
     private readonly fb: FormBuilder,
     private readonly router: Router,
@@ -36,11 +34,11 @@ export default class PrestationExtendComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     this.prestation = this.sharedDataService.getSelectedPrestation();
-    let dateFin =  this.prestation?.dateFin;
+    let dateFin = this.prestation?.dateFin;
     let formatedDate = dateFin?.split('/');
-    dateFin = formatedDate![2]+'-'+ formatedDate![1]+  '-'+formatedDate![0];
+    dateFin =
+      formatedDate![2] + '-' + formatedDate![1] + '-' + formatedDate![0];
 
-    this.siret = this.sharedDataService.getSiret();
     this.formPrestation = this.fb.group({
       dateFin: [dateFin, Validators.required],
     });
@@ -52,9 +50,8 @@ export default class PrestationExtendComponent implements OnInit {
         dateFin: this.formPrestation.get('dateFin')?.value,
       });
 
-      this.prestation!.dateFin =
-        this.formPrestation.get('dateFin')?.value;
-      this.prestationService.updateDatePrestation(this.prestation!, this.siret).subscribe({
+      this.prestation!.dateFin = this.formPrestation.get('dateFin')?.value;
+      this.prestationService.updateDatePrestation(this.prestation!).subscribe({
         next: () => {
           this.onSuccess('UPDATE,PRESTATION');
           this.router.navigate(['/prestations/read']);
@@ -64,7 +61,9 @@ export default class PrestationExtendComponent implements OnInit {
         },
       });
     } else {
-      for (const [key, control] of Object.entries(this.formPrestation.controls)) {
+      for (const [key, control] of Object.entries(
+        this.formPrestation.controls
+      )) {
         if (control.invalid) {
           control.markAsTouched();
         }

@@ -52,11 +52,12 @@ export class TvaEditComponent implements OnInit, OnDestroy {
     });
 
     this.loadMonthYear();
-    this.loadExercicesRef();
 
     this.companies = this.sharedDataService.getCompanies();
     this.tva = this.sharedDataService.getSelectedTva();
     this.exercices = this.sharedDataService.getExercices();
+    
+    this.exercices = this.exercices!.filter((ex) => ex.exercise !== 'Tous');
 
     if (this.tva) {
       this.tvaId = this.tva.id;
@@ -68,7 +69,6 @@ export class TvaEditComponent implements OnInit, OnDestroy {
         (c) => c.exercise == this.tva!.exercise
       )?.exercise;
 
-      //25/05/2025
       const datePaiement = this.tva.datePayment.split('/');
       let formatedDate =
         datePaiement[2] + '-' + datePaiement[1] + '-' + datePaiement[0];
@@ -85,17 +85,7 @@ export class TvaEditComponent implements OnInit, OnDestroy {
   private loadMonthYear() {
     this.monthsYear = GetMonthsOfYear();
   }
-
-  private loadExercicesRef() {
-    this.tvaService.findExercisesRef().subscribe({
-      next: (exercises) => {
-        this.exercices = exercises;
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
+ 
 
   setMonthValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;

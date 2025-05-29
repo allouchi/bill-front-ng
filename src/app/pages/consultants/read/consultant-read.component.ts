@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
+import { AuthService } from '../../../services/auth/auth-service';
 
 @Component({
   selector: 'bill-consultant-read',
@@ -31,10 +32,12 @@ export class ConsultantReadComponent {
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
     private readonly sharedMessagesService: SharedMessagesService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.isAdmin();
     this.loadConsultants();
   }
 
