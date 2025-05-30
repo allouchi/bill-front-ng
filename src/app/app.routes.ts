@@ -16,11 +16,11 @@ import { TvaEditComponent } from './pages/tva/edit/tva-edit.component';
 import { FactureAddComponent } from './pages/factures/add/facture-add.component';
 
 import { AuthGuard } from './services/auth/auth-guard';
-import { LoginComponent } from './authentification/login/login.component';
-import { LogoutComponent } from './authentification/logout/logout.component';
 import { AddUserComponent } from './pages/users/add/add.component';
 import { EditUserComponent } from './pages/users/edit/edit.component';
 import PrestationExtendComponent from './pages/prestations/add/prestation-extend.component';
+import { LoginComponent } from './pages/login/login.component';
+import { LogoutComponent } from './pages/logout/logout.component';
 
 export const BILLING_ROUTE: Routes = [
   {

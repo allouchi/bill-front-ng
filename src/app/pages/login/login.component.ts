@@ -1,12 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth/auth-service';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AlertService } from '../../services/alert/alert-messages.service';
 import { IsAuthService } from '../../services/shared/islogin-service';
 import { AuthResponse } from '../../models/AuthResponse';
-
 
 @Component({
   selector: 'bill-login',
@@ -16,6 +21,7 @@ import { AuthResponse } from '../../models/AuthResponse';
 })
 export class LoginComponent implements OnInit, OnDestroy {
   formLogin!: FormGroup;
+  isSubmit: boolean = false;
 
   constructor(
     private readonly authService: AuthService,
@@ -33,9 +39,11 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   authenticate() {
+    this.isSubmit = true;
+    this.alertService.show('', 'success');
     const username = this.formLogin.get('username')?.value;
     const password = this.formLogin.get('password')?.value;
-
+   
     this.authService
       .login({ username: username, password: password })
       .subscribe({
@@ -55,10 +63,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   private onError(error: any) {
-    console.log(error);
-    console.log(error.message); // Ton message d'erreur
-    console.log(error.code); // Le code personnalisé
-
     this.isAuthService.setIsAuth(false);
     this.authService.logout();
     this.formLogin.patchValue({
@@ -68,7 +72,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     const code: string = error.code;
     switch (code) {
-      case 'Http failure': {
+      case 'ERR_SERVER_DOWN': {
         this.alertService.show('Problème de connextion au serveur', 'error');
         break;
       }

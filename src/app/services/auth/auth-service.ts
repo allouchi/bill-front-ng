@@ -24,27 +24,27 @@ export class AuthService {
   ) {}
 
   login(credentials: { username: string; password: string }) {
-    return this.http.post<AuthResponse>(this.url, credentials).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.error instanceof ErrorEvent) {
-          return throwError(
-            () =>
-              new CustomError(
-                'Connexion impossible au serveur.',
-                'ERR_CONNECTION_REFUSED'
-              )
-          );
-        } else {
-          return throwError(
-            () =>
-              new CustomError(
-                `Erreur ${error.status} : ${error.statusText}`,
-                `HTTP_${error.status}`
-              )
-          );
-        }
+    return this.http
+      .post<AuthResponse>(this.url, credentials, {
+        withCredentials: true,
       })
-    );
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          if (error.error instanceof ErrorEvent) {
+            return throwError(
+              () =>
+                new CustomError(
+                  'Connexion impossible au serveur.',
+                  'ERR_CONNECTION_REFUSED'
+                )
+            );
+          } else {
+            return throwError(
+              () => new CustomError(error.error.code, error.error.message)
+            );
+          }
+        })
+      );
   }
 
   saveToken(token: string) {
