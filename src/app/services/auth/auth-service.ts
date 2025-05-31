@@ -7,13 +7,14 @@ import { LibelleCompanyService } from '../shared/libelle-company-service';
 import { SharedDataService } from '../shared/shared-data-service';
 import { catchError, throwError } from 'rxjs';
 import { CustomError } from '../error/CustomError';
+import Role from '../../models/Role';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   url = env.apiURL + '/users/login';
-  userRole: string = '';
+  userRoles: Role[] = [];
   user!: User | null;
   libelleHeader: string = '';
 
@@ -63,17 +64,13 @@ export class AuthService {
     localStorage.removeItem('jwt');
   }
 
-  getRole(): string {
-    return this.userRole;
+  getRoles(): Role[] {
+    return this.userRoles;
   }
 
   setUser(authResponse: AuthResponse) {
     this.user = authResponse.user;
-    this.userRole = authResponse.user.role!.substring(
-      5,
-
-      authResponse.user.role?.length
-    );
+    this.userRoles = authResponse.user.roles!;
     let libelleHeader = '';
     if (authResponse.user) {
       libelleHeader =
@@ -94,12 +91,20 @@ export class AuthService {
   }
 
   hasRole(expectedRole: string): boolean {
-    return this.userRole === expectedRole;
+    const role = this.userRoles.filter((u) => u.role === expectedRole);
+    if (role) {
+      return true;
+    }
+    return false;
   }
 
   // Pour plusieurs rôles autorisés :
-  hasAnyRole(roles: string[]): boolean {
-    return roles.includes(this.userRole);
+  hasAnyRole(expectedRoles: string[]): boolean {
+    if (this.user && this.user.roles) {
+      const match = this.user.roles.find((r) => expectedRoles.includes(r.role));
+      return !!match;
+    }
+    return false;
   }
 
   getLibelleHeader() {
@@ -107,7 +112,7 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    if (this.hasRole('ADMIN')) {
+    if (this.hasRole('ROLE_ADMIN')) {
       return true;
     }
     return false;

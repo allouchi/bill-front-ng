@@ -21,6 +21,7 @@ import { EditUserComponent } from './pages/users/edit/edit.component';
 import PrestationExtendComponent from './pages/prestations/add/prestation-extend.component';
 import { LoginComponent } from './pages/login/login.component';
 import { LogoutComponent } from './pages/logout/logout.component';
+import { UserReadComponent } from './pages/users/read/user-read.component';
 
 export const BILLING_ROUTE: Routes = [
   {
@@ -168,6 +169,10 @@ export const BILLING_ROUTE: Routes = [
       {
         path: 'add',
         loadComponent: () => AddUserComponent,
+      },
+      {
+        path: 'read',
+        loadComponent: () => UserReadComponent,
       },
     ],
   },

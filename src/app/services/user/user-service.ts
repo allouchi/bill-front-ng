@@ -15,7 +15,9 @@ export class UserService implements IUserService, IRolesService {
   private readonly ROLES_PATH: string = `${this.apiURL}` + '/roles';
 
   constructor(private readonly http: HttpClient) {}
-
+  findUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.USER_PATH}`);
+  }
   login(user: User): Observable<User> {
     return this.http.get<User>(
       `${this.USER_PATH}/${user.email}/${user.password}`

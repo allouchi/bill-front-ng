@@ -6,6 +6,7 @@ import Facture from '../../models/Facture';
 import Consultant from '../../models/Consultant';
 import Client from '../../models/Client';
 import Exercise from '../../models/Exercise';
+import User from '../../models/User';
 
 @Injectable({ providedIn: 'root' })
 export class SharedDataService {
@@ -22,6 +23,7 @@ export class SharedDataService {
   exercices: Exercise[] | null = null;
   selectedExercise: Exercise | null = null;
   siret: string = '';
+  selectedUser: User | null = null;
 
   getSelectedExercise(): Exercise | null {
     return this.selectedExercise;
@@ -72,6 +74,13 @@ export class SharedDataService {
 
   gertSelectedFacture() {
     return this.selectedFacture;
+  }
+
+  setSelectedUser(user: User) {
+    this.selectedUser = user;
+  }
+  getSelectedUser() {
+    return this.selectedUser;
   }
 
   setSelectedConsultant(consultant: Consultant) {

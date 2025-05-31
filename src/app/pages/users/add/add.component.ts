@@ -92,7 +92,7 @@ export class AddUserComponent implements OnInit {
         lastName: this.userForm.get('lastName')?.value,
         siret: this.userForm.get('siret')?.value,
         password: this.userForm.get('password')?.value,
-        role: this.userForm.get('role')?.value,
+        roles: this.userForm.get('role')?.value,
         activated: true,
       };
 

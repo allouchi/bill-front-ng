@@ -32,6 +32,8 @@ export interface IUserService {
    */
   login(user: User): Observable<User>;
 
+  findUsers(): Observable<User[]>;
+
   /**
    * Disconnect user
    *

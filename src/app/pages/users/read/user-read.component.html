@@ -1,0 +1,61 @@
+@if(isLoaded){
+
+<div class="mt-4 mx-5">
+  <div class="text-end mb-2 me-3">
+    <button class="btn btn-pink" (click)="addUser()" title="Nouveau">
+      Ajouter
+    </button>
+  </div>
+  <table class="table table-success table-striped">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col">Identité</th>
+        <th scope="col">Email</th>
+        <th scope="col">Société</th>
+        <th scope="col">Role</th>
+        <th scope="col">Actif</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of filtredUsers; track user.id) {
+      <tr>
+        <td style="text-align: center">
+          {{ user | userPipe }}
+        </td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.siret! | raisonSociale : companies }}</td>
+        <td>
+          <span *ngFor="let role of user.roles; let last = last">
+            {{ role.description }}<span *ngIf="!last">, </span>
+          </span>
+        </td>
+        <td>{{ user.activated ? "oui" : "non" }}</td>
+
+        <td>
+          <button
+            class="btn btn-outline-primary btn-sm me-2"
+            (click)="editUser($event, user)"
+            title="Modifier user"
+            [disabled]="!isAdmin"
+          >
+            <i class="bi bi-pencil"></i>
+          </button>
+
+          <button
+            class="btn btn-outline-danger btn-sm me-2"
+            (click)="deleteUser($event, user)"
+            title="Supprimer utilisateur"
+            [disabled]="!isAdmin"
+          >
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+}@else {
+<bill-waiting></bill-waiting>
+}

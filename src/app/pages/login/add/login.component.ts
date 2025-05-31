@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.alertService.show('', 'success');
     const username = this.formLogin.get('username')?.value;
     const password = this.formLogin.get('password')?.value;
-
+   
     this.authService
       .login({ username: username, password: password })
       .subscribe({

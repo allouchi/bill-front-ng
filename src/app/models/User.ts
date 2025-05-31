@@ -8,6 +8,6 @@ export default interface User {
   lastName?: string;
   password: string;
   siret?: string;
-  role?: string;
+  roles?: Role[];
   activated: boolean;
 }
