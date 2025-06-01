@@ -4,22 +4,22 @@ import { UserService } from '../../../services/user/user-service';
 import { CommonModule } from '@angular/common';
 import Company from '../../../models/Company';
 import { CompanyService } from '../../../services/companies/company-service';
-import RolesRef from '../../../models/RolesRef';
 import User from '../../../models/User';
 import { Router } from '@angular/router';
 import { AlertService } from '../../../services/alert/alert-messages.service';
 import GetMessagesEroor from '../../../shared/utils/messages-error';
+import Role from '../../../models/Role';
 
 @Component({
   selector: 'bill-user-add',
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
-  templateUrl: './add.component.html',
-  styleUrl: './add.component.css',
+  templateUrl: './user-add.component.html',
+  styleUrl: './user-add.component.css',
 })
 export class AddUserComponent implements OnInit {
   userForm!: FormGroup;
   companies: Company[] = [];
-  roles: RolesRef[] = [];
+  roles: Role[] = [];
   selectedRole: string = '';
   selectedCompany: string = '';
 
@@ -38,7 +38,7 @@ export class AddUserComponent implements OnInit {
       lastName: ['', Validators.required],
       siret: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(3)]],
-      role: ['', Validators.required],
+      role: [null, Validators.required],
     });
 
     this.loadCompanies();
@@ -67,14 +67,8 @@ export class AddUserComponent implements OnInit {
         this.onError(err);
       },
     });
-  }
+  } 
 
-  setRoleValue(event: Event) {
-    const selectedValue = (event.target as HTMLSelectElement).value;
-    this.userForm.patchValue({
-      role: selectedValue,
-    });
-  }
 
   setCompanyValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
@@ -83,7 +77,25 @@ export class AddUserComponent implements OnInit {
     });
   }
 
+    setRoleValue(event: Event) {
+    const selectedValue = (event.target as HTMLSelectElement).value; 
+    
+    this.userForm.patchValue({      
+      role: selectedValue,
+    });
+  }
+
+   getByRole(role: string) : Role{    
+    const selectedRole = this.roles.find(r=> r.role == role);   
+    return selectedRole!
+  }
+
+
   addUser(): void {
+    const selected: Role [] = [];
+    let role = this.getByRole(this.selectedRole);   
+    selected.push(role!);
+
     if (this.userForm.valid) {
       let user: User = {
         id: null,
@@ -92,10 +104,10 @@ export class AddUserComponent implements OnInit {
         lastName: this.userForm.get('lastName')?.value,
         siret: this.userForm.get('siret')?.value,
         password: this.userForm.get('password')?.value,
-        roles: this.userForm.get('role')?.value,
+        roles: selected,
         activated: true,
       };
-
+     
       this.userService.createUser(user).subscribe({
         next: () => this.onSuccess('ADD,USER'),
         error: (err) => this.onError(err),

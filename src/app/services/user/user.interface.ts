@@ -34,6 +34,8 @@ export interface IUserService {
 
   findUsers(): Observable<User[]>;
 
+  deleteUser(id: number): Observable<User>;
+
   /**
    * Disconnect user
    *

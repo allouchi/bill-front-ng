@@ -8,7 +8,8 @@ import { ClientService } from '../../../services/clients/client-service';
 import { ConsultantService } from '../../../services/consultants/consultant-service';
 import { CompanyService } from '../../../services/companies/company-service';
 import { PrestationService } from '../../../services/prestations/prestation.service';
-
+import { UserService } from '../../../services/user/user-service';
+import User from '../../../models/User';
 
 @Component({
   selector: 'bill-confirm-modal',
@@ -19,7 +20,6 @@ import { PrestationService } from '../../../services/prestations/prestation.serv
 export class ConfirmDeleteComponent implements OnInit {
   item: any;
   composant: any;
-  
 
   constructor(
     private readonly activeModal: NgbActiveModal,
@@ -29,7 +29,8 @@ export class ConfirmDeleteComponent implements OnInit {
     private readonly clientService: ClientService,
     private readonly consultantService: ConsultantService,
     private readonly companyService: CompanyService,
-    private readonly prestationService: PrestationService
+    private readonly prestationService: PrestationService,
+    private readonly userService: UserService
   ) {}
 
   ngOnInit() {
@@ -66,9 +67,21 @@ export class ConfirmDeleteComponent implements OnInit {
     }
 
     if (this.item == 'User') {
-      this.deleteFacture(this.composant.id);
+      this.deleteUser(this.composant);
     }
     this.activeModal.close('confirm');
+  }
+
+  deleteUser(user: User) {
+    console.log(user);
+    this.userService.deleteUser(user.id!).subscribe({
+      next: () => {
+        this.onSuccess('DELETE,USER');
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
   }
 
   deleteCompany(id: number) {
@@ -136,8 +149,6 @@ export class ConfirmDeleteComponent implements OnInit {
       },
     });
   }
-
-  
 
   private onSuccess(respSuccess: any) {
     this.alertService.show(respSuccess, 'success');

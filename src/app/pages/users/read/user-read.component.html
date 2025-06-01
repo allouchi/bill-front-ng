@@ -25,7 +25,7 @@
         </td>
         <td>{{ user.email }}</td>
         <td>{{ user.siret! | raisonSociale : companies }}</td>
-        <td>
+        <td *ngIf="user.roles">
           <span *ngFor="let role of user.roles; let last = last">
             {{ role.description }}<span *ngIf="!last">, </span>
           </span>

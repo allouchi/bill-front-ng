@@ -57,7 +57,7 @@ export class ConfirmEditComponent implements OnInit {
     }
 
     if (this.item == 'User') {
-      this.editFacture(this.composant);
+      this.editUser(this.composant);
     }
     this.activeModal.close('confirm');
   }
@@ -73,4 +73,6 @@ export class ConfirmEditComponent implements OnInit {
   editClient(composant: any) {}
 
   editTva(composant: any) {}
+
+   editUser(composant: any) {}
 }

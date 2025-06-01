@@ -19,7 +19,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'bill-User-read',
   standalone: true,
-  imports: [ WaitingComponent, UserNamePipe, RaisonSocialePipe, CommonModule],
+  imports: [WaitingComponent, UserNamePipe, RaisonSocialePipe, CommonModule],
   templateUrl: './User-read.component.html',
   styleUrl: './User-read.component.css',
 })
@@ -38,32 +38,26 @@ export class UserReadComponent implements OnInit, OnDestroy {
     private readonly sharedDataService: SharedDataService,
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly authService: AuthService,
-     private readonly companyService: CompanyService,
+    private readonly companyService: CompanyService
   ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
-     this.loadCompanies();
     this.loadUsers();
+    this.loadCompanies();
   }
 
-    loadCompanies() {
+  loadCompanies() {
     this.companyService.findCompanies().subscribe({
       next: (companies) => {
         setTimeout(() => {
-          this.companies = companies;                 
+          this.companies = companies;
         }, 500);
       },
       error: (err) => {
         this.onError(err);
-        this.isLoaded = true;
       },
     });
-  }
-
-  buildRaisonSocial(siret: string) : string {
-    console.log("siret :", siret)
-    return '';
   }
 
   private loadUsers() {
@@ -81,24 +75,22 @@ export class UserReadComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteUser(event: Event, User: User) {
+  deleteUser(event: Event, user: User) {
     event.preventDefault();
     const modal = this.modalService.open(ConfirmDeleteComponent, {
       size: 'lg',
       backdrop: 'static',
     });
     modal.componentInstance.item = 'User';
-    modal.componentInstance.composant = User;
+    modal.componentInstance.composant = user;
 
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.onSuccess('DELETE,User');
-          this.filtredUsers = this.users.filter(
-            (item) => item.id !== User.id
-          );
+          this.onSuccess('EDIT,USER');
+          this.filtredUsers = this.users.filter((item) => item.id !== user.id);
           this.users = this.filtredUsers;
-          console.log(this.filtredUsers);
+          this.router.navigate(['/users/read']);
         }
       })
       .catch(() => {
@@ -122,7 +114,7 @@ export class UserReadComponent implements OnInit, OnDestroy {
       .then((result) => {
         if (result === 'confirm') {
           this.sharedDataService.setSelectedUser(user);
-          this.router.navigate(['Users/edit']);
+          this.router.navigate(['users/edit']);
         }
       })
       .catch(() => {
@@ -132,7 +124,7 @@ export class UserReadComponent implements OnInit, OnDestroy {
 
   addUser() {
     this.sharedMessagesService.setMessage("Ajout d'un User");
-    this.router.navigate(['Users/add']);
+    this.router.navigate(['users/add']);
   }
 
   private onSuccess(respSuccess: any) {

@@ -48,14 +48,14 @@ export class LoginComponent implements OnInit, OnDestroy {
       .login({ username: username, password: password })
       .subscribe({
         next: (response) => {
-          this.onSuccess(response);
-          this.isAuthService.setIsAuth(true);
+          this.onSuccess(response);         
         },
         error: (err) => this.onError(err),
       });
   }
 
-  private onSuccess(authResponse: AuthResponse) {
+  private onSuccess(authResponse: AuthResponse) { 
+    this.isAuthService.setIsAuth(true);
     this.authService.saveToken(authResponse.jwt);
     this.authService.setUser(authResponse);
     this.alertService.show('AUTHENT', 'success');

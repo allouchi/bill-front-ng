@@ -15,6 +15,10 @@ export class UserService implements IUserService, IRolesService {
   private readonly ROLES_PATH: string = `${this.apiURL}` + '/roles';
 
   constructor(private readonly http: HttpClient) {}
+
+  deleteUser(id: number): Observable<User> {
+    return this.http.delete<User>(`${this.USER_PATH}/${id}`);
+  }
   findUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${this.USER_PATH}`);
   }
