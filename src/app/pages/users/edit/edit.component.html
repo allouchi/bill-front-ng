@@ -1,1 +1,137 @@
-<p>edit works!</p>
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h4>Editer l'utilisateur : {{user?.firstName + ' ' + user?.lastName}}</h4>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="userForm" (ngSubmit)="editUser()">
+        <div class="mb-3">
+          <label for="email" class="form-label fw-bold">Email</label>
+          <input
+            type="email"
+            id="email"
+            class="form-control"
+            formControlName="email"           
+          />
+          <div
+            class="text-danger"
+            *ngIf="
+              userForm.get('email')?.invalid && userForm.get('email')?.touched
+            "
+          >
+            L'adresse Email est requise.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="firstName" class="form-label fw-bold">Nom</label>
+          <input
+            type="text"
+            id="firstName"
+            class="form-control"
+            formControlName="firstName"
+            
+          />
+          <div
+            class="text-danger"
+            *ngIf="
+              userForm.get('firstName')?.invalid &&
+              userForm.get('firstName')?.touched
+            "
+          >
+            Le nom est requis.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="lastName" class="form-label fw-bold">Prénom</label>
+          <input
+            type="text"
+            id="lastName"
+            class="form-control"
+            formControlName="lastName"
+             [disabled]="true"
+          />
+          <div
+            class="text-danger"
+            *ngIf="
+              userForm.get('lastName')?.invalid &&
+              userForm.get('lastName')?.touched
+            "
+          >
+            Le nom est requis.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label fw-bold">Mot de passe</label>
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            formControlName="password"
+             
+          />
+          <div
+            class="text-danger"
+            *ngIf="
+              userForm.get('password')?.invalid &&
+              userForm.get('password')?.touched
+            "
+          >
+            Mot de passe requis (min. 6 caractères).
+          </div>
+        </div>
+
+        <div class="mb-3 me-2" style="width: 200px">
+          <label for="rolesSelect" class="form-label fw-bold">Role</label>
+          <select
+            [(ngModel)]="selectedRole"
+            formControlName="role"
+            (change)="setRoleValue($event)"
+            class="form-select"
+            id="rolesSelect"
+          >
+            @for (role of roles; track role.id) {
+            <option value="{{ role.id }}" [value]="role.role">
+              {{ role.description }}
+            </option>
+            }
+          </select>
+
+          <div
+            class="text-danger"
+            *ngIf="
+              userForm.get('role')?.invalid && userForm.get('role')?.touched
+            "
+          >
+            Le role est requis.
+          </div>
+        </div>
+        <div class="mb-3 me-2" style="width: 200px">
+          <label for="companySelect" class="form-label fw-bold">Société</label>
+          <select
+            [(ngModel)]="selectedCompany"
+            formControlName="siret"
+            (change)="setCompanyValue($event)"
+            class="form-select"
+            id="companySelect"
+          >
+            @for (company of companies; track company.id) {
+            <option value="{{ company.siret }}" [value]="company.siret">
+              {{ company.socialReason }}
+            </option>
+            }
+          </select>
+        </div>
+
+        <div class="d-flex justify-content-center gap-3">
+          <button class="btn btn-secondary me-2" (click)="cancel()">
+            Annuler
+          </button>
+          <button class="btn btn-primary" type="submit">Valider</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

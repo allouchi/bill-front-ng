@@ -123,7 +123,7 @@ export class UserReadComponent implements OnInit, OnDestroy {
   }
 
   addUser() {
-    this.sharedMessagesService.setMessage("Ajout d'un User");
+    this.sharedMessagesService.setMessage("Ajout d'un User");   
     this.router.navigate(['users/add']);
   }
 
