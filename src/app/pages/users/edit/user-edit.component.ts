@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -19,8 +19,8 @@ import { SharedDataService } from '../../../services/shared/shared-data-service'
 @Component({
   selector: 'bill-user-edit',
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
-  templateUrl: './edit.component.html',
-  styleUrl: './edit.component.css',
+  templateUrl: './user-edit.component.html',
+  styleUrl: './user-edit.component.css',
 })
 export class EditUserComponent {
   userForm!: FormGroup;
@@ -54,7 +54,7 @@ export class EditUserComponent {
         { value: this.user?.lastName, disabled: true },
         Validators.required,
       ],
-      siret: [{ value: this.user?.siret, disabled: true }, Validators.required],
+      siret: [{ value: this.user?.siret }, Validators.required],
       password: [
         { value: this.user?.password, disabled: true },
         [Validators.required, Validators.minLength(3)],
