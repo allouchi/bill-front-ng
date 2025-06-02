@@ -90,7 +90,7 @@
             id="rolesSelect"
           >
             @for (role of roles; track role.id) {
-            <option value="{{ role.id }}" [value]="role.role">
+            <option value="{{ role.id }}" [value]="role.roleName">
               {{ role.description }}
             </option>
             }

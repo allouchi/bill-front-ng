@@ -19,9 +19,6 @@ export class UnsplashService {
       .set('page', page)
       .set('per_page', perPage)
       .set('client_id', this.accessKey);
-
-
-
     return this.http.get(this.apiUrl, { params });
   }
 

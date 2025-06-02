@@ -5,7 +5,7 @@ import { IUserService } from "./user.interface";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { IRolesService } from './roles.interface';
-import RolesRef from '../../models/RolesRef';
+import Role from "../../models/Role";
 
 @Injectable({ providedIn: 'root' })
 export class UserService implements IUserService, IRolesService {
@@ -43,7 +43,7 @@ export class UserService implements IUserService, IRolesService {
     return this.http.get<User>(`${this.USER_PATH}/${email}/${password}`);
   }
 
-  getRoles(): Observable<RolesRef[]> {
-    return this.http.get<RolesRef[]>(`${this.ROLES_PATH}`);
+  getRoles(): Observable<Role[]> {
+    return this.http.get<Role[]>(`${this.ROLES_PATH}`);
   }
 }

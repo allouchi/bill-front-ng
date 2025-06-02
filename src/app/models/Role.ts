@@ -1,5 +1,5 @@
 export default interface Role {
   id: number | null;
-  role: string;
+  roleName: string;
   description: string;
 }

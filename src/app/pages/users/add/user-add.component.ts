@@ -24,8 +24,8 @@ export class AddUserComponent implements OnInit {
   selectedCompany: string = '';
 
   constructor(
-    private fb: FormBuilder,
-    private userService: UserService,
+    private readonly fb: FormBuilder,
+    private readonly userService: UserService,
     private readonly companyService: CompanyService,
     private readonly alertService: AlertService,
     private readonly router: Router
@@ -61,7 +61,7 @@ export class AddUserComponent implements OnInit {
     this.userService.getRoles().subscribe({
       next: (roles) => {
         this.roles = roles;
-        this.selectedRole = roles.find((r) => r.id == 1)?.role!;
+        this.selectedRole = roles.find((r) => r.id == 1)?.roleName!;
       },
       error: (err) => {
         this.onError(err);
@@ -86,7 +86,7 @@ export class AddUserComponent implements OnInit {
   }
 
    getByRole(role: string) : Role{    
-    const selectedRole = this.roles.find(r=> r.role == role);   
+     const selectedRole = this.roles.find(r => r.roleName == role);   
     return selectedRole!
   }
 
@@ -94,7 +94,7 @@ export class AddUserComponent implements OnInit {
   addUser(): void {
     const selected: Role [] = [];
     let role = this.getByRole(this.selectedRole);   
-    selected.push(role!);
+    selected.push(role);
 
     if (this.userForm.valid) {
       let user: User = {

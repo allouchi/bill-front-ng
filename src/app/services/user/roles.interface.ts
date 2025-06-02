@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import RolesRef from "../../models/RolesRef";
+import Role from "../../models/Role";
 
 
 /**
@@ -12,5 +12,5 @@ export interface IRolesService {
    *
    * @returns Promise<UserRoleRef>
    */
-  getRoles(): Observable<RolesRef[]>;
+  getRoles(): Observable<Role[]>;
 }

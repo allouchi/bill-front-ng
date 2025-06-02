@@ -20,8 +20,8 @@ import { CommonModule } from '@angular/common';
   selector: 'bill-User-read',
   standalone: true,
   imports: [WaitingComponent, UserNamePipe, RaisonSocialePipe, CommonModule],
-  templateUrl: './User-read.component.html',
-  styleUrl: './User-read.component.css',
+  templateUrl: './user-read.component.html',
+  styleUrl: './user-read.component.css',
 })
 export class UserReadComponent implements OnInit, OnDestroy {
   users: User[] = [];

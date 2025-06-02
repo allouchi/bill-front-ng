@@ -38,7 +38,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private readonly isAuthService: IsAuthService,
     private readonly router: Router,
     public readonly authService: AuthService,
-    private readonly userService: UserService
+
   ) {}
 
   ngOnInit(): void {

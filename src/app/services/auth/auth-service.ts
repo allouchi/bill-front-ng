@@ -91,7 +91,7 @@ export class AuthService {
   }
 
   hasRole(expectedRole: string): boolean {
-    const role = this.userRoles.filter((u) => u.role === expectedRole);
+    const role = this.userRoles.filter((u) => u.roleName === expectedRole);
     if (role) {
       return true;
     }
@@ -101,7 +101,7 @@ export class AuthService {
   // Pour plusieurs rôles autorisés :
   hasAnyRole(expectedRoles: string[]): boolean {
     if (this.user && this.user.roles) {
-      const match = this.user.roles.find((r) => expectedRoles.includes(r.role));
+      const match = this.user.roles.find((r) => expectedRoles.includes(r.roleName));
       return !!match;
     }
     return false;

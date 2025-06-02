@@ -70,7 +70,7 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
     this.formPresta = this.fb.group({
       prestaDateFin: ['', Validators.required],
     });
-    this.siret = this.sharedDataService.getSiret();
+    this.siret = this.sharedDataService.getSiret();    
     this.loadPrestations();
   }
 

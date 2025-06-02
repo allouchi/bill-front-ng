@@ -54,7 +54,7 @@
           >
         </li>
   <!-- </li> *ngIf="authService.hasAnyRole(['ROLE_ADMIN', 'ROLE_MODERATOR'])" --> 
-        <li       
+        <li *ngIf="authService.hasAnyRole(['ROLE_ADMIN', 'ROLE_MODERATOR'])"
           class="nav-item"
         >
           <a class="nav-link" routerLink="/users/read" (click)="clicked($event)"

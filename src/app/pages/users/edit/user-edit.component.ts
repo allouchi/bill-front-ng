@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import {
+  FormArray,
   FormBuilder,
+  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -16,6 +18,7 @@ import { AlertService } from '../../../services/alert/alert-messages.service';
 import GetMessagesEroor from '../../../shared/utils/messages-error';
 import Role from '../../../models/Role';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
+
 @Component({
   selector: 'bill-user-edit',
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
@@ -31,15 +34,16 @@ export class EditUserComponent {
   selectedCompany: string = '';
 
   constructor(
-    private fb: FormBuilder,
-    private userService: UserService,
+    private readonly fb: FormBuilder,
+    private readonly userService: UserService,
     private readonly companyService: CompanyService,
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
     private readonly router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+    this.loadRoles();
     this.user = this.sharedDataService.getSelectedUser();
     this.userForm = this.fb.group({
       email: [
@@ -55,15 +59,21 @@ export class EditUserComponent {
         Validators.required,
       ],
       siret: [{ value: this.user?.siret }, Validators.required],
-      password: [
-        { value: this.user?.password, disabled: true },
-        [Validators.required, Validators.minLength(3)],
-      ],
-      role: [{ value: this.user?.roles }, Validators.required],
+      roles: this.fb.array([])
+    });
+    this.loadCompanies();
+
+  }
+
+  private addCheckboxes() {
+    const checkedRoles = this.user?.roles.map(r => r.roleName);
+
+    const rolesFormArray = this.userForm.get('roles') as FormArray;
+    this.roles.forEach(role => {
+      const isSelected = checkedRoles!.includes(role.roleName);
+      rolesFormArray.push(new FormControl(isSelected));
     });
 
-    this.loadCompanies();
-    this.loadRoles();
   }
 
   loadCompanies() {
@@ -82,12 +92,17 @@ export class EditUserComponent {
     this.userService.getRoles().subscribe({
       next: (roles) => {
         this.roles = roles;
-        this.selectedRole = roles.find((r) => r.id == 1)?.role!;
+        this.selectedRole = roles.find((r) => r.id == 1)?.roleName!;
+        this.addCheckboxes();
       },
       error: (err) => {
         this.onError(err);
       },
     });
+  }
+
+  get rolesFormArray() {
+    return this.userForm.get('roles') as FormArray;
   }
 
   setCompanyValue(event: Event) {
@@ -99,31 +114,29 @@ export class EditUserComponent {
 
   setRoleValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
-
     this.userForm.patchValue({
       role: selectedValue,
     });
   }
 
-  getByRole(role: string): Role {
-    const selectedRole = this.roles.find((r) => r.role == role);
-    return selectedRole!;
-  }
-
   editUser(): void {
-    const selected: Role[] = [];
-    let role = this.getByRole(this.selectedRole);
-    selected.push(role!);
+    const rolesValue: boolean[] = this.userForm.value.roles;
+    const selectedRoles = rolesValue
+      .map((checked, i) => checked ? this.roles[i] : null)
+      .filter((role): role is Role => role !== null);
+
+
+
 
     if (this.userForm.valid) {
       let user: User = {
         id: this.user!.id,
-        email: this.userForm.get('email')?.value,
+        email: this.user!.email,
         firstName: this.userForm.get('firstName')?.value,
         lastName: this.userForm.get('lastName')?.value,
         siret: this.userForm.get('siret')?.value,
-        password: this.userForm.get('password')?.value,
-        roles: selected,
+        password: this.user!.password,
+        roles: selectedRoles,
         activated: true,
       };
 
@@ -141,7 +154,7 @@ export class EditUserComponent {
   }
 
   cancel() {
-    this.router.navigate(['bill-dashboard']);
+    this.router.navigate(['users/read']);
   }
 
   private onSuccess(respSuccess: any) {
