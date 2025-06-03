@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'bill-waiting',
@@ -6,5 +6,17 @@ import { Component } from '@angular/core';
   templateUrl: './waiting.component.html',
   styleUrl: './waiting.component.css'
 })
-export class WaitingComponent {
+export class WaitingComponent implements OnInit {
+
+  @Input() edit: string = 'read';
+
+  isEdit: boolean = false;
+
+  ngOnInit(): void {
+    console.log("this.edit : ", this.edit)
+    if (this.edit === 'edit') {
+      this.isEdit = true;
+    }
+  }
+
 }

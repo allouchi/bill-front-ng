@@ -10,7 +10,6 @@ import { LibelleCompanyService } from '../../../services/shared/libelle-company-
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth-service';
-import User from '../../../models/User';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
@@ -30,6 +29,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   observableEvent$ = new Subscription();
   siret: string = '';
   isAdmin = false;
+  parent = 'read';
 
   constructor(
     private readonly modalService: NgbModal,

@@ -31,6 +31,7 @@ export class FactureAddComponent implements OnInit {
   siret: string = '';
   isUpload: boolean = true;
   observableEvent$ = new Subscription();
+  parent = 'edit';
 
   constructor(
     private readonly router: Router,
@@ -88,10 +89,15 @@ export class FactureAddComponent implements OnInit {
         this.selectedMonth
       )
       .subscribe({
-        next: () => {
-          this.router.navigate(['/factures/read']);
-          this.onSuccess('ADD,FACTURE');
-          this.isUpload = true;
+        next: () => {        
+          //this.isUpload = true;
+
+          setTimeout(() => {
+            this.router.navigate(['/factures/read']);
+            this.onSuccess('ADD,FACTURE');
+            this.isUpload = true;
+          }, 10000);
+
         },
         error: (err) => {
           this.isUpload = true;

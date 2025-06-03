@@ -53,6 +53,7 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
   monthsYear: any;
   observableEvent$ = new Subscription();
   isAdmin = false;
+  parent = 'read';
 
   private readonly router = inject(Router);
   constructor(
@@ -142,6 +143,7 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         this.sharedDataService.setSelectedPrestation(prestation);
+        this.parent = 'edit';
         this.router.navigate(['/factures/add']);
       })
       .catch(() => {

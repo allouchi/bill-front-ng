@@ -23,6 +23,7 @@ import { SharedDataService } from '../../../services/shared/shared-data-service'
 export default class FactureEditComponent implements OnInit {
   formFacture!: FormGroup;
   facture: Facture | null = null;
+  parent = 'read';
 
   constructor(
     private readonly fb: FormBuilder,

@@ -38,6 +38,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   observableEvent$ = new Subscription();
   router = inject(Router);
   isAdmin = false;
+  parent = 'read';
 
   constructor(
     private readonly tvaService: TvaService,

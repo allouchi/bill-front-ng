@@ -24,6 +24,7 @@ export class ClientReadComponent implements OnInit, OnDestroy {
   filtredClients: Client[] = [];
   isLoaded = false;
   isAdmin = false;
+  parent = 'read';
 
   constructor(
     private readonly modalService: NgbModal,

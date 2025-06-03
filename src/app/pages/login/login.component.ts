@@ -39,8 +39,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   authenticate() {
-    this.isSubmit = true;
-    this.alertService.show('', 'success');
+    this.isSubmit = true;   
     const username = this.formLogin.get('username')?.value;
     const password = this.formLogin.get('password')?.value;
 

@@ -1,13 +1,7 @@
 import { Component,  OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TvaService } from '../../../services/tva/tva-service';
-import { AlertService } from '../../../services/alert/alert-messages.service';
 import { CommonModule } from '@angular/common';
-import { FactureService } from '../../../services/factures/facture.service';
-import { ClientService } from '../../../services/clients/client-service';
-import { ConsultantService } from '../../../services/consultants/consultant-service';
-import { CompanyService } from '../../../services/companies/company-service';
-import { PrestationService } from '../../../services/prestations/prestation.service';
+
 
 
 @Component({
@@ -23,8 +17,7 @@ export class ConfirmEditComponent implements OnInit {
 
   constructor(private readonly activeModal: NgbActiveModal) {}
 
-  ngOnInit() {
-    // setTimeout(() => this.confirmBtn.nativeElement.focus(), 0);
+  ngOnInit() {   
   }
 
   cancel(): void {

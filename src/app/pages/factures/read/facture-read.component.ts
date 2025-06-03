@@ -10,6 +10,9 @@ import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
+import { TvaService } from '../../../services/tva/tva-service';
+import TvaInfos from '../../../models/TvaInfos';
+import Tva from '../../../models/Tva';
 
 @Component({
   selector: 'bill-facture-read',
@@ -22,10 +25,15 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   factures: Facture[] = [];
   filtredFactures: Facture[] = [];
   exercises: Exercise[] = [];
+  tvaInfos!: TvaInfos;
+  tvaInfosFilterd!: TvaInfos;
+  tvas: Tva[] = [];
+  filtredTvas: Tva[] = [];
   siret: string = '';
   isLoaded = false;
   isAdmin = false;
   observableEvent$ = new Subscription();
+  parent = 'read';
   private readonly router = inject(Router);
 
   constructor(
@@ -33,14 +41,17 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
     private readonly modalService: NgbModal,
-    public readonly authService: AuthService
+    public readonly authService: AuthService,
+    private readonly tvaService: TvaService,
   ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
     this.loadExercisesRef();
-    this.loadFactures();
+    this.loadFactures();   
+    this.loadTva('Tous');
+    this.loadTvaInfo('Tous');
   }
 
   private loadFactures() {
@@ -58,6 +69,31 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  private loadTva(exercice: string) {
+    this.tvaService.findTvaByExercise(this.siret, exercice).subscribe({
+      next: (tvas) => {
+        this.tvas = tvas;
+        this.filtredTvas = tvas;
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+  private loadTvaInfo(exercice: string) {
+    this.tvaService.findTvaInfoByExercise(this.siret, exercice).subscribe({
+      next: (tvaInfos) => {
+        this.tvaInfos = tvaInfos;
+        this.tvaInfosFilterd = tvaInfos;
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
+
   private loadExercisesRef() {
     this.factureService.findExercisesRef().subscribe({
       next: (exercises) => {
@@ -69,8 +105,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     });
   }
 
-  setYearValue(event: Event) {
-    const selectedValue = (event.target as HTMLSelectElement).value;
+  private filterFactures(selectedValue: string) {
     if (this.factures && selectedValue !== 'Tous') {
       this.filtredFactures = this.factures.filter(
         (facture) => facture.dateFacturation.substring(6) == selectedValue
@@ -78,6 +113,23 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     } else {
       this.filtredFactures = this.factures;
     }
+  }
+
+  private filterTvas(selectedValue: string) {
+    if (this.tvas && selectedValue !== 'Tous') {
+      this.filtredTvas = this.tvas.filter(
+        (tva) => tva.exercise == selectedValue
+      );
+    } else {
+      this.filtredTvas = this.tvas;
+    }
+    this.loadTvaInfo(selectedValue);
+  }
+
+  setYearValue(event: Event) {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    this.filterFactures(selectedValue);
+    this.filterTvas(selectedValue);
   }
 
   deleteFacture(event: Event, facture: Facture) {

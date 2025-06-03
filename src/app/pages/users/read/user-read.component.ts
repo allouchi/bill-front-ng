@@ -29,6 +29,7 @@ export class UserReadComponent implements OnInit, OnDestroy {
   companies: Company[] = [];
   isLoaded = false;
   isAdmin = false;
+  parent = 'read';
 
   constructor(
     private readonly modalService: NgbModal,
