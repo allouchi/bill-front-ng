@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
 import { CompanyService } from '../../../services/companies/company-service';
 import Company from '../../../models/Company';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import TvaInfos from '../../../models/TvaInfos';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { Subscription } from 'rxjs';
@@ -19,7 +19,7 @@ import { AuthService } from '../../../services/auth/auth-service';
 
 @Component({
   selector: 'bill-tva-read',
-  imports: [WaitingComponent, ReactiveFormsModule],
+  imports: [WaitingComponent, ReactiveFormsModule, FormsModule],
   templateUrl: './tva-read.component.html',
   styleUrl: './tva-read.component.css',
 })
@@ -33,7 +33,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   tvaInfosFilterd!: TvaInfos;
   data: Map<string, any> = new Map();
   monthsYear: any;
-  selectedExercice: string = 'Tous';
+  selectedExercice: string = '';
   siret: string = '';
   observableEvent$ = new Subscription();
   router = inject(Router);
@@ -56,8 +56,10 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     this.loadCompanies();
     this.loadMonthYear();
     this.loadExercicesRef();
-    this.loadTva('Tous');
-    this.loadTvaInfo('Tous');
+    const currentExercice = new Date().getFullYear();
+    this.selectedExercice = currentExercice.toString();
+    this.loadTva(this.selectedExercice);
+    this.loadTvaInfo(this.selectedExercice);
   }
 
   private loadCompanies() {
@@ -72,6 +74,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   }
 
   loadTvaInfo(exercice: string) {
+    console.log(exercice);
     this.tvaService.findTvaInfoByExercise(this.siret, exercice).subscribe({
       next: (tvaInfos) => {
         this.tvaInfos = tvaInfos;
@@ -102,12 +105,6 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     this.tvaService.findTvaByExercise(this.siret, exercice).subscribe({
       next: (tvas) => {
         this.tvas = tvas;
-        if (tvas) {
-          tvas.forEach((tva) => {
-            let date = tva.datePayment.split('/');
-            //tva.datePayment = date[2] + '-' + date[1] + '-' + date[0];
-          });
-        }
         setTimeout(() => {
           this.filtredTvas = tvas;
           this.isLoaded = true;
@@ -121,14 +118,8 @@ export class TvaReadComponent implements OnInit, OnDestroy {
 
   setYearValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
-    if (this.tvas && selectedValue !== 'Tous') {
-      this.filtredTvas = this.tvas.filter(
-        (tva) => tva.exercise == selectedValue
-      );
-    } else {
-      this.filtredTvas = this.tvas;
-    }
     this.loadTvaInfo(selectedValue);
+    this.loadTva(selectedValue);
   }
 
   addTva() {

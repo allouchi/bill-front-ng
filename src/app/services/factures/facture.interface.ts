@@ -43,4 +43,6 @@ export interface IFactureService {
   deleteFactureById(factureId: number): Observable<String>;
 
   findExercisesRef(): Observable<Exercise[]>;
+
+  downloadFactureById(id: number): Observable<any>;
 }

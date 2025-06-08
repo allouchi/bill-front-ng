@@ -120,8 +120,8 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
         delaiPaiement: this.formPrestation.get('delaiPaiement')?.value,
         dateFin: this.formPrestation.get('dateFin')?.value,
         dateDebut: this.formPrestation.get('dateDebut')?.value,
-        clientPrestation: '',
-        designation: '',
+        clientPrestation: this.formPrestation.get('client')?.value,
+        designation: 'La Prestation est réalisée pour le compte de ',
         quantite: 0,
       };
 

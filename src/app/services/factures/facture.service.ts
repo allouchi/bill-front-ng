@@ -18,7 +18,7 @@ export class FactureService implements IFactureService {
   private readonly FACTURES_PATH: string = `${this.apiURL}` + '/factures';
   private readonly EXERCISE_PATH: string =
     `${this.apiURL}` + '/tvas/exerciceRef';
-
+  private readonly EDITION_PATH: string = `${this.apiURL}` + '/editions';
   constructor(private readonly http: HttpClient) {}
 
   updateFacture(facture: Facture): Observable<Facture> {
@@ -44,5 +44,9 @@ export class FactureService implements IFactureService {
 
   findExercisesRef(): Observable<Exercise[]> {
     return this.http.get<Exercise[]>(`${this.EXERCISE_PATH}`);
+  }
+
+  downloadFactureById(factureId: number): Observable<any> {
+    return this.http.get<any>(`${this.EDITION_PATH}/${factureId}`);
   }
 }

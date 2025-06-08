@@ -5,7 +5,7 @@
     <!-- Colonne de gauche : Exercice -->
     <div style="width: 200px;">
       <label for="yearSelect" class="form-label fw-bold">Exercice</label>
-      <select (change)="setYearValue($event)" class="form-select" id="yearSelect">
+      <select (change)="setYearValue($event)" class="form-select" id="yearSelect" [(ngModel)]="selectedExercice" >
         @for (year of exercises; track year.id) {
         <option [value]="year.exercise">{{ year.exercise }}</option>
         }
@@ -17,6 +17,7 @@
         <thead>
           <tr>
             <th scope="col">CA TTC</th>
+            <th scope="col">TOTAL TVA</th>
             <th scope="col">TOTAL TVA REGLEE</th>
             <th scope="col">RESTE TVA A PAYER</th>
           </tr>
@@ -24,6 +25,7 @@
         <tbody>
           <tr>
             <td class="text-center">{{ tvaInfosFilterd.totalTTC }}</td>
+            <td class="text-center">{{ tvaInfosFilterd.totalTva }}</td>
             <td class="text-center">{{ tvaInfosFilterd.totalTvaPaye }}</td>
             <td class="text-center">{{ tvaInfosFilterd.totalTvaRestant }}</td>
           </tr>
@@ -63,7 +65,7 @@
           <td>
             <button
               class="btn btn-outline-primary btn-sm me-2"
-              (click)="updateFacture(facture)"
+              (click)="updateFacture($event, facture)"
               title="Modifier Facture"
               [disabled]="!isAdmin"
             >
@@ -76,6 +78,15 @@
               [disabled]="!isAdmin"
             >
               <i class="bi bi-trash"></i>
+            </button>
+
+             <button
+              class="btn btn-primary btn-sm me-2"
+              (click)="downloadFacture( facture)"
+              title="Télécharger Facture"
+              [disabled]="!isAdmin"
+            >
+              <i class="bi bi-download"></i>
             </button>
           </td>
         </tr>

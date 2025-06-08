@@ -13,11 +13,13 @@ import { AuthService } from '../../../services/auth/auth-service';
 import { TvaService } from '../../../services/tva/tva-service';
 import TvaInfos from '../../../models/TvaInfos';
 import Tva from '../../../models/Tva';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 
 @Component({
   selector: 'bill-facture-read',
   standalone: true,
-  imports: [WaitingComponent],
+  imports: [WaitingComponent, ReactiveFormsModule, FormsModule],
   templateUrl: './facture-read.component.html',
   styleUrls: ['./facture-read.component.scss'],
 })
@@ -34,6 +36,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   isAdmin = false;
   observableEvent$ = new Subscription();
   parent = 'read';
+  selectedExercice: string = '';
   private readonly router = inject(Router);
 
   constructor(
@@ -42,16 +45,17 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly sharedDataService: SharedDataService,
     private readonly modalService: NgbModal,
     public readonly authService: AuthService,
-    private readonly tvaService: TvaService,
+    private readonly tvaService: TvaService
   ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
     this.loadExercisesRef();
-    this.loadFactures();   
-    this.loadTva('Tous');
-    this.loadTvaInfo('Tous');
+    this.loadFactures();
+    const currentExercice = new Date().getFullYear();
+    this.loadTva(currentExercice.toString());
+    this.loadTvaInfo(currentExercice.toString());
   }
 
   private loadFactures() {
@@ -61,6 +65,9 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
           this.factures = factures;
           this.filtredFactures = factures;
           this.isLoaded = true;
+          const currentExercice = new Date().getFullYear();
+          this.selectedExercice = currentExercice.toString();
+          this.filterFactures(currentExercice.toString());
         }, 500);
       },
       error: (err) => {
@@ -68,7 +75,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       },
     });
   }
-
 
   private loadTva(exercice: string) {
     this.tvaService.findTvaByExercise(this.siret, exercice).subscribe({
@@ -92,7 +98,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       },
     });
   }
-
 
   private loadExercisesRef() {
     this.factureService.findExercisesRef().subscribe({
@@ -158,14 +163,28 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       });
   }
 
-  updateFacture(facture: Facture) {
-    const ok = confirm(
-      `Voulez-vous vraiment mettre à jour "${facture.numeroFacture}" ?`
-    );
-    if (ok) {
-      this.sharedDataService.setSelectedFacture(facture);
-      this.router.navigate(['factures/edit']);
-    }
+  updateFacture(event: Event, facture: Facture) {
+    event.preventDefault();
+    const modal = this.modalService.open(ConfirmEditComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false,
+      centered: true,
+    });
+    modal.componentInstance.item = 'Facture';
+    modal.componentInstance.composant = facture;
+
+    modal.result
+      .then((result) => {
+        if (result === 'confirm') {
+          this.onSuccess('UPDATE,FACTURE');
+          this.sharedDataService.setSelectedFacture(facture);
+          this.router.navigate(['factures/edit']);
+        }
+      })
+      .catch(() => {
+        console.log('Annulé');
+      });
   }
 
   private onSuccess(respSuccess: any) {
@@ -181,6 +200,17 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     } else {
       this.alertService.show(message, 'error');
     }
+  }
+
+  downloadFacture(facture: Facture) {
+    this.factureService.downloadFactureById(facture.id!).subscribe({
+      next: (file) => {
+        console.log(file);
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
   }
 
   ngOnDestroy(): void {
