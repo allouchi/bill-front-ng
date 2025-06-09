@@ -1,10 +1,10 @@
 
 
 import { FooterComponent } from '../footer/footer.component';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
-import { AppInitService } from '../../services/shared/app-init-service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'bill-root',
@@ -13,13 +13,16 @@ import { AppInitService } from '../../services/shared/app-init-service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'bill-front-ng';
 
-  constructor(private readonly initService: AppInitService) {}
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    //this.initService.initAppWithSubscribe();
+    this.http.get('/api/companies').subscribe({
+      next: (res) => console.log('Réponse API', res),
+      error: (err) => console.error('Erreur API', err),
+    });
   }
 }
 
