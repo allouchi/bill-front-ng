@@ -8,10 +8,8 @@ export class AuthInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    alert('token');
-    const token = localStorage.getItem('token');
 
-    console.log('AuthInterceptor called for:', req.url); // ← vérifie dans la consol
+    const token = localStorage.getItem('jwt');
 
     if (token) {
       const authReq = req.clone({

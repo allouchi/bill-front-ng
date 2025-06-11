@@ -3,14 +3,11 @@ import { Router, RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { AlertComponent } from '../../shared/alert/alert.component';
 import { SharedMessagesService } from '../../services/shared/messages.service';
-import { SharedDataService } from '../../services/shared/shared-data-service';
 import { Subscription } from 'rxjs';
 import { LibelleCompanyService } from '../../services/shared/libelle-company-service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
 import { AuthService } from '../../services/auth/auth-service';
-import { UserService } from '../../services/user/user-service';
 import { IsAuthService } from '../../services/shared/islogin-service';
 
 @Component({
@@ -33,7 +30,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly sharedMessagesService: SharedMessagesService,
-    private readonly sharedDataService: SharedDataService,
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly isAuthService: IsAuthService,
     private readonly router: Router,
@@ -76,8 +72,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.isAuthService.setIsAuth(false);
     this.authService.logout();
     this.sharedMessagesService.setMessage('');
-    this.libelleCompanyService.setMessage('');
-    //this.userService.logout().subscribe((response) => {});
+    this.libelleCompanyService.setMessage('');   
     this.router.navigate(['/bill-dashboard']);
   }
 

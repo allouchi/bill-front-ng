@@ -47,15 +47,15 @@ export class LoginComponent implements OnInit, OnDestroy {
       .login({ username: username, password: password })
       .subscribe({
         next: (response) => {
-          this.onSuccess(response);         
+          this.onSuccess(response);        
         },
         error: (err) => this.onError(err),
       });
   }
 
-  private onSuccess(authResponse: AuthResponse) { 
-    this.isAuthService.setIsAuth(true);
-    this.authService.saveToken(authResponse.jwt);
+  private onSuccess(authResponse: AuthResponse) {
+    this.isAuthService.setIsAuth(true);   
+    this.authService.saveToken(authResponse.token);
     this.authService.setUser(authResponse);
     this.alertService.show('AUTHENT', 'success');
     this.router.navigate(['bill-dashboard']);

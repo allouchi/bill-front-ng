@@ -12,8 +12,7 @@ export class WaitingComponent implements OnInit {
 
   isEdit: boolean = false;
 
-  ngOnInit(): void {
-    console.log("this.edit : ", this.edit)
+  ngOnInit(): void {   
     if (this.edit === 'edit') {
       this.isEdit = true;
     }
