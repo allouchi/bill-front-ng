@@ -40,9 +40,9 @@ export interface IFactureService {
    *
    * @param id facture id to delete
    */
-  deleteFactureById(factureId: number): Observable<String>;
+  deleteFactureById(factureId: number): Observable<string>;
 
   findExercisesRef(): Observable<Exercise[]>;
 
-  downloadFactureById(id: number): Observable<any>;
+  downloadPdfFacture(id: number): Observable<Blob>;
 }

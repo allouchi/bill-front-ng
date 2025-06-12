@@ -187,6 +187,25 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       });
   }
 
+
+
+  downloadFacture(facture: Facture) {
+    this.factureService.downloadPdfFacture(facture.id!).subscribe({
+      next: (blob) => {
+        console.log("blob : ", blob)
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'mon_fichier.pdf'; // Nom du fichier à sauvegarder
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
   private onSuccess(respSuccess: any) {
     this.alertService.show(respSuccess, 'success');
   }
@@ -200,17 +219,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     } else {
       this.alertService.show(message, 'error');
     }
-  }
-
-  downloadFacture(facture: Facture) {
-    this.factureService.downloadFactureById(facture.id!).subscribe({
-      next: (file) => {
-        console.log(file);
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
   }
 
   ngOnDestroy(): void {

@@ -90,17 +90,12 @@ export class FactureAddComponent implements OnInit {
       )
       .subscribe({
         next: () => {        
-          //this.isUpload = true;
-
-          setTimeout(() => {
-            this.router.navigate(['/factures/read']);
-            this.onSuccess('ADD,FACTURE');
-            this.isUpload = true;
-          }, 10000);
-
+          this.router.navigate(['/factures/read']);
+          this.onSuccess('ADD,FACTURE');
+          this.isUpload = false;
         },
         error: (err) => {
-          this.isUpload = true;
+          this.isUpload = false;
           this.onError(err);
         },
       });

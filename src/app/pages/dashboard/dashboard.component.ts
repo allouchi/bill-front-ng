@@ -19,11 +19,15 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.unsplashService.searchPhotos(this.query).subscribe((data: any) => {
-      this.photos = data.results;
+      if (data) {
+        this.photos = data.results;
+      }     
     });
 
     this.unsplashService.getRandomPhoto('nature').subscribe((data) => {
-      this.photoUrl = data.urls.regular;
+      if (data) {
+        this.photoUrl = data.urls.regular;
+      }     
     });
   }
 }

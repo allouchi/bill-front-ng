@@ -46,7 +46,9 @@ export class FactureService implements IFactureService {
     return this.http.get<Exercise[]>(`${this.EXERCISE_PATH}`);
   }
 
-  downloadFactureById(factureId: number): Observable<any> {
-    return this.http.get<any>(`${this.EDITION_PATH}/${factureId}`);
+  downloadPdfFacture(factureId: number): Observable<Blob> {
+    return this.http.get(`${this.EDITION_PATH}/${factureId}`, {
+      responseType: 'blob'
+    });
   }
 }
