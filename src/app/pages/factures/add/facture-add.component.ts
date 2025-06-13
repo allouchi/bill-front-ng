@@ -16,6 +16,7 @@ import { SharedDataService } from '../../../services/shared/shared-data-service'
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
+import { FactureService } from '../../../services/factures/facture.service';
 
 @Component({
   selector: 'bill-facture-add',
@@ -36,7 +37,7 @@ export class FactureAddComponent implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly fb: FormBuilder,
-    private readonly prestationService: PrestationService,
+    private readonly factureService: FactureService,
     private readonly sharedDataService: SharedDataService,
     private readonly alertService: AlertService
   ) {}
@@ -46,6 +47,7 @@ export class FactureAddComponent implements OnInit {
       monthFacture: ['', Validators.required],
       numeroCommande: [{ value: '', disabled: true }],
       quantite: ['', Validators.required],
+      newTemplate: [true, Validators.required],
       clientPrestation: [{ value: '', disabled: true }],
     });
 
@@ -78,15 +80,19 @@ export class FactureAddComponent implements OnInit {
     });
   }
 
-  private editFacture(prestation: Prestation) {
+  /**
+   * 
+   * @param prestation 
+   */
+  private editFacture(prestation: Prestation) {    
     prestation.id = this.selectedPrestation!.id;
     this.isUpload = false;
-    this.prestationService
-      .createOrUpdatePrestation(
+    this.factureService
+      .createFacture(
         prestation,
-        this.siret,
-        false,
-        this.selectedMonth
+        this.siret,       
+        this.selectedMonth,
+        this.formFacture.get('newTemplate')?.value
       )
       .subscribe({
         next: () => {        

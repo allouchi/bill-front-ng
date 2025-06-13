@@ -5,6 +5,7 @@ import { HttpClient } from "@angular/common/http";
 import { env } from "../../../environments/env";
 import { Injectable } from "@angular/core";
 import Exercise from '../../models/Exercise';
+import Prestation from "../../models/Prestation";
 
 /**
  * Adapter for IFactureService
@@ -24,16 +25,6 @@ export class FactureService implements IFactureService {
   updateFacture(facture: Facture): Observable<Facture> {
     return this.http.put<Facture>(this.FACTURES_PATH, facture);
   }
-  createFacture(
-    facture: Facture,
-    siret: string,
-    prestationId: number
-  ): Observable<Facture> {
-    return this.http.post<Facture>(
-      `${this.FACTURES_PATH}/${siret}/${prestationId}`,
-      facture
-    );
-  }
 
   findFacturesBySiret(siret: string): Observable<Facture[]> {
     return this.http.get<Facture[]>(`${this.FACTURES_PATH}/${siret}`);
@@ -44,6 +35,26 @@ export class FactureService implements IFactureService {
 
   findExercisesRef(): Observable<Exercise[]> {
     return this.http.get<Exercise[]>(`${this.EXERCISE_PATH}`);
+  }
+
+  createFacture(
+    prestation: Prestation,
+    siret: string,
+    moisFacture: number | null,
+    iTextGeneration: boolean
+  ): Observable<Prestation> {
+    const isNew: boolean = prestation.id === 0 || prestation.id === null;
+    if (isNew) {
+      return this.http.post<Prestation>(
+        `${this.FACTURES_PATH}/${siret}`,
+        prestation
+      );
+    } else {
+      return this.http.put<Prestation>(
+        `${this.FACTURES_PATH}/${siret}/${moisFacture}/${iTextGeneration}`,
+        prestation
+      );
+    }
   }
 
   downloadPdfFacture(factureId: number): Observable<Blob> {

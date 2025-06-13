@@ -14,8 +14,8 @@ export class PrestationService implements IPrestationService {
   createOrUpdatePrestation(
     prestation: Prestation,
     siret: string,
-    templateChoice: boolean,
-    moisFactureId: number | null
+    iTextGeneration: boolean,
+    moisFacture: number | null
   ): Observable<Prestation> {
     const isNew: boolean = prestation.id === 0 || prestation.id === null;
     if (isNew) {
@@ -25,7 +25,7 @@ export class PrestationService implements IPrestationService {
       );
     } else {
       return this.http.put<Prestation>(
-        `${this.PRESTATION_PATH}/${siret}/${templateChoice}/${moisFactureId}`,
+        `${this.PRESTATION_PATH}/${siret}/${iTextGeneration}/${moisFacture}`,
         prestation
       );
     }

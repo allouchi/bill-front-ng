@@ -191,8 +191,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   downloadFacture(facture: Facture) {
     this.factureService.downloadPdfFacture(facture.id!).subscribe({
-      next: (blob) => {
-        console.log("blob : ", blob)
+      next: (blob) => {        
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;

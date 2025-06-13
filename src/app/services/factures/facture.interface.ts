@@ -1,6 +1,7 @@
 import { Observable } from "rxjs";
 import Facture from "../../models/Facture";
 import Exercise from '../../models/Exercise';
+import Prestation from "../../models/Prestation";
 
 /**
  * Facture fetcher port
@@ -14,10 +15,11 @@ export interface IFactureService {
    * @returns Observable<Facture>
    */
   createFacture(
-    facture: Facture,
-    siret: string,
-    prestationId: number
-  ): Observable<Facture>;
+    prestation: Partial<Prestation>,
+    siret: string,   
+    moisFactureId: number,
+    iTextGeneration: boolean,
+  ): Observable<Prestation>;
 
   /**
    * Update facture for the current project or update it if already exists
