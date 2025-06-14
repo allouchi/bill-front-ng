@@ -33,9 +33,7 @@ export class ConfirmDeleteComponent implements OnInit {
     private readonly userService: UserService
   ) {}
 
-  ngOnInit() {
-    // setTimeout(() => this.confirmBtn.nativeElement.focus(), 0);
-  }
+  ngOnInit() {}
 
   cancel(): void {
     this.activeModal.dismiss('cancel');
@@ -73,7 +71,6 @@ export class ConfirmDeleteComponent implements OnInit {
   }
 
   deleteUser(user: User) {
-    console.log(user);
     this.userService.deleteUser(user.id!).subscribe({
       next: () => {
         this.onSuccess('DELETE,USER');

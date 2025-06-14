@@ -40,7 +40,7 @@ export class EditUserComponent {
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
     private readonly router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadRoles();
@@ -58,22 +58,22 @@ export class EditUserComponent {
         { value: this.user?.lastName, disabled: true },
         Validators.required,
       ],
+      password: [''],
+      passwordConfirm: [''],
       siret: [{ value: this.user?.siret }, Validators.required],
-      roles: this.fb.array([])
+      roles: this.fb.array([]),
     });
     this.loadCompanies();
-
   }
 
   private addCheckboxes() {
-    const checkedRoles = this.user?.roles.map(r => r.roleName);
+    const checkedRoles = this.user?.roles.map((r) => r.roleName);
 
     const rolesFormArray = this.userForm.get('roles') as FormArray;
-    this.roles.forEach(role => {
+    this.roles.forEach((role) => {
       const isSelected = checkedRoles!.includes(role.roleName);
       rolesFormArray.push(new FormControl(isSelected));
     });
-
   }
 
   loadCompanies() {
@@ -122,13 +122,20 @@ export class EditUserComponent {
   editUser(): void {
     const rolesValue: boolean[] = this.userForm.value.roles;
     const selectedRoles = rolesValue
-      .map((checked, i) => checked ? this.roles[i] : null)
+      .map((checked, i) => (checked ? this.roles[i] : null))
       .filter((role): role is Role => role !== null);
-
-
-
+    const password = this.userForm.get('password')?.value;
+    const passwordConfirm = this.userForm.get('passwordConfirm')?.value;
+    if (password !== passwordConfirm) {
+      this.userForm.get('password')?.setErrors({ customError: true });
+      this.userForm.get('passwordConfirm')?.setErrors({ customError: true });
+    }
 
     if (this.userForm.valid) {
+      const password = this.userForm.get('password')?.value;
+      if (password) {
+        this.user!.password = password;
+      }
       let user: User = {
         id: this.user!.id,
         email: this.user!.email,

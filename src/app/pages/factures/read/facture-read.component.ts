@@ -15,6 +15,7 @@ import TvaInfos from '../../../models/TvaInfos';
 import Tva from '../../../models/Tva';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
+import { DetailFactureComponent } from '../../../shared/modal/detail/detail-facture.component';
 
 @Component({
   selector: 'bill-facture-read',
@@ -187,11 +188,9 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       });
   }
 
-
-
   downloadFacture(facture: Facture) {
     this.factureService.downloadPdfFacture(facture.id!).subscribe({
-      next: (blob) => {        
+      next: (blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -203,6 +202,17 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
         this.onError(err);
       },
     });
+  }
+
+  detailFacture(event: Event, facture: Facture) {
+    event.preventDefault();
+    const modal = this.modalService.open(DetailFactureComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false,
+      centered: true,
+    });
+    modal.componentInstance.facture = facture;
   }
 
   private onSuccess(respSuccess: any) {

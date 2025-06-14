@@ -1,0 +1,91 @@
+<div class="p-4">
+  <!-- Header -->
+  <div class="modal-header border-0 pb-0">
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      data-bs-toggle="tooltip"
+      data-bs-placement="bottom"
+      title="Fermer"
+      (click)="fermer()"
+    ></button>
+  </div>
+
+  <!-- Body -->
+
+  <div class="modal-body mt-3">
+    <div>
+      <div
+        class="alert alert-warning d-flex justify-content-center gap-2"
+        role="alert"
+      >
+        <i class="bi bi-info-circle-fill fs-5"></i>
+        Détail de la facture numéro : {{ numeroCommande }}, éditée le :
+        {{ dateFacturation }}
+      </div>
+    </div>
+
+    <form [formGroup]="factureForm">
+      <div class="container mt-5">
+        <div class="card">
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="email" class="form-label fw-bold"
+                >Statut facture</label
+              >
+              <input
+                type="text"
+                id="factureStatus"
+                class="form-control"
+                formControlName="factureStatus"
+                [ngClass]="{
+                  'is-valid': status,
+                  'is-invalid': !status
+                }"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="dateEncaissement" class="form-label fw-bold"
+                >Date Encaissement</label
+              >
+              <input
+                type="text"
+                id="dateEncaissement"
+                class="form-control"
+                formControlName="dateEncaissement"
+                 [ngClass]="{
+                  'is-valid': status,
+                  'is-invalid': !status
+                }"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="statusDesc" class="form-label fw-bold"
+                >Description
+              </label>
+              <input
+                type="text"
+                id="statusDesc"
+                class="form-control"
+                formControlName="statusDesc"
+                 [ngClass]="{
+                  'is-valid': status,
+                  'is-invalid': !status
+                }"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!-- Footer -->
+    <div class="modal-footer border-0 pt-0 justify-content-center">
+      <button type="button" class="btn btn-secondary px-4" (click)="fermer()">
+        <i class="bi bi-x-circle me-1"></i> Fermer
+      </button>
+    </div>
+  </div>
+</div>
