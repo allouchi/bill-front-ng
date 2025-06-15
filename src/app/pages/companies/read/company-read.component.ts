@@ -152,8 +152,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   }
 
   addCampany() {
-    this.sharedMessagesService.setMessage("Ajout d'une Société");
-    this.sharedDataService.setSelectCompany(null);
+    this.sharedMessagesService.setMessage("Ajout d'une Société");   
     this.router.navigate(['/companies/add']);
   }
 

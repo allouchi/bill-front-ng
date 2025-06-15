@@ -17,6 +17,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { DetailFactureComponent } from '../../../shared/modal/detail/detail-facture.component';
 import { CommonModule } from '@angular/common';
+import { SharedMessagesService } from '../../../services/shared/messages.service';
 
 @Component({
   selector: 'bill-facture-read',
@@ -48,7 +49,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly sharedDataService: SharedDataService,
     private readonly modalService: NgbModal,
     public readonly authService: AuthService,
-    private readonly tvaService: TvaService
+    private readonly tvaService: TvaService,
+    private readonly sharedMessagesService: SharedMessagesService
   ) {}
 
   ngOnInit(): void {
@@ -182,6 +184,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
         if (result === 'confirm') {
           this.onSuccess('UPDATE,FACTURE');
           this.sharedDataService.setSelectedFacture(facture);
+          this.sharedMessagesService.setMessage('Mise à jour de la facture');
           this.router.navigate(['factures/edit']);
         }
       })

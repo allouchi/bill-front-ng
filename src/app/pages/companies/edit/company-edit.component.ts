@@ -35,6 +35,7 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
   company: Company | null = null;
   companyId: number | null = null;
   adresseId: number | null = null;
+  currentUrl: string = '';
 
   constructor(
     private readonly fb: FormBuilder,
@@ -60,7 +61,10 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
       pays: ['', Validators.required],
     });
 
-    this.company = this.sharedDataService.getSelectedCompany();
+    this.currentUrl = this.router.url;
+    if (this.currentUrl.includes('/edit')) {
+      this.company = this.sharedDataService.getSelectedCompany();
+    }
 
     if (this.company) {
       this.companyId = this.company.id;

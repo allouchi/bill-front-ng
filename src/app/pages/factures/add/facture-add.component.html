@@ -3,7 +3,7 @@
 <form [formGroup]="formFacture" (ngSubmit)="addFacture()">
     <!-- Combo Box (Select) -->
     <div class="mb-3">
-        <label for="monthSelect" class="form-label">Mois de la Facture : *</label>
+        <label for="monthSelect" class="form-label"><b>Mois de la Facture : * </b></label>
         <select (change)="setMonthValue($event)" class="form-select" id="monthSelect" formControlName="monthFacture">
             @for (month of monthsYear; track month.id) {
             <option value="{{ month.id }}">{{ month.label }}</option>
@@ -20,7 +20,7 @@
 
     <!-- Champ de saisie -->
     <div class="mb-3">
-        <label for="exampleInput" class="form-label">Numéro de commande : *
+        <label for="exampleInput" class="form-label"><b>Numéro de commande : * </b>
         </label>
         <input formControlName="numeroCommande" type="text" class="form-control" id="numeroCommande"
             placeholder="Entrez Numéro de commande" />
@@ -32,7 +32,7 @@
         </div>
     </div>
     <div class="mb-3">
-        <label for="exampleInput" class="form-label">Quantité : *</label>
+        <label for="exampleInput" class="form-label"><b>Quantité : *</b></label>
         <input formControlName="quantite" type="text" class="form-control" id="quantite"
             placeholder="Séléctionner Mois Facture" />
         <div *ngIf="
@@ -44,7 +44,7 @@
     </div>
 
     <div class="mb-3">
-        <label for="exampleInput" class="form-label">Client Prestation : *</label>
+        <label for="exampleInput" class="form-label"><b>Client Prestation : *</b></label>
         <input formControlName="clientPrestation" type="text" class="form-control" id="clientPrestation"
             placeholder="Entrez Client Prestation" />
 
@@ -57,7 +57,7 @@
     </div>
     <div class="form-check mb-3">
         <input type="checkbox" class="form-check-input" id="newTemplate" formControlName="newTemplate">
-        <label for="newTemplate" class="form-check-label">J'opte pour le nouvau template?</label>
+        <label for="newTemplate" class="form-check-label"><b>J'opte pour le nouvau template?</b></label>
     </div>
 
     <div class="d-flex justify-content-center gap-3">

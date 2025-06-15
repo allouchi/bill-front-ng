@@ -87,6 +87,7 @@ export class ConsultantReadComponent {
   }
 
   updateConsultant(consultant: Consultant) {
+    this.sharedMessagesService.setMessage("Mise à jour d'un Consultant");
     const ok = confirm(
       `Voulez-vous vraiment mettre à jour "${consultant.firstName} ${consultant.lastName}" ?`
     );
@@ -112,6 +113,7 @@ export class ConsultantReadComponent {
       .then((result) => {
         if (result === 'confirm') {
           this.sharedDataService.setSelectedConsultant(consultant);
+          this.sharedMessagesService.setMessage("Mise à jour d'un Consultant");
           this.router.navigate(['consultants/edit']);
         }
       })
