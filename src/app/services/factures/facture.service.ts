@@ -6,6 +6,7 @@ import { env } from "../../../environments/env";
 import { Injectable } from "@angular/core";
 import Exercise from '../../models/Exercise';
 import Prestation from "../../models/Prestation";
+import DataPDF from '../../models/DataPDF';
 
 /**
  * Adapter for IFactureService
@@ -57,9 +58,7 @@ export class FactureService implements IFactureService {
     }
   }
 
-  downloadPdfFacture(factureId: number): Observable<Blob> {
-    return this.http.get(`${this.EDITION_PATH}/${factureId}`, {
-      responseType: 'blob'
-    });
+  downloadPdfFacture(factureId: number): Observable<DataPDF> {
+    return this.http.get<DataPDF>(`${this.EDITION_PATH}/${factureId}`);
   }
 }

@@ -52,7 +52,10 @@
       </thead>
       <tbody>
         @for (facture of filtredFactures; track facture.id) {
-        <tr>
+        <tr [ngClass]="({ 
+          'table-success': facture.factureStatus=='OK', 
+          'table-danger': facture.factureStatus=='KO' 
+        })">
           <td style="text-align: center;">{{ facture.numeroFacture }}</td>
           <td>{{ facture.moisFacture }}</td>
           <td>{{ facture.tarifHT }}</td>
@@ -75,7 +78,7 @@
             <button
               class="btn btn-outline-primary btn-sm me-2"
               (click)="detailFacture($event, facture)"
-              title="Détail Facture"
+              title="Statut Facture"
               [disabled]="!isAdmin"
             >
               <i class="bi bi-info-circle"></i>

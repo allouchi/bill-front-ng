@@ -2,6 +2,7 @@ import { Observable } from "rxjs";
 import Facture from "../../models/Facture";
 import Exercise from '../../models/Exercise';
 import Prestation from "../../models/Prestation";
+import DataPDF from '../../models/DataPDF';
 
 /**
  * Facture fetcher port
@@ -16,9 +17,9 @@ export interface IFactureService {
    */
   createFacture(
     prestation: Partial<Prestation>,
-    siret: string,   
+    siret: string,
     moisFactureId: number,
-    iTextGeneration: boolean,
+    iTextGeneration: boolean
   ): Observable<Prestation>;
 
   /**
@@ -46,5 +47,5 @@ export interface IFactureService {
 
   findExercisesRef(): Observable<Exercise[]>;
 
-  downloadPdfFacture(id: number): Observable<Blob>;
+  downloadPdfFacture(id: number): Observable<DataPDF>;
 }

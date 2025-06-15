@@ -5,34 +5,38 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'bill-detail-facture',
-  imports: [CommonModule,  ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './detail-facture.component.html',
   styleUrl: './detail-facture.component.css',
 })
 export class DetailFactureComponent implements OnInit {
   facture: any;
   factureForm!: FormGroup;
-  numeroCommande: string = '';
+  numeroFacture: string = '';
   dateFacturation: string = '';
-  status : boolean = false;
+  status: boolean = false;
 
   constructor(
     private readonly activeModal: NgbActiveModal,
     private readonly fb: FormBuilder
   ) {}
   ngOnInit(): void {
-    
     this.factureForm = this.fb.group({
       dateEncaissement: [
-        { value: this.facture?.dateEncaissement?this.facture?.dateEncaissement : "Facture non acquitée", disabled: true },
+        {
+          value: this.facture?.dateEncaissement
+            ? this.facture?.dateEncaissement
+            : 'Facture non acquitée',
+          disabled: true,
+        },
       ],
       factureStatus: [{ value: this.facture?.factureStatus, disabled: true }],
       statusDesc: [{ value: this.facture?.statusDesc, disabled: true }],
     });
 
-    this.numeroCommande = this.facture.numeroCommande;
+    this.numeroFacture = this.facture.numeroFacture;
     this.dateFacturation = this.facture.dateFacturation;
-    if(this.facture.dateEncaissement){
+    if (this.facture.dateEncaissement) {
       this.status = true;
     }
   }

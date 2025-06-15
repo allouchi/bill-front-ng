@@ -16,11 +16,12 @@ import Tva from '../../../models/Tva';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { DetailFactureComponent } from '../../../shared/modal/detail/detail-facture.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'bill-facture-read',
   standalone: true,
-  imports: [WaitingComponent, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, WaitingComponent, ReactiveFormsModule, FormsModule],
   templateUrl: './facture-read.component.html',
   styleUrls: ['./facture-read.component.scss'],
 })
@@ -38,6 +39,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   observableEvent$ = new Subscription();
   parent = 'read';
   selectedExercice: string = '';
+
   private readonly router = inject(Router);
 
   constructor(
@@ -190,11 +192,18 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   downloadFacture(facture: Facture) {
     this.factureService.downloadPdfFacture(facture.id!).subscribe({
-      next: (blob) => {
+      next: (dataPDF) => {
+        const byteCharacters = atob(dataPDF.contentBase64); // decode base64
+        const byteNumbers = new Array(byteCharacters.length)
+          .fill(0)
+          .map((_, i) => byteCharacters.charCodeAt(i));
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
         const url = window.URL.createObjectURL(blob);
+
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'mon_fichier.pdf'; // Nom du fichier à sauvegarder
+        a.download = dataPDF.fileName;
         a.click();
         window.URL.revokeObjectURL(url);
       },
