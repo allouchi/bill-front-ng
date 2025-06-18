@@ -8,7 +8,7 @@
     <div class="card-body">
       <form [formGroup]="userForm" (ngSubmit)="editUser()">
         <div class="mb-3">
-          <label for="email" class="form-label fw-bold">Email</label>
+          <label for="email" class="form-label fw-bold">Email :</label>
           <input
             type="email"
             id="email"
@@ -26,7 +26,7 @@
         </div>
 
         <div class="mb-3">
-          <label for="firstName" class="form-label fw-bold">Nom</label>
+          <label for="firstName" class="form-label fw-bold">Nom :</label>
           <input
             type="text"
             id="firstName"
@@ -45,7 +45,7 @@
         </div>
 
         <div class="mb-3">
-          <label for="lastName" class="form-label fw-bold">Prénom</label>
+          <label for="lastName" class="form-label fw-bold">Prénom :</label>
           <input
             type="text"
             id="lastName"
@@ -111,7 +111,7 @@
           </div>
         </div>
         <div class="mb-3 me-2" style="width: 200px">
-          <label for="companySelect" class="form-label fw-bold">Société</label>
+          <label for="companySelect" class="form-label fw-bold">Société :</label>
           <select
             [(ngModel)]="selectedCompany"
             formControlName="siret"
