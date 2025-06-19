@@ -1,7 +1,13 @@
 
 @if(isUpload){
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4>Ajout d'une nouvelle facture</h4>
+            </div>
 <form [formGroup]="formFacture" (ngSubmit)="addFacture()">
     <!-- Combo Box (Select) -->
+    <div class="row">
     <div class="mb-3">
         <label for="monthSelect" class="form-label fw-bold">Mois de la Facture : *</label>
         <select (change)="setMonthValue($event)" class="form-select" id="monthSelect" formControlName="monthFacture">
@@ -64,7 +70,11 @@
         <button class="btn btn-secondary me-2" (click)="cancel()">Annuler</button>
         <button class="btn btn-primary" type="submit">Valider</button>
     </div>
+</div>
 </form>
+
+</div>
+</div>
 
  } @else {
 <bill-waiting [edit]="parent"></bill-waiting>

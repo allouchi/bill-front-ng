@@ -14,6 +14,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { Subscription } from 'rxjs';
+import { SharedMessagesService } from '../../../services/shared/messages.service';
 
 @Component({
   selector: 'bill-consultant-edit',
@@ -28,13 +29,16 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
   consultantId: number | null = null;
   siret: string = '';
   observableEvent$ = new Subscription();
+  currentUrl: string = '';
+  isEdit: boolean = false;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly consultantService: ConsultantService,
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly sharedMessagesService: SharedMessagesService
   ) {}
 
   ngOnInit(): void {
@@ -43,10 +47,16 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
       lastName: ['', Validators.required],
       email: ['', Validators.required],
       fonction: ['', Validators.required],
-    });
+    });   
 
-    this.consultant = this.sharedDataService.getSelectedConsultant();
-    this.siret = this.sharedDataService.getSiret();
+    this.currentUrl = this.router.url;
+    if (this.currentUrl.includes('/edit')) {
+      this.consultant = this.sharedDataService.getSelectedConsultant();
+      this.siret = this.sharedDataService.getSiret();
+      this.isEdit = true;
+      this.sharedMessagesService.setMessage(`Mise à jour de ${this.consultant?.firstName} ${this.consultant?.lastName}`);
+    }
+
 
     if (this.consultant) {
       this.consultantId = this.consultant.id;

@@ -1,3 +1,13 @@
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            @if(isEdit){
+            <h4>Mise à jour d'une société</h4>
+            }@else{
+            <h4>Ajout d'une société</h4>
+            }
+        </div>
+        <div class="card-body">
 <form [formGroup]="formCompany" #form="ngForm" (ngSubmit)="addCompany()" class="p-4 border rounded">
     <div class="row">
 
@@ -232,3 +242,6 @@
         <button class="btn btn-primary" type="submit">Valider</button>
     </div>
 </form>
+</div>
+</div>
+</div>

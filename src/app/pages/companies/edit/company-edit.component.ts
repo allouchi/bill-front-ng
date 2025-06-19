@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import Adresse from '../../../models/Adresse';
 import Company from '../../../models/Company';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
+import { SharedMessagesService } from '../../../services/shared/messages.service';
 
 @Component({
   selector: 'company-edit',
@@ -36,13 +37,15 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
   companyId: number | null = null;
   adresseId: number | null = null;
   currentUrl: string = '';
+  isEdit: boolean = false;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly companyService: CompanyService,
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly sharedMessagesService: SharedMessagesService
   ) {}
   ngOnInit(): void {
     this.formCompany = this.fb.group({
@@ -64,6 +67,8 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
     this.currentUrl = this.router.url;
     if (this.currentUrl.includes('/edit')) {
       this.company = this.sharedDataService.getSelectedCompany();
+      this.isEdit = true;
+      this.sharedMessagesService.setMessage(`Mise à jour de ${this.company?.socialReason}`);
     }
 
     if (this.company) {

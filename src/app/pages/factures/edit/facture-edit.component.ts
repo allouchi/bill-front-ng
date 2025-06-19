@@ -23,6 +23,7 @@ import { SharedDataService } from '../../../services/shared/shared-data-service'
 export default class FactureEditComponent implements OnInit {
   formFacture!: FormGroup;
   facture: Facture | null = null;
+  numeroFacture: string | null = '';
   parent = 'read';
 
   constructor(
@@ -34,6 +35,7 @@ export default class FactureEditComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     this.facture = this.sharedDataService.gertSelectedFacture();
+    this.numeroFacture = this.facture!.numeroFacture;
     this.formFacture = this.fb.group({
       dateEncaissement: ['', Validators.required],
     });

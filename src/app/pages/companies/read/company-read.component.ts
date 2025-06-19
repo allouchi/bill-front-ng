@@ -103,9 +103,9 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     const selectedValue = (event.target as HTMLSelectElement).value;
     this.companies.forEach((item) => {
       if (item.siret === selectedValue) {
-        item!.checked = true;
+        item.checked = true;
       } else {
-        item!.checked = false;
+        item.checked = false;
       }
     });
 
@@ -127,7 +127,8 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     });
   }
 
-  editCompany(event: Event, company: Company) {
+  editCompany(event: Event, company: Company) {   
+    this.sharedMessagesService.setMessage("Modifier une Société");
     event.preventDefault();
     const modal = this.modalService.open(ConfirmEditComponent, {
       size: 'lg',
@@ -142,7 +143,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.sharedDataService.setSelectCompany(company!);
+          this.sharedDataService.setSelectCompany(company);
           this.router.navigate(['/companies/edit']);
         }
       })
