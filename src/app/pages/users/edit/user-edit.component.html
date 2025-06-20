@@ -2,11 +2,12 @@
   <div class="card">
     <div class="card-header bg-primary text-white">
       <h4>
-        Editer l'utilisateur : {{ user?.firstName + " " + user?.lastName }}
+        Mise à jour de l'utilisateur : {{ user?.firstName + " " + user?.lastName }}
       </h4>
     </div>
     <div class="card-body">
-      <form [formGroup]="userForm" (ngSubmit)="editUser()">
+      <form [formGroup]="userForm" (ngSubmit)="editUser()" class="p-4 border rounded">
+        <div class="row">
         <div class="mb-3">
           <label for="email" class="form-label fw-bold">Email :</label>
           <input
@@ -68,7 +69,7 @@
             >Mot de passe :
           </label>
           <input
-            type="password"
+            type="text"
             id="password"
             class="form-control"
             formControlName="password"
@@ -86,7 +87,7 @@
             >Confirmation :</label
           >
           <input
-            type="password"
+            type="text"
             id="passwordConfirm"
             class="form-control"
             formControlName="passwordConfirm"
@@ -133,6 +134,7 @@
           </button>
           <button class="btn btn-primary" type="submit">Valider</button>
         </div>
+      </div>
       </form>
     </div>
   </div>

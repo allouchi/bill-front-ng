@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AuthService } from '../../services/auth/auth-service';
 import { Router } from '@angular/router';
 import {
   FormBuilder,
@@ -9,9 +8,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AlertService } from '../../services/alert/alert-messages.service';
-import { IsAuthService } from '../../services/shared/islogin-service';
-import { AuthResponse } from '../../models/AuthResponse';
+import { AuthService } from '../../../services/auth/auth-service';
+import { AlertService } from '../../../services/alert/alert-messages.service';
+import { IsAuthService } from '../../../services/shared/islogin-service';
+import { AuthResponse } from '../../../models/AuthResponse';
 
 @Component({
   selector: 'bill-login',
@@ -47,16 +47,16 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.authService
       .login({ username: username, password: password })
       .subscribe({
-        next: (response) => {
+        next: (response: any) => {
           this.onSuccess(response);
           this.isAuthService.setIsAuth(true);
         },
-        error: (err) => this.onError(err),
+        error: (err: any) => this.onError(err),
       });
   }
 
   private onSuccess(authResponse: AuthResponse) {
-    this.authService.saveToken(authResponse.jwt);
+    this.authService.saveToken(authResponse.token);
     this.authService.setUser(authResponse);
     this.alertService.show('AUTHENT', 'success');
     this.router.navigate(['bill-dashboard']);
@@ -68,33 +68,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.formLogin.patchValue({
       username: '',
       password: '',
-    });
+    });    
+    console.log(error.code)
 
-    const code: string = error.code;
-    switch (code) {
-      case 'ERR_SERVER_DOWN': {
-        this.alertService.show('Problème de connextion au serveur', 'error');
-        break;
-      }
-      case 'RESOURCE_NOT_FOUND': {
-        this.alertService.show(
-          "Vos identifiants sont incorrects ou votre compte n'est plus valide",
-          'error'
-        );
-        break;
-      }
-      case 'ACCESS_DENIED': {
-        this.alertService.show(
-          "Vous n'êtes pas autorisé à accéder à cette ressource",
-          'error'
-        );
-        break;
-      }
-      default: {
-        //statements;
-        break;
-      }
-    }
+    this.alertService.show(error.code.message, 'error');   
   }
 
   ngOnDestroy(): void {

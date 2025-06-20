@@ -18,6 +18,7 @@ import { AlertService } from '../../../services/alert/alert-messages.service';
 import GetMessagesEroor from '../../../shared/utils/messages-error';
 import Role from '../../../models/Role';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
+import { SharedMessagesService } from '../../../services/shared/messages.service';
 
 @Component({
   selector: 'bill-user-edit',
@@ -39,7 +40,8 @@ export class EditUserComponent {
     private readonly companyService: CompanyService,
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly sharedMessagesService: SharedMessagesService
   ) {}
 
   ngOnInit(): void {
@@ -120,16 +122,21 @@ export class EditUserComponent {
   }
 
   editUser(): void {
+    this.sharedMessagesService.setMessage("Mise à jour d'un utilisateur");
     const rolesValue: boolean[] = this.userForm.value.roles;
     const selectedRoles = rolesValue
       .map((checked, i) => (checked ? this.roles[i] : null))
       .filter((role): role is Role => role !== null);
     const password = this.userForm.get('password')?.value;
     const passwordConfirm = this.userForm.get('passwordConfirm')?.value;
-    if (password !== passwordConfirm) {
+    if ((password != '' || passwordConfirm != '') && (password !== passwordConfirm)) {
       this.userForm.get('password')?.setErrors({ customError: true });
       this.userForm.get('passwordConfirm')?.setErrors({ customError: true });
+      return;
     }
+    this.userForm.get('password')?.setErrors(null);
+    this.userForm.get('passwordConfirm')?.setErrors(null);
+    console.log(this.userForm.value)
 
     if (this.userForm.valid) {
       const password = this.userForm.get('password')?.value;

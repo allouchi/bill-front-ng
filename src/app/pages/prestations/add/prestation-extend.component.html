@@ -1,12 +1,18 @@
 
-
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h4>Prolonger une prestation</h4>
+    </div>
+    <div class="card-body">
 <form [formGroup]="formPrestation" #form="ngForm"
-  (ngSubmit)="prolongePrestation()"
+  (ngSubmit)="prolongerPrestation()"
   class="p-4 border rounded"
 >
+
   <div class="row"> 
       <div class="mb-3">
-        <label class="form-label" for="dateFin">Date Fin</label>
+        <label class="form-label fw-bold" for="dateFin">Date Fin :</label>
         <input
           type="date"
           id="dateFin"
@@ -36,3 +42,6 @@
     <button class="btn btn-primary" type="submit">Valider</button>
   </div>
 </form>
+</div>
+</div>
+</div>

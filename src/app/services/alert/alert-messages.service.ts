@@ -50,7 +50,7 @@ export class AlertService implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.alertSubject) {
-      this.alertSubject.unsubscribe;
+      this.alertSubject.unsubscribe();
     }
   }
 }
