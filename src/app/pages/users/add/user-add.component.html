@@ -62,23 +62,25 @@
         </div>
 
         <div class="mb-3">
-          <label for="password" class="form-label fw-bold">Mot de passe</label>
-          <input
-            type="password"
-            id="password"
-            class="form-control"
-            formControlName="password"
-          />
-          <div
-            class="text-danger"
-            *ngIf="
-              userForm.get('password')?.invalid &&
-              userForm.get('password')?.touched
-            "
-          >
-            Mot de passe requis (min. 6 caractères).
+          <label for="password" class="form-label fw-bold">Mot de passe :
+          </label>
+          <input type="password" id="password" class="form-control" formControlName="password" />
           </div>
+        <ng-container *ngIf="userForm.get('password') as champ">
+          <div *ngIf="champ.errors?.['customError'] && champ.touched" class="text-danger">
+            Le mot de passe doit-être identique.
+          </div>
+        </ng-container>
+        
+        <div class="mb-3">
+          <label for="passwordConfirm" class="form-label fw-bold">Confirmation :</label>
+          <input type="password" id="passwordConfirm" class="form-control" formControlName="passwordConfirm" />
         </div>
+        <ng-container *ngIf="userForm.get('passwordConfirm') as champ">
+          <div *ngIf="champ.errors?.['customError'] && champ.touched" class="text-danger">
+            Le mot de passe doit-être identique.
+          </div>
+        </ng-container>
 
         <div class="mb-3 me-2" style="width: 200px">
           <label for="rolesSelect" class="form-label fw-bold">Role</label>

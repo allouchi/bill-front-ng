@@ -136,7 +136,7 @@ export class EditUserComponent {
     }
     this.userForm.get('password')?.setErrors(null);
     this.userForm.get('passwordConfirm')?.setErrors(null);
-    console.log(this.userForm.value)
+
 
     if (this.userForm.valid) {
       const password = this.userForm.get('password')?.value;
