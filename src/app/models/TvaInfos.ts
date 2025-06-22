@@ -3,5 +3,6 @@ export default interface TvaInfos {
   totalTvaRestant: number;
   totalTTC: number;
   totalTva: number;
+  totalTvaNet: number;
 }
 

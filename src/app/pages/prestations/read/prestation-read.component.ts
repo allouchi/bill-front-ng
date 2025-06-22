@@ -143,6 +143,7 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         this.sharedDataService.setSelectedPrestation(prestation);
+        this.sharedMessagesService.setMessage("Edition d'une nouvelle facture");
         this.parent = 'edit';
         this.router.navigate(['/factures/add']);
       })

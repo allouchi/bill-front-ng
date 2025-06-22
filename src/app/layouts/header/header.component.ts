@@ -1,7 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { SharedMessagesService } from '../../services/shared/messages.service';
 import { Subscription } from 'rxjs';
-import { IsAuthService } from '../../services/shared/islogin-service';
 
 @Component({
   selector: 'bill-header',
@@ -14,10 +13,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   observableEvent$ = new Subscription();
 
-  constructor(
-    private readonly sharedMessagesService: SharedMessagesService,
-    private readonly isAuthService: IsAuthService
-  ) {}
+  constructor(private readonly sharedMessagesService: SharedMessagesService) {}
 
   ngOnInit(): void {
     this.observableEvent$ = this.sharedMessagesService

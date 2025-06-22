@@ -97,6 +97,7 @@ export class ClientReadComponent implements OnInit, OnDestroy {
       .then((result) => {
         if (result === 'confirm') {
           this.sharedDataService.setSelectedClient(client);
+          this.sharedMessagesService.setMessage("Mise à jour d'un Client");
           this.router.navigate(['clients/edit']);
         }
       })

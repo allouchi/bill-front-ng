@@ -69,31 +69,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       password: '',
     });
 
-    const code: string = error.code;
-    switch (code) {
-      case 'ERR_SERVER_DOWN': {
-        this.alertService.show('Problème de connextion au serveur', 'error');
-        break;
-      }
-      case 'RESOURCE_NOT_FOUND': {
-        this.alertService.show(
-          "Vos identifiants sont incorrects ou votre compte n'est plus valide",
-          'error'
-        );
-        break;
-      }
-      case 'ACCESS_DENIED': {
-        this.alertService.show(
-          "Vous n'êtes pas autorisé à accéder à cette ressource",
-          'error'
-        );
-        break;
-      }
-      default: {
-        //statements;
-        break;
-      }
-    }
+    this.alertService.show(error.error.message, 'error');
   }
 
   ngOnDestroy(): void {

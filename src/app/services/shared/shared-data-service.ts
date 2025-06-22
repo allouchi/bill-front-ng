@@ -42,7 +42,7 @@ export class SharedDataService {
   getSelectedCompany(): Company | null {
     return this.selectedCompany;
   }
-  setSelectCompany(company: Company) {
+  setSelectCompany(company: Company | null) {
     this.selectedCompany = company;
   }
 

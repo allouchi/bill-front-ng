@@ -14,6 +14,7 @@ import Adresse from '../../../models/Adresse';
 import { Router } from '@angular/router';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { Subscription } from 'rxjs';
+import { SharedMessagesService } from '../../../services/shared/messages.service';
 
 @Component({
   selector: 'bill-client-edit',
@@ -28,15 +29,18 @@ export class ClientEditComponent implements OnInit, OnDestroy {
   clientId: number | null = null;
   addresseId: number | null = null;
   siret: string = '';
-
   observableEvent$ = new Subscription();
+  currentUrl: string = '';
+  isEdit: boolean = false;
+  socialReason: string = '';
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly clientService: ClientService,
     private readonly alertService: AlertService,
     private readonly router: Router,
-    private readonly sharedDataService: SharedDataService
+    private readonly sharedDataService: SharedDataService,
+    private readonly sharedMessagesService: SharedMessagesService
   ) {}
 
   ngOnInit(): void {
@@ -50,8 +54,17 @@ export class ClientEditComponent implements OnInit, OnDestroy {
       pays: ['', Validators.required],
     });
 
-    this.client = this.sharedDataService.getSelectedClient();
-    this.siret = this.sharedDataService.getSiret();
+
+
+    this.currentUrl = this.router.url;
+    if (this.currentUrl.includes('/edit')) {
+      this.client = this.sharedDataService.getSelectedClient();
+      this.siret = this.sharedDataService.getSiret();
+      this.isEdit = true;
+      this.socialReason = this.client!.socialReason;
+      this.sharedMessagesService.setMessage(`Mise à jour de ${this.client?.socialReason}`);
+    }
+
 
     if (this.client) {
       this.clientId = this.client.id;

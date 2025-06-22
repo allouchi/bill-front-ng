@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import Adresse from '../../../models/Adresse';
 import Company from '../../../models/Company';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
+import { SharedMessagesService } from '../../../services/shared/messages.service';
 
 @Component({
   selector: 'company-edit',
@@ -35,13 +36,16 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
   company: Company | null = null;
   companyId: number | null = null;
   adresseId: number | null = null;
+  currentUrl: string = '';
+  isEdit: boolean = false;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly companyService: CompanyService,
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly sharedMessagesService: SharedMessagesService
   ) {}
   ngOnInit(): void {
     this.formCompany = this.fb.group({
@@ -58,27 +62,39 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
       codePostal: ['', Validators.required],
       localite: ['', Validators.required],
       pays: ['', Validators.required],
+      checked: [''],
     });
 
-    this.company = this.sharedDataService.getSelectedCompany();
+    this.currentUrl = this.router.url;
+    if (this.currentUrl.includes('/edit')) {
+      this.company = this.sharedDataService.getSelectedCompany();
+      this.isEdit = true;
+      this.sharedMessagesService.setMessage(
+        `Mise à jour de ${this.company?.socialReason}`
+      );
+      this.buildDataCompany(this.company);
+    }
+  }
 
-    if (this.company) {
-      this.companyId = this.company.id;
-      this.adresseId = this.company.companyAdresse.id;
+  buildDataCompany(company: Company | null) {
+    if (company) {
+      this.companyId = company.id;
+      this.adresseId = company.companyAdresse.id;
       this.formCompany.patchValue({
-        socialReason: this.company.socialReason,
-        status: this.company.status,
-        siret: this.company.siret,
-        rcsName: this.company.rcsName,
-        numeroTva: this.company.numeroTva,
-        codeApe: this.company.codeApe,
-        numeroIban: this.company.numeroIban,
-        numeroBic: this.company.numeroBic,
-        numero: this.company.companyAdresse.numero,
-        rue: this.company.companyAdresse.rue,
-        codePostal: this.company.companyAdresse.codePostal,
-        localite: this.company.companyAdresse.localite,
-        pays: this.company.companyAdresse.pays,
+        socialReason: company.socialReason,
+        status: company.status,
+        siret: company.siret,
+        rcsName: company.rcsName,
+        numeroTva: company.numeroTva,
+        codeApe: company.codeApe,
+        numeroIban: company.numeroIban,
+        numeroBic: company.numeroBic,
+        numero: company.companyAdresse.numero,
+        rue: company.companyAdresse.rue,
+        codePostal: company.companyAdresse.codePostal,
+        localite: company.companyAdresse.localite,
+        pays: company.companyAdresse.pays,
+        checked: company.checked,
       });
     }
   }

@@ -38,6 +38,7 @@ export class AddUserComponent implements OnInit {
       lastName: ['', Validators.required],
       siret: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(3)]],
+      passwordConfirm: ['', [Validators.required, Validators.minLength(3)]],
       role: [null, Validators.required],
     });
 
@@ -96,6 +97,16 @@ export class AddUserComponent implements OnInit {
     let role = this.getByRole(this.selectedRole);   
     selected.push(role);
 
+    const password = this.userForm.get('password')?.value;
+    const passwordConfirm = this.userForm.get('passwordConfirm')?.value;
+    if ((password == '' || passwordConfirm == '') || (password !== passwordConfirm)) {
+      this.userForm.get('password')?.setErrors({ customError: true });
+      this.userForm.get('passwordConfirm')?.setErrors({ customError: true });
+      return;
+    }
+    this.userForm.get('password')?.setErrors(null);
+    this.userForm.get('passwordConfirm')?.setErrors(null);
+
     if (this.userForm.valid) {
       let user: User = {
         id: null,
@@ -126,7 +137,7 @@ export class AddUserComponent implements OnInit {
   }
 
   private onSuccess(respSuccess: any) {
-    this.router.navigate(['bill-dashboard']);
+    this.router.navigate(['users/read']);
     this.alertService.show(respSuccess, 'success');
   }
 

@@ -103,9 +103,9 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     const selectedValue = (event.target as HTMLSelectElement).value;
     this.companies.forEach((item) => {
       if (item.siret === selectedValue) {
-        item!.checked = true;
+        item.checked = true;
       } else {
-        item!.checked = false;
+        item.checked = false;
       }
     });
 
@@ -117,8 +117,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     this.sharedDataService.setPrestations(company!.prestations!);
     this.libelleCompanyService.setMessage(this.authService.getLibelleHeader());
     this.companyService.createOrUpdateCompany(company!).subscribe({
-      next: () => {
-        //this.onSuccess('UPDATE,SOCIETE');
+      next: () => {        
         this.libelleCompanyService.setMessage(company?.socialReason!);
       },
       error: (err) => {
@@ -127,8 +126,9 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     });
   }
 
-  editCompany(event: Event, company: Company) {
-    event.preventDefault();
+  editCompany(event: Event, company: Company) { 
+     event.preventDefault();
+     this.sharedMessagesService.setMessage('Modifier une Société');   
     const modal = this.modalService.open(ConfirmEditComponent, {
       size: 'lg',
       backdrop: 'static',
@@ -142,7 +142,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.sharedDataService.setSelectCompany(company!);
+          this.sharedDataService.setSelectCompany(company);
           this.router.navigate(['/companies/edit']);
         }
       })
@@ -152,7 +152,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   }
 
   addCampany() {
-    this.sharedMessagesService.setMessage("Ajout d'une Société");
+    this.sharedMessagesService.setMessage("Ajout d'une Société");   
     this.router.navigate(['/companies/add']);
   }
 

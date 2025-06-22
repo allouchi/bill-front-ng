@@ -14,6 +14,7 @@ import { AlertService } from '../../../services/alert/alert-messages.service';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import Prestation from '../../../models/Prestation';
 import { PrestationService } from '../../../services/prestations/prestation.service';
+import { SharedMessagesService } from '../../../services/shared/messages.service';
 
 @Component({
   selector: 'bill-prestation-extend',
@@ -30,10 +31,12 @@ export default class PrestationExtendComponent implements OnInit {
     private readonly router: Router,
     private readonly prestationService: PrestationService,
     private readonly alertService: AlertService,
-    private readonly sharedDataService: SharedDataService
+    private readonly sharedDataService: SharedDataService,
+    private readonly sharedMessagesService: SharedMessagesService
   ) {}
   ngOnInit(): void {
     this.prestation = this.sharedDataService.getSelectedPrestation();
+    this.sharedMessagesService.setMessage("Prolongation de la prestation pour " + `${this.prestation?.clientPrestation}`);
     let dateFin = this.prestation?.dateFin;
     let formatedDate = dateFin?.split('/');
     dateFin =
@@ -44,7 +47,7 @@ export default class PrestationExtendComponent implements OnInit {
     });
   }
 
-  prolongePrestation() {
+  prolongerPrestation() {
     if (this.formPrestation.valid) {
       this.formPrestation.patchValue({
         dateFin: this.formPrestation.get('dateFin')?.value,
@@ -53,7 +56,7 @@ export default class PrestationExtendComponent implements OnInit {
       this.prestation!.dateFin = this.formPrestation.get('dateFin')?.value;
       this.prestationService.updateDatePrestation(this.prestation!).subscribe({
         next: () => {
-          this.onSuccess('UPDATE,PRESTATION');
+          this.onSuccess('UPDATE,PRESTATION');         
           this.router.navigate(['/prestations/read']);
         },
         error: (err) => {
