@@ -22,6 +22,7 @@
           <tr>
             <th scope="col">CA TTC</th>
             <th scope="col">TOTAL TVA</th>
+            <th scope="col">TOTAL TVA NET</th>
             <th scope="col">TOTAL TVA REGLEE</th>
             <th scope="col">RESTE TVA A PAYER</th>
           </tr>
@@ -29,7 +30,10 @@
         <tbody>
           <tr>
             <td style="text-align: center">{{ tvaInfosFilterd.totalTTC }}</td>
-            <td class="text-center">{{ tvaInfosFilterd.totalTva }}</td>
+            <td class="text-center">
+              {{ tvaInfosFilterd.totalTva }}</td>
+               <td class="text-center">
+              {{ tvaInfosFilterd.totalTvaNet }}</td>
             <td style="text-align: center">
               {{ tvaInfosFilterd.totalTvaPaye }}
             </td>

@@ -117,8 +117,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     this.sharedDataService.setPrestations(company!.prestations!);
     this.libelleCompanyService.setMessage(this.authService.getLibelleHeader());
     this.companyService.createOrUpdateCompany(company!).subscribe({
-      next: () => {
-        //this.onSuccess('UPDATE,SOCIETE');
+      next: () => {        
         this.libelleCompanyService.setMessage(company?.socialReason!);
       },
       error: (err) => {
@@ -127,9 +126,9 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     });
   }
 
-  editCompany(event: Event, company: Company) {   
-    this.sharedMessagesService.setMessage("Modifier une Société");
-    event.preventDefault();
+  editCompany(event: Event, company: Company) { 
+     event.preventDefault();
+     this.sharedMessagesService.setMessage('Modifier une Société');   
     const modal = this.modalService.open(ConfirmEditComponent, {
       size: 'lg',
       backdrop: 'static',

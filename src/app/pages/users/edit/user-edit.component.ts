@@ -33,6 +33,7 @@ export class EditUserComponent {
   user!: User | null;
   selectedRole: string = '';
   selectedCompany: string = '';
+  showPassword: boolean = true;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -66,6 +67,10 @@ export class EditUserComponent {
       roles: this.fb.array([]),
     });
     this.loadCompanies();
+  }
+  showPassord(event: Event) {
+    event.preventDefault;
+    this.showPassword = !this.showPassword;
   }
 
   private addCheckboxes() {
@@ -129,14 +134,16 @@ export class EditUserComponent {
       .filter((role): role is Role => role !== null);
     const password = this.userForm.get('password')?.value;
     const passwordConfirm = this.userForm.get('passwordConfirm')?.value;
-    if ((password != '' || passwordConfirm != '') && (password !== passwordConfirm)) {
+    if (
+      (password != '' || passwordConfirm != '') &&
+      password !== passwordConfirm
+    ) {
       this.userForm.get('password')?.setErrors({ customError: true });
       this.userForm.get('passwordConfirm')?.setErrors({ customError: true });
       return;
     }
     this.userForm.get('password')?.setErrors(null);
     this.userForm.get('passwordConfirm')?.setErrors(null);
-
 
     if (this.userForm.valid) {
       const password = this.userForm.get('password')?.value;

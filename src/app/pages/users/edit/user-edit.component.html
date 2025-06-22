@@ -2,139 +2,156 @@
   <div class="card">
     <div class="card-header bg-primary text-white">
       <h4>
-        Mise à jour de l'utilisateur : {{ user?.firstName + " " + user?.lastName }}
+        Mise à jour de l'utilisateur :
+        {{ user?.firstName + " " + user?.lastName }}
       </h4>
     </div>
     <div class="card-body">
-      <form [formGroup]="userForm" (ngSubmit)="editUser()" class="p-4 border rounded">
+      <form
+        [formGroup]="userForm"        
+        class="p-4 border rounded"
+      >
         <div class="row">
-        <div class="mb-3">
-          <label for="email" class="form-label fw-bold">Email :</label>
-          <input
-            type="email"
-            id="email"
-            class="form-control"
-            formControlName="email"
-          />
-          <div
-            class="text-danger"
-            *ngIf="
-              userForm.get('email')?.invalid && userForm.get('email')?.touched
-            "
-          >
-            L'adresse Email est requise.
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label for="firstName" class="form-label fw-bold">Nom :</label>
-          <input
-            type="text"
-            id="firstName"
-            class="form-control"
-            formControlName="firstName"
-          />
-          <div
-            class="text-danger"
-            *ngIf="
-              userForm.get('firstName')?.invalid &&
-              userForm.get('firstName')?.touched
-            "
-          >
-            Le nom est requis.
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label for="lastName" class="form-label fw-bold">Prénom :</label>
-          <input
-            type="text"
-            id="lastName"
-            class="form-control"
-            formControlName="lastName"
-          />
-          <div
-            class="text-danger"
-            *ngIf="
-              userForm.get('lastName')?.invalid &&
-              userForm.get('lastName')?.touched
-            "
-          >
-            Le nom est requis.
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label for="password" class="form-label fw-bold"
-            >Mot de passe :
-          </label>
-          <input
-            type="password"
-            id="password"
-            class="form-control"
-            formControlName="password"
-          />
-        </div>
-
-        <ng-container *ngIf="userForm.get('password') as champ">
-          <div *ngIf="champ.errors?.['customError'] && champ.touched" class="text-danger">
-            Le mot de passe doit-être identique.
-          </div>
-        </ng-container>
-
-        <div class="mb-3">
-          <label for="passwordConfirm" class="form-label fw-bold"
-            >Confirmation :</label
-          >
-          <input
-            type="password"
-            id="passwordConfirm"
-            class="form-control"
-            formControlName="passwordConfirm"
-          />
-        </div>
-        <ng-container *ngIf="userForm.get('passwordConfirm') as champ">
-          <div *ngIf="champ.errors?.['customError'] && champ.touched" class="text-danger">
-           Le mot de passe doit-être identique.
-          </div>
-        </ng-container>
-
-        <div class="mb-3 me-2" style="width: 200px">
-          <label for="rolesFor" class="form-label fw-bold">Role : *</label>
-
-          <div formArrayName="roles">
-            <div *ngFor="let control of rolesFormArray.controls; let i = index">
-              <label>
-                <input type="checkbox" [formControlName]="i" />
-                {{ roles[i].description }}
-              </label>
+          <div class="mb-3">
+            <label for="email" class="form-label fw-bold">Email :</label>
+            <input
+              type="email"
+              id="email"
+              class="form-control"
+              formControlName="email"
+            />
+            <div
+              class="text-danger"
+              *ngIf="
+                userForm.get('email')?.invalid && userForm.get('email')?.touched
+              "
+            >
+              L'adresse Email est requise.
             </div>
           </div>
-        </div>
-        <div class="mb-3 me-2" style="width: 200px">
-          <label for="companySelect" class="form-label fw-bold">Société :</label>
-          <select
-            [(ngModel)]="selectedCompany"
-            formControlName="siret"
-            (change)="setCompanyValue($event)"
-            class="form-select"
-            id="companySelect"
-          >
-            @for (company of companies; track company.id) {
-            <option value="{{ company.siret }}" [value]="company.siret">
-              {{ company.socialReason }}
-            </option>
-            }
-          </select>
-        </div>
 
-        <div class="d-flex justify-content-center gap-3">
-          <button class="btn btn-secondary me-2" (click)="cancel()">
-            Annuler
-          </button>
-          <button class="btn btn-primary" type="submit">Valider</button>
+          <div class="mb-3">
+            <label for="firstName" class="form-label fw-bold">Nom :</label>
+            <input
+              type="text"
+              id="firstName"
+              class="form-control"
+              formControlName="firstName"
+            />
+            <div
+              class="text-danger"
+              *ngIf="
+                userForm.get('firstName')?.invalid &&
+                userForm.get('firstName')?.touched
+              "
+            >
+              Le nom est requis.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="lastName" class="form-label fw-bold">Prénom :</label>
+            <input
+              type="text"
+              id="lastName"
+              class="form-control"
+              formControlName="lastName"
+            />
+            <div
+              class="text-danger"
+              *ngIf="
+                userForm.get('lastName')?.invalid &&
+                userForm.get('lastName')?.touched
+              "
+            >
+              Le nom est requis.
+            </div>
+          </div>
+          <button  (click)="showPassord($event)">Modifer mot passe?</button>
+          @if(showPassword==true){
+          <div>
+            <div class="mb-3">
+              <label for="password" class="form-label fw-bold"
+                >Mot de passe :
+              </label>
+              <input
+                type="password"
+                id="password"
+                class="form-control"
+                formControlName="password"
+              />
+            </div>
+
+            <ng-container *ngIf="userForm.get('password') as champ">
+              <div
+                *ngIf="champ.errors?.['customError'] && champ.touched"
+                class="text-danger"
+              >
+                Le mot de passe doit-être identique.
+              </div>
+            </ng-container>
+
+            <div class="mb-3">
+              <label for="passwordConfirm" class="form-label fw-bold"
+                >Confirmation :</label
+              >
+              <input
+                type="password"
+                id="passwordConfirm"
+                class="form-control"
+                formControlName="passwordConfirm"
+              />
+            </div>
+            <ng-container *ngIf="userForm.get('passwordConfirm') as champ">
+              <div
+                *ngIf="champ.errors?.['customError'] && champ.touched"
+                class="text-danger"
+              >
+                Le mot de passe doit-être identique.
+              </div>
+            </ng-container>
+          </div>
+          }
+          <div class="mb-3 me-2" style="width: 200px">
+            <label for="rolesFor" class="form-label fw-bold">Role : *</label>
+
+            <div formArrayName="roles">
+              <div
+                *ngFor="let control of rolesFormArray.controls; let i = index"
+              >
+                <label>
+                  <input type="checkbox" [formControlName]="i" />
+                  {{ roles[i].description }}
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3 me-2" style="width: 200px">
+            <label for="companySelect" class="form-label fw-bold"
+              >Société :</label
+            >
+            <select
+              [(ngModel)]="selectedCompany"
+              formControlName="siret"
+              (change)="setCompanyValue($event)"
+              class="form-select"
+              id="companySelect"
+            >
+              @for (company of companies; track company.id) {
+              <option value="{{ company.siret }}" [value]="company.siret">
+                {{ company.socialReason }}
+              </option>
+              }
+            </select>
+          </div>
+
+          <div class="d-flex justify-content-center gap-3">
+            <button class="btn btn-secondary me-2" (click)="cancel()">
+              Annuler
+            </button>
+            <button class="btn btn-primary" type="submit" (click)="editUser()">Valider</button>
+          </div>
         </div>
-      </div>
       </form>
     </div>
   </div>
