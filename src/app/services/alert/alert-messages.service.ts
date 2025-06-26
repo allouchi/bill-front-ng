@@ -33,6 +33,9 @@ export class AlertService implements OnInit, OnDestroy {
     if (action == 'UPDATE') {
       action = ' été mise à jour avec succès !';
     }
+     if (action == 'LOGOUT') {
+       action = 'A Bientôt !';
+     }
     if (action == 'AUTHENT') {
       action = "Bienvenue sur l'application de facturation";
       this.message = action;

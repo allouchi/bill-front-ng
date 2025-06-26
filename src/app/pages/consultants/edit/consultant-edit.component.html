@@ -1,7 +1,12 @@
 <div class="container mt-5">
     <div class="card">
         <div class="card-header bg-primary text-white">
-            <h4>Ajout d'un consultant</h4>
+        @if(isEdit){
+            <h4>Mise à jour d'un consultant</h4>
+        }@else{
+            <h4>Ajout d'un consultant</h4> 
+        }        
+           
         </div>
         <div class="card-body">
 <form [formGroup]="formConsultant" #form="ngForm" (ngSubmit)="addConsultant()" class="p-4 border rounded">
