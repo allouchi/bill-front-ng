@@ -1,4 +1,0 @@
-export class AuthResquest {  
-  username: string;
-  password: string; 
-}

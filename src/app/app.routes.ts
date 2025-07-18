@@ -22,6 +22,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { LogoutComponent } from './pages/logout/logout.component';
 import { UserReadComponent } from './pages/users/read/user-read.component';
 import { AddUserComponent } from './pages/users/add/user-add.component';
+import { OperationReadComponent } from './pages/dashboard/read/operation-read.component';
 
 export const BILLING_ROUTE: Routes = [
   {
@@ -34,12 +35,12 @@ export const BILLING_ROUTE: Routes = [
   },
   {
     path: '',
-    component: DashboardComponent,
+    component: OperationReadComponent,
     canActivate: [AuthGuard],
   },
   {
     path: 'bill-dashboard',
-    component: DashboardComponent,
+    component: OperationReadComponent,
     canActivate: [AuthGuard],
   },
   {

@@ -15,7 +15,7 @@ import { CompanyService } from '../../../services/companies/company-service';
 import User from '../../../models/User';
 import { Router } from '@angular/router';
 import { AlertService } from '../../../services/alert/alert-messages.service';
-import GetMessagesEroor from '../../../shared/utils/messages-error';
+import GetMessagesError from '../../../shared/utils/messages-error';
 import Role from '../../../models/Role';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
@@ -68,8 +68,7 @@ export class EditUserComponent {
     });
     this.loadCompanies();
   }
-  showPassord(event: Event) {
-    event.preventDefault;
+  showPassord(event: Event) {    
     this.showPassword = !this.showPassword;
   }
 
@@ -184,7 +183,7 @@ export class EditUserComponent {
   }
 
   private onError(error: any) {
-    const message = GetMessagesEroor(error);
+    const message = GetMessagesError(error);
     this.alertService.show(message, 'error');
   }
 }

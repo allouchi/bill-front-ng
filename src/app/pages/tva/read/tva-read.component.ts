@@ -65,7 +65,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   private loadCompanies() {
     this.companyService.findCompanies().subscribe({
       next: (companies) => {
-        this.companies = companies;
+        this.companies = companies;       
       },
       error: (err) => {
         this.onError(err);
@@ -73,8 +73,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadTvaInfo(exercice: string) {
-    console.log(exercice);
+  loadTvaInfo(exercice: string) {    
     this.tvaService.findTvaInfoByExercise(this.siret, exercice).subscribe({
       next: (tvaInfos) => {
         this.tvaInfos = tvaInfos;

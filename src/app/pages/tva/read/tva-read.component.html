@@ -7,8 +7,7 @@
       <select
         (change)="setYearValue($event)"
         class="form-select"
-        id="yearSelect"
-        [(ngModel)]="selectedExercice" 
+        id="yearSelect"       
       >
         @for (year of exercises; track year.id) {
         <option [value]="year.exercise">{{ year.exercise }}</option>
@@ -17,7 +16,7 @@
     </div>
 
     <div>
-      <table class="table">
+      <table class="table table-bordered">
         <thead>
           <tr>
             <th scope="col">CA TTC</th>

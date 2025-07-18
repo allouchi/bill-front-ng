@@ -24,7 +24,7 @@ import GetMonthsOfYear from '../../../shared/utils/month-year';
   templateUrl: './tva-edit.component.html',
   styleUrl: './tva-edit.component.css',
 })
-export class TvaEditComponent implements OnInit, OnDestroy {
+export class OperationEditComponent implements OnInit, OnDestroy {
   formTva!: FormGroup;
   tva: Tva | null = null;
   monthsYear!: any;
