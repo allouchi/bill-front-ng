@@ -23,7 +23,7 @@ import { AlertService } from '../../../services/alert/alert-messages.service';
 })
 export class OperationReadComponent implements OnInit, OnDestroy {
   isLoaded = false;
-   operations: Operation[] = [];
+  operations: Operation[] = [];
   operationsFiltred: Operation[] = [];
   exercises: Exercise[] = [];
   tvaInfos!: TvaInfos;
@@ -36,6 +36,8 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   router = inject(Router);
   isAdmin = false;
   parent = 'read';
+  total: number = 0;
+  totalByExcercise: number = 0;
 
   constructor(
 
@@ -61,6 +63,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
         this.operations = operations;
         this.operationsFiltred = operations;
         this.isLoaded = true;
+        this.calculTotal(operations)
       },
       error: (err) => {
         this.onError(err);
@@ -69,11 +72,31 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     });
   }
 
+  calculTotal(operations: Operation[]) {
+    if (operations) {
+      operations.forEach(oper => {
+        this.total += oper.montantOperation;
+      })
+      this.totalByExcercise = this.total;
+    }
+  }
+
   setYearValue(event: Event) {
+    this.totalByExcercise = 0;
     const selectedValue = (event.target as HTMLSelectElement).value;
     this.selectedExercice = selectedValue;
+
     if (this.operations) {
-      this.operationsFiltred = this.operations.filter(o => o.exercise == selectedValue);
+      if (selectedValue == 'Tous') {
+        this.totalByExcercise = this.total;
+        this.operationsFiltred = this.operations;
+      } else {
+        this.operationsFiltred = this.operations.filter(o => o.exercise == selectedValue);
+        this.operationsFiltred.forEach(oper => {
+          this.totalByExcercise += oper.montantOperation;
+        })
+      }
+
     }
   }
 
@@ -89,14 +112,14 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   }
 
   addOperation() {
-    this.sharedMessagesService.setMessage("Ajout d'une Opération");    
+    this.sharedMessagesService.setMessage("Ajout d'une Opération");
     this.sharedDataService.setExercices(this.exercises);
     this.router.navigate(['/operations/add']);
   }
 
-  updateOperation(operation: Operation) {    
+  updateOperation(operation: Operation) {
     this.sharedMessagesService.setMessage("Edition d'une Opération");
-    this.sharedDataService.setExercices(this.exercises);  
+    this.sharedDataService.setExercices(this.exercises);
     this.sharedDataService.setSelectOperation(operation);
     this.router.navigate(['/operations/edit']);
   }
