@@ -19,19 +19,17 @@ export class OperationService {
     constructor(private readonly http: HttpClient) { }
 
     createOrUpdateOperation(
-        operation: Operation,
-        siret: string
+        operation: Operation      
     ): Observable<Operation> {
-        const isNew: boolean = !operation.id || operation.id === 0;
-
+        const isNew: boolean = !operation.id || operation.id === 0;        
         if (isNew) {
             return this.http.post<Operation>(
-                `${this.OPERATION_PATH}/${siret}`,
+                `${this.OPERATION_PATH}/add`,
                 operation
             );
         } else {
             return this.http.put<Operation>(
-                `${this.OPERATION_PATH}/${siret}`,
+                `${this.OPERATION_PATH}/edit`,
                 operation
             );
         }
@@ -45,6 +43,7 @@ export class OperationService {
     }
 
     deletedOperationById(id: number): Observable<string> {
+        console.log("id :", id)
         return this.http.delete<string>(
             `${this.OPERATION_PATH}/${id}`
         );

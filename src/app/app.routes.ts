@@ -22,7 +22,10 @@ import { LoginComponent } from './pages/login/login.component';
 import { LogoutComponent } from './pages/logout/logout.component';
 import { UserReadComponent } from './pages/users/read/user-read.component';
 import { AddUserComponent } from './pages/users/add/user-add.component';
-import { OperationReadComponent } from './pages/dashboard/read/operation-read.component';
+import { OperationAddComponent } from './pages/operations/add/operation-add.component';
+import { OperationEditComponent } from './pages/operations/edit/operation-edit.component';
+import { OperationReadComponent } from './pages/operations/read/operation-read.component';
+
 
 export const BILLING_ROUTE: Routes = [
   {
@@ -35,14 +38,34 @@ export const BILLING_ROUTE: Routes = [
   },
   {
     path: '',
-    component: OperationReadComponent,
+    component: DashboardComponent,
     canActivate: [AuthGuard],
   },
   {
-    path: 'bill-dashboard',
-    component: OperationReadComponent,
+    path: 'dashboard',
+    component: DashboardComponent,
     canActivate: [AuthGuard],
   },
+
+  {
+    path: 'operations',
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'read',
+        loadComponent: () => OperationReadComponent,
+      },
+      {
+        path: 'edit',
+        loadComponent: () => OperationEditComponent,
+      },
+      {
+        path: 'add',
+        loadComponent: () => OperationAddComponent,
+      },
+    ],
+  },
+
   {
     path: 'companies',
     canActivate: [AuthGuard],

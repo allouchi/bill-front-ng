@@ -133,7 +133,7 @@ export class AddUserComponent implements OnInit {
   }
 
   cancel() {
-    this.router.navigate(['bill-dashboard']);
+    this.router.navigate(['dashboard']);
   }
 
   private onSuccess(respSuccess: any) {

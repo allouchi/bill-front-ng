@@ -7,10 +7,12 @@ import Consultant from '../../models/Consultant';
 import Client from '../../models/Client';
 import Exercise from '../../models/Exercise';
 import User from '../../models/User';
+import Operation from '../../models/Operation';
 
 @Injectable({ providedIn: 'root' })
 export class SharedDataService {
   selectedCompany: Company | null = null;
+  selectedOperation: Operation | null = null;
   selectedPrestation: Prestation | null = null;
   prestations: Prestation[] | null = null;
   selectedTva: Tva | null = null;
@@ -21,14 +23,14 @@ export class SharedDataService {
   consultants: Consultant[] | null = null;
   companies: Company[] | null = null;
   exercices: Exercise[] | null = null;
-  selectedExercise: Exercise | null = null;
+  selectedExercise: string | null = null;
   siret: string = '';
   selectedUser: User | null = null;
 
-  getSelectedExercise(): Exercise | null {
+  getSelectedExercise(): string | null {
     return this.selectedExercise;
   }
-  setSelectedExercise(exercise: Exercise) {
+  setSelectedExercise(exercise: string) {
     this.selectedExercise = exercise;
   }
   setSiret(siret: string) {
@@ -36,7 +38,7 @@ export class SharedDataService {
   }
 
   getSiret() {
-    return (this.siret = this.selectedCompany!.siret);
+    return this.selectedCompany!.siret;
   }
 
   getSelectedCompany(): Company | null {
@@ -44,6 +46,13 @@ export class SharedDataService {
   }
   setSelectCompany(company: Company | null) {
     this.selectedCompany = company;
+  }
+
+  getSelectedOperration(): Operation | null {
+    return this.selectedOperation;
+  }
+  setSelectOperation(company: Operation | null) {
+    this.selectedOperation = company;
   }
 
   getSelectedPrestation(): Prestation | null {

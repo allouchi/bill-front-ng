@@ -3,5 +3,5 @@ export default interface Operation {
     montantOperation: number;
     typeOperation: string;
     dateOperation: string;
-    exercice: string;
+    exercise: string;
 }

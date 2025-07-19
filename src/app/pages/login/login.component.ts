@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isAuthService.setIsAuth(true);    
     this.authService.setUser(authResponse);
     this.alertService.show('AUTHENT', 'success');
-    this.router.navigate(['bill-dashboard']);
+    this.router.navigate(['dashboard']);
   }
 
   private onResponseError(error: any) {   

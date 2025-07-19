@@ -74,7 +74,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.authService.logout();
     this.sharedMessagesService.setMessage('');
     this.libelleCompanyService.setMessage('');
-    this.router.navigate(['/bill-dashboard']);
+    this.router.navigate(['/dashboard']);
     this.alertService.show('LOGOUT', 'success');
   }
 

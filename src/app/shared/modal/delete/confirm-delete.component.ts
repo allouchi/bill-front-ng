@@ -10,6 +10,7 @@ import { CompanyService } from '../../../services/companies/company-service';
 import { PrestationService } from '../../../services/prestations/prestation.service';
 import { UserService } from '../../../services/user/user-service';
 import User from '../../../models/User';
+import { OperationService } from '../../../services/dashboard/operation-service';
 
 @Component({
   selector: 'bill-confirm-modal',
@@ -30,6 +31,7 @@ export class ConfirmDeleteComponent implements OnInit {
     private readonly consultantService: ConsultantService,
     private readonly companyService: CompanyService,
     private readonly prestationService: PrestationService,
+    private readonly operationService: OperationService,
     private readonly userService: UserService
   ) {}
 
@@ -65,7 +67,11 @@ export class ConfirmDeleteComponent implements OnInit {
     }
 
     if (this.item == 'User') {
-      this.deleteUser(this.composant);
+      this.deleteUser(this.composant.id);
+    }
+
+    if (this.item == 'Operation') {
+      this.deleteOperation(this.composant.id);
     }
     this.activeModal.close('confirm');
   }
@@ -113,6 +119,19 @@ export class ConfirmDeleteComponent implements OnInit {
       },
     });
   }
+
+  deleteOperation(id: number) {
+    this.operationService.deletedOperationById(id).subscribe({
+      next: () => {
+        this.onSuccess('DELETE,OPERATION');
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
+
 
   deleteConsultant(id: number) {
     this.consultantService.deleteConsultantById(id).subscribe({
