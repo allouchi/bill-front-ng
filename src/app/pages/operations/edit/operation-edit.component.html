@@ -30,16 +30,24 @@
             <div class="mb-3">
               <label class="form-label fw-bold" for="montantOperation">Montant opération *</label>
               <input type="text" id="montantOperation" class="form-control" formControlName="montantOperation"
+               appNumericFormat
                 [class.is-invalid]="
                     formOperation.get('montantOperation')?.invalid &&
                     formOperation.get('montantOperation')?.touched
                   " />
 
-              <div *ngIf="
-                    formOperation.get('montantOperation')?.invalid &&
+             <div *ngIf="
+                    formOperation.get('montantOperation')?.errors?.['required'] &&
                     formOperation.get('montantOperation')?.touched
                   " class="text-danger">
                 Ce champ est requis.
+              </div>
+
+               <div *ngIf="
+                    formOperation.get('montantOperation')?.errors?.['pattern'] &&
+                    formOperation.get('montantOperation')?.touched
+                  " class="text-danger">
+                Ce champ doit être numérique.
               </div>
             </div>
           </div>

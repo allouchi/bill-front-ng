@@ -14,10 +14,18 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { AlertService } from '../../../services/alert/alert-messages.service';
+import { CommonModule } from '@angular/common';
+import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 
 @Component({
   selector: 'bill-operation-read',
-  imports: [WaitingComponent, ReactiveFormsModule, FormsModule],
+  imports: [
+    CommonModule,
+    WaitingComponent,
+    ReactiveFormsModule,
+    CustomDecimalPipe,
+    FormsModule,
+  ],
   templateUrl: './operation-read.component.html',
   styleUrl: './operation-read.component.css',
 })
@@ -26,21 +34,13 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   operations: Operation[] = [];
   operationsFiltred: Operation[] = [];
   exercises: Exercise[] = [];
-  tvaInfos!: TvaInfos;
-  tvaInfosFilterd!: TvaInfos;
-  data: Map<string, any> = new Map();
-  monthsYear: any;
   selectedExercice: string = '';
-  siret: string = '';
-  observableEvent$ = new Subscription();
-  router = inject(Router);
   isAdmin = false;
   parent = 'read';
   total: number = 0;
   totalByExcercise: number = 0;
-
+  router = inject(Router);
   constructor(
-
     private readonly sharedDataService: SharedDataService,
     private readonly operationSerice: OperationService,
     private readonly authService: AuthService,
@@ -48,10 +48,9 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     private readonly modalService: NgbModal,
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly alertService: AlertService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.siret = this.sharedDataService.getSiret();
     this.isAdmin = this.authService.isAdmin();
     this.loadExercicesRef();
     this.loadOperations();
@@ -63,7 +62,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
         this.operations = operations;
         this.operationsFiltred = operations;
         this.isLoaded = true;
-        this.calculTotal(operations)
+        this.calculTotal(operations);
       },
       error: (err) => {
         this.onError(err);
@@ -74,9 +73,9 @@ export class OperationReadComponent implements OnInit, OnDestroy {
 
   calculTotal(operations: Operation[]) {
     if (operations) {
-      operations.forEach(oper => {
+      operations.forEach((oper) => {
         this.total += oper.montantOperation;
-      })
+      });
       this.totalByExcercise = this.total;
     }
   }
@@ -91,12 +90,13 @@ export class OperationReadComponent implements OnInit, OnDestroy {
         this.totalByExcercise = this.total;
         this.operationsFiltred = this.operations;
       } else {
-        this.operationsFiltred = this.operations.filter(o => o.exercise == selectedValue);
-        this.operationsFiltred.forEach(oper => {
+        this.operationsFiltred = this.operations.filter(
+          (o) => o.exercise == selectedValue
+        );
+        this.operationsFiltred.forEach((oper) => {
           this.totalByExcercise += oper.montantOperation;
-        })
+        });
       }
-
     }
   }
 
@@ -136,7 +136,9 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.operationsFiltred = this.operations.filter((oper) => oper.id !== operation.id);
+          this.operationsFiltred = this.operations.filter(
+            (oper) => oper.id !== operation.id
+          );
           this.operations = this.operationsFiltred;
         }
       })
@@ -157,7 +159,6 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('')
+    console.log('');
   }
-
 }

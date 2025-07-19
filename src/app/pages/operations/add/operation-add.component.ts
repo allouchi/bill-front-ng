@@ -47,9 +47,12 @@ export class OperationAddComponent implements OnInit, OnDestroy {
     this.exercises = this.exercises!.filter((ex) => ex.exercise !== 'Tous');
     this.formOperation = this.fb.group({
       exercise: ['', Validators.required],
-      montantOperation: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+      montantOperation: [
+        '',
+        [Validators.required, Validators.pattern(/^\d+$/)],
+      ],
       dateOperation: ['', Validators.required],
-      typeOperation: ['', Validators.required]
+      typeOperation: ['', Validators.required],
     });
   }
 
