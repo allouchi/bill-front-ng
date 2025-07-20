@@ -17,6 +17,7 @@ import Company from '../../../models/Company';
 import Exercise from '../../../models/Exercise';
 import { CommonModule } from '@angular/common';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
+import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
 
 @Component({
   selector: 'bill-tva-edit',
@@ -49,7 +50,7 @@ export class TvaEditComponent implements OnInit, OnDestroy {
       company: [{ value: '', disabled: true }],
       exercise: ['', Validators.required],
       datePayment: ['', Validators.required],
-      montantPayment: ['', Validators.required],
+      montantPayment: ['', [Validators.required, numericFrValidator()]],
       monthPayment: ['', Validators.required]     
     });
 
@@ -87,11 +88,13 @@ export class TvaEditComponent implements OnInit, OnDestroy {
       const datePaiement = this.tva.datePayment.split('/');
       let formatedDate =
         datePaiement[2] + '-' + datePaiement[1] + '-' + datePaiement[0];
+      const formattedMontant = this.tva.montantPayment.toFixed(2);
+
       this.formTva.patchValue({
         monthPayment: this.tva.monthPayment,
         exercise: selectedExercice,
         datePayment: formatedDate,
-        montantPayment: this.tva.montantPayment,
+        montantPayment: formattedMontant,
         company: selectedCompany,
       });
     }
@@ -153,7 +156,7 @@ export class TvaEditComponent implements OnInit, OnDestroy {
         },
       });
     } else {
-      for (const [key, control] of Object.entries(this.formTva.controls)) {
+      for (const [, control] of Object.entries(this.formTva.controls)) {
         if (control.invalid) {
           control.markAsTouched();
         }
@@ -179,6 +182,6 @@ export class TvaEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('');
+    this.alertService.clear();
   }
 }

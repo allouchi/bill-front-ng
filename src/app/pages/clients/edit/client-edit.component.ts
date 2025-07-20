@@ -122,7 +122,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
         },
       });
     } else {
-      for (const [key, control] of Object.entries(this.formClient.controls)) {
+      for (const [, control] of Object.entries(this.formClient.controls)) {
         if (control.invalid) {
           control.markAsTouched();
         }
@@ -148,6 +148,6 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     }
   }
   ngOnDestroy(): void {
-    console.log('');
+    this.alertService.clear();
   }
 }

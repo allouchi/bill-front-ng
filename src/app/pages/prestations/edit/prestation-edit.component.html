@@ -54,12 +54,18 @@
             formPrestation.get('tarifHT')?.touched
           " />
 
-        <div *ngIf="
-            formPrestation.get('tarifHT')?.invalid &&
-            formPrestation.get('tarifHT')?.touched
-          " class="text-danger">
-          Ce champ est requis.
-        </div>
+      <div *ngIf="
+                                formPrestation.get('tarifHT')?.errors?.['required'] &&
+                                formPrestation.get('tarifHT')?.touched
+                              " class="text-danger">
+        Ce champ est requis.
+      </div>
+      <div *ngIf="
+                                            formPrestation.get('tarifHT')?.errors?.['notNumeric'] &&
+                                            formPrestation.get('tarifHT')?.touched
+                                          " class="text-danger">
+        Ce champ doit être numérique.
+      </div>
       </div>
 
       <div class="mb-3">
@@ -116,12 +122,18 @@
                                       formPrestation.get('delaiPaiement')?.touched
                                     " />
 
-    <div *ngIf="
-                                      formPrestation.get('delaiPaiement')?.invalid &&
+      <div *ngIf="
+                          formPrestation.get('delaiPaiement')?.errors?.['required'] &&
+                          formPrestation.get('delaiPaiement')?.touched
+                        " class="text-danger">
+        Ce champ est requis.
+      </div>
+      <div *ngIf="
+                                      formPrestation.get('delaiPaiement')?.errors?.['notNumeric'] &&
                                       formPrestation.get('delaiPaiement')?.touched
                                     " class="text-danger">
-      Ce champ est requis.
-    </div>
+        Ce champ doit être numérique.
+      </div>
   </div>
 </div>
 

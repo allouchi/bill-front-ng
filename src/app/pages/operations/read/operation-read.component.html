@@ -16,11 +16,11 @@
       </select>
     </div>
 
-     <div><strong>Total : </strong> {{totalByExcercise | customDecimalPipe }}</div>
+    <div><strong>Total Opérations : </strong> {{totalByExcercise | customDecimalPipe }}</div>
 
     <div>
       <label class="form-label invisible" for="add">Ajouter</label>
-      <button id="add" class="btn btn-pink" (click)="addOperation()" title="Nouveau">
+      <button id="add" class="btn btn-pink" (click)="addOperation()" title="Ajouter une opération">
         <i class="bi bi-plus-circle me-1"></i>
         Ajouter
       </button>
@@ -49,14 +49,14 @@
             <button
               class="btn btn-outline-primary btn-sm me-2"
               (click)="updateOperation(operation)"
-              title="Modifier Opération"
+              title="Modifier opération"
             >
               <i class="bi bi-pencil"></i>
             </button>
             <button
               class="btn btn-outline-danger btn-sm me-2"
               (click)="deleteOperation($event, operation)"
-              title="Supprimer Operation"
+              title="Supprimer opération"
               [disabled]="!isAdmin"
             >
               <i class="bi bi-trash"></i>

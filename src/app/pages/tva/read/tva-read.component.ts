@@ -76,7 +76,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   loadTvaInfo(exercice: string) {    
     this.tvaService.findTvaInfoByExercise(this.siret, exercice).subscribe({
       next: (tvaInfos) => {
-        this.tvaInfos = tvaInfos;
+        this.tvaInfos = tvaInfos;       
         this.tvaInfosFilterd = tvaInfos;
       },
       error: (err) => {

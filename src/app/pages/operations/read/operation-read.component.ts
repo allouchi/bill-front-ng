@@ -5,8 +5,6 @@ import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import TvaInfos from '../../../models/TvaInfos';
-import { Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth/auth-service';
 import { OperationService } from '../../../services/dashboard/operation-service';
 import Operation from '../../../models/Operation';
@@ -159,6 +157,6 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('');
+    this.alertService.clear();
   }
 }

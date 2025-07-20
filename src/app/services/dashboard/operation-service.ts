@@ -19,9 +19,9 @@ export class OperationService {
     constructor(private readonly http: HttpClient) { }
 
     createOrUpdateOperation(
-        operation: Operation      
+        operation: Operation
     ): Observable<Operation> {
-        const isNew: boolean = !operation.id || operation.id === 0;        
+        const isNew: boolean = !operation.id || operation.id === 0;
         if (isNew) {
             return this.http.post<Operation>(
                 `${this.OPERATION_PATH}/add`,
@@ -34,7 +34,7 @@ export class OperationService {
             );
         }
     }
-  
+
     getOperations(): Observable<Operation[]> {
         return this.http.get<Operation[]>(
             `${this.OPERATION_PATH}`
@@ -43,7 +43,6 @@ export class OperationService {
     }
 
     deletedOperationById(id: number): Observable<string> {
-        console.log("id :", id)
         return this.http.delete<string>(
             `${this.OPERATION_PATH}/${id}`
         );

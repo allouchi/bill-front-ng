@@ -16,6 +16,8 @@ import { CommonModule } from '@angular/common';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
 import Operation from '../../../models/Operation';
 import { OperationService } from '../../../services/dashboard/operation-service';
+import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
+
 
 @Component({
   selector: 'bill-operation-add',
@@ -49,7 +51,7 @@ export class OperationAddComponent implements OnInit, OnDestroy {
       exercise: ['', Validators.required],
       montantOperation: [
         '',
-        [Validators.required, Validators.pattern(/^\d+$/)],
+        [Validators.required, numericFrValidator()],
       ],
       dateOperation: ['', Validators.required],
       typeOperation: ['', Validators.required],
@@ -82,9 +84,12 @@ export class OperationAddComponent implements OnInit, OnDestroy {
       let formatedDate =
         dateOperation[2] + '/' + dateOperation[1] + '/' + dateOperation[0];
 
+      const montantOperation = this.formOperation.get('montantOperation')?.value;
+      const montantFormat = montantOperation.toString().replace(',', '.')
+
       let operation: Operation = {
         id: null,
-        montantOperation: this.formOperation.get('montantOperation')?.value,
+        montantOperation: montantFormat,
         exercise: this.formOperation.get('exercise')?.value,
         typeOperation: this.formOperation.get('typeOperation')?.value,
         dateOperation: formatedDate
@@ -100,7 +105,7 @@ export class OperationAddComponent implements OnInit, OnDestroy {
         },
       });
     } else {
-      for (const [key, control] of Object.entries(this.formOperation.controls)) {
+      for (const [, control] of Object.entries(this.formOperation.controls)) {
         if (control.invalid) {
           control.markAsTouched();
         }
@@ -126,6 +131,6 @@ export class OperationAddComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('');
+    this.alertService.clear();
   }
 }

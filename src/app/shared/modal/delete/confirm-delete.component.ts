@@ -1,4 +1,4 @@
-import { Component,  OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TvaService } from '../../../services/tva/tva-service';
 import { AlertService } from '../../../services/alert/alert-messages.service';
@@ -18,7 +18,7 @@ import { OperationService } from '../../../services/dashboard/operation-service'
   templateUrl: './confirm-delete.component.html',
   styleUrl: './confirm-delete.component.css',
 })
-export class ConfirmDeleteComponent implements OnInit {
+export class ConfirmDeleteComponent {
   item: any;
   composant: any;
 
@@ -35,7 +35,6 @@ export class ConfirmDeleteComponent implements OnInit {
     private readonly userService: UserService
   ) {}
 
-  ngOnInit() {}
 
   cancel(): void {
     this.activeModal.dismiss('cancel');

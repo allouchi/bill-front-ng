@@ -2,8 +2,7 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 
 import {
-  FormBuilder,
-  FormControl,
+  FormBuilder,  
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -16,7 +15,7 @@ import Exercise from '../../../models/Exercise';
 import { CommonModule } from '@angular/common';
 import Operation from '../../../models/Operation';
 import { OperationService } from '../../../services/dashboard/operation-service';
-import { NumericFormatDirective } from '../../../shared/directive/numeric-directive';
+import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
 
 @Component({
   selector: 'bill-operation-edit',
@@ -24,7 +23,7 @@ import { NumericFormatDirective } from '../../../shared/directive/numeric-direct
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    NumericFormatDirective,
+
   ],
   templateUrl: './operation-edit.component.html',
   styleUrl: './operation-edit.component.css',
@@ -56,11 +55,13 @@ export class OperationEditComponent implements OnInit, OnDestroy {
         dateOperation[2] + '-' + dateOperation[1] + '-' + dateOperation[0];
     }
 
+    const formattedMontant = this.selectedOperation?.montantOperation.toFixed(2);
+
     this.formOperation = this.fb.group({
       exercise: [this.selectedOperation?.exercise, Validators.required],
       montantOperation: [
-        this.selectedOperation?.montantOperation,
-        [Validators.required, Validators.pattern('^[0-9]+$')],
+        formattedMontant,
+        [Validators.required, numericFrValidator()],
       ],
       dateOperation: [formatedDate, Validators.required],
       typeOperation: [
@@ -70,10 +71,6 @@ export class OperationEditComponent implements OnInit, OnDestroy {
     });
   }
 
-  numericValidator(control: FormControl) {
-    const value = control.value;
-    return isNaN(value) ? { notNumeric: true } : null;
-  }
 
   setDateOperationValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
@@ -95,20 +92,20 @@ export class OperationEditComponent implements OnInit, OnDestroy {
       dateOperation = dateOperation.split('-');
       let formatedDate =
         dateOperation[2] + '/' + dateOperation[1] + '/' + dateOperation[0];
-
+      const montantOperation = this.formOperation.get('montantOperation')?.value;
+      const montantFormat = montantOperation.toString().replace(',', '.')      
       let operation: Operation = {
         id: this.selectedOperation!.id,
-        montantOperation: this.formOperation.get('montantOperation')?.value,
+        montantOperation: montantFormat,
         exercise: this.formOperation.get('exercise')?.value,
         typeOperation: this.formOperation.get('typeOperation')?.value,
         dateOperation: formatedDate,
       };
 
-      console.log(operation);
 
       this.operationService.createOrUpdateOperation(operation).subscribe({
         next: () => {
-          this.onSuccess('EDIT,OPERATION');
+          this.onSuccess('UPDATE,OPERATION');
           this.router.navigate(['/operations/read']);
         },
         error: (err) => {
@@ -116,7 +113,7 @@ export class OperationEditComponent implements OnInit, OnDestroy {
         },
       });
     } else {
-      for (const [key, control] of Object.entries(
+      for (const [, control] of Object.entries(
         this.formOperation.controls
       )) {
         if (control.invalid) {
@@ -144,6 +141,6 @@ export class OperationEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('');
+    this.alertService.clear();
   }
 }

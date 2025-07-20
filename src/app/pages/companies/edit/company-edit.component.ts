@@ -150,7 +150,7 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
         },
       });
     } else {
-      for (const [key, control] of Object.entries(this.formCompany.controls)) {
+      for (const [, control] of Object.entries(this.formCompany.controls)) {
         if (control.invalid) {
           control.markAsTouched();
         }
@@ -176,6 +176,6 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
     }
   }
   ngOnDestroy(): void {
-    console.log('');
+    this.alertService.clear();
   }
 }

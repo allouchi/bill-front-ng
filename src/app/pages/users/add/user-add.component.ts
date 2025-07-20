@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../../services/user/user-service';
 import { CommonModule } from '@angular/common';
@@ -7,8 +7,8 @@ import { CompanyService } from '../../../services/companies/company-service';
 import User from '../../../models/User';
 import { Router } from '@angular/router';
 import { AlertService } from '../../../services/alert/alert-messages.service';
-import GetMessagesEroor from '../../../shared/utils/messages-error';
 import Role from '../../../models/Role';
+import { customEmailValidator } from '../../../shared/utils/numeric-fr.validator';
 
 @Component({
   selector: 'bill-user-add',
@@ -16,7 +16,7 @@ import Role from '../../../models/Role';
   templateUrl: './user-add.component.html',
   styleUrl: './user-add.component.css',
 })
-export class AddUserComponent implements OnInit {
+export class AddUserComponent implements OnInit, OnDestroy {
   userForm!: FormGroup;
   companies: Company[] = [];
   roles: Role[] = [];
@@ -31,9 +31,10 @@ export class AddUserComponent implements OnInit {
     private readonly router: Router
   ) {}
 
+
   ngOnInit(): void {
     this.userForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, customEmailValidator]],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       siret: ['', Validators.required],
@@ -42,8 +43,21 @@ export class AddUserComponent implements OnInit {
       role: [null, Validators.required],
     });
 
+    this.initFields();
     this.loadCompanies();
     this.loadRoles();
+
+  }
+
+  initFields() {
+    this.userForm.get('email')?.reset('');
+    this.userForm.get('password')?.reset('');
+    this.userForm.get('passwordConfirm')?.reset('');
+
+    this.userForm.patchValue({
+      email: ''
+    });
+
   }
 
   loadCompanies() {
@@ -124,7 +138,7 @@ export class AddUserComponent implements OnInit {
         error: (err) => this.onError(err),
       });
     } else {
-      for (const [key, control] of Object.entries(this.userForm.controls)) {
+      for (const [, control] of Object.entries(this.userForm.controls)) {
         if (control.invalid) {
           control.markAsTouched();
         }
@@ -141,8 +155,11 @@ export class AddUserComponent implements OnInit {
     this.alertService.show(respSuccess, 'success');
   }
 
-  private onError(error: any) {
-    const message = GetMessagesEroor(error);
-    this.alertService.show(message, 'error');
+  private onError(error: any) {  
+    this.alertService.show(error.error.message, 'error');
+  }
+
+  ngOnDestroy(): void {
+    this.alertService.clear();
   }
 }

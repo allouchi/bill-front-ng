@@ -64,7 +64,7 @@ export default class PrestationExtendComponent implements OnInit {
         },
       });
     } else {
-      for (const [key, control] of Object.entries(
+      for (const [, control] of Object.entries(
         this.formPrestation.controls
       )) {
         if (control.invalid) {

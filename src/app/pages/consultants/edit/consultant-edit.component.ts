@@ -95,7 +95,7 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
           },
         });
     } else {
-      for (const [key, control] of Object.entries(
+      for (const [, control] of Object.entries(
         this.formConsultant.controls
       )) {
         if (control.invalid) {
@@ -123,6 +123,6 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
     }
   }
   ngOnDestroy(): void {
-    console.log('');
+    this.alertService.clear();
   }
 }
