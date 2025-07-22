@@ -33,10 +33,12 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   operationsFiltred: Operation[] = [];
   exercises: Exercise[] = [];
   selectedExercice: string = '';
+  selectedType: string = '';
   isAdmin = false;
   parent = 'read';
-  total: number = 0;
-  totalByExcercise: number = 0;
+
+  totalOperation: number = 0;
+  typeOperations: string[] = ['Tous', 'DIV', 'NDF'];
   router = inject(Router);
   constructor(
     private readonly sharedDataService: SharedDataService,
@@ -59,6 +61,8 @@ export class OperationReadComponent implements OnInit, OnDestroy {
       next: (operations) => {
         this.operations = operations;
         this.operationsFiltred = operations;
+        this.selectedType = 'Tous';
+        this.selectedExercice = 'Tous';
         this.isLoaded = true;
         this.calculTotal(operations);
       },
@@ -72,30 +76,81 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   calculTotal(operations: Operation[]) {
     if (operations) {
       operations.forEach((oper) => {
-        this.total += oper.montantOperation;
+        this.totalOperation += oper.montantOperation;
       });
-      this.totalByExcercise = this.total;
     }
   }
 
-  setYearValue(event: Event) {
-    this.totalByExcercise = 0;
+  filterByExercice(selectedExeciceValue: string) {
+    if (this.operations) {
+      if (selectedExeciceValue == 'Tous') {
+        if (this.selectedType == 'Tous') {
+          this.operationsFiltred = this.operations;
+        } else {
+          this.operationsFiltred = this.operations.filter(
+            (o) => o.typeOperation == this.selectedType
+          );
+        }
+      } else {
+        if (this.selectedType == 'Tous') {
+          this.operationsFiltred = this.operations.filter(
+            (o) => o.exercise == selectedExeciceValue
+          );
+        } else {
+          this.operationsFiltred = this.operations.filter(
+            (o) =>
+              o.exercise == selectedExeciceValue &&
+              o.typeOperation == this.selectedType
+          );
+        }
+      }
+      this.operationsFiltred.forEach((oper) => {
+        this.totalOperation += oper.montantOperation;
+      });
+    }
+  }
+
+  filterByType(selectedTypeValue: string) {
+    if (this.operations) {
+      if (selectedTypeValue == 'Tous') {
+        if (this.selectedExercice == 'Tous') {
+          this.operationsFiltred = this.operations;
+        } else {
+          this.operationsFiltred = this.operations.filter(
+            (o) => o.exercise == this.selectedExercice
+          );
+        }
+      } else {
+        if (this.selectedExercice == 'Tous') {
+          this.operationsFiltred = this.operations.filter(
+            (o) => o.typeOperation == selectedTypeValue
+          );
+        } else {
+          this.operationsFiltred = this.operations.filter(
+            (o) =>
+              o.exercise == this.selectedExercice &&
+              o.typeOperation == selectedTypeValue
+          );
+        }
+      }
+      this.operationsFiltred.forEach((oper) => {
+        this.totalOperation += oper.montantOperation;
+      });
+    }
+  }
+
+  setTypeValue(event: Event) {
+    this.totalOperation = 0;
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    this.selectedType = selectedValue;
+    this.filterByType(selectedValue);
+  }
+
+  setExerciceValue(event: Event) {
+    this.totalOperation = 0;
     const selectedValue = (event.target as HTMLSelectElement).value;
     this.selectedExercice = selectedValue;
-
-    if (this.operations) {
-      if (selectedValue == 'Tous') {
-        this.totalByExcercise = this.total;
-        this.operationsFiltred = this.operations;
-      } else {
-        this.operationsFiltred = this.operations.filter(
-          (o) => o.exercise == selectedValue
-        );
-        this.operationsFiltred.forEach((oper) => {
-          this.totalByExcercise += oper.montantOperation;
-        });
-      }
-    }
+    this.filterByExercice(selectedValue);
   }
 
   private loadExercicesRef() {

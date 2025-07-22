@@ -1,23 +1,34 @@
 @if(isLoaded){
 
 <div class="mt-4 mx-5">
-  <div class="d-flex justify-content-between align-items-end mb-3">
-    <div style="width: 200px">
-   
+ <div class="d-flex justify-content-between align-items-end mb-3" style="gap: 10px;">
+    <div style="width: 150px ; margin-right: 0;">   
       <label for="yearSelect" class="form-label fw-bold">Exercice</label>
       <select
-        (change)="setYearValue($event)"
+        (change)="setExerciceValue($event)"
         class="form-select"
         id="yearSelect"       
       >
         @for (year of exercises; track year.id) {
         <option [value]="year.exercise">{{ year.exercise }}</option>
         }
-      </select>
+      </select>      
     </div>
 
-    <div><strong>Total Opérations : </strong> {{totalByExcercise | customDecimalPipe }}</div>
+     <div style="width: 150px; margin-left: 0;">   
+      <label for="typeSelect" class="form-label fw-bold">Type</label>
+      <select
+        (change)="setTypeValue($event)"
+        class="form-select"
+        id="typeSelect"       
+      >
+        @for (type of typeOperations; track type) {
+        <option [value]="type">{{ type }}</option>
+        }
+      </select>      
+    </div>
 
+    <div><strong>Total Opérations : </strong> {{totalOperation | customDecimalPipe }}</div>
     <div>
       <label class="form-label invisible" for="add">Ajouter</label>
       <button id="add" class="btn btn-pink" (click)="addOperation()" title="Ajouter une opération">
@@ -31,8 +42,8 @@
       <thead class="table-dark">
         <tr>
           <th scope="col">Type Opération</th>
-          <th scope="col">exercice</th>
-          <th scope="col">montant Opération</th>
+          <th scope="col">Exercice</th>
+          <th scope="col">Montant Opération</th>
           <th scope="col">Date Opération</th>
           <th scope="col">Actions</th>
         </tr>
