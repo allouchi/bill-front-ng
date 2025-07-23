@@ -1,4 +1,5 @@
-export class AuthResquest {  
+export class AuthResquest {
   username!: string;
-  password!: string; 
+  password!: string;
+  rememberMe!: string;
 }

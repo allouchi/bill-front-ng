@@ -18,11 +18,18 @@ import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.
 import { DetailFactureComponent } from '../../../shared/modal/detail/detail-facture.component';
 import { CommonModule } from '@angular/common';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 
 @Component({
   selector: 'bill-facture-read',
   standalone: true,
-  imports: [CommonModule, WaitingComponent, ReactiveFormsModule, FormsModule],
+  imports: [
+    CommonModule,
+    WaitingComponent,
+    ReactiveFormsModule,
+    CustomDecimalPipe,
+    FormsModule,
+  ],
   templateUrl: './facture-read.component.html',
   styleUrls: ['./facture-read.component.scss'],
 })

@@ -28,16 +28,16 @@
         </thead>
         <tbody>
           <tr>
-            <td style="text-align: center">{{ tvaInfosFilterd.totalTTC }}</td>
+            <td style="text-align: center">{{ tvaInfosFilterd.totalTTC | customDecimalPipe}}</td>
             <td class="text-center">
-              {{ tvaInfosFilterd.totalTva }}</td>
+              {{ tvaInfosFilterd.totalTva | customDecimalPipe}}</td>
                <td class="text-center">
-              {{ tvaInfosFilterd.totalTvaNet }}</td>
+              {{ tvaInfosFilterd.totalTvaNet | customDecimalPipe}}</td>
             <td style="text-align: center">
-              {{ tvaInfosFilterd.totalTvaPaye }}
+              {{ tvaInfosFilterd.totalTvaPaye | customDecimalPipe}}
             </td>
             <td style="text-align: center">
-              {{ tvaInfosFilterd.totalTvaRestant }}
+              {{ tvaInfosFilterd.totalTvaRestant | customDecimalPipe}}
             </td>
           </tr>
         </tbody>
@@ -68,7 +68,7 @@
           <td style="text-align: center">{{ tva.exercise }}</td>
           <td style="text-align: center">{{ tva.monthPayment }}</td>
           <td style="text-align: center">{{ tva.datePayment }}</td>
-          <td style="text-align: center">{{ tva.montantPayment }}</td>
+          <td style="text-align: center">{{ tva.montantPayment | customDecimalPipe}}</td>
 
           <td>
             <button

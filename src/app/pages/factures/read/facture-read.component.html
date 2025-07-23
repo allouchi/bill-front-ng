@@ -25,11 +25,11 @@
         </thead>
         <tbody>
           <tr>
-            <td class="text-center">{{ tvaInfosFilterd.totalTTC }}</td>
-            <td class="text-center">{{ tvaInfosFilterd.totalTva }}</td>
-            <td class="text-center">{{ tvaInfosFilterd.totalTvaNet }}</td>
-            <td class="text-center">{{ tvaInfosFilterd.totalTvaPaye }}</td>
-            <td class="text-center">{{ tvaInfosFilterd.totalTvaRestant }}</td>
+            <td class="text-center">{{ tvaInfosFilterd.totalTTC | customDecimalPipe}}</td>
+            <td class="text-center">{{ tvaInfosFilterd.totalTva | customDecimalPipe}}</td>
+            <td class="text-center">{{ tvaInfosFilterd.totalTvaNet | customDecimalPipe}}</td>
+            <td class="text-center">{{ tvaInfosFilterd.totalTvaPaye | customDecimalPipe}}</td>
+            <td class="text-center">{{ tvaInfosFilterd.totalTvaRestant | customDecimalPipe}}</td>
           </tr>
         </tbody>
       </table>
@@ -61,11 +61,11 @@
           <td style="text-align: center;">{{ facture.numeroFacture }}</td>
           <td>{{ facture.moisFacture }}</td>
           <td>{{ facture.tarifHT }}</td>
-          <td>{{ facture.quantite }}</td>
-          <td>{{ facture.prixTotalHT }}</td>
-          <td>{{ facture.prixTotalTTC }}</td>
-          <td>{{ facture.montantTVA }}</td>
-          <td>{{ facture.montantNetTVA }}</td>
+          <td>{{ facture.quantite | customDecimalPipe}}</td>
+          <td>{{ facture.prixTotalHT | customDecimalPipe}}</td>
+          <td>{{ facture.prixTotalTTC | customDecimalPipe}}</td>
+          <td>{{ facture.montantTVA | customDecimalPipe}}</td>
+          <td>{{ facture.montantNetTVA | customDecimalPipe}}</td>
           <td>{{ facture.dateEcheance }}</td>
           <td>
             <button

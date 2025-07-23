@@ -7,6 +7,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class CustomDecimalPipe implements PipeTransform {
   transform(value: number): string {
-    return value.toFixed(2).toString().replace('.', ',');
+    if (value == null) {
+      return '';
+    }
+    const withPoint = value.toFixed(2).toString().replace('.', ',');
+    return withPoint.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   }  
 }

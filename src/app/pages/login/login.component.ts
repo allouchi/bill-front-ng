@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { AlertService } from '../../services/alert/alert-messages.service';
 import { IsAuthService } from '../../services/shared/islogin-service';
 import { AuthResponse } from '../../models/AuthResponse';
+import { AuthResquest } from '../../models/AuthRequest';
 
 @Component({
   selector: 'bill-login',
@@ -35,35 +36,39 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.formLogin = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
+      rememberMe: [''],
     });
   }
 
   authenticate() {
-    this.isSubmit = true;   
+    this.isSubmit = true;
     const username = this.formLogin.get('username')?.value;
     const password = this.formLogin.get('password')?.value;
+    const rememberMe = this.formLogin.get('rememberMe')?.value;
+    console.log('rememberMe', rememberMe);
+    let authRequest = new AuthResquest();
+    authRequest.username = username;
+    authRequest.password = password;
+    authRequest.rememberMe = rememberMe;
 
-    this.authService
-      .login({ username: username, password: password })
-      .subscribe({
-        next: (response) => {
-          this.onResponseSuccess(response);        
-        },
-        error: (err) => this.onResponseError(err),
-      });
+    this.authService.login(authRequest).subscribe({
+      next: (response) => {
+        this.onResponseSuccess(response);
+      },
+      error: (err) => this.onResponseError(err),
+    });
   }
 
   private onResponseSuccess(authResponse: AuthResponse) {
-    this.isAuthService.setIsAuth(true);    
+    this.isAuthService.setIsAuth(true);
     this.authService.setUser(authResponse);
     this.alertService.show('AUTHENT', 'success');
     this.router.navigate(['dashboard']);
   }
 
-  private onResponseError(error: any) {   
-
+  private onResponseError(error: any) {
     this.isAuthService.setIsAuth(false);
-    this.authService.logout();   
+    this.authService.logout();
     this.formLogin.patchValue({
       username: '',
       password: '',
@@ -102,7 +107,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         break;
       }
     }
-
   }
 
   ngOnDestroy(): void {
