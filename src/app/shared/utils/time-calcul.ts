@@ -15,10 +15,10 @@ function JoursFeries(an: number) {
   var I =
     H -
     Math.floor(H / 28) *
-    (1 -
-      Math.floor(H / 28) *
-      Math.floor(29 / (H + 1)) *
-      Math.floor((21 - G) / 11));
+      (1 -
+        Math.floor(H / 28) *
+          Math.floor(29 / (H + 1)) *
+          Math.floor((21 - G) / 11));
   let J = (an * 1 + Math.floor(an / 4) + I + 2 - C + Math.floor(C / 4)) % 7;
   let L = I - J;
   let MoisPaques = 3 + Math.floor((L + 40) / 44);
@@ -94,6 +94,3 @@ const JoursOuvres = (moisSelected: any): number => {
 };
 
 export default JoursOuvres;
-
-
-

@@ -56,11 +56,18 @@
                     formConsultant.get('email')?.touched
                   " />
                 <div *ngIf="
-                    formConsultant.get('email')?.invalid &&
+                    formConsultant.get('email')?.errors?.['required'] &&
                     formConsultant.get('email')?.touched
                   " class="text-danger">
                     Ce champ est requis.
                 </div>
+
+                 <div *ngIf="
+                    formConsultant.get('email')?.errors?.['invalidEmail'] &&
+                    formConsultant.get('email')?.touched
+                  " class="text-danger">
+                   L'adresse e-mail n'est pas valide.
+                </div>               
             </div>
         </div>
 

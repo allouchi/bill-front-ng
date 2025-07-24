@@ -7,7 +7,7 @@
       <select
         (change)="setYearValue($event)"
         class="form-select"
-        id="yearSelect"       
+        id="yearSelect"
       >
         @for (year of exercises; track year.id) {
         <option [value]="year.exercise">{{ year.exercise }}</option>
@@ -19,26 +19,44 @@
       <table class="table table-bordered">
         <thead>
           <tr>
+            <th scope="col">CA NET</th>
             <th scope="col">CA TTC</th>
             <th scope="col">TOTAL TVA</th>
             <th scope="col">TOTAL NET</th>
             <th scope="col">TOTAL REGLE</th>
+             @if(tvaInfosFilterd.totalTvaRestant>0 ){
             <th scope="col">RESTE A PAYER</th>
+            }@else {
+            <th scope="col">TROP PAYER</th>
+            }
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="text-align: center">{{ tvaInfosFilterd.totalTTC | customDecimalPipe}}</td>
+            <td style="text-align: center">
+              {{ tvaInfosFilterd.totalCAHorsTaxe | customDecimalPipe }}
+            </td>
+            <td style="text-align: center">
+              {{ tvaInfosFilterd.totalTTC | customDecimalPipe }}
+            </td>
             <td class="text-center">
-              {{ tvaInfosFilterd.totalTva | customDecimalPipe}}</td>
-               <td class="text-center">
-              {{ tvaInfosFilterd.totalTvaNet | customDecimalPipe}}</td>
-            <td style="text-align: center">
-              {{ tvaInfosFilterd.totalTvaPaye | customDecimalPipe}}
+              {{ tvaInfosFilterd.totalTva | customDecimalPipe }}
+            </td>
+            <td class="text-center">
+              {{ tvaInfosFilterd.totalTvaNet | customDecimalPipe }}
             </td>
             <td style="text-align: center">
-              {{ tvaInfosFilterd.totalTvaRestant | customDecimalPipe}}
+              {{ tvaInfosFilterd.totalTvaPaye | customDecimalPipe }}
             </td>
+            @if(tvaInfosFilterd.totalTvaRestant>0 ){
+              <td class="text-center">
+              {{ tvaInfosFilterd.totalTvaRestant | customDecimalPipe }}
+            </td>
+             }@else {
+            <td class="text-center">
+              {{ -tvaInfosFilterd.totalTvaRestant | customDecimalPipe }}
+            </td>
+            }
           </tr>
         </tbody>
       </table>
@@ -68,7 +86,9 @@
           <td style="text-align: center">{{ tva.exercise }}</td>
           <td style="text-align: center">{{ tva.monthPayment }}</td>
           <td style="text-align: center">{{ tva.datePayment }}</td>
-          <td style="text-align: center">{{ tva.montantPayment | customDecimalPipe}}</td>
+          <td style="text-align: center">
+            {{ tva.montantPayment | customDecimalPipe }}
+          </td>
 
           <td>
             <button

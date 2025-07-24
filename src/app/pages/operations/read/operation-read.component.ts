@@ -14,6 +14,7 @@ import { SharedMessagesService } from '../../../services/shared/messages.service
 import { AlertService } from '../../../services/alert/alert-messages.service';
 import { CommonModule } from '@angular/common';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
+import TvaInfos from '../../../models/TvaInfos';
 
 @Component({
   selector: 'bill-operation-read',
@@ -33,9 +34,12 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   operationsFiltred: Operation[] = [];
   exercises: Exercise[] = [];
   selectedExercice: string = '';
+  tvaInfos!: TvaInfos;
+  tvaInfosFilterd!: TvaInfos;
   selectedType: string = '';
   isAdmin = false;
   parent = 'read';
+  siret: string = '';
 
   totalOperation: number = 0;
   typeOperations: string[] = ['Tous', 'DIV', 'NDF'];
@@ -52,7 +56,9 @@ export class OperationReadComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
+    this.siret = this.sharedDataService.getSiret();
     this.loadExercicesRef();
+    this.loadTvaInfo('Tous');
     this.loadOperations();
   }
 
@@ -69,6 +75,18 @@ export class OperationReadComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.onError(err);
         this.isLoaded = true;
+      },
+    });
+  }
+
+  loadTvaInfo(exercice: string) {
+    this.tvaService.findTvaInfoByExercise(this.siret, exercice).subscribe({
+      next: (tvaInfos) => {
+        this.tvaInfos = tvaInfos;
+        this.tvaInfosFilterd = tvaInfos;
+      },
+      error: (err) => {
+        this.onError(err);
       },
     });
   }
@@ -108,6 +126,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
         this.totalOperation += oper.montantOperation;
       });
     }
+    this.loadTvaInfo(selectedExeciceValue);
   }
 
   filterByType(selectedTypeValue: string) {

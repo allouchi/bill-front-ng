@@ -13,6 +13,7 @@ import { AlertService } from '../../services/alert/alert-messages.service';
 import { IsAuthService } from '../../services/shared/islogin-service';
 import { AuthResponse } from '../../models/AuthResponse';
 import { AuthResquest } from '../../models/AuthRequest';
+import { customEmailValidator } from '../../shared/utils/numeric-fr.validator';
 
 @Component({
   selector: 'bill-login',
@@ -34,7 +35,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.formLogin = this.fb.group({
-      username: ['', Validators.required],
+      username: ['', [Validators.required, customEmailValidator]],
       password: ['', Validators.required],
       rememberMe: [''],
     });
@@ -45,7 +46,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     const username = this.formLogin.get('username')?.value;
     const password = this.formLogin.get('password')?.value;
     const rememberMe = this.formLogin.get('rememberMe')?.value;
-    console.log('rememberMe', rememberMe);
+
     let authRequest = new AuthResquest();
     authRequest.username = username;
     authRequest.password = password;
@@ -70,7 +71,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isAuthService.setIsAuth(false);
     this.authService.logout();
     this.formLogin.patchValue({
-      username: '',
       password: '',
     });
 

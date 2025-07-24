@@ -3,38 +3,67 @@
 <div class="mt-4 mx-5">
   <div class="d-flex justify-content-between align-items-end mb-3">
     <!-- Colonne de gauche : Exercice -->
-    <div style="width: 200px;">
+    <div style="width: 200px">
       <label for="yearSelect" class="form-label fw-bold">Exercice</label>
-      <select (change)="setYearValue($event)" class="form-select" id="yearSelect" [(ngModel)]="selectedExercice" >
+      <select
+        (change)="setYearValue($event)"
+        class="form-select"
+        id="yearSelect"
+        [(ngModel)]="selectedExercice"
+      >
         @for (year of exercises; track year.id) {
         <option [value]="year.exercise">{{ year.exercise }}</option>
         }
-        </select>
-        </div>
+      </select>
+    </div>
     <!-- Colonne centrale : Tableau centré -->
     <div class="flex-grow-1 d-flex justify-content-center">
       <table class="table table-bordered w-auto">
         <thead>
           <tr>
+            <th scope="col">CA NET</th>
             <th scope="col">CA TTC</th>
             <th scope="col">TOTAL TVA</th>
-             <th scope="col">TOTAL NET</th>
+            <th scope="col">TOTAL NET</th>
             <th scope="col">TOTAL REGLE</th>
+            @if(tvaInfosFilterd.totalTvaRestant>0 ){
             <th scope="col">RESTE A PAYER</th>
+            }@else {
+            <th scope="col">TROP PAYER</th>
+            }
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td class="text-center">{{ tvaInfosFilterd.totalTTC | customDecimalPipe}}</td>
-            <td class="text-center">{{ tvaInfosFilterd.totalTva | customDecimalPipe}}</td>
-            <td class="text-center">{{ tvaInfosFilterd.totalTvaNet | customDecimalPipe}}</td>
-            <td class="text-center">{{ tvaInfosFilterd.totalTvaPaye | customDecimalPipe}}</td>
-            <td class="text-center">{{ tvaInfosFilterd.totalTvaRestant | customDecimalPipe}}</td>
+            <td style="text-align: center">
+              {{ tvaInfosFilterd.totalCAHorsTaxe | customDecimalPipe }}
+            </td>
+            <td class="text-center">
+              {{ tvaInfosFilterd.totalTTC | customDecimalPipe }}
+            </td>
+            <td class="text-center">
+              {{ tvaInfosFilterd.totalTva | customDecimalPipe }}
+            </td>
+            <td class="text-center">
+              {{ tvaInfosFilterd.totalTvaNet | customDecimalPipe }}
+            </td>
+            <td class="text-center">
+              {{ tvaInfosFilterd.totalTvaPaye | customDecimalPipe }}
+            </td>
+            @if(tvaInfosFilterd.totalTvaRestant>0 ){
+              <td class="text-center">
+              {{ tvaInfosFilterd.totalTvaRestant | customDecimalPipe }}
+            </td>
+             }@else {
+            <td class="text-center">
+              {{ -tvaInfosFilterd.totalTvaRestant | customDecimalPipe }}
+            </td>
+            }
           </tr>
         </tbody>
       </table>
     </div>
-    </div>
+  </div>
 
   <div class="table-responsive">
     <table class="table table-success table-striped">
@@ -54,18 +83,20 @@
       </thead>
       <tbody>
         @for (facture of filtredFactures; track facture.id) {
-        <tr [ngClass]="({ 
-          'table-success': facture.factureStatus=='OK', 
-          'table-danger': facture.factureStatus=='KO' 
-        })">
-          <td style="text-align: center;">{{ facture.numeroFacture }}</td>
+        <tr
+          [ngClass]="{
+            'table-success': facture.factureStatus == 'OK',
+            'table-danger': facture.factureStatus == 'KO'
+          }"
+        >
+          <td style="text-align: center">{{ facture.numeroFacture }}</td>
           <td>{{ facture.moisFacture }}</td>
           <td>{{ facture.tarifHT }}</td>
-          <td>{{ facture.quantite | customDecimalPipe}}</td>
-          <td>{{ facture.prixTotalHT | customDecimalPipe}}</td>
-          <td>{{ facture.prixTotalTTC | customDecimalPipe}}</td>
-          <td>{{ facture.montantTVA | customDecimalPipe}}</td>
-          <td>{{ facture.montantNetTVA | customDecimalPipe}}</td>
+          <td>{{ facture.quantite | customDecimalPipe }}</td>
+          <td>{{ facture.prixTotalHT | customDecimalPipe }}</td>
+          <td>{{ facture.prixTotalTTC | customDecimalPipe }}</td>
+          <td>{{ facture.montantTVA | customDecimalPipe }}</td>
+          <td>{{ facture.montantNetTVA | customDecimalPipe }}</td>
           <td>{{ facture.dateEcheance }}</td>
           <td>
             <button
@@ -94,9 +125,9 @@
               <i class="bi bi-trash"></i>
             </button>
 
-             <button
+            <button
               class="btn btn-primary btn-sm me-2"
-              (click)="downloadFacture( facture)"
+              (click)="downloadFacture(facture)"
               title="Télécharger Facture"
               [disabled]="!isAdmin"
             >

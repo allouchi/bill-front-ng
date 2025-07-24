@@ -51,7 +51,7 @@ export class TvaEditComponent implements OnInit, OnDestroy {
       exercise: ['', Validators.required],
       datePayment: ['', Validators.required],
       montantPayment: ['', [Validators.required, numericFrValidator()]],
-      monthPayment: ['', Validators.required]     
+      monthPayment: ['', Validators.required],
     });
 
     this.loadMonthYear();
@@ -60,15 +60,15 @@ export class TvaEditComponent implements OnInit, OnDestroy {
     this.tva = this.sharedDataService.getSelectedTva();
     this.exercices = this.sharedDataService.getExercices();
     this.siret = this.sharedDataService.getSiret();
-    
+
     this.exercices = this.exercices!.filter((ex) => ex.exercise !== 'Tous');
 
     if (this.companies) {
-      this.companies.forEach(c => {
+      this.companies.forEach((c) => {
         if (c.siret == this.siret) {
           this.selectedCompany = c;
         }
-      })
+      });
 
       this.formTva.patchValue({
         company: this.selectedCompany,
@@ -103,7 +103,6 @@ export class TvaEditComponent implements OnInit, OnDestroy {
   private loadMonthYear() {
     this.monthsYear = GetMonthsOfYear();
   }
- 
 
   setMonthValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
@@ -132,13 +131,15 @@ export class TvaEditComponent implements OnInit, OnDestroy {
       const selectedSiret = this.companies!.find(
         (c) => c.socialReason == selectedRaisonSocial
       )?.siret;
-
+      const formattedMontant = this.formTva
+        .get('montantPayment')
+        ?.value.replace(',', '.');
       let tvaModif: Tva = {
         id: this.tvaId,
         monthPayment: this.formTva.get('monthPayment')?.value,
         exercise: this.formTva.get('exercise')?.value,
         datePayment: this.formTva.get('datePayment')?.value,
-        montantPayment: this.formTva.get('montantPayment')?.value,
+        montantPayment: formattedMontant,
         siret: selectedSiret!,
       };
 

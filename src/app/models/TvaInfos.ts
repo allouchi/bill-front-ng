@@ -4,5 +4,6 @@ export default interface TvaInfos {
   totalTTC: number;
   totalTva: number;
   totalTvaNet: number;
+  totalCAHorsTaxe: number;
 }
 

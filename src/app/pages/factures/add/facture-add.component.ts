@@ -111,7 +111,7 @@ export class FactureAddComponent implements OnInit {
     if (this.formFacture.valid) {
       let prestation: Prestation = {
         id: null,
-        quantite: this.formFacture.get('quantite')?.value,
+        quantite: this.formFacture.get('quantite')?.value.replace(',', '.'),
         numeroCommande: this.formFacture.get('numeroCommande')?.value,
         clientPrestation: this.formFacture.get('clientPrestation')?.value,
         designation: 'La Prestation est réalisée pour le compte de ',

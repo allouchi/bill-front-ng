@@ -1,13 +1,15 @@
 import { Directive, HostListener, ElementRef, Renderer2 } from '@angular/core';
 
 @Directive({
-  selector: '[numberFormat]'
+  selector: '[numberFormat]',
 })
 export class NumberFormatDirective {
-
   private readonly regex: RegExp = new RegExp(/^-?\d*[.,]?\d{0,2}$/g); // Optionnel : 2 décimales
 
-  constructor(private readonly el: ElementRef, private readonly renderer: Renderer2) { }
+  constructor(
+    private readonly el: ElementRef,
+    private readonly renderer: Renderer2
+  ) {}
 
   @HostListener('input', ['$event'])
   onInputChange(event: any) {
@@ -35,7 +37,9 @@ export class NumberFormatDirective {
     if (value) {
       const num = parseFloat(value);
       if (!isNaN(num)) {
-        const formatted = num.toLocaleString('en-US', { maximumFractionDigits: 2 });
+        const formatted = num.toLocaleString('en-US', {
+          maximumFractionDigits: 2,
+        });
         this.renderer.setProperty(this.el.nativeElement, 'value', formatted);
       }
     }

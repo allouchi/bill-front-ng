@@ -133,14 +133,14 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
 
   editNewFacture(event: Event, prestation: Prestation) {
     event.preventDefault();
-    console.log("prestation :", prestation)
+   
     const modal = this.modalService.open(ConfirmEditComponent, {
       size: 'lg',
       backdrop: 'static',
     });
     modal.componentInstance.item = 'Prestation';
     modal.componentInstance.composant = prestation;
-    console.log("prestation :", prestation)
+   
 
     modal.result
       .then((result) => {
