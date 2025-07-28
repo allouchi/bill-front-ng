@@ -12,14 +12,15 @@
             id="email"
             class="form-control"
             formControlName="email"
+             [class.is-invalid]="
+            userForm.get('email')?.invalid &&
+            userForm.get('email')?.touched"
           />
-          <div
-            class="text-danger"
-            *ngIf="
-              userForm.get('email')?.invalid && userForm.get('email')?.touched
-            "
-          >
+          <div *ngIf="userForm.get('email')?.errors?.['required'] && userForm.get('email')?.touched" class="text-danger">
             L'adresse Email est requise.
+          </div>
+          <div *ngIf="userForm.get('email')?.errors?.['invalidEmail'] && userForm.get('email')?.touched" class="text-danger">
+            L'adresse e-mail n'est pas valide.
           </div>
         </div>
 

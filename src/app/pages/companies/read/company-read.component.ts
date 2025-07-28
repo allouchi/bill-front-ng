@@ -172,6 +172,6 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log();
+    this.alertService.clear();
   }
 }

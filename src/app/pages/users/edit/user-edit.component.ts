@@ -15,10 +15,11 @@ import { CompanyService } from '../../../services/companies/company-service';
 import User from '../../../models/User';
 import { Router } from '@angular/router';
 import { AlertService } from '../../../services/alert/alert-messages.service';
-import GetMessagesEroor from '../../../shared/utils/messages-error';
+import GetMessagesError from '../../../shared/utils/messages-error';
 import Role from '../../../models/Role';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { customEmailValidator } from '../../../shared/utils/numeric-fr.validator';
 
 @Component({
   selector: 'bill-user-edit',
@@ -33,7 +34,8 @@ export class EditUserComponent {
   user!: User | null;
   selectedRole: string = '';
   selectedCompany: string = '';
-  showPassword: boolean = true;
+  showPassword: boolean = false;
+  message: string = '';
 
   constructor(
     private readonly fb: FormBuilder,
@@ -51,7 +53,7 @@ export class EditUserComponent {
     this.userForm = this.fb.group({
       email: [
         { value: this.user?.email, disabled: true },
-        [Validators.required, Validators.email],
+        [Validators.required, customEmailValidator],
       ],
       firstName: [
         { value: this.user?.firstName, disabled: true },
@@ -67,10 +69,25 @@ export class EditUserComponent {
       roles: this.fb.array([]),
     });
     this.loadCompanies();
+    this.initPassword();
   }
-  showPassord(event: Event) {
-    event.preventDefault;
+
+  initPassword() {
+    if (this.showPassword) {
+      this.message = 'Cacher les champs mot de passe ?'
+    } else {
+      this.message = 'Montrer les champs mot de passe ?'
+    }
+    this.userForm.get('password')?.reset(null);
+    this.userForm.get('passwordConfirm')?.reset(null);
+  }
+  showPassord() {    
     this.showPassword = !this.showPassword;
+    if (this.showPassword) {
+      this.message = 'Cacher les champs mot de passe ?'
+    } else {
+      this.message = 'Montrer les champs mot de passe ?'
+    }
   }
 
   private addCheckboxes() {
@@ -184,7 +201,7 @@ export class EditUserComponent {
   }
 
   private onError(error: any) {
-    const message = GetMessagesEroor(error);
+    const message = GetMessagesError(error);
     this.alertService.show(message, 'error');
   }
 }

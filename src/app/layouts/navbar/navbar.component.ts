@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth-service';
 import { IsAuthService } from '../../services/shared/islogin-service';
+import { AlertService } from '../../services/alert/alert-messages.service';
 
 @Component({
   selector: 'bill-navbar',
@@ -34,7 +35,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private readonly isAuthService: IsAuthService,
     private readonly router: Router,
     public readonly authService: AuthService,
-
+    private readonly alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -72,8 +73,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.isAuthService.setIsAuth(false);
     this.authService.logout();
     this.sharedMessagesService.setMessage('');
-    this.libelleCompanyService.setMessage('');   
-    this.router.navigate(['/bill-dashboard']);
+    this.libelleCompanyService.setMessage('');
+    this.router.navigate(['/dashboard']);
+    this.alertService.show('LOGOUT', 'success');
   }
 
   ngOnDestroy(): void {

@@ -144,6 +144,6 @@ export class UserReadComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('');
+    this.alertService.clear();
   }
 }

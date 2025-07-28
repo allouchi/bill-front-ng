@@ -26,8 +26,7 @@ export class AppInitService {
     });
   }
 
-  private onSuccess(companies: Company[]) {
-    //this.alertService.show(respSuccess, 'success');
+  private onSuccess(companies: Company[]) {   
     this.selectedCompany = companies.find(
       (company) => company.checked === true
     )!;

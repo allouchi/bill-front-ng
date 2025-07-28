@@ -16,6 +16,7 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { FactureService } from '../../../services/factures/facture.service';
+import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
 
 @Component({
   selector: 'bill-facture-add',
@@ -45,7 +46,7 @@ export class FactureAddComponent implements OnInit {
     this.formFacture = this.fb.group({
       monthFacture: ['', Validators.required],
       numeroCommande: [{ value: '', disabled: true }],
-      quantite: ['', Validators.required],
+      quantite: ['', [Validators.required, numericFrValidator()]],
       newTemplate: [true, Validators.required],
       clientPrestation: [{ value: '', disabled: true }],
     });
@@ -110,7 +111,7 @@ export class FactureAddComponent implements OnInit {
     if (this.formFacture.valid) {
       let prestation: Prestation = {
         id: null,
-        quantite: this.formFacture.get('quantite')?.value,
+        quantite: this.formFacture.get('quantite')?.value.replace(',', '.'),
         numeroCommande: this.formFacture.get('numeroCommande')?.value,
         clientPrestation: this.formFacture.get('clientPrestation')?.value,
         designation: 'La Prestation est réalisée pour le compte de ',
@@ -121,11 +122,12 @@ export class FactureAddComponent implements OnInit {
         dateFin: this.selectedPrestation!.dateFin,
         dateDebut: this.selectedPrestation!.dateDebut,
         siret: this.selectedPrestation!.siret,
+        isPrestaNoteValid: false,
       };
 
       this.editFacture(prestation);
     } else {
-      for (const [key, control] of Object.entries(this.formFacture.controls)) {
+      for (const [, control] of Object.entries(this.formFacture.controls)) {
         if (control.invalid) {
           control.markAsTouched();
         }

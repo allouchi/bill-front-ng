@@ -16,10 +16,16 @@ import { Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
+import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 
 @Component({
   selector: 'bill-tva-read',
-  imports: [WaitingComponent, ReactiveFormsModule, FormsModule],
+  imports: [
+    WaitingComponent,
+    ReactiveFormsModule,
+    CustomDecimalPipe,
+    FormsModule,
+  ],
   templateUrl: './tva-read.component.html',
   styleUrl: './tva-read.component.css',
 })
@@ -74,7 +80,6 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   }
 
   loadTvaInfo(exercice: string) {
-    console.log(exercice);
     this.tvaService.findTvaInfoByExercise(this.siret, exercice).subscribe({
       next: (tvaInfos) => {
         this.tvaInfos = tvaInfos;

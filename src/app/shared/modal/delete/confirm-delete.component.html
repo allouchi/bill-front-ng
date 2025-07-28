@@ -40,7 +40,17 @@
                 </div>
             </div>
         </div>
-        
+
+        <div *ngIf="item && item === 'Operation'">
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <div>
+                    L'opération <strong>{{ composant.typeOperation }} </strong> d'un montant de <strong>{{
+                        composant.montantOperation }}€ </strong> en date de <strong>{{ composant.dateOperation }} </strong>
+                    va être supprimée !!!
+                </div>
+            </div>
+        </div>
         <div *ngIf="item && item === 'Consultant'">
             <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
                 <i class="bi bi-info-circle-fill fs-5"></i>

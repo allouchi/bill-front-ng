@@ -1,4 +1,4 @@
-import { Component,  OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TvaService } from '../../../services/tva/tva-service';
 import { AlertService } from '../../../services/alert/alert-messages.service';
@@ -10,6 +10,7 @@ import { CompanyService } from '../../../services/companies/company-service';
 import { PrestationService } from '../../../services/prestations/prestation.service';
 import { UserService } from '../../../services/user/user-service';
 import User from '../../../models/User';
+import { OperationService } from '../../../services/dashboard/operation-service';
 
 @Component({
   selector: 'bill-confirm-modal',
@@ -17,7 +18,7 @@ import User from '../../../models/User';
   templateUrl: './confirm-delete.component.html',
   styleUrl: './confirm-delete.component.css',
 })
-export class ConfirmDeleteComponent implements OnInit {
+export class ConfirmDeleteComponent {
   item: any;
   composant: any;
 
@@ -30,10 +31,10 @@ export class ConfirmDeleteComponent implements OnInit {
     private readonly consultantService: ConsultantService,
     private readonly companyService: CompanyService,
     private readonly prestationService: PrestationService,
+    private readonly operationService: OperationService,
     private readonly userService: UserService
   ) {}
 
-  ngOnInit() {}
 
   cancel(): void {
     this.activeModal.dismiss('cancel');
@@ -65,7 +66,11 @@ export class ConfirmDeleteComponent implements OnInit {
     }
 
     if (this.item == 'User') {
-      this.deleteUser(this.composant);
+      this.deleteUser(this.composant.id);
+    }
+
+    if (this.item == 'Operation') {
+      this.deleteOperation(this.composant.id);
     }
     this.activeModal.close('confirm');
   }
@@ -113,6 +118,19 @@ export class ConfirmDeleteComponent implements OnInit {
       },
     });
   }
+
+  deleteOperation(id: number) {
+    this.operationService.deletedOperationById(id).subscribe({
+      next: () => {
+        this.onSuccess('DELETE,OPERATION');
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
+
 
   deleteConsultant(id: number) {
     this.consultantService.deleteConsultantById(id).subscribe({

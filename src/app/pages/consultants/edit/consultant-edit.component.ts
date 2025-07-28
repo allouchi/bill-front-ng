@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { Subscription } from 'rxjs';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { customEmailValidator } from '../../../shared/utils/numeric-fr.validator';
 
 @Component({
   selector: 'bill-consultant-edit',
@@ -45,18 +46,19 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
     this.formConsultant = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
-      email: ['', Validators.required],
+      email: ['', [Validators.required, customEmailValidator]],
       fonction: ['', Validators.required],
-    });   
+    });
 
     this.currentUrl = this.router.url;
     if (this.currentUrl.includes('/edit')) {
       this.consultant = this.sharedDataService.getSelectedConsultant();
       this.siret = this.sharedDataService.getSiret();
       this.isEdit = true;
-      this.sharedMessagesService.setMessage(`Mise à jour de ${this.consultant?.firstName} ${this.consultant?.lastName}`);
+      this.sharedMessagesService.setMessage(
+        `Mise à jour de ${this.consultant?.firstName} ${this.consultant?.lastName}`
+      );
     }
-
 
     if (this.consultant) {
       this.consultantId = this.consultant.id;
@@ -95,9 +97,7 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
           },
         });
     } else {
-      for (const [key, control] of Object.entries(
-        this.formConsultant.controls
-      )) {
+      for (const [, control] of Object.entries(this.formConsultant.controls)) {
         if (control.invalid) {
           control.markAsTouched();
         }
@@ -123,6 +123,6 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
     }
   }
   ngOnDestroy(): void {
-    console.log('');
+    this.alertService.clear();
   }
 }

@@ -17,6 +17,7 @@ import Company from '../../../models/Company';
 import Exercise from '../../../models/Exercise';
 import { CommonModule } from '@angular/common';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
+import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
 
 @Component({
   selector: 'bill-tva-edit',
@@ -32,6 +33,8 @@ export class TvaEditComponent implements OnInit, OnDestroy {
   exercices: Exercise[] | null = [];
   selectedExercise: Exercise | null = null;
   tvaId!: number | null;
+  siret: string = '';
+  selectedCompany!: Company;
 
   router = inject(Router);
 
@@ -44,10 +47,10 @@ export class TvaEditComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.formTva = this.fb.group({
-      company: ['', Validators.required],
+      company: [{ value: '', disabled: true }],
       exercise: ['', Validators.required],
       datePayment: ['', Validators.required],
-      montantPayment: ['', Validators.required],
+      montantPayment: ['', [Validators.required, numericFrValidator()]],
       monthPayment: ['', Validators.required],
     });
 
@@ -56,8 +59,21 @@ export class TvaEditComponent implements OnInit, OnDestroy {
     this.companies = this.sharedDataService.getCompanies();
     this.tva = this.sharedDataService.getSelectedTva();
     this.exercices = this.sharedDataService.getExercices();
-    
+    this.siret = this.sharedDataService.getSiret();
+
     this.exercices = this.exercices!.filter((ex) => ex.exercise !== 'Tous');
+
+    if (this.companies) {
+      this.companies.forEach((c) => {
+        if (c.siret == this.siret) {
+          this.selectedCompany = c;
+        }
+      });
+
+      this.formTva.patchValue({
+        company: this.selectedCompany,
+      });
+    }
 
     if (this.tva) {
       this.tvaId = this.tva.id;
@@ -65,18 +81,20 @@ export class TvaEditComponent implements OnInit, OnDestroy {
         (c) => c.siret == this.tva!.siret
       )?.socialReason;
 
-      const selectedExercice = this.exercices!.find(
+      const selectedExercice = this.exercices.find(
         (c) => c.exercise == this.tva!.exercise
       )?.exercise;
 
       const datePaiement = this.tva.datePayment.split('/');
       let formatedDate =
         datePaiement[2] + '-' + datePaiement[1] + '-' + datePaiement[0];
+      const formattedMontant = this.tva.montantPayment.toFixed(2);
+
       this.formTva.patchValue({
         monthPayment: this.tva.monthPayment,
         exercise: selectedExercice,
         datePayment: formatedDate,
-        montantPayment: this.tva.montantPayment,
+        montantPayment: formattedMontant,
         company: selectedCompany,
       });
     }
@@ -85,7 +103,6 @@ export class TvaEditComponent implements OnInit, OnDestroy {
   private loadMonthYear() {
     this.monthsYear = GetMonthsOfYear();
   }
- 
 
   setMonthValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
@@ -114,13 +131,15 @@ export class TvaEditComponent implements OnInit, OnDestroy {
       const selectedSiret = this.companies!.find(
         (c) => c.socialReason == selectedRaisonSocial
       )?.siret;
-
+      const formattedMontant = this.formTva
+        .get('montantPayment')
+        ?.value.replace(',', '.');
       let tvaModif: Tva = {
         id: this.tvaId,
         monthPayment: this.formTva.get('monthPayment')?.value,
         exercise: this.formTva.get('exercise')?.value,
         datePayment: this.formTva.get('datePayment')?.value,
-        montantPayment: this.formTva.get('montantPayment')?.value,
+        montantPayment: formattedMontant,
         siret: selectedSiret!,
       };
 
@@ -138,7 +157,7 @@ export class TvaEditComponent implements OnInit, OnDestroy {
         },
       });
     } else {
-      for (const [key, control] of Object.entries(this.formTva.controls)) {
+      for (const [, control] of Object.entries(this.formTva.controls)) {
         if (control.invalid) {
           control.markAsTouched();
         }
@@ -164,6 +183,6 @@ export class TvaEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('ngOnDestroy');
+    this.alertService.clear();
   }
 }

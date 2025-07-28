@@ -1,22 +1,24 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { env } from '../../../environments/env';
 import { AuthResponse } from '../../models/AuthResponse';
 import User from '../../models/User';
 import { LibelleCompanyService } from '../shared/libelle-company-service';
 import { SharedDataService } from '../shared/shared-data-service';
-import { catchError, throwError } from 'rxjs';
-import { CustomError } from '../error/CustomError';
 import Role from '../../models/Role';
+import { Observable, tap, throwError } from 'rxjs';
+import { RefreshRequest } from '../../models/RefreshRequest';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  url = env.apiURL + '/users/login';
+  loginUrl = env.apiURL + '/users/login';
+  refreshUrl = env.apiURL + '/users/refresh-token';
   userRoles: Role[] = [];
   user!: User | null;
   libelleHeader: string = '';
+
 
   constructor(
     private readonly http: HttpClient,
@@ -25,26 +27,58 @@ export class AuthService {
   ) { }
 
   login(credentials: { username: string; password: string }) {
-    return this.http
-      .post<AuthResponse>(this.url, credentials, {
-        withCredentials: true,
-      })     
+
+    return this.http.post<AuthResponse>(this.loginUrl, credentials, {
+      withCredentials: true,
+    }).pipe(
+      tap(tokens => {
+        this.saveAccessToken(tokens.accessToken);
+        this.saveRefreshToken(tokens.refreshToken);
+      })
+    );
+
   }
 
-  saveToken(token: string) {
-    localStorage.setItem('jwt', token);
+  refreshAccessToken(): Observable<AuthResponse> {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    const refreshRequest = new RefreshRequest();
+    refreshRequest.refreshToken = refreshToken;
+
+    return this.http.post<AuthResponse>(this.refreshUrl, refreshRequest, {
+      withCredentials: true,
+    }).pipe(
+      tap(res => {
+        this.saveAccessToken(res.refreshToken);
+      })
+    );
   }
 
-  getToken(): string | null {
-    return localStorage.getItem('jwt');
+  saveAccessToken(token: string) {
+    localStorage.setItem('accessToken', token);
+  }
+
+  saveRefreshToken(token: string) {
+    localStorage.setItem('refreshToken', token);
+  }
+
+  getAccessToken(): string | null {
+    return localStorage.getItem('accessToken');
+  }
+
+  getRefreshToken(): string | null {
+    return localStorage.getItem('refreshToken');
   }
 
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    return !!this.getAccessToken();
   }
 
   logout() {
-    localStorage.removeItem('jwt');
+    localStorage.removeItem('accessToken');
   }
 
   getRoles(): Role[] {
@@ -66,7 +100,7 @@ export class AuthService {
     }
     this.libelleHeader = libelleHeader;
     this.libelleCompanyService.setMessage(libelleHeader);
-    this.sharedDataService.setSelectCompany(authResponse.company!);
+    this.sharedDataService.setSelectCompany(authResponse.company);
   }
 
   getUser(): User | null {
@@ -83,7 +117,7 @@ export class AuthService {
 
   // Pour plusieurs rôles autorisés :
   hasAnyRole(expectedRoles: string[]): boolean {
-    if (this.user && this.user.roles) {
+    if (this.user?.roles) {
       const match = this.user.roles.find((r) => expectedRoles.includes(r.roleName));
       return !!match;
     }

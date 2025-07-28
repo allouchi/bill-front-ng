@@ -10,8 +10,8 @@ import { ClientService } from '../../../services/clients/client-service';
 import { ConsultantService } from '../../../services/consultants/consultant-service';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../../../services/auth/auth-service';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
+import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
 
 @Component({
   selector: 'bill-prestation-edit',
@@ -47,9 +47,9 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
     this.formPrestation = this.fb.group({
       client: ['', Validators.required],
       consultant: ['', Validators.required],
-      tarifHT: ['', Validators.required],
+      tarifHT: ['', [Validators.required, numericFrValidator()]],
       numeroCommande: ['', Validators.required],
-      delaiPaiement: ['', Validators.required],
+      delaiPaiement: ['', [Validators.required, numericFrValidator()]],
       dateDebut: ['', Validators.required],
       dateFin: ['', Validators.required],
     });
@@ -123,6 +123,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
         clientPrestation: this.formPrestation.get('client')?.value,
         designation: 'La Prestation est réalisée pour le compte de ',
         quantite: 0,
+        isPrestaNoteValid: false,
       };
 
       this.prestationService
@@ -137,7 +138,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
           },
         });
     } else {
-      for (const [key, control] of Object.entries(
+      for (const [, control] of Object.entries(
         this.formPrestation.controls
       )) {
         if (control.invalid) {
@@ -166,6 +167,6 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('ngOnDestroy');
+    this.alertService.clear();
   }
 }

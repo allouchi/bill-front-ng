@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { Subscription } from 'rxjs';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { customEmailValidator } from '../../../shared/utils/numeric-fr.validator';
 
 @Component({
   selector: 'bill-client-edit',
@@ -46,7 +47,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.formClient = this.fb.group({
       socialReason: ['', Validators.required],
-      email: ['', Validators.required],
+      email: ['', Validators.required, customEmailValidator],
       numero: ['', Validators.required],
       rue: ['', Validators.required],
       codePostal: ['', Validators.required],
@@ -54,17 +55,16 @@ export class ClientEditComponent implements OnInit, OnDestroy {
       pays: ['', Validators.required],
     });
 
-
-
     this.currentUrl = this.router.url;
     if (this.currentUrl.includes('/edit')) {
       this.client = this.sharedDataService.getSelectedClient();
       this.siret = this.sharedDataService.getSiret();
       this.isEdit = true;
       this.socialReason = this.client!.socialReason;
-      this.sharedMessagesService.setMessage(`Mise à jour de ${this.client?.socialReason}`);
+      this.sharedMessagesService.setMessage(
+        `Mise à jour de ${this.client?.socialReason}`
+      );
     }
-
 
     if (this.client) {
       this.clientId = this.client.id;
@@ -122,7 +122,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
         },
       });
     } else {
-      for (const [key, control] of Object.entries(this.formClient.controls)) {
+      for (const [, control] of Object.entries(this.formClient.controls)) {
         if (control.invalid) {
           control.markAsTouched();
         }
@@ -148,6 +148,6 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     }
   }
   ngOnDestroy(): void {
-    console.log('');
+    this.alertService.clear();
   }
 }
