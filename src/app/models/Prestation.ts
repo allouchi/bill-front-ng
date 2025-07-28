@@ -16,4 +16,5 @@ export default interface Prestation {
   dateFin?: string;
   dateDebut?: string;
   siret?: string;
+  isPrestaNoteValid: boolean;
 }

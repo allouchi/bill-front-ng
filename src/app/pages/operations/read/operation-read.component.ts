@@ -34,8 +34,8 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   operationsFiltred: Operation[] = [];
   exercises: Exercise[] = [];
   selectedExercice: string = '';
-  tvaInfos!: TvaInfos;
-  tvaInfosFilterd!: TvaInfos;
+  tvaInfos: TvaInfos | null = null;
+  tvaInfosFilterd: TvaInfos | null = null;
   selectedType: string = '';
   isAdmin = false;
   parent = 'read';
@@ -63,7 +63,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   }
 
   loadOperations() {
-    this.operationSerice.getOperations().subscribe({
+    this.operationSerice.getOperations(this.siret).subscribe({
       next: (operations) => {
         this.operations = operations;
         this.operationsFiltred = operations;
@@ -92,6 +92,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   }
 
   calculTotal(operations: Operation[]) {
+    this.totalOperation = 0;
     if (operations) {
       operations.forEach((oper) => {
         this.totalOperation += oper.montantOperation;
@@ -212,6 +213,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
             (oper) => oper.id !== operation.id
           );
           this.operations = this.operationsFiltred;
+          this.calculTotal(this.operations);
         }
       })
       .catch(() => {

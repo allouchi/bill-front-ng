@@ -123,6 +123,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
         clientPrestation: this.formPrestation.get('client')?.value,
         designation: 'La Prestation est réalisée pour le compte de ',
         quantite: 0,
+        isPrestaNoteValid: false,
       };
 
       this.prestationService

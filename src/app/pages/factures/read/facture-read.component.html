@@ -108,6 +108,15 @@
               <i class="bi bi-pencil"></i>
             </button>
 
+             <button
+              class="btn btn-outline-primary btn-sm me-2"
+              (click)="cancelModif($event, facture)"
+              title="Annuler statut Facture"
+              [disabled]="!isAdmin || facture.factureStatus == 'KO'"
+            >
+              <i class="bi bi-x-circle"></i>
+            </button>
+
             <button
               class="btn btn-outline-primary btn-sm me-2"
               (click)="detailFacture($event, facture)"
@@ -135,6 +144,8 @@
             </button>
           </td>
         </tr>
+        } @empty {
+        <p>Aucun Facture</p>
         }
       </tbody>
     </table>

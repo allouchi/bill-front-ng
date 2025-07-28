@@ -31,7 +31,8 @@ export class OperationAddComponent implements OnInit, OnDestroy {
   exercises: Exercise[] | null = [];
   selectedExercise: string | null = null;
   selectedOperation!: Operation | null;
-  typeOperationValue: string[] = ['DIV', 'NDF']
+  siret: string = '';
+  typeOperationValue: string[] = ['DIV', 'NDF'];
 
   router = inject(Router);
 
@@ -40,19 +41,16 @@ export class OperationAddComponent implements OnInit, OnDestroy {
     private readonly operationService: OperationService,
     private readonly alertService: AlertService,
     private readonly fb: FormBuilder
-  ) { }
-
+  ) {}
 
   ngOnInit(): void {
     this.loadMonthYear();
     this.exercises = this.sharedDataService.getExercices();
+    this.siret = this.sharedDataService.getSiret();
     this.exercises = this.exercises!.filter((ex) => ex.exercise !== 'Tous');
     this.formOperation = this.fb.group({
       exercise: ['', Validators.required],
-      montantOperation: [
-        '',
-        [Validators.required, numericFrValidator()],
-      ],
+      montantOperation: ['', [Validators.required, numericFrValidator()]],
       dateOperation: ['', Validators.required],
       typeOperation: ['', Validators.required],
     });
@@ -69,7 +67,6 @@ export class OperationAddComponent implements OnInit, OnDestroy {
     });
   }
 
-
   setExerciceValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
     this.formOperation.patchValue({
@@ -84,15 +81,17 @@ export class OperationAddComponent implements OnInit, OnDestroy {
       let formatedDate =
         dateOperation[2] + '/' + dateOperation[1] + '/' + dateOperation[0];
 
-      const montantOperation = this.formOperation.get('montantOperation')?.value;
-      const montantFormat = montantOperation.toString().replace(',', '.')
+      const montantOperation =
+        this.formOperation.get('montantOperation')?.value;
+      const montantFormat = montantOperation.toString().replace(',', '.');
 
       let operation: Operation = {
         id: null,
         montantOperation: montantFormat,
         exercise: this.formOperation.get('exercise')?.value,
         typeOperation: this.formOperation.get('typeOperation')?.value,
-        dateOperation: formatedDate
+        dateOperation: formatedDate,
+        siret: this.siret,
       };
 
       this.operationService.createOrUpdateOperation(operation).subscribe({

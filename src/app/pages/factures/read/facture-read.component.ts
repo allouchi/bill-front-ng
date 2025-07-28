@@ -145,6 +145,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   setYearValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
+    this.selectedExercice = selectedValue;
     this.filterFactures(selectedValue);
     this.filterTvas(selectedValue);
   }
@@ -163,11 +164,53 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
+         
           this.onSuccess('DELETE,FACTURE');
+         
           this.filtredFactures = this.factures.filter(
             (item) => item.id !== facture.id
           );
-          this.factures = this.filtredFactures;
+          this.factures = this.filtredFactures;          
+          this.filterFactures(this.selectedExercice);
+        }
+      })
+      .catch(() => {
+        console.log('Annulé');
+      });
+  }
+
+  cancelModif(event: Event, facture: Facture) {
+    event.preventDefault();
+    const modal = this.modalService.open(ConfirmEditComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false,
+      centered: true,
+    });
+    modal.componentInstance.item = 'Facture';
+    modal.componentInstance.composant = facture;
+    facture.dateEncaissement = '';
+    modal.result
+      .then((result) => {
+        if (result === 'confirm') {
+          this.onSuccess('UPDATE,FACTURE');
+          this.sharedDataService.setSelectedFacture(facture);
+          this.sharedMessagesService.setMessage('Mise à jour de la facture');
+          this.factureService.updateFacture(facture!).subscribe({
+            next: (factureModif) => {
+              this.filtredFactures = this.filtredFactures.filter(
+                (item) => item.id !== factureModif.id
+              );
+
+              this.filtredFactures.push(factureModif);
+              this.filtredFactures.sort((a, b) => b.id! - a.id!);
+              this.onSuccess('UPDATE,FACTURE');
+              this.router.navigate(['/factures/read']);
+            },
+            error: (err) => {
+              this.onError(err);
+            },
+          });
         }
       })
       .catch(() => {
@@ -240,12 +283,17 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   private onError(error: any) {
     this.isLoaded = true;
-    const message: string = error.message;
+    const code: string = error.error.code;
 
-    if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
-    } else {
-      this.alertService.show(message, 'error');
+    switch (code) {
+      case 'PDF_ERROR': {
+        this.alertService.show("Le fichier n'existe pas ou endommagé", 'error');
+        break;
+      }
+      default: {
+        this.alertService.show('Problème de connextion au serveur', 'error');
+        break;
+      }
     }
   }
 

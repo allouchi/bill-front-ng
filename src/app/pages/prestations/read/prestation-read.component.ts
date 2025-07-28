@@ -27,6 +27,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
+import { Util } from '../../../shared/utils/utils';
 
 @Component({
   selector: 'bill-prestation-read',
@@ -71,7 +72,7 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
     this.formPresta = this.fb.group({
       prestaDateFin: ['', Validators.required],
     });
-    this.siret = this.sharedDataService.getSiret();    
+    this.siret = this.sharedDataService.getSiret();
     this.loadPrestations();
   }
 
@@ -80,6 +81,9 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
       next: (prestations) => {
         setTimeout(() => {
           this.prestations = prestations;
+          this.prestations.forEach((p) => {
+            p.isPrestaNoteValid = Util.isPrestaNotValid(p.dateFin!);
+          });
           this.isLoaded = true;
         }, 500);
       },
@@ -133,14 +137,13 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
 
   editNewFacture(event: Event, prestation: Prestation) {
     event.preventDefault();
-   
+
     const modal = this.modalService.open(ConfirmEditComponent, {
       size: 'lg',
       backdrop: 'static',
     });
     modal.componentInstance.item = 'Prestation';
     modal.componentInstance.composant = prestation;
-   
 
     modal.result
       .then((result) => {
@@ -170,10 +173,9 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
   }
 
   prolongerPrestation(prestation: Prestation) {
-     this.sharedDataService.setSelectedPrestation(prestation);
-     this.router.navigate(['/prestations/extend']);
+    this.sharedDataService.setSelectedPrestation(prestation);
+    this.router.navigate(['/prestations/extend']);
   }
-
 
   ngOnDestroy(): void {
     this.alertService.clear();

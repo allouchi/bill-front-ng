@@ -13,38 +13,25 @@ import Operation from "../../models/Operation";
 
 @Injectable({ providedIn: 'root' })
 export class OperationService {
-    private readonly apiURL = env.apiURL;
-    private readonly OPERATION_PATH: string = `${this.apiURL}` + "/operations";
+  private readonly apiURL = env.apiURL;
+  private readonly OPERATION_PATH: string = `${this.apiURL}` + '/operations';
 
-    constructor(private readonly http: HttpClient) { }
+  constructor(private readonly http: HttpClient) {}
 
-    createOrUpdateOperation(
-        operation: Operation
-    ): Observable<Operation> {
-        const isNew: boolean = !operation.id || operation.id === 0;
-        if (isNew) {
-            return this.http.post<Operation>(
-                `${this.OPERATION_PATH}/add`,
-                operation
-            );
-        } else {
-            return this.http.put<Operation>(
-                `${this.OPERATION_PATH}/edit`,
-                operation
-            );
-        }
+  createOrUpdateOperation(operation: Operation): Observable<Operation> {
+    const isNew: boolean = !operation.id || operation.id === 0;
+    if (isNew) {
+      return this.http.post<Operation>(`${this.OPERATION_PATH}/add`, operation);
+    } else {
+      return this.http.put<Operation>(`${this.OPERATION_PATH}/edit`, operation);
     }
+  }
 
-    getOperations(): Observable<Operation[]> {
-        return this.http.get<Operation[]>(
-            `${this.OPERATION_PATH}`
-        );
+  getOperations(siret: string): Observable<Operation[]> {
+    return this.http.get<Operation[]>(`${this.OPERATION_PATH}/${siret}`);
+  }
 
-    }
-
-    deletedOperationById(id: number): Observable<string> {
-        return this.http.delete<string>(
-            `${this.OPERATION_PATH}/${id}`
-        );
-    }
+  deletedOperationById(id: number): Observable<string> {
+    return this.http.delete<string>(`${this.OPERATION_PATH}/${id}`);
+  }
 }

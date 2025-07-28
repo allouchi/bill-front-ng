@@ -122,6 +122,7 @@ export class FactureAddComponent implements OnInit {
         dateFin: this.selectedPrestation!.dateFin,
         dateDebut: this.selectedPrestation!.dateDebut,
         siret: this.selectedPrestation!.siret,
+        isPrestaNoteValid: false,
       };
 
       this.editFacture(prestation);

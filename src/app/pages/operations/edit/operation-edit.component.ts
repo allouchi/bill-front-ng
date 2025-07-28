@@ -19,12 +19,7 @@ import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
 
 @Component({
   selector: 'bill-operation-edit',
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    CommonModule,
-
-  ],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './operation-edit.component.html',
   styleUrl: './operation-edit.component.css',
 })
@@ -35,6 +30,7 @@ export class OperationEditComponent implements OnInit, OnDestroy {
   selectedExercise: string | null = null;
   selectedOperation!: Operation | null;
   typeOperationValue: string[] = ['DIV', 'NDF'];
+  siret: string = '';
   router = inject(Router);
 
   constructor(
@@ -47,6 +43,7 @@ export class OperationEditComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.exercises = this.sharedDataService.getExercices();
     this.selectedOperation = this.sharedDataService.getSelectedOperration();
+    this.siret = this.sharedDataService.getSiret();
     this.exercises = this.exercises!.filter((ex) => ex.exercise !== 'Tous');
     let formatedDate;
     if (this.selectedOperation) {
@@ -55,7 +52,8 @@ export class OperationEditComponent implements OnInit, OnDestroy {
         dateOperation[2] + '-' + dateOperation[1] + '-' + dateOperation[0];
     }
 
-    const formattedMontant = this.selectedOperation?.montantOperation.toFixed(2);
+    const formattedMontant =
+      this.selectedOperation?.montantOperation.toFixed(2);
 
     this.formOperation = this.fb.group({
       exercise: [this.selectedOperation?.exercise, Validators.required],
@@ -70,7 +68,6 @@ export class OperationEditComponent implements OnInit, OnDestroy {
       ],
     });
   }
-
 
   setDateOperationValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
@@ -92,16 +89,17 @@ export class OperationEditComponent implements OnInit, OnDestroy {
       dateOperation = dateOperation.split('-');
       let formatedDate =
         dateOperation[2] + '/' + dateOperation[1] + '/' + dateOperation[0];
-      const montantOperation = this.formOperation.get('montantOperation')?.value;
-      const montantFormat = montantOperation.toString().replace(',', '.')      
+      const montantOperation =
+        this.formOperation.get('montantOperation')?.value;
+      const montantFormat = montantOperation.toString().replace(',', '.');
       let operation: Operation = {
         id: this.selectedOperation!.id,
         montantOperation: montantFormat,
         exercise: this.formOperation.get('exercise')?.value,
         typeOperation: this.formOperation.get('typeOperation')?.value,
         dateOperation: formatedDate,
+        siret: this.siret,
       };
-
 
       this.operationService.createOrUpdateOperation(operation).subscribe({
         next: () => {
@@ -113,9 +111,7 @@ export class OperationEditComponent implements OnInit, OnDestroy {
         },
       });
     } else {
-      for (const [, control] of Object.entries(
-        this.formOperation.controls
-      )) {
+      for (const [, control] of Object.entries(this.formOperation.controls)) {
         if (control.invalid) {
           control.markAsTouched();
         }

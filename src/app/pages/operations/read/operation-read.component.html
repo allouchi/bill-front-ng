@@ -28,8 +28,10 @@
       </select>      
     </div>
 
-    
-     <div><strong>CA NET : </strong> {{ tvaInfosFilterd.totalCAHorsTaxe | customDecimalPipe}}</div>
+    @if(tvaInfosFilterd){
+      <div><strong>CA NET : </strong> {{ tvaInfosFilterd!.totalCAHorsTaxe | customDecimalPipe}}</div>
+    }
+     
 
     <div><strong>Total Opérations : </strong> {{totalOperation | customDecimalPipe }}</div>
     <div>
@@ -78,7 +80,7 @@
           </td>
         </tr>
         } @empty {
-        <p>Aucun Opérations</p>
+        <p>Aucun Opération</p>
         }
       </tbody>
     </table>
