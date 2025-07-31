@@ -84,6 +84,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       next: (tvaInfos) => {
         this.tvaInfos = tvaInfos;
         this.tvaInfosFilterd = tvaInfos;
+        
       },
       error: (err) => {
         this.onError(err);
@@ -157,6 +158,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
         if (result === 'confirm') {
           this.filtredTvas = this.tvas.filter((t) => t.id !== tva.id);
           this.tvas = this.filtredTvas;
+          this.loadTvaInfo(this.selectedExercice);
         }
       })
       .catch(() => {

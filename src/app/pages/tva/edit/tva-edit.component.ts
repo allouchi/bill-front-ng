@@ -18,6 +18,7 @@ import Exercise from '../../../models/Exercise';
 import { CommonModule } from '@angular/common';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
 import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
+import { SharedMessagesService } from '../../../services/shared/messages.service';
 
 @Component({
   selector: 'bill-tva-edit',
@@ -42,7 +43,8 @@ export class TvaEditComponent implements OnInit, OnDestroy {
     private readonly sharedDataService: SharedDataService,
     private readonly tvaService: TvaService,
     private readonly alertService: AlertService,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly sharedMessagesService: SharedMessagesService
   ) {}
 
   ngOnInit(): void {
@@ -150,6 +152,7 @@ export class TvaEditComponent implements OnInit, OnDestroy {
           } else {
             this.onSuccess('ADD,TVA');
           }
+          this.sharedMessagesService.setMessage('Liste des TVAs');
           this.router.navigate(['/tvas/read']);
         },
         error: (err) => {

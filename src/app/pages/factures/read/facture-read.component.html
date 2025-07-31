@@ -18,11 +18,11 @@
     </div>
     <!-- Colonne centrale : Tableau centré -->
     <div class="flex-grow-1 d-flex justify-content-center">
-      <table class="table table-bordered w-auto">
+      <table class="table table-bordered w-auto table-dark">
         <thead>
           <tr>
-            <th scope="col">CA NET</th>
             <th scope="col">CA TTC</th>
+            <th scope="col">CA NET</th>            
             <th scope="col">TOTAL TVA</th>
             <th scope="col">TOTAL NET</th>
             <th scope="col">TOTAL REGLE</th>
@@ -35,12 +35,12 @@
         </thead>
         <tbody>
           <tr>
-            <td style="text-align: center">
-              {{ tvaInfosFilterd.totalCAHorsTaxe | customDecimalPipe }}
-            </td>
             <td class="text-center">
               {{ tvaInfosFilterd.totalTTC | customDecimalPipe }}
             </td>
+            <td style="text-align: center">
+              {{ tvaInfosFilterd.totalCAHorsTaxe | customDecimalPipe }}
+            </td>            
             <td class="text-center">
               {{ tvaInfosFilterd.totalTva | customDecimalPipe }}
             </td>

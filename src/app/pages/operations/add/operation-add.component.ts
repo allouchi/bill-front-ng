@@ -17,7 +17,7 @@ import GetMonthsOfYear from '../../../shared/utils/month-year';
 import Operation from '../../../models/Operation';
 import { OperationService } from '../../../services/dashboard/operation-service';
 import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
-
+import { SharedMessagesService } from '../../../services/shared/messages.service';
 
 @Component({
   selector: 'bill-operation-add',
@@ -40,7 +40,8 @@ export class OperationAddComponent implements OnInit, OnDestroy {
     private readonly sharedDataService: SharedDataService,
     private readonly operationService: OperationService,
     private readonly alertService: AlertService,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly sharedMessagesService: SharedMessagesService
   ) {}
 
   ngOnInit(): void {
@@ -97,6 +98,7 @@ export class OperationAddComponent implements OnInit, OnDestroy {
       this.operationService.createOrUpdateOperation(operation).subscribe({
         next: () => {
           this.onSuccess('ADD,OPERATION');
+          this.sharedMessagesService.setMessage('Liste des Opérations');
           this.router.navigate(['/operations/read']);
         },
         error: (err) => {

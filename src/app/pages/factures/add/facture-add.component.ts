@@ -109,9 +109,18 @@ export class FactureAddComponent implements OnInit {
 
   addFacture() {
     if (this.formFacture.valid) {
+     
+      let quantiteValue = this.formFacture.get('quantite')?.value;
+      if (quantiteValue) {
+        const nombreStr: string = quantiteValue.toString();
+        if (nombreStr.includes(',')) {
+          quantiteValue = quantiteValue.replace(',', '.');
+        }
+      }
+
       let prestation: Prestation = {
         id: null,
-        quantite: this.formFacture.get('quantite')?.value.replace(',', '.'),
+        quantite: quantiteValue,
         numeroCommande: this.formFacture.get('numeroCommande')?.value,
         clientPrestation: this.formFacture.get('clientPrestation')?.value,
         designation: 'La Prestation est réalisée pour le compte de ',

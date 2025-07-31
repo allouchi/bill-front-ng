@@ -47,7 +47,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.formClient = this.fb.group({
       socialReason: ['', Validators.required],
-      email: ['', Validators.required, customEmailValidator],
+      email: ['', [Validators.required, customEmailValidator]],
       numero: ['', Validators.required],
       rue: ['', Validators.required],
       codePostal: ['', Validators.required],
