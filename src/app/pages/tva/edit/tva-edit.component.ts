@@ -36,7 +36,8 @@ export class TvaEditComponent implements OnInit, OnDestroy {
   tvaId!: number | null;
   siret: string = '';
   selectedCompany!: Company;
-
+  currentUrl: string = '';
+  isEdit: boolean = false;
   router = inject(Router);
 
   constructor(
@@ -57,6 +58,12 @@ export class TvaEditComponent implements OnInit, OnDestroy {
     });
 
     this.loadMonthYear();
+
+    this.currentUrl = this.router.url;
+
+    if (this.currentUrl.includes('/edit')) {
+      this.isEdit = true;
+    }
 
     this.companies = this.sharedDataService.getCompanies();
     this.tva = this.sharedDataService.getSelectedTva();
