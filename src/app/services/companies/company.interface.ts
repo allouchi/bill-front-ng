@@ -21,7 +21,7 @@ export interface ICompanyService {
    * @param company company name
    * @returns Observable<Company>
    */
-  findCompaniesBySiret(siret: string): Observable<Company[]>;
+  findCompanieBySiret(siret: string): Observable<Company[]>;
 
   /**
    * Get all schemas if no project or all schemas for project name in otherwise

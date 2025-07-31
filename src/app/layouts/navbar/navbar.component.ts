@@ -59,13 +59,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
   clicked(event: MouseEvent) {
     event.preventDefault();
     const link = event.target as HTMLAnchorElement;
-    if (!this.isAuth || link.textContent == 'ADMIN') {
+    if (!this.isAuth) {
       this.sharedMessagesService.setMessage('');
       return;
     }
 
     if (link.textContent) {
-      this.sharedMessagesService.setMessage('LISTE DES ' + link.textContent);
+      if (link.textContent == 'ADMINS') {
+        this.sharedMessagesService.setMessage('LISTE DES UTILISATEURS');
+      } else {
+        this.sharedMessagesService.setMessage('LISTE DES ' + link.textContent);
+      }
     }
   }
 

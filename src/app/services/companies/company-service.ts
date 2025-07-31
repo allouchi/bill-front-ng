@@ -31,7 +31,7 @@ export class CompanyService implements ICompanyService {
     return this.http.get<Company[]>(`${this.COMPNAY_PATH}`);
   }
 
-  findCompaniesBySiret(siret: string): Observable<Company[]> {
+  findCompanieBySiret(siret: string): Observable<Company[]> {
     return this.http.get<Company[]>(`${this.COMPNAY_PATH}/${siret}`);
   }
 

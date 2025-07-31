@@ -52,16 +52,12 @@
           <a class="nav-link" routerLink="/operations/read" (click)="clicked($event)">OPERATIONS</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/tvas/read" (click)="clicked($event)">TVAS</a
-          >
+            <a class="nav-link" routerLink="/tvas/read" (click)="clicked($event)">TVAS</a>
         </li>
-        <li *ngIf="authService.hasAnyRole(['ROLE_ADMIN', 'ROLE_MODERATOR'])"
-          class="nav-item"
-        >
-          <a class="nav-link" routerLink="/users/read" (click)="clicked($event)"
-            >ADMIN</a
-          >
+ <li class="nav-item">
+            <a class="nav-link" routerLink="/users/read" (click)="clicked($event)">ADMINS</a>
         </li>
+       
         }
       </ul>
 

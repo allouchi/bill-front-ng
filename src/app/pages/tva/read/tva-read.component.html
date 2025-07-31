@@ -16,11 +16,11 @@
     </div>
 
     <div>
-      <table class="table table-bordered">
+      <table class="table table-bordered table-dark">
         <thead>
           <tr>
-            <th scope="col">CA NET</th>
-            <th scope="col">CA TTC</th>
+             <th scope="col">CA TTC</th>
+            <th scope="col">CA NET</th>           
             <th scope="col">TOTAL TVA</th>
             <th scope="col">TOTAL NET</th>
             <th scope="col">TOTAL REGLE</th>
@@ -34,11 +34,11 @@
         <tbody>
           <tr>
             <td style="text-align: center">
-              {{ tvaInfosFilterd.totalCAHorsTaxe | customDecimalPipe }}
-            </td>
-            <td style="text-align: center">
               {{ tvaInfosFilterd.totalTTC | customDecimalPipe }}
             </td>
+            <td style="text-align: center">
+              {{ tvaInfosFilterd.totalCAHorsTaxe | customDecimalPipe }}
+            </td>            
             <td class="text-center">
               {{ tvaInfosFilterd.totalTva | customDecimalPipe }}
             </td>

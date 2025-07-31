@@ -19,24 +19,23 @@ export class AuthService {
   user!: User | null;
   libelleHeader: string = '';
 
-
   constructor(
     private readonly http: HttpClient,
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly sharedDataService: SharedDataService
-  ) { }
+  ) {}
 
   login(credentials: { username: string; password: string }) {
-
-    return this.http.post<AuthResponse>(this.loginUrl, credentials, {
-      withCredentials: true,
-    }).pipe(
-      tap(tokens => {
-        this.saveAccessToken(tokens.accessToken);
-        this.saveRefreshToken(tokens.refreshToken);
+    return this.http
+      .post<AuthResponse>(this.loginUrl, credentials, {
+        withCredentials: true,
       })
-    );
-
+      .pipe(
+        tap((tokens) => {
+          this.saveAccessToken(tokens.accessToken);
+          this.saveRefreshToken(tokens.refreshToken);
+        })
+      );
   }
 
   refreshAccessToken(): Observable<AuthResponse> {
@@ -48,13 +47,15 @@ export class AuthService {
     const refreshRequest = new RefreshRequest();
     refreshRequest.refreshToken = refreshToken;
 
-    return this.http.post<AuthResponse>(this.refreshUrl, refreshRequest, {
-      withCredentials: true,
-    }).pipe(
-      tap(res => {
-        this.saveAccessToken(res.refreshToken);
+    return this.http
+      .post<AuthResponse>(this.refreshUrl, refreshRequest, {
+        withCredentials: true,
       })
-    );
+      .pipe(
+        tap((res) => {
+          this.saveAccessToken(res.refreshToken);
+        })
+      );
   }
 
   saveAccessToken(token: string) {
@@ -101,6 +102,7 @@ export class AuthService {
     this.libelleHeader = libelleHeader;
     this.libelleCompanyService.setMessage(libelleHeader);
     this.sharedDataService.setSelectCompany(authResponse.company);
+    this.sharedDataService.setSiret(authResponse.company!.siret);
   }
 
   getUser(): User | null {
@@ -118,7 +120,9 @@ export class AuthService {
   // Pour plusieurs rôles autorisés :
   hasAnyRole(expectedRoles: string[]): boolean {
     if (this.user?.roles) {
-      const match = this.user.roles.find((r) => expectedRoles.includes(r.roleName));
+      const match = this.user.roles.find((r) =>
+        expectedRoles.includes(r.roleName)
+      );
       return !!match;
     }
     return false;

@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
+import { SharedMessagesService } from '../../../services/shared/messages.service';
 
 @Component({
   selector: 'bill-prestation-edit',
@@ -31,7 +32,6 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
   siret: string = '';
   observableEvent$ = new Subscription();
 
-
   router = inject(Router);
 
   constructor(
@@ -40,7 +40,8 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly clientService: ClientService,
     private readonly consultantService: ConsultantService,
-    private readonly sharedDataService: SharedDataService
+    private readonly sharedDataService: SharedDataService,
+    private readonly sharedMessagesService: SharedMessagesService
   ) {}
 
   ngOnInit(): void {
@@ -138,9 +139,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
           },
         });
     } else {
-      for (const [, control] of Object.entries(
-        this.formPrestation.controls
-      )) {
+      for (const [, control] of Object.entries(this.formPrestation.controls)) {
         if (control.invalid) {
           control.markAsTouched();
         }
@@ -149,6 +148,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
   }
 
   cancel() {
+    this.sharedMessagesService.setMessage('Liste des Opérations');
     this.router.navigate(['/prestations/read']);
   }
 

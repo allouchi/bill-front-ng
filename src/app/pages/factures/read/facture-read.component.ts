@@ -195,7 +195,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
         if (result === 'confirm') {
           this.onSuccess('UPDATE,FACTURE');
           this.sharedDataService.setSelectedFacture(facture);
-          this.sharedMessagesService.setMessage('Mise à jour de la facture');
+          this.sharedMessagesService.setMessage('Mise à jour de Facture');
           this.factureService.updateFacture(facture!).subscribe({
             next: (factureModif) => {
               this.filtredFactures = this.filtredFactures.filter(
@@ -234,7 +234,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
         if (result === 'confirm') {
           this.onSuccess('UPDATE,FACTURE');
           this.sharedDataService.setSelectedFacture(facture);
-          this.sharedMessagesService.setMessage('Mise à jour de la facture');
+          this.sharedMessagesService.setMessage('Mise à jour de Facture');
           this.router.navigate(['factures/edit']);
         }
       })
