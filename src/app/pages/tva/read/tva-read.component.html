@@ -8,6 +8,7 @@
         (change)="setYearValue($event)"
         class="form-select"
         id="yearSelect"
+         [(ngModel)]="selectedExercice"
       >
         @for (year of exercises; track year.id) {
         <option [value]="year.exercise">{{ year.exercise }}</option>

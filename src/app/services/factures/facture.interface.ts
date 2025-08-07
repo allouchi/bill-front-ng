@@ -39,6 +39,17 @@ export interface IFactureService {
   findFacturesBySiret(siret: string): Observable<Facture[]>;
 
   /**
+   * Get all schemas if no project or all schemas for project name in otherwise
+   *
+   * @param company company name
+   * @returns Observable<Facture[]>
+   */
+  findFacturesByExercice(
+    siret: string,
+    exercice: string
+  ): Observable<Facture[]>;
+
+  /**
    * Delete one facture by it's id
    *
    * @param id facture id to delete
