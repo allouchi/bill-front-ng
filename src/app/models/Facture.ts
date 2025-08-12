@@ -21,4 +21,6 @@ export default interface Facture {
   clientPrestation: string;
   filePath: string;
   moisFacture: string;
+  siret: string;
+  exercice: string;
 }

@@ -58,6 +58,15 @@ export class FactureService implements IFactureService {
     }
   }
 
+  findFacturesByExercice(
+    siret: string,
+    exercice: string
+  ): Observable<Facture[]> {
+    return this.http.get<Facture[]>(
+      `${this.FACTURES_PATH}/${siret}/${exercice}`
+    );
+  }
+
   downloadPdfFacture(factureId: number): Observable<DataPDF> {
     return this.http.get<DataPDF>(`${this.EDITION_PATH}/${factureId}`);
   }

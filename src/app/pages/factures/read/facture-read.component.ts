@@ -55,7 +55,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
     private readonly modalService: NgbModal,
-    public readonly authService: AuthService,
+    private readonly authService: AuthService,
     private readonly tvaService: TvaService,
     private readonly sharedMessagesService: SharedMessagesService
   ) {}
@@ -80,6 +80,22 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
           const currentExercice = new Date().getFullYear();
           this.selectedExercice = currentExercice.toString();
           this.filterFactures(currentExercice.toString());
+        }, 500);
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
+  private loadFacturesByExercice(exercice: string) {
+    this.factureService.findFacturesByExercice(this.siret, exercice).subscribe({
+      next: (factures) => {
+        setTimeout(() => {
+          this.factures = factures;
+          this.filtredFactures = factures;
+          this.isLoaded = true;
+          //this.filterFactures(exercice);
         }, 500);
       },
       error: (err) => {
@@ -164,14 +180,13 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-         
           this.onSuccess('DELETE,FACTURE');
-         
           this.filtredFactures = this.factures.filter(
             (item) => item.id !== facture.id
           );
-          this.factures = this.filtredFactures;          
+          this.factures = this.filtredFactures;
           this.filterFactures(this.selectedExercice);
+          this.loadTvaInfo(this.selectedExercice);
         }
       })
       .catch(() => {
