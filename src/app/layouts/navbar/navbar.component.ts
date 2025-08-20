@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth-service';
 import { IsAuthService } from '../../services/shared/islogin-service';
 import { AlertService } from '../../services/alert/alert-messages.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmEditComponent } from '../../shared/modal/edit/confirm-update.component';
 
 @Component({
   selector: 'bill-navbar',
@@ -35,7 +37,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private readonly isAuthService: IsAuthService,
     private readonly router: Router,
     public readonly authService: AuthService,
-    private readonly alertService: AlertService
+    private readonly alertService: AlertService,
+    private readonly modalService: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -80,6 +83,28 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.libelleCompanyService.setMessage('');
     this.router.navigate(['/dashboard']);
     this.alertService.show('LOGOUT', 'success');
+  }
+
+  userLogout(event: Event) {
+    event.preventDefault();
+    const modal = this.modalService.open(ConfirmEditComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false,
+      centered: true,
+    });
+
+    modal.componentInstance.item = 'Logout';
+
+    modal.result
+      .then((result) => {
+        if (result === 'confirm') {
+          this.logout();
+        }
+      })
+      .catch(() => {
+        console.log('Annulé');
+      });
   }
 
   ngOnDestroy(): void {
