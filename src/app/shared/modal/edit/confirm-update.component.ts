@@ -1,4 +1,4 @@
-import { Component,  OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 
@@ -10,15 +10,13 @@ import { CommonModule } from '@angular/common';
   templateUrl: './confirm-update.component.html',
   styleUrl: './confirm-update.component.css',
 })
-export class ConfirmEditComponent implements OnInit {
+export class ConfirmEditComponent {
   item: any;
   composant: any;
   state: boolean = false;
 
   constructor(private readonly activeModal: NgbActiveModal) {}
 
-  ngOnInit() {   
-  }
 
   cancel(): void {
     this.activeModal.dismiss('cancel');
