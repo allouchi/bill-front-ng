@@ -19,6 +19,7 @@ import { DetailFactureComponent } from '../../../shared/modal/detail/detail-fact
 import { CommonModule } from '@angular/common';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
+import { ToastService } from '../../../services/alert/ToastService';
 
 @Component({
   selector: 'bill-facture-read',
@@ -59,8 +60,9 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly modalService: NgbModal,
     private readonly authService: AuthService,
     private readonly tvaService: TvaService,
-    private readonly sharedMessagesService: SharedMessagesService
-  ) { }
+    private readonly sharedMessagesService: SharedMessagesService,
+    private readonly toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -69,6 +71,15 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     this.loadExercisesRef();
     this.loadFacturesByExercise(this.selectedExercice);
     this.loadTvaInfo(this.selectedExercice);
+  }
+
+  onSuccess1() {
+    this.toastService.show(
+      'La sauvegarde a réussi !',
+      'Succès',
+      'success',
+      3500
+    );
   }
 
   private loadTvaInfo(exercice: string) {
@@ -94,33 +105,37 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   }
 
   loadFacturesBySiret() {
-    this.factureService.findFacturesBySiret(this.siret, this.page, this.size).subscribe({
-      next: (data) => {
-        this.factures = data.content;
-        this.totalPages = data.totalPages;
-        this.totalElements = data.totalElements;
-        this.isLoaded = true;
-        this.loadTvaInfo(this.selectedExercice);
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
+    this.factureService
+      .findFacturesBySiret(this.siret, this.page, this.size)
+      .subscribe({
+        next: (data) => {
+          this.factures = data.content;
+          this.totalPages = data.totalPages;
+          this.totalElements = data.totalElements;
+          this.isLoaded = true;
+          this.loadTvaInfo(this.selectedExercice);
+        },
+        error: (err) => {
+          this.onError(err);
+        },
+      });
   }
 
   loadFacturesByExercise(exercice: string) {
-    this.factureService.findFacturesByExercice(this.siret, exercice, this.page, this.size).subscribe({
-      next: (data) => {
-        this.factures = data.content;
-        this.totalPages = data.totalPages;
-        this.totalElements = data.totalElements;
-        this.isLoaded = true;
-        this.loadTvaInfo(this.selectedExercice);
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
+    this.factureService
+      .findFacturesByExercice(this.siret, exercice, this.page, this.size)
+      .subscribe({
+        next: (data) => {
+          this.factures = data.content;
+          this.totalPages = data.totalPages;
+          this.totalElements = data.totalElements;
+          this.isLoaded = true;
+          this.loadTvaInfo(this.selectedExercice);
+        },
+        error: (err) => {
+          this.onError(err);
+        },
+      });
   }
 
   nextPage(): void {
@@ -191,7 +206,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       .then((result) => {
         if (result === 'confirm') {
           this.onSuccess('DELETE,FACTURE');
-          this.deleteFactureService(facture.id!)
+          this.deleteFactureService(facture.id!);
         }
       })
       .catch(() => {
@@ -218,7 +233,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
           this.sharedMessagesService.setMessage('Mise à jour de Facture');
           this.factureService.updateFacture(facture).subscribe({
             next: (factureModif) => {
-
               this.onSuccess('UPDATE,FACTURE');
               this.router.navigate(['/factures/read']);
             },
@@ -251,6 +265,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
           this.sharedDataService.setSelectedFacture(facture);
           this.sharedMessagesService.setMessage('Mise à jour de Facture');
           this.router.navigate(['factures/edit']);
+          this.onSuccess1();
         }
       })
       .catch(() => {

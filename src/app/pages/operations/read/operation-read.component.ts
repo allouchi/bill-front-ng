@@ -15,6 +15,7 @@ import { AlertService } from '../../../services/alert/alert-messages.service';
 import { CommonModule } from '@angular/common';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import TvaInfos from '../../../models/TvaInfos';
+import { ToastService } from '../../../services/alert/ToastService';
 
 @Component({
   selector: 'bill-operation-read',
@@ -51,7 +52,8 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     private readonly tvaService: TvaService,
     private readonly modalService: NgbModal,
     private readonly sharedMessagesService: SharedMessagesService,
-    private readonly alertService: AlertService
+    private readonly alertService: AlertService,
+    private readonly toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -60,6 +62,15 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     this.loadExercicesRef();
     this.loadTvaInfo('Tous');
     this.loadOperations();
+  }
+
+  onSuccess() {
+    this.toastService.show(
+      'La sauvegarde a réussi !',
+      'Succès',
+      'success',
+      3500
+    );
   }
 
   loadOperations() {
@@ -214,6 +225,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
           );
           this.operations = this.operationsFiltred;
           this.calculTotal(this.operations);
+          this.onSuccess();
         }
       })
       .catch(() => {
