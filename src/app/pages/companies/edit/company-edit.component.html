@@ -1,251 +1,261 @@
 <div class="container mt-5">
-    <div class="card">
-        <div class="card-header bg-primary text-white">
-            @if(isEdit){
-            <h4>Mise à jour d'une société</h4>
-            }@else{
-            <h4>Ajout d'une société</h4>
-            }
-        </div>
-        <div class="card-body">
-            <form [formGroup]="formCompany" #form="ngForm" (ngSubmit)="addCompany()" class="p-4 border rounded">
-                <div class="row">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      @if(isEdit){
+      <h4>Mise à jour d'une société</h4>
+      }@else{
+      <h4>Ajout d'une société</h4>
+      }
+    </div>
+    <div class="card-body">
+      <form [formGroup]="formCompany" #form="ngForm" (ngSubmit)="addCompany()" class="p-4 border rounded">
+        <div class="row">
 
-        <div class="mb-3 fw-bold">
+          <div class="mb-3 fw-bold">
             Informations société
-        </div>
-    
-        <!-- Colonne gauche -->
-        <div class="col-md-4">
+          </div>
+          
+          <!-- Colonne gauche -->
+          <div class="col-md-4">
             <div class="mb-3">
-                <label class="form-label fw-bold" htmlFor="socialReason">Raison Social *</label>
-                <input type="text" id="socialReason" class="form-control" formControlName="socialReason"
-                    [class.is-invalid]="
+              <label class="form-label fw-bold" htmlFor="socialReason">Raison Social *</label>
+              <input type="text" id="socialReason" class="form-control" formControlName="socialReason" [class.is-invalid]="
             formCompany.get('socialReason')?.invalid &&
             formCompany.get('socialReason')?.touched
           " />
-                <div *ngIf="
+              <div *ngIf="
             formCompany.get('socialReason')?.invalid &&
             formCompany.get('socialReason')?.touched
           " class="text-danger">
-                    Ce champ est requis.
+                Ce champ est requis.
                 </div>
             </div>
-        </div>
+          </div>
 
-        <div class="col-md-4">
+          <div class="col-md-4">
             <div class="mb-3">
-                <label class="form-label fw-bold" htmlFor="siret">Siret *</label>
-                <input type="text" id="siret" class="form-control" formControlName="siret" [class.is-invalid]="
+              <label class="form-label fw-bold" htmlFor="siret">Siret *</label>
+              <input type="text" id="siret" class="form-control" formControlName="siret" [class.is-invalid]="
                             formCompany.get('siret')?.invalid &&
                             formCompany.get('siret')?.touched
                           " />
 
-                <div *ngIf="
+              <div *ngIf="
                             formCompany.get('siret')?.invalid &&
                             formCompany.get('siret')?.touched
                           " class="text-danger">
-                    Ce champ est requis.
+                Ce champ est requis.
                 </div>
             </div>
-        </div>
+          </div>
 
-        <div class="col-md-4">
+          <div class="col-md-4">
             <div class="mb-3">
-                <label class="form-label fw-bold" htmlFor="status">Statut *</label>
-                <input type="text" id="status" class="form-control" formControlName="status" [class.is-invalid]="
+              <label class="form-label fw-bold" htmlFor="status">Statut *</label>
+              <input type="text" id="status" class="form-control" formControlName="status" [class.is-invalid]="
             formCompany.get('status')?.invalid &&
             formCompany.get('status')?.touched
           " />
 
-                <div *ngIf="
+              <div *ngIf="
             formCompany.get('status')?.invalid &&
             formCompany.get('status')?.touched
           " class="text-danger">
-                    Ce champ est requis.
+                Ce champ est requis.
                 </div>
             </div>
-        </div>
+          </div>
 
-        <div class="col-md-4">
+          <div class="col-md-4">
             <div class="mb-3">
-                <label class="form-label fw-bold" htmlFor="rcsName">RCS Nom *</label>
-                <input type="text" id="rcsName" class="form-control" formControlName="rcsName" [class.is-invalid]="
+              <label class="form-label fw-bold" htmlFor="rcsName">RCS Nom *</label>
+              <input type="text" id="rcsName" class="form-control" formControlName="rcsName" [class.is-invalid]="
                     formCompany.get('rcsName')?.invalid &&
                     formCompany.get('rcsName')?.touched
                   " />
 
-                <div *ngIf="
+              <div *ngIf="
                     formCompany.get('rcsName')?.invalid &&
                     formCompany.get('rcsName')?.touched
                   " class="text-danger">
-                    Ce champ est requis.
+                Ce champ est requis.
                 </div>
             </div>
-        </div>
+          </div>
 
-        <div class="col-md-4">
+          <div class="col-md-4">
             <div class="mb-3">
-                <label class="form-label fw-bold" htmlFor="numeroTva">Numéro TVA *</label>
-                <input type="text" id="numeroTva" class="form-control" formControlName="numeroTva" [class.is-invalid]="
+              <label class="form-label fw-bold" htmlFor="numeroTva">Numéro TVA *</label>
+              <input type="text" id="numeroTva" class="form-control" formControlName="numeroTva" [class.is-invalid]="
                             formCompany.get('numeroTva')?.invalid &&
                             formCompany.get('numeroTva')?.touched
                           " />
 
-                <div *ngIf="
+              <div *ngIf="
                             formCompany.get('numeroTva')?.invalid &&
                             formCompany.get('numeroTva')?.touched
                           " class="text-danger">
-                    Ce champ est requis.
+                Ce champ est requis.
                 </div>
             </div>
-        </div>
+          </div>
 
-        <div class="col-md-4">
+          <div class="col-md-4">
             <div class="mb-3">
-                <label class="form-label fw-bold" htmlFor="codeApe">Code APE *</label>
-                <input type="text" id="codeApe" class="form-control" formControlName="codeApe" [class.is-invalid]="
+              <label class="form-label fw-bold" htmlFor="codeApe">Code APE *</label>
+              <input type="text" id="codeApe" class="form-control" formControlName="codeApe" [class.is-invalid]="
                                     formCompany.get('codeApe')?.invalid &&
                                     formCompany.get('codeApe')?.touched
                                   " />
 
-                <div *ngIf="
+              <div *ngIf="
                                     formCompany.get('codeApe')?.invalid &&
                                     formCompany.get('codeApe')?.touched
                                   " class="text-danger">
-                    Ce champ est requis.
+                Ce champ est requis.
                 </div>
             </div>
-        </div>
+          </div>
 
-        <div class="col-md-4">
+          <div class="col-md-4">
             <div class="mb-3">
-                <label class="form-label fw-bold" htmlFor="numeroIban">Numéro IBAN *</label>
-                <input type="text" id="numeroIban" class="form-control" formControlName="numeroIban" [class.is-invalid]="
+              <label class="form-label fw-bold" htmlFor="numeroIban">Numéro IBAN *</label>
+              <input type="text" id="numeroIban" class="form-control" formControlName="numeroIban" [class.is-invalid]="
                                             formCompany.get('numeroIban')?.invalid &&
                                             formCompany.get('numeroIban')?.touched
                                           " />
 
-                <div *ngIf="
+              <div *ngIf="
                                             formCompany.get('numeroIban')?.invalid &&
                                             formCompany.get('numeroIban')?.touched
                                           " class="text-danger">
-                    Ce champ est requis.
+                Ce champ est requis.
                 </div>
             </div>
-        </div>
+          </div>
 
-        <div class="col-md-4">
+          <div class="col-md-4">
             <div class="mb-3">
-                <label class="form-label fw-bold" htmlFor="numeroBic">Numéro BIC *</label>
-                <input type="text" id="numeroBic" class="form-control" formControlName="numeroBic" [class.is-invalid]="
+              <label class="form-label fw-bold" htmlFor="numeroBic">Numéro BIC *</label>
+              <input type="text" id="numeroBic" class="form-control" formControlName="numeroBic" [class.is-invalid]="
                                                     formCompany.get('numeroBic')?.invalid &&
                                                     formCompany.get('numeroBic')?.touched
                                                   " />
 
-                <div *ngIf="
+              <div *ngIf="
                                                     formCompany.get('numeroBic')?.invalid &&
                                                     formCompany.get('numeroBic')?.touched
                                                   " class="text-danger">
-                    Ce champ est requis.
+                Ce champ est requis.
                 </div>
             </div>
+          </div>
+
+
         </div>
 
+        <div class="mb-3 fw-bold">
+          Adresse société
+        </div>
 
-    </div>
-
-    <div class="mb-3 fw-bold">
-        Adresse société
-    </div>
-
-    <div class="row">
-        <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-6">
             <div class="mb-3">
-                <label class="form-label fw-bold" htmlFor="numero">Numéro *</label>
-                <input type="text" id="numero" class="form-control" formControlName="numero" [class.is-invalid]="
+              <label class="form-label fw-bold" htmlFor="numero">Numéro *</label>
+              <input type="text" id="numero" class="form-control" formControlName="numero" [class.is-invalid]="
                     formCompany.get('numero')?.invalid &&
                     formCompany.get('numero')?.touched
                   " />
-                <div *ngIf="
+              <div *ngIf="
                     formCompany.get('numero')?.invalid &&
                     formCompany.get('numero')?.touched
                   " class="text-danger">
-                    Ce champ est requis.
+                Ce champ est requis.
                 </div>
             </div>
-        </div>
+          </div>
 
-        <div class="col-md-6">
+          <div class="col-md-6">
             <div class="mb-3">
-                <label class="form-label fw-bold" htmlFor="rue">Rue *</label>
-                <input type="text" id="rue" class="form-control" formControlName="rue" [class.is-invalid]="
+              <label class="form-label fw-bold" htmlFor="rue">Rue *</label>
+              <input type="text" id="rue" class="form-control" formControlName="rue" [class.is-invalid]="
                             formCompany.get('rue')?.invalid &&
                             formCompany.get('rue')?.touched
                           " />
-                <div *ngIf="
+              <div *ngIf="
                             formCompany.get('rue')?.invalid &&
                             formCompany.get('rue')?.touched
                           " class="text-danger">
-                    Ce champ est requis.
+                Ce champ est requis.
                 </div>
             </div>
-        </div>
+          </div>
 
 
-        <div class="col-md-6">
+          <div class="col-md-6">
             <div class="mb-3">
-                <label class="form-label fw-bold" htmlFor="codePostal">Code Postal *</label>
-                <input type="text" id="codePostal" class="form-control" formControlName="codePostal"
-                    (keypress)="allowOnlyNumbers($event)" [class.is-invalid]="formCompany.get('codePostal')?.invalid &&
+              <label class="form-label fw-bold" htmlFor="codePostal">Code Postal *</label>
+              <input type="text" id="codePostal" class="form-control" formControlName="codePostal"
+                (keypress)="allowOnlyNumbers($event)"
+                [class.is-invalid]="formCompany.get('codePostal')?.invalid &&
                                                                                     formCompany.get('codePostal')?.touched" />
-                <div *ngIf="
+              <div *ngIf="
                                     formCompany.get('codePostal')?.invalid &&
                                     formCompany.get('codePostal')?.touched
                                   " class="text-danger">
-                    Ce champ est requis.
+                Ce champ est requis.
                 </div>
             </div>
-        </div>
+          </div>
 
-        <div class="col-md-6">
+          <div class="col-md-6">
             <div class="mb-3">
-                <label class="form-label fw-bold" htmlFor="localite">Commune *</label>
-                <input type="text" id="localite" class="form-control" formControlName="localite" [class.is-invalid]="
+              <label class="form-label fw-bold" htmlFor="localite">Commune *</label>
+              <input type="text" id="localite" class="form-control" formControlName="localite" [class.is-invalid]="
                                             formCompany.get('localite')?.invalid &&
                                             formCompany.get('localite')?.touched
                                           " />
-                <div *ngIf="
+              <div *ngIf="
                                             formCompany.get('localite')?.invalid &&
                                             formCompany.get('localite')?.touched
                                           " class="text-danger">
-                    Ce champ est requis.
+                Ce champ est requis.
                 </div>
             </div>
-        </div>
-        <div>
+          </div>
+          <div>
             <div class="mb-3">
-                <label class="form-label fw-bold" htmlFor="pays">Pays *</label>
-                <input type="text" id="pays" class="form-control" formControlName="pays" [class.is-invalid]="
-                                                    formCompany.get('pays')?.invalid &&
-                                                    formCompany.get('pays')?.touched
-                                                  " />
-                <div *ngIf="
+              <label class="form-label fw-bold" htmlFor="pays">Pays *</label>
+              <select formControlName="pays"
+                [class.is-invalid]="
+                                                                                                                                                                                                                                                                  formCompany.get('pays')?.invalid &&
+                                                                                                                                                                                                                                                                  formCompany.get('pays')?.touched
+                                                            " class="form-select"
+                id="countrySelect">
+                @for (country of countries; track country?.cca2) {
+                <option  [value]="country?.translations?.fra?.common">
+                  {{ country?.translations?.fra?.common }}
+                </option>
+                }
+                
+              </select>
+
+              <div *ngIf="
                                                     formCompany.get('pays')?.invalid &&
                                                     formCompany.get('pays')?.touched
                                                   " class="text-danger">
-                    Ce champ est requis.
+                Ce champ est requis.
                 </div>
             </div>
+          </div>
+
         </div>
 
-    </div>
-
-    <div class="d-flex justify-content-center gap-3">
-        <button class="btn btn-secondary me-2" (click)="cancel()">Annuler</button>
-        <button class="btn btn-primary" type="submit">Valider</button>
-    </div>
-</form>
-</div>
-</div>
+        <div class="d-flex justify-content-center gap-3">
+          <button class="btn btn-secondary me-2" (click)="cancel()">Annuler</button>
+          <button class="btn btn-primary" type="submit">Valider</button>
+        </div>
+        </form>
+        </div>
+        </div>
 </div>

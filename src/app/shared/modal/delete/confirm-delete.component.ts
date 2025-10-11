@@ -33,7 +33,7 @@ export class ConfirmDeleteComponent {
     private readonly prestationService: PrestationService,
     private readonly operationService: OperationService,
     private readonly userService: UserService
-  ) {}
+  ) { }
 
 
   cancel(): void {
@@ -50,7 +50,7 @@ export class ConfirmDeleteComponent {
     }
 
     if (this.item == 'Facture') {
-      this.deleteFacture(this.composant.id);
+      //this.deleteFacture(this.composant.id);
     }
 
     if (this.item == 'Consultant') {
@@ -62,7 +62,7 @@ export class ConfirmDeleteComponent {
     }
 
     if (this.item == 'Tva') {
-      this.deleteTva(this.composant.id);
+      //this.deleteTva(this.composant.id);
     }
 
     if (this.item == 'User') {
@@ -169,5 +169,5 @@ export class ConfirmDeleteComponent {
     this.alertService.show(respSuccess, 'success');
   }
 
-  private onError(error: any) {}
+  private onError(error: any) { }
 }

@@ -54,7 +54,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly modalService: NgbModal,
     private readonly authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.siret = this.sharedDataService.getSiret();
@@ -84,7 +84,6 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       next: (tvaInfos) => {
         this.tvaInfos = tvaInfos;
         this.tvaInfosFilterd = tvaInfos;
-        
       },
       error: (err) => {
         this.onError(err);
@@ -124,6 +123,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
 
   setYearValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
+    this.selectedExercice = selectedValue;
     this.loadTvaInfo(selectedValue);
     this.loadTva(selectedValue);
   }
@@ -144,6 +144,18 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     this.router.navigate(['/tvas/edit']);
   }
 
+  deleteTvaSerice(id: number) {
+    this.tvaService.deleteTvaById(id).subscribe({
+      next: () => {
+        this.onSuccess('DELETE,TVA');
+        this.loadTva(this.selectedExercice);
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
   deleteTva(event: Event, tva: Tva) {
     event.preventDefault();
     const modal = this.modalService.open(ConfirmDeleteComponent, {
@@ -156,6 +168,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
+          this.deleteTvaSerice(tva.id!)
           this.filtredTvas = this.tvas.filter((t) => t.id !== tva.id);
           this.tvas = this.filtredTvas;
           this.loadTvaInfo(this.selectedExercice);

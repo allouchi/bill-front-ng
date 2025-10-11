@@ -16,6 +16,18 @@ import Adresse from '../../../models/Adresse';
 import Company from '../../../models/Company';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { CountryService } from '../../../services/shared/country-service';
+
+export interface Country {
+  name: { common: string; official: string };
+  cca2: string;
+  flags: { png: string; svg: string };
+  capital?: string[];
+  region?: string;
+  translations: {
+    fra?: { official: string; common: string };
+  };
+}
 
 @Component({
   selector: 'company-edit',
@@ -38,6 +50,8 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
   adresseId: number | null = null;
   currentUrl: string = '';
   isEdit: boolean = false;
+  countries?: Partial<Country[]>;
+  selectedCountry = '';
 
   constructor(
     private readonly fb: FormBuilder,
@@ -45,9 +59,12 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
     private readonly router: Router,
-    private readonly sharedMessagesService: SharedMessagesService
-  ) {}
+    private readonly sharedMessagesService: SharedMessagesService,
+    private readonly countryService: CountryService
+  ) { }
   ngOnInit(): void {
+    this.loadCountries();
+
     this.formCompany = this.fb.group({
       socialReason: ['', Validators.required],
       status: ['', Validators.required],
@@ -61,7 +78,7 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
       rue: ['', Validators.required],
       codePostal: ['', Validators.required],
       localite: ['', Validators.required],
-      pays: ['', Validators.required],
+      pays: ['France', Validators.required],
       checked: [''],
     });
 
@@ -72,11 +89,33 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
       this.sharedMessagesService.setMessage(
         `Mise à jour de ${this.company?.socialReason}`
       );
-      this.buildDataCompany(this.company);
     }
   }
 
+  loadCountries() {
+    this.countryService.getCountries().subscribe(data => {
+      this.countries = data.filter(r => (r.region === 'Europe') || r.region === 'Africa');
+      this.buildDataCompany(this.company);
+    });
+  }
+
   buildDataCompany(company: Company | null) {
+
+    if (this.countries) {
+      this.countries = this.countries.sort((a, b) => {
+        const nameA = a!.translations?.fra?.common || a!.name.common;
+        const nameB = b!.translations?.fra?.common || b!.name.common;
+        return nameA.localeCompare(nameB, 'fr');
+      });
+
+      const found = this.countries.find(
+        (item) => item?.translations?.fra?.common.toLocaleUpperCase() === company?.companyAdresse.pays.toUpperCase()
+      );
+
+      this.selectedCountry = found?.translations?.fra?.common || '';
+
+    }
+
     if (company) {
       this.companyId = company.id;
       this.adresseId = company.companyAdresse.id;
@@ -93,7 +132,7 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
         rue: company.companyAdresse.rue,
         codePostal: company.companyAdresse.codePostal,
         localite: company.companyAdresse.localite,
-        pays: company.companyAdresse.pays,
+        pays: this.selectedCountry,
         checked: company.checked,
       });
     }

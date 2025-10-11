@@ -1,12 +1,13 @@
 import { Observable } from "rxjs";
 import Facture from "../../models/Facture";
 import { IFactureService } from "./facture.interface";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { env } from "../../../environments/env";
 import { Injectable } from "@angular/core";
 import Exercise from '../../models/Exercise';
 import Prestation from "../../models/Prestation";
 import DataPDF from '../../models/DataPDF';
+import { Page } from "../../models/Page";
 
 /**
  * Adapter for IFactureService
@@ -21,15 +22,35 @@ export class FactureService implements IFactureService {
   private readonly EXERCISE_PATH: string =
     `${this.apiURL}` + '/tvas/exerciceRef';
   private readonly EDITION_PATH: string = `${this.apiURL}` + '/editions';
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   updateFacture(facture: Facture): Observable<Facture> {
     return this.http.put<Facture>(this.FACTURES_PATH, facture);
   }
 
-  findFacturesBySiret(siret: string): Observable<Facture[]> {
-    return this.http.get<Facture[]>(`${this.FACTURES_PATH}/${siret}`);
+  findFacturesBySiret(siret: string, page: number, size: number): Observable<Page<Facture>> {
+    let params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+    return this.http.get<Page<Facture>>(`${this.FACTURES_PATH}/${siret}`, { params });
   }
+
+  findFacturesByExercice(
+    siret: string,
+    exercice: string,
+    page: number,
+    size: number
+  ): Observable<Page<Facture>> {
+
+    let params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+
+    return this.http.get<Page<Facture>>(
+      `${this.FACTURES_PATH}/${siret}/${exercice}`, { params }
+    );
+  }
+
   deleteFactureById(factureId: number): Observable<string> {
     return this.http.delete<string>(`${this.FACTURES_PATH}/${factureId}`);
   }
@@ -56,15 +77,6 @@ export class FactureService implements IFactureService {
         prestation
       );
     }
-  }
-
-  findFacturesByExercice(
-    siret: string,
-    exercice: string
-  ): Observable<Facture[]> {
-    return this.http.get<Facture[]>(
-      `${this.FACTURES_PATH}/${siret}/${exercice}`
-    );
   }
 
   downloadPdfFacture(factureId: number): Observable<DataPDF> {
