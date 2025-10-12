@@ -1,9 +1,10 @@
 <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
   <div *ngFor="let t of toasts" 
-       class="toast mb-2"
-       [class.show]="t.visible"
-       [class.fade]="true"
-       role="alert" aria-live="assertive" aria-atomic="true">
+     class="toast mb-2"
+     [class.show]="t.visible"
+     [class.fade]="true"
+     [ngClass]="{ 'success-toast': t.type === 'success' }"
+     role="alert" aria-live="assertive" aria-atomic="true">
        
     <div class="toast-header align-items-center">
       <i [ngClass]="{
@@ -11,7 +12,7 @@
             'bi bi-info-circle-fill text-info': t.type === 'info',
             'bi bi-exclamation-triangle-fill text-warning': t.type === 'warning',
             'bi bi-x-circle-fill text-danger': t.type === 'danger'
-          }" class="me-2 fs-5"></i>
+          }" class="me-2 fs-3"></i>
       
       <strong class="me-auto">
         {{ t.title || (t.type === 'success' ? 'Succès' : 'Notification') }}
