@@ -2,7 +2,6 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FactureService } from '../../../services/factures/facture.service';
 import Facture from '../../../models/Facture';
 import { Router } from '@angular/router';
-import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import Exercise from '../../../models/Exercise';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
@@ -19,7 +18,8 @@ import { DetailFactureComponent } from '../../../shared/modal/detail/detail-fact
 import { CommonModule } from '@angular/common';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
-import { ToastService } from '../../../services/alert/ToastService';
+import { AlertService } from '../../../services/alert/alertService';
+
 
 @Component({
   selector: 'bill-facture-read',
@@ -61,8 +61,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly tvaService: TvaService,
     private readonly sharedMessagesService: SharedMessagesService,
-    private readonly toastService: ToastService
-  ) {}
+
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -74,11 +74,10 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   }
 
   onSuccess1() {
-    this.toastService.show(
+    this.alertService.show(
       'La sauvegarde a réussi !',
       'Succès',
-      'success',
-      3500
+      'success'
     );
   }
 
@@ -174,7 +173,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   deleteFactureService(id: number) {
     this.factureService.deleteFactureById(id).subscribe({
       next: () => {
-        this.onSuccess('DELETE,FACTURE');
+        this.alertService.show('DELETE', 'FACTURE', 'success');
         const nbElements = (this.totalElements - 1) % this.size;
         if (this.page > 0 && nbElements == 0) {
           this.page--;
@@ -205,7 +204,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.onSuccess('DELETE,FACTURE');
+          this.alertService.show('DELETE', 'FACTURE', 'success');
           this.deleteFactureService(facture.id!);
         }
       })
@@ -228,12 +227,11 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.onSuccess('UPDATE,FACTURE');
           this.sharedDataService.setSelectedFacture(facture);
           this.sharedMessagesService.setMessage('Mise à jour de Facture');
           this.factureService.updateFacture(facture).subscribe({
             next: (factureModif) => {
-              this.onSuccess('UPDATE,FACTURE');
+              this.alertService.show('UPDATE', 'FACTURE', 'success');
               this.router.navigate(['/factures/read']);
             },
             error: (err) => {
@@ -261,11 +259,10 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.onSuccess('UPDATE,FACTURE');
+          this.alertService.show('UPDATE', 'FACTURE', 'success');
           this.sharedDataService.setSelectedFacture(facture);
           this.sharedMessagesService.setMessage('Mise à jour de Facture');
           this.router.navigate(['factures/edit']);
-          this.onSuccess1();
         }
       })
       .catch(() => {
@@ -307,21 +304,17 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     modal.componentInstance.facture = facture;
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
-
   private onError(error: any) {
     this.isLoaded = true;
     const code: string = error.error.code;
 
     switch (code) {
       case 'PDF_ERROR': {
-        this.alertService.show("Le fichier n'existe pas ou endommagé", 'error');
+        this.alertService.show('', "Le fichier n'existe pas ou endommagé", 'error');
         break;
       }
       default: {
-        this.alertService.show('Problème de connextion au serveur', 'error');
+        this.alertService.show('', 'Problème de connextion au serveur', 'error');
         break;
       }
     }

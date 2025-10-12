@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ClientService } from '../../../services/clients/client-service';
-import { AlertService } from '../../../services/alert/alert-messages.service';
+
 import Client from '../../../models/Client';
 import Adresse from '../../../models/Adresse';
 import { Router } from '@angular/router';
@@ -16,6 +16,7 @@ import { SharedDataService } from '../../../services/shared/shared-data-service'
 import { Subscription } from 'rxjs';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { customEmailValidator } from '../../../shared/utils/numeric-fr.validator';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-client-edit',
@@ -42,7 +43,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly sharedDataService: SharedDataService,
     private readonly sharedMessagesService: SharedMessagesService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.formClient = this.fb.group({
@@ -110,9 +111,9 @@ export class ClientEditComponent implements OnInit, OnDestroy {
       this.clientService.createOrUpdateClient(client, this.siret).subscribe({
         next: () => {
           if (this.clientId) {
-            this.onSuccess('UPDATE,CLIENT');
+            this.alertService.show('UPDATE', 'CLIENT', 'success');
           } else {
-            this.onSuccess('ADD,CLIENT');
+            this.alertService.show('ADD', 'CLIENT', 'success');
           }
 
           this.router.navigate(['/clients/read']);
@@ -134,17 +135,14 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     this.router.navigate(['/clients/read']);
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
 
   private onError(error: any) {
     const message: string = error.message;
 
     if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
+      this.alertService.show('', 'Problème serveur', 'error');
     } else {
-      this.alertService.show(message, 'error');
+      this.alertService.show('', message, 'error');
     }
   }
   ngOnDestroy(): void {

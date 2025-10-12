@@ -11,7 +11,6 @@ import {
 import Tva from '../../../models/Tva';
 import { TvaService } from '../../../services/tva/tva-service';
 import { Router } from '@angular/router';
-import { AlertService } from '../../../services/alert/alert-messages.service';
 
 import Company from '../../../models/Company';
 import Exercise from '../../../models/Exercise';
@@ -19,6 +18,7 @@ import { CommonModule } from '@angular/common';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
 import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-tva-edit',
@@ -46,7 +46,7 @@ export class TvaEditComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly fb: FormBuilder,
     private readonly sharedMessagesService: SharedMessagesService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.formTva = this.fb.group({
@@ -155,9 +155,9 @@ export class TvaEditComponent implements OnInit, OnDestroy {
       this.tvaService.createOrUpdateTva(tvaModif).subscribe({
         next: () => {
           if (this.tvaId) {
-            this.onSuccess('UPDATE,TVA');
+            this.alertService.show('UPDATE', 'TVA', 'success');
           } else {
-            this.onSuccess('ADD,TVA');
+            this.alertService.show('ADD', 'TVA', 'success');
           }
           this.sharedMessagesService.setMessage('Liste des TVAs');
           this.router.navigate(['/tvas/read']);
@@ -179,16 +179,12 @@ export class TvaEditComponent implements OnInit, OnDestroy {
     this.router.navigate(['/tvas/read']);
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
-
   private onError(error: any) {
     const message: string = error.message;
     if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
+      this.alertService.show('', 'Problème serveur', 'error');
     } else {
-      this.alertService.show(message, 'error');
+      this.alertService.show('', message, 'error');
     }
   }
 

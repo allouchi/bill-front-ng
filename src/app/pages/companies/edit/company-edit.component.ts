@@ -10,13 +10,14 @@ import {
 import { NgbCollapseModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { CompanyService } from '../../../services/companies/company-service';
-import { AlertService } from '../../../services/alert/alert-messages.service';
+
 import { Router } from '@angular/router';
 import Adresse from '../../../models/Adresse';
 import Company from '../../../models/Company';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { CountryService } from '../../../services/shared/country-service';
+import { AlertService } from '../../../services/alert/alertService';
 
 export interface Country {
   name: { common: string; official: string };
@@ -178,9 +179,9 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
       this.companyService.createOrUpdateCompany(company).subscribe({
         next: () => {
           if (this.companyId) {
-            this.onSuccess('UPDATE,SOCIETE');
+            this.alertService.show('UPDATE', 'SOCIETE', 'success');
           } else {
-            this.onSuccess('ADD,SOCIETE');
+            this.alertService.show('ADD', 'SOCIETE', 'success');
           }
           this.router.navigate(['/companies/read']);
         },
@@ -201,17 +202,14 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
     this.router.navigate(['/companies/read']);
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
 
   private onError(error: any) {
     const message: string = error.message;
 
     if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
+      this.alertService.show('', 'Problème serveur', 'error');
     } else {
-      this.alertService.show(message, 'error');
+      this.alertService.show('', message, 'error');
     }
   }
   ngOnDestroy(): void {

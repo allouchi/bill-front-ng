@@ -11,11 +11,12 @@ import Operation from '../../../models/Operation';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
-import { AlertService } from '../../../services/alert/alert-messages.service';
+
 import { CommonModule } from '@angular/common';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import TvaInfos from '../../../models/TvaInfos';
-import { ToastService } from '../../../services/alert/ToastService';
+import { AlertService } from '../../../services/alert/alertService';
+
 
 @Component({
   selector: 'bill-operation-read',
@@ -52,9 +53,9 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     private readonly tvaService: TvaService,
     private readonly modalService: NgbModal,
     private readonly sharedMessagesService: SharedMessagesService,
-    private readonly alertService: AlertService,
-    private readonly toastService: ToastService
-  ) {}
+    private readonly alertService: AlertService
+
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -64,14 +65,6 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     this.loadOperations();
   }
 
-  onSuccess() {
-    this.toastService.show(
-      'La sauvegarde a réussi !',
-      'Succès',
-      'success',
-      3500
-    );
-  }
 
   loadOperations() {
     this.operationSerice.getOperations(this.siret).subscribe({
@@ -225,7 +218,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
           );
           this.operations = this.operationsFiltred;
           this.calculTotal(this.operations);
-          this.onSuccess();
+          this.alertService.show('DELETE', 'OPERATION', 'success');
         }
       })
       .catch(() => {
@@ -238,9 +231,9 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     const message: string = error.message;
 
     if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
+      this.alertService.show('', 'Problème serveur', 'error');
     } else {
-      this.alertService.show(message, 'error');
+      this.alertService.show('', message, 'error');
     }
   }
 

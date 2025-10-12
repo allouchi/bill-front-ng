@@ -9,9 +9,9 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FactureService } from '../../../services/factures/facture.service';
-import { AlertService } from '../../../services/alert/alert-messages.service';
 import Facture from '../../../models/Facture';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-facture-edit',
@@ -32,7 +32,7 @@ export default class FactureEditComponent implements OnInit {
     private readonly factureService: FactureService,
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService
-  ) {}
+  ) { }
   ngOnInit(): void {
     this.facture = this.sharedDataService.gertSelectedFacture();
     this.numeroFacture = this.facture!.numeroFacture;
@@ -52,7 +52,7 @@ export default class FactureEditComponent implements OnInit {
 
       this.factureService.updateFacture(this.facture!).subscribe({
         next: () => {
-          this.onSuccess('UPDATE,FACTURE');
+          this.alertService.show('UPDATE', 'FACTURE', 'success');
           this.router.navigate(['/factures/read']);
         },
         error: (err) => {
@@ -68,17 +68,14 @@ export default class FactureEditComponent implements OnInit {
     }
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
 
   private onError(error: any) {
     const message: string = error.message;
 
     if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
+      this.alertService.show('', 'Problème serveur', 'error');
     } else {
-      this.alertService.show(message, 'error');
+      this.alertService.show('', message, 'error');
     }
   }
 

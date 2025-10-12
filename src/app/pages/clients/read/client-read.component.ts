@@ -3,7 +3,6 @@ import Client from '../../../models/Client';
 import { ClientService } from '../../../services/clients/client-service';
 import { Router } from '@angular/router';
 import { AdresseClientPipe } from '../../../shared/pipes/clientAdresse-pipe';
-import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
@@ -11,6 +10,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-client-read',
@@ -34,7 +34,7 @@ export class ClientReadComponent implements OnInit, OnDestroy {
     private readonly sharedDataService: SharedDataService,
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -68,12 +68,11 @@ export class ClientReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.onSuccess('DELETE,CLIENT');
+          this.alertService.show('DELETE', 'CLIENT', 'success');
           this.filtredClients = this.clients.filter(
             (item) => item.id !== client.id
           );
           this.clients = this.filtredClients;
-          console.log(this.filtredClients);
         }
       })
       .catch(() => {
@@ -111,18 +110,15 @@ export class ClientReadComponent implements OnInit, OnDestroy {
     this.router.navigate(['clients/add']);
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
 
   private onError(error: any) {
     this.isLoaded = true;
     const message: string = error.message;
 
     if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
+      this.alertService.show('', 'Problème serveur', 'error');
     } else {
-      this.alertService.show(message, 'error');
+      this.alertService.show('', message, 'error');
     }
   }
 

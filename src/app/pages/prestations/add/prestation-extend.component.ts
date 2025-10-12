@@ -9,12 +9,12 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { AlertService } from '../../../services/alert/alert-messages.service';
 
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import Prestation from '../../../models/Prestation';
 import { PrestationService } from '../../../services/prestations/prestation.service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-prestation-extend',
@@ -33,7 +33,7 @@ export default class PrestationExtendComponent implements OnInit {
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
     private readonly sharedMessagesService: SharedMessagesService
-  ) {}
+  ) { }
   ngOnInit(): void {
     this.prestation = this.sharedDataService.getSelectedPrestation();
     this.sharedMessagesService.setMessage("Prolongation de la prestation pour " + `${this.prestation?.clientPrestation}`);
@@ -56,7 +56,7 @@ export default class PrestationExtendComponent implements OnInit {
       this.prestation!.dateFin = this.formPrestation.get('dateFin')?.value;
       this.prestationService.updateDatePrestation(this.prestation!).subscribe({
         next: () => {
-          this.onSuccess('UPDATE,PRESTATION');         
+          this.alertService.show('UPDATE', 'PRESTATION', 'success');
           this.router.navigate(['/prestations/read']);
         },
         error: (err) => {
@@ -74,17 +74,13 @@ export default class PrestationExtendComponent implements OnInit {
     }
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
-
   private onError(error: any) {
     const message: string = error.message;
 
     if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
+      this.alertService.show('', 'Problème serveur', 'error');
     } else {
-      this.alertService.show(message, 'error');
+      this.alertService.show('', message, 'error');
     }
   }
 

@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
-import { ToastData, ToastService } from '../../services/alert/ToastService';
+
 import { CommonModule } from '@angular/common';
+import { AlertService, ToastData } from '../../services/alert/alertService';
 
 
 interface ToastInternal extends ToastData {
@@ -10,20 +11,20 @@ interface ToastInternal extends ToastData {
 }
 
 @Component({
-  selector: 'alert-toast-center',
-  templateUrl: './toast.component.html',
-   imports: [ CommonModule],
-  styleUrls: ['./toast.component.css']
+  selector: 'alert-message',
+  templateUrl: './alert.component.html',
+  imports: [CommonModule],
+  styleUrls: ['./alert.component.css']
 })
-export class ToastComponent implements OnInit, OnDestroy {
+export class AlertComponent implements OnInit, OnDestroy {
   toasts: ToastInternal[] = [];
   private sub!: Subscription;
   private counter = 0;
 
-  constructor(private toastService: ToastService) {}
+  constructor(private readonly alertService: AlertService) { }
 
   ngOnInit() {
-    this.sub = this.toastService.toast$.subscribe((data) => this.addToast(data));
+    this.sub = this.alertService.toast$.subscribe((data) => this.addToast(data));
   }
 
   ngOnDestroy() {

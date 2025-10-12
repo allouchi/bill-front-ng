@@ -6,9 +6,10 @@ import Company from '../../../models/Company';
 import { CompanyService } from '../../../services/companies/company-service';
 import User from '../../../models/User';
 import { Router } from '@angular/router';
-import { AlertService } from '../../../services/alert/alert-messages.service';
+
 import Role from '../../../models/Role';
 import { customEmailValidator } from '../../../shared/utils/numeric-fr.validator';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-user-add',
@@ -29,7 +30,7 @@ export class AddUserComponent implements OnInit, OnDestroy {
     private readonly companyService: CompanyService,
     private readonly alertService: AlertService,
     private readonly router: Router
-  ) {}
+  ) { }
 
 
   ngOnInit(): void {
@@ -82,7 +83,7 @@ export class AddUserComponent implements OnInit, OnDestroy {
         this.onError(err);
       },
     });
-  } 
+  }
 
 
   setCompanyValue(event: Event) {
@@ -92,23 +93,23 @@ export class AddUserComponent implements OnInit, OnDestroy {
     });
   }
 
-    setRoleValue(event: Event) {
-    const selectedValue = (event.target as HTMLSelectElement).value; 
-    
-    this.userForm.patchValue({      
+  setRoleValue(event: Event) {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+
+    this.userForm.patchValue({
       role: selectedValue,
     });
   }
 
-   getByRole(role: string) : Role{    
-     const selectedRole = this.roles.find(r => r.roleName == role);   
+  getByRole(role: string): Role {
+    const selectedRole = this.roles.find(r => r.roleName == role);
     return selectedRole!
   }
 
 
   addUser(): void {
-    const selected: Role [] = [];
-    let role = this.getByRole(this.selectedRole);   
+    const selected: Role[] = [];
+    let role = this.getByRole(this.selectedRole);
     selected.push(role);
 
     const password = this.userForm.get('password')?.value;
@@ -132,9 +133,12 @@ export class AddUserComponent implements OnInit, OnDestroy {
         roles: selected,
         activated: true,
       };
-     
+
       this.userService.createUser(user).subscribe({
-        next: () => this.onSuccess('ADD,USER'),
+        next: () => {
+          this.router.navigate(['users/read']);
+          this.alertService.show('ADD', 'USER', 'success');
+        },
         error: (err) => this.onError(err),
       });
     } else {
@@ -150,13 +154,8 @@ export class AddUserComponent implements OnInit, OnDestroy {
     this.router.navigate(['dashboard']);
   }
 
-  private onSuccess(respSuccess: any) {
-    this.router.navigate(['users/read']);
-    this.alertService.show(respSuccess, 'success');
-  }
-
-  private onError(error: any) {  
-    this.alertService.show(error.error.message, 'error');
+  private onError(error: any) {
+    this.alertService.show('', error.error.message, 'error');
   }
 
   ngOnDestroy(): void {

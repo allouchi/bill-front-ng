@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import Tva from '../../../models/Tva';
 import { TvaService } from '../../../services/tva/tva-service';
-import { AlertService } from '../../../services/alert/alert-messages.service';
+
 import Exercise from '../../../models/Exercise';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
@@ -17,6 +17,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-tva-read',
@@ -147,7 +148,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   deleteTvaSerice(id: number) {
     this.tvaService.deleteTvaById(id).subscribe({
       next: () => {
-        this.onSuccess('DELETE,TVA');
+        this.alertService.show('DELETE', 'TVA', 'success');
         this.loadTva(this.selectedExercice);
       },
       error: (err) => {
@@ -179,18 +180,14 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       });
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
-
   private onError(error: any) {
     this.isLoaded = true;
     const message: string = error.message;
 
     if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
+      this.alertService.show('', 'Problème serveur', 'error');
     } else {
-      this.alertService.show(message, 'error');
+      this.alertService.show('', message, 'error');
     }
   }
 

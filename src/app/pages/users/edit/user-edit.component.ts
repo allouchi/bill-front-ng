@@ -14,12 +14,12 @@ import Company from '../../../models/Company';
 import { CompanyService } from '../../../services/companies/company-service';
 import User from '../../../models/User';
 import { Router } from '@angular/router';
-import { AlertService } from '../../../services/alert/alert-messages.service';
 import GetMessagesError from '../../../shared/utils/messages-error';
 import Role from '../../../models/Role';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { customEmailValidator } from '../../../shared/utils/numeric-fr.validator';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-user-edit',
@@ -45,7 +45,7 @@ export class EditUserComponent {
     private readonly sharedDataService: SharedDataService,
     private readonly router: Router,
     private readonly sharedMessagesService: SharedMessagesService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadRoles();
@@ -81,7 +81,7 @@ export class EditUserComponent {
     this.userForm.get('password')?.reset(null);
     this.userForm.get('passwordConfirm')?.reset(null);
   }
-  showPassord() {    
+  showPassord() {
     this.showPassword = !this.showPassword;
     if (this.showPassword) {
       this.message = 'Cacher les champs mot de passe ?'
@@ -179,7 +179,10 @@ export class EditUserComponent {
       };
 
       this.userService.editUser(user).subscribe({
-        next: () => this.onSuccess('ADD,USER'),
+        next: () => {
+          this.router.navigate(['users/read']);
+          this.alertService.show('ADD', 'USER', 'success');
+        },
         error: (err) => this.onError(err),
       });
     } else {
@@ -195,13 +198,8 @@ export class EditUserComponent {
     this.router.navigate(['users/read']);
   }
 
-  private onSuccess(respSuccess: any) {
-    this.router.navigate(['users/read']);
-    this.alertService.show(respSuccess, 'success');
-  }
-
   private onError(error: any) {
     const message = GetMessagesError(error);
-    this.alertService.show(message, 'error');
+    this.alertService.show('', message, 'error');
   }
 }

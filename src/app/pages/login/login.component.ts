@@ -9,11 +9,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AlertService } from '../../services/alert/alert-messages.service';
+
 import { IsAuthService } from '../../services/shared/islogin-service';
 import { AuthResponse } from '../../models/AuthResponse';
 import { AuthResquest } from '../../models/AuthRequest';
 import { customEmailValidator } from '../../shared/utils/numeric-fr.validator';
+import { AlertService } from '../../services/alert/alertService';
+
 
 @Component({
   selector: 'bill-login',
@@ -31,7 +33,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private readonly fb: FormBuilder,
     private readonly alertService: AlertService,
     private readonly isAuthService: IsAuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.formLogin = this.fb.group({
@@ -63,7 +65,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   private onResponseSuccess(authResponse: AuthResponse) {
     this.isAuthService.setIsAuth(true);
     this.authService.setUser(authResponse);
-    this.alertService.show('AUTHENT', 'success');
+    this.alertService.show('AUTHENT', '', 'success');
     this.router.navigate(['dashboard']);
   }
 
@@ -82,20 +84,20 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     switch (code) {
       case 'ERR_SERVER_DOWN': {
-        this.alertService.show('Problème de connextion au serveur', 'error');
+        this.alertService.show('', 'Problème de connextion au serveur', 'error');
         break;
       }
 
       case 'RESOURCE_NOT_FOUND':
       case 'BAD_CREDENTIAL': {
-        this.alertService.show(
+        this.alertService.show('',
           "Vos identifiants sont incorrects ou votre compte n'est plus valide",
           'error'
         );
         break;
       }
       case 'ACCESS_DENIED': {
-        this.alertService.show(
+        this.alertService.show('',
           "Vous n'êtes pas autorisé à accéder à cette ressource",
           'error'
         );

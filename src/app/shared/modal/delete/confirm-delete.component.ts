@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TvaService } from '../../../services/tva/tva-service';
-import { AlertService } from '../../../services/alert/alert-messages.service';
 import { CommonModule } from '@angular/common';
 import { FactureService } from '../../../services/factures/facture.service';
 import { ClientService } from '../../../services/clients/client-service';
@@ -11,6 +10,7 @@ import { PrestationService } from '../../../services/prestations/prestation.serv
 import { UserService } from '../../../services/user/user-service';
 import User from '../../../models/User';
 import { OperationService } from '../../../services/dashboard/operation-service';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-confirm-modal',
@@ -78,7 +78,7 @@ export class ConfirmDeleteComponent {
   deleteUser(user: User) {
     this.userService.deleteUser(user.id!).subscribe({
       next: () => {
-        this.onSuccess('DELETE,USER');
+        this.alertService.show('DELETE', 'USER', 'success')
       },
       error: (err) => {
         this.onError(err);
@@ -89,7 +89,7 @@ export class ConfirmDeleteComponent {
   deleteCompany(id: number) {
     this.companyService.deleteCompanyById(id).subscribe({
       next: () => {
-        this.onSuccess('DELETE,COMPANY');
+        this.alertService.show('DELETE', 'COMPANY', 'success')
       },
       error: (err) => {
         this.onError(err);
@@ -100,7 +100,7 @@ export class ConfirmDeleteComponent {
   deletePrestation(id: number) {
     this.prestationService.deletePrestationById(id).subscribe({
       next: () => {
-        this.onSuccess('DELETE,PRESTATION');
+        this.alertService.show('DELETE', 'PRESTATION', 'success')
       },
       error: (err) => {
         this.onError(err);
@@ -111,7 +111,7 @@ export class ConfirmDeleteComponent {
   deleteFacture(id: number) {
     this.factureService.deleteFactureById(id).subscribe({
       next: () => {
-        this.onSuccess('DELETE,FACTURE');
+        this.alertService.show('DELETE', 'FACTURE', 'success')
       },
       error: (err) => {
         this.onError(err);
@@ -122,7 +122,7 @@ export class ConfirmDeleteComponent {
   deleteOperation(id: number) {
     this.operationService.deletedOperationById(id).subscribe({
       next: () => {
-        this.onSuccess('DELETE,OPERATION');
+        this.alertService.show('DELETE', 'OPERATION', 'success')
       },
       error: (err) => {
         this.onError(err);
@@ -135,7 +135,7 @@ export class ConfirmDeleteComponent {
   deleteConsultant(id: number) {
     this.consultantService.deleteConsultantById(id).subscribe({
       next: () => {
-        this.onSuccess('DELETE,CONSULTANT');
+        this.alertService.show('DELETE', 'CONSULTANT', 'success')
       },
       error: (err) => {
         this.onError(err);
@@ -146,7 +146,7 @@ export class ConfirmDeleteComponent {
   deleteClient(id: number) {
     this.clientService.deleteClientById(id).subscribe({
       next: () => {
-        this.onSuccess('DELETE,CLIENT');
+        this.alertService.show('DELETE', 'CLIENT', 'success')
       },
       error: (err) => {
         this.onError(err);
@@ -157,16 +157,12 @@ export class ConfirmDeleteComponent {
   deleteTva(id: number) {
     this.tvaService.deleteTvaById(id).subscribe({
       next: () => {
-        this.onSuccess('DELETE,TVA');
+        this.alertService.show('DELETE', 'TVA', 'success')
       },
       error: (err) => {
         this.onError(err);
       },
     });
-  }
-
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
   }
 
   private onError(error: any) { }

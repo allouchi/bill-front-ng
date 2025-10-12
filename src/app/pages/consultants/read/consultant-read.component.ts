@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import Consultant from '../../../models/Consultant';
 import { ConsultantService } from '../../../services/consultants/consultant-service';
 import { Router } from '@angular/router';
-import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
@@ -11,6 +10,7 @@ import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-del
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { AuthService } from '../../../services/auth/auth-service';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-consultant-read',
@@ -34,7 +34,7 @@ export class ConsultantReadComponent {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly router: Router,
     private readonly authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -70,7 +70,7 @@ export class ConsultantReadComponent {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.onSuccess('DELETE,CONSULTANT');
+          this.alertService.show('DELETE', 'CONSULTANT', 'success');
           this.consultants = this.consultants.filter(
             (item) => item.id !== consultant.id
           );
@@ -121,19 +121,14 @@ export class ConsultantReadComponent {
         console.log('Annulé');
       });
   }
-
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
-
   private onError(error: any) {
     this.isLoaded = true;
     const message: string = error.message;
 
     if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
+      this.alertService.show('', 'Problème serveur', 'error');
     } else {
-      this.alertService.show(message, 'error');
+      this.alertService.show('', message, 'error');
     }
   }
 

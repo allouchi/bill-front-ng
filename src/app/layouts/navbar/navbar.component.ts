@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
-import { AlertComponent } from '../../shared/alert/alert.component';
 import { SharedMessagesService } from '../../services/shared/messages.service';
 import { Subscription } from 'rxjs';
 import { LibelleCompanyService } from '../../services/shared/libelle-company-service';
@@ -9,9 +8,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth-service';
 import { IsAuthService } from '../../services/shared/islogin-service';
-import { AlertService } from '../../services/alert/alert-messages.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmEditComponent } from '../../shared/modal/edit/confirm-update.component';
+import { AlertService } from '../../services/alert/alertService';
 
 @Component({
   selector: 'bill-navbar',
@@ -19,7 +18,6 @@ import { ConfirmEditComponent } from '../../shared/modal/edit/confirm-update.com
     CommonModule,
     RouterLink,
     HeaderComponent,
-    AlertComponent,
     FormsModule,
   ],
   templateUrl: './navbar.component.html',
@@ -39,7 +37,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     public readonly authService: AuthService,
     private readonly alertService: AlertService,
     private readonly modalService: NgbModal
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.authenticated$ = this.isAuthService
@@ -82,7 +80,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.sharedMessagesService.setMessage('');
     this.libelleCompanyService.setMessage('');
     this.router.navigate(['/dashboard']);
-    this.alertService.show('LOGOUT', 'success');
+    this.alertService.show('LOGOUT', '', 'success');
   }
 
   userLogout(event: Event) {
