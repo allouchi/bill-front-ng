@@ -11,10 +11,12 @@ export interface ToastData {
 
 @Injectable({ providedIn: 'root' })
 export class AlertService {
-  deleteMessage = ' été supprimée avec succès !';
-  addMessage = ' été ajoutée avec succès !';
-  updateMessage = ' été mise à jour avec succès !';
+  deleteMessage = ' été supprimé avec succès !';
+  addMessageM = ' été ajouté avec succès !';
+  addMessageF = ' été ajoutée avec succès !';
+  updateMessage = ' été mis à jour avec succès !';
   logoutMessage = 'A bientôt !';
+  loginMessage = 'Bienvenue, vous êtes connecté !';
   private alertSubject = new Subject<ToastData>();
   toast$ = this.alertSubject.asObservable();
 
@@ -26,10 +28,22 @@ export class AlertService {
     type: ToastData['type'] = 'success',
     delay = 7000
   ) {
-    composant =
-      'Le composant ' +
-      composant.charAt(0).toUpperCase() +
-      composant.slice(1).toLowerCase();
+    switch (composant) {
+      case 'CONSULTANT':
+      case 'USER':
+      case 'CLIENT': {
+        composant = 'Le ' + composant;
+        break;
+      }
+
+      case 'COMPANY':
+      case 'FACTURE':
+      case 'TVA':
+      case 'PRESTATION': {
+        composant = 'La ' + composant;
+        break;
+      }
+    }
 
     switch (action) {
       case 'DELETE': {
@@ -46,9 +60,12 @@ export class AlertService {
         message = composant + this.updateMessage;
         break;
       }
-
+      case 'AUTHENT': {
+        message = this.loginMessage;
+        break;
+      }
       case 'LOGOUT': {
-        message = composant + this.logoutMessage;
+        message = this.logoutMessage;
         break;
       }
     }

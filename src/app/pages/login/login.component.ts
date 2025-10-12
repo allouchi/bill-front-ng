@@ -53,9 +53,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     authRequest.username = username;
     authRequest.password = password;
     authRequest.rememberMe = rememberMe;
+    
 
     this.authService.login(authRequest).subscribe({
-      next: (response) => {
+      next: (response) => {      
         this.onResponseSuccess(response);
       },
       error: (err) => this.onResponseError(err),
@@ -84,20 +85,21 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     switch (code) {
       case 'ERR_SERVER_DOWN': {
-        this.alertService.show('', 'Problème de connextion au serveur', 'error');
+        this.alertService.show('ERR_SERVER_DOWN', 'Problème de connextion au serveur', 'error');
         break;
       }
 
       case 'RESOURCE_NOT_FOUND':
       case 'BAD_CREDENTIAL': {
-        this.alertService.show('',
+        this.alertService.show('BAD_CREDENTIAL',
           "Vos identifiants sont incorrects ou votre compte n'est plus valide",
           'error'
         );
         break;
       }
       case 'ACCESS_DENIED': {
-        this.alertService.show('',
+        this.alertService.show(
+          'ACCESS_DENIED',
           "Vous n'êtes pas autorisé à accéder à cette ressource",
           'error'
         );

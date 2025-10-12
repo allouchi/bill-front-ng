@@ -41,7 +41,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly authService: AuthService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -157,7 +157,6 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     this.sharedMessagesService.setMessage("Ajout d'une Société");
     this.router.navigate(['/companies/add']);
   }
-
 
   private onError(error: any) {
     this.isLoaded = true;
