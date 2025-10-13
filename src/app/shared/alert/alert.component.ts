@@ -24,17 +24,17 @@ export class AlertComponent implements OnInit, OnDestroy {
   constructor(private readonly alertService: AlertService) { }
 
   ngOnInit() {
-    this.sub = this.alertService.toast$.subscribe((data) => this.addToast(data));
-  }
-
-  ngOnDestroy() {
-    this.sub?.unsubscribe();
+    this.sub = this.alertService.toast$.subscribe((data) => {
+      ;
+      this.addToast(data);
+    });
   }
 
   addToast(data: ToastData) {
     const id = ++this.counter;
     const toast: ToastInternal = { ...data, id, visible: false };
     this.toasts.push(toast);
+
 
     // small delay to let Angular render then add 'show' class (animation fade-in)
     setTimeout(() => {
@@ -45,6 +45,7 @@ export class AlertComponent implements OnInit, OnDestroy {
     // auto hide after delay
     timer(data.delay ?? 3000).subscribe(() => this.hideToast(id));
   }
+
 
   hideToast(id: number) {
     const t = this.toasts.find(x => x.id === id);
@@ -59,5 +60,9 @@ export class AlertComponent implements OnInit, OnDestroy {
   // si l'utilisateur clique sur la croix
   closeClicked(id: number) {
     this.hideToast(id);
+  }
+
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
   }
 }

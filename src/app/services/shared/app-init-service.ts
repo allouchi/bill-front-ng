@@ -13,7 +13,7 @@ export class AppInitService {
   constructor(
     private readonly companyService: CompanyService,
     private readonly alertService: AlertService
-  ) {}
+  ) { }
 
   initAppWithSubscribe(): void {
     this.companyService.findCompanies().subscribe({
@@ -36,7 +36,7 @@ export class AppInitService {
     const message: string = error.message;
 
     if (message.includes('Http failure')) {
-      this.alertService.show('SERVER_ERROR', 'Problème serveur', 'error');
+      this.alertService.show('SERVER_ERROR', '', '', '', 'danger');
     } else {
       this.alertService.show('', message, 'error');
     }

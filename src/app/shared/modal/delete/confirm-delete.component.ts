@@ -89,7 +89,7 @@ export class ConfirmDeleteComponent {
   deleteCompany(id: number) {
     this.companyService.deleteCompanyById(id).subscribe({
       next: () => {
-        this.alertService.show('DELETE', 'COMPANY', 'success')
+        this.alertService.show('DELETE', 'SOCIETE', 'success')
       },
       error: (err) => {
         this.onError(err);

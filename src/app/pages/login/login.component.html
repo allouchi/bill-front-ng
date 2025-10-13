@@ -16,67 +16,40 @@
 
 <main class="form-signin">
   <form [formGroup]="formLogin" #form="ngForm" (ngSubmit)="authenticate()">
-    <img
-      class="mb-4"
-      src="../assets/sbatec.jpg"
-     width="300" height="200" alt="logo"
-    />
+    <img class="mb-4" src="../assets/sbatec.jpg" width="300" height="200" alt="logo" />
     <h1 class="h3 mb-3 fw-normal">Veuillez vous connecter</h1>
 
     <div class="form-floating mb-3">
-      <input
-        type="email"
-        class="form-control"
-        id="email"
-        formControlName="username"
-        [class.is-invalid]="
+      <input type="email" class="form-control" id="email" formControlName="username" [class.is-invalid]="
             formLogin.get('username')?.invalid &&
-            formLogin.get('username')?.touched"
-      />
+            formLogin.get('username')?.touched" />
 
       <label for="email">E-Mail : *</label>
-      <div
-        *ngIf="
+      <div *ngIf="
           formLogin.get('username')?.invalid &&
             formLogin.get('username')?.touched
-        "
-        class="text-danger"
-      >
+        " class="text-danger">
         L'adresse Email est requise.
       </div>
     </div>
 
     <div class="form-floating mb-3">
-      <input
-        type="password"
-        class="form-control"
-        id="password"
-        formControlName="password"
-         [class.is-invalid]="
+      <input type="password" class="form-control" id="password" formControlName="password" [class.is-invalid]="
             formLogin.get('password')?.invalid &&
-            formLogin.get('password')?.touched"
-      />
+            formLogin.get('password')?.touched" />
       <label for="password">Mot de passe : *</label>
-      <div
-        *ngIf="
+      <div *ngIf="
           formLogin.get('password')?.invalid &&
             formLogin.get('password')?.touched 
-        "
-        class="text-danger"
-      >
+        " class="text-danger">
         Le mot de passe est requis.
       </div>
     </div>
 
     <div class="checkbox mb-3">
-      <label> <input type="checkbox"  id="rememberMe"
-        formControlName ='rememberMe' /> Remember me </label>
+      <label> <input type="checkbox" id="rememberMe" formControlName='rememberMe' /> Remember me </label>
     </div>
-    <button
-      class="w-100 btn btn-lg btn-primary"
-      type="submit"
-      (click)="authenticate()"
-    >
+    <button class="w-100 btn btn-lg btn-primary" type="button" (click)="authenticate()">
       Valider
     </button>
   </form>

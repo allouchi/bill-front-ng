@@ -11,14 +11,22 @@ export interface ToastData {
 
 @Injectable({ providedIn: 'root' })
 export class AlertService {
-  deleteMessage = ' été supprimé avec succès !';
+  deleteMessageM = ' été supprimé avec succès !';
+  deleteMessageF = ' été supprimée avec succès !';
   addMessageM = ' été ajouté avec succès !';
   addMessageF = ' été ajoutée avec succès !';
-  updateMessage = ' été mis à jour avec succès !';
+  updateMessageM = ' été mis à jour avec succès !';
+  updateMessageF = ' été mise à jour avec succès !';
   logoutMessage = 'A bientôt !';
   loginMessage = 'Bienvenue, vous êtes connecté !';
-  private alertSubject = new Subject<ToastData>();
+  errorServerMessage = "Erreur s'est produite lors d'appel Serveur";
+  female: boolean = true;
+
+  private readonly alertSubject = new Subject<ToastData>();
   toast$ = this.alertSubject.asObservable();
+
+  constructor() {
+  }
 
   show(
     action: string,
@@ -33,31 +41,50 @@ export class AlertService {
       case 'USER':
       case 'CLIENT': {
         composant = 'Le ' + composant;
+        this.female = false;
         break;
       }
 
-      case 'COMPANY':
+      case 'SOCIETE':
       case 'FACTURE':
       case 'TVA':
       case 'PRESTATION': {
         composant = 'La ' + composant;
+        this.female = true;
+        break;
+      }
+      case 'OPERATION': {
+        composant = "L' " + composant;
+        this.female = true;
         break;
       }
     }
 
     switch (action) {
       case 'DELETE': {
-        message = composant + this.deleteMessage;
+        if (this.female) {
+          message = composant + this.deleteMessageF;
+        } else {
+          message = composant + this.deleteMessageM;
+        }
         break;
       }
 
       case 'ADD': {
-        message = composant + this.addMessage;
+        if (this.female) {
+          message = composant + this.addMessageF;
+        } else {
+          message = composant + this.addMessageM;
+        }
         break;
       }
 
       case 'UPDATE': {
-        message = composant + this.updateMessage;
+        if (this.female) {
+          message = composant + this.updateMessageF;
+        } else {
+          message = composant + this.updateMessageM;
+        }
         break;
       }
       case 'AUTHENT': {
@@ -68,7 +95,16 @@ export class AlertService {
         message = this.logoutMessage;
         break;
       }
+
+      case 'SERVER_ERROR': {
+        message = this.errorServerMessage;
+        break;
+      }
+
     }
+    console.log("message : ", message)
+    console.log("title : ", title)
+    console.log("type : ", type)
 
     this.alertSubject.next({ message, title, type, delay });
   }
@@ -77,9 +113,4 @@ export class AlertService {
     this.alertSubject.next({ message: '', type: 'success' });
   }
 
-  ngOnDestroy(): void {
-    if (this.alertSubject) {
-      this.alertSubject.unsubscribe();
-    }
-  }
 }

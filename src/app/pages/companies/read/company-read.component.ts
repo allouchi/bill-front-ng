@@ -41,7 +41,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -88,7 +88,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.alertService.show('DELETE', 'COMPANY', 'success');
+          this.alertService.show('DELETE', 'SOCIETE', 'success');
           this.filtredCompanies = this.companies.filter(
             (item) => item.id !== company.id
           );
@@ -161,9 +161,10 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   private onError(error: any) {
     this.isLoaded = true;
     const message: string = error.message;
+    console.log("onError :", error)
 
     if (message.includes('Http failure')) {
-      this.alertService.show('', 'Problème serveur', 'error');
+      this.alertService.show('SERVER_ERROR', '', '', '', 'danger');
     } else {
       this.alertService.show('', message, 'error');
     }

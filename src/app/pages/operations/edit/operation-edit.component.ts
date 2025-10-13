@@ -131,7 +131,7 @@ export class OperationEditComponent implements OnInit, OnDestroy {
   private onError(error: any) {
     const message: string = error.message;
     if (message.includes('Http failure')) {
-      this.alertService.show('', 'Problème serveur', 'error');
+      this.alertService.show('SERVER_ERROR', '', '', '', 'danger');
     } else {
       this.alertService.show('', message, 'error');
     }

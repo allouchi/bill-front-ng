@@ -4,7 +4,8 @@ import { FooterComponent } from '../footer/footer.component';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
-import { AlertComponent } from '../../shared/toast/alert.component';
+import { AlertComponent } from '../../shared/alert/alert.component';
+
 
 
 @Component({
