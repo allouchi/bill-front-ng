@@ -73,6 +73,21 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     });
   }
 
+  deleteCompanySerice(id: number) {
+    this.companyService.deleteCompanyById(id).subscribe({
+      next: () => {
+        this.alertService.show('DELETE', 'SOCIETE', 'success');
+        this.filtredCompanies = this.companies.filter(
+          (item) => item.id !== id
+        );
+        this.companies = this.filtredCompanies;
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
   deleteCompany(event: Event, company: Company) {
     event.preventDefault();
     const modal = this.modalService.open(ConfirmDeleteComponent, {
@@ -88,11 +103,9 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.alertService.show('DELETE', 'SOCIETE', 'success');
-          this.filtredCompanies = this.companies.filter(
-            (item) => item.id !== company.id
-          );
-          this.companies = this.filtredCompanies;
+          if (company.id) {
+            this.deleteCompanySerice(company.id);
+          }
         }
       })
       .catch(() => {
@@ -160,14 +173,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
 
   private onError(error: any) {
     this.isLoaded = true;
-    const message: string = error.message;
-    console.log("onError :", error)
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('SERVER_ERROR', '', '', '', 'danger');
-    } else {
-      this.alertService.show('', message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {

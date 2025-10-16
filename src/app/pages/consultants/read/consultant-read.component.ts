@@ -11,6 +11,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { AuthService } from '../../../services/auth/auth-service';
 import { AlertService } from '../../../services/alert/alertService';
+import Prestation from '../../../models/Prestation';
+import { PrestationService } from '../../../services/prestations/prestation.service';
 
 @Component({
   selector: 'bill-consultant-read',
@@ -21,6 +23,7 @@ import { AlertService } from '../../../services/alert/alertService';
 })
 export class ConsultantReadComponent {
   consultants: Consultant[] = [];
+  prestations!: Prestation[];
   isLoaded = false;
   siret: string = '';
   observableEvent$ = new Subscription();
@@ -33,21 +36,63 @@ export class ConsultantReadComponent {
     private readonly sharedDataService: SharedDataService,
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly router: Router,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly prestationService: PrestationService
   ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
-    this.loadConsultants();
+    this.siret = this.sharedDataService.getSiret();
+    this.loadPrestations();
+  }
+
+  private disableConsultantDelete() {
+    if (this.prestations) {
+      const clientIdsAvecPrestation = new Set(this.prestations
+        .filter(prestations => prestations.consultant)
+        .map(prestation => prestation.consultant!.id)
+      );
+
+      this.consultants = this.consultants.map(consultant => ({
+        ...consultant,
+        hasPrestation: clientIdsAvecPrestation.has(consultant.id)
+      }));
+    }
   }
 
   private loadConsultants() {
     this.consultantService.findConsultants().subscribe({
       next: (consultants) => {
-        setTimeout(() => {
-          this.consultants = consultants;
-          this.isLoaded = true;
-        }, 500);
+        this.consultants = consultants;
+        this.isLoaded = true;
+        this.disableConsultantDelete();
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
+
+  loadPrestations() {
+    this.prestationService.getPrestationsBySiret(this.siret).subscribe({
+      next: (prestations) => {
+        this.prestations = prestations;
+        this.loadConsultants();
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
+  deleteConsultantService(id: number) {
+    this.consultantService.deleteConsultantById(id).subscribe({
+      next: () => {
+        this.alertService.show('DELETE', 'CONSULTANT', 'success')
+        this.consultants = this.consultants.filter(
+          (item) => item.id !== id
+        );
       },
       error: (err) => {
         this.onError(err);
@@ -70,10 +115,10 @@ export class ConsultantReadComponent {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.alertService.show('DELETE', 'CONSULTANT', 'success');
-          this.consultants = this.consultants.filter(
-            (item) => item.id !== consultant.id
-          );
+          if (consultant && consultant.id) {
+            this.deleteConsultantService(consultant.id);
+            this.disableConsultantDelete();
+          }
         }
       })
       .catch(() => {
@@ -123,13 +168,7 @@ export class ConsultantReadComponent {
   }
   private onError(error: any) {
     this.isLoaded = true;
-    const message: string = error.message;
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('SERVER_ERROR', '', '', '', 'danger');
-    } else {
-      this.alertService.show('', message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {

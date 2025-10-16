@@ -173,7 +173,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   deleteFactureService(id: number) {
     this.factureService.deleteFactureById(id).subscribe({
       next: () => {
-        this.alertService.show('DELETE', 'FACTURE', 'success');
         const nbElements = (this.totalElements - 1) % this.size;
         if (this.page > 0 && nbElements == 0) {
           this.page--;

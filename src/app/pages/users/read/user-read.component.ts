@@ -88,7 +88,7 @@ export class UserReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.alertService.show('EDIT', 'USER', 'success');
+          this.alertService.show('DELETE', 'USER', 'success');
           this.filtredUsers = this.users.filter((item) => item.id !== user.id);
           this.users = this.filtredUsers;
           this.router.navigate(['/users/read']);
@@ -130,13 +130,7 @@ export class UserReadComponent implements OnInit, OnDestroy {
 
   private onError(error: any) {
     this.isLoaded = true;
-    const message: string = error.message;
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('SERVER_ERROR', '', '', '', 'danger');
-    } else {
-      this.alertService.show('', message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {

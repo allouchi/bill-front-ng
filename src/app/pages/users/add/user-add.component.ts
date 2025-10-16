@@ -155,7 +155,7 @@ export class AddUserComponent implements OnInit, OnDestroy {
   }
 
   private onError(error: any) {
-    this.alertService.show('', error.error.message, 'error');
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {

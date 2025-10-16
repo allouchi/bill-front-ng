@@ -181,7 +181,7 @@ export class EditUserComponent {
       this.userService.editUser(user).subscribe({
         next: () => {
           this.router.navigate(['users/read']);
-          this.alertService.show('ADD', 'USER', 'success');
+          this.alertService.show('UPDATE', 'USER', 'success');
         },
         error: (err) => this.onError(err),
       });

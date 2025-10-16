@@ -57,9 +57,10 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     });
 
     this.currentUrl = this.router.url;
+    this.siret = this.sharedDataService.getSiret();
+
     if (this.currentUrl.includes('/edit')) {
       this.client = this.sharedDataService.getSelectedClient();
-      this.siret = this.sharedDataService.getSiret();
       this.isEdit = true;
       this.socialReason = this.client!.socialReason;
       this.sharedMessagesService.setMessage(
@@ -106,6 +107,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
         socialReason: this.formClient.get('socialReason')?.value,
         email: this.formClient.get('email')?.value,
         adresseClient: adresseClient,
+        hasPrestation: true
       };
 
       this.clientService.createOrUpdateClient(client, this.siret).subscribe({
@@ -137,13 +139,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
 
 
   private onError(error: any) {
-    const message: string = error.message;
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('SERVER_ERROR', '', '', '', 'danger');
-    } else {
-      this.alertService.show('', message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
   ngOnDestroy(): void {
     this.alertService.clear();

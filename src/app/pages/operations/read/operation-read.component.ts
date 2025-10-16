@@ -53,7 +53,8 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     private readonly tvaService: TvaService,
     private readonly modalService: NgbModal,
     private readonly sharedMessagesService: SharedMessagesService,
-    private readonly alertService: AlertService
+    private readonly alertService: AlertService,
+    private readonly operationService: OperationService
 
   ) { }
 
@@ -201,6 +202,23 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     this.router.navigate(['/operations/edit']);
   }
 
+  deleteOperationService(id: number) {
+    this.operationService.deletedOperationById(id).subscribe({
+      next: () => {
+        this.alertService.show('DELETE', 'OPERATION', 'success')
+        this.operationsFiltred = this.operations.filter(
+          (oper) => oper.id !== id
+        );
+        this.operations = this.operationsFiltred;
+        this.calculTotal(this.operations);
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
+
   deleteOperation(event: Event, operation: Operation) {
     event.preventDefault();
     const modal = this.modalService.open(ConfirmDeleteComponent, {
@@ -213,12 +231,9 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.operationsFiltred = this.operations.filter(
-            (oper) => oper.id !== operation.id
-          );
-          this.operations = this.operationsFiltred;
-          this.calculTotal(this.operations);
-          this.alertService.show('DELETE', 'OPERATION', 'success');
+          if (operation.id) {
+            this.deleteOperationService(operation.id)
+          }
         }
       })
       .catch(() => {
@@ -228,13 +243,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
 
   private onError(error: any) {
     this.isLoaded = true;
-    const message: string = error.message;
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('SERVER_ERROR', '', '', '', 'danger');
-    } else {
-      this.alertService.show('', message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {

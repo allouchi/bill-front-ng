@@ -18,7 +18,7 @@
         {{ t.title || (t.type === 'success' ? 'Succès' :
         t.type === 'info' ? 'Information' :
         t.type === 'warning' ? 'Attention' :
-        'Erreur') }}
+        'Echec') }}
       </strong>
 
       <button type="button" class="btn-close ms-2 mb-1" aria-label="Close" (click)="closeClicked(t.id)">

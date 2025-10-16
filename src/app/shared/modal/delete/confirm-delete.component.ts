@@ -42,7 +42,7 @@ export class ConfirmDeleteComponent {
 
   confirmDelete(): void {
     if (this.item == 'Company') {
-      this.deleteCompany(this.composant.id);
+      //this.deleteCompany(this.composant.id);
     }
 
     if (this.item == 'Prestation') {
@@ -54,11 +54,11 @@ export class ConfirmDeleteComponent {
     }
 
     if (this.item == 'Consultant') {
-      this.deleteConsultant(this.composant.id);
+      //this.deleteConsultant(this.composant.id);
     }
 
     if (this.item == 'Client') {
-      this.deleteClient(this.composant.id);
+      //this.deleteClient(this.composant.id);
     }
 
     if (this.item == 'Tva') {
@@ -70,7 +70,7 @@ export class ConfirmDeleteComponent {
     }
 
     if (this.item == 'Operation') {
-      this.deleteOperation(this.composant.id);
+      //this.deleteOperation(this.composant.id);
     }
     this.activeModal.close('confirm');
   }
@@ -129,8 +129,6 @@ export class ConfirmDeleteComponent {
       },
     });
   }
-
-
 
   deleteConsultant(id: number) {
     this.consultantService.deleteConsultantById(id).subscribe({

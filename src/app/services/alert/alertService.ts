@@ -19,8 +19,8 @@ export class AlertService {
   updateMessageF = ' été mise à jour avec succès !';
   logoutMessage = 'A bientôt !';
   loginMessage = 'Bienvenue, vous êtes connecté !';
-  errorServerMessage = "Erreur s'est produite lors d'appel Serveur";
   female: boolean = true;
+  serverError = 'Le serveur est inaccessible !'
 
   private readonly alertSubject = new Subject<ToastData>();
   toast$ = this.alertSubject.asObservable();
@@ -37,8 +37,13 @@ export class AlertService {
     delay = 7000
   ) {
     switch (composant) {
-      case 'CONSULTANT':
       case 'USER':
+        {
+          composant = "L'utilisateur ";
+          this.female = false;
+          break;
+        }
+      case 'CONSULTANT':
       case 'CLIENT': {
         composant = 'Le ' + composant;
         this.female = false;
@@ -96,21 +101,24 @@ export class AlertService {
         break;
       }
 
-      case 'SERVER_ERROR': {
-        message = this.errorServerMessage;
-        break;
-      }
-
     }
-    console.log("message : ", message)
-    console.log("title : ", title)
-    console.log("type : ", type)
 
     this.alertSubject.next({ message, title, type, delay });
   }
 
+  showFunctionlError(
+    error: any,
+    title: string = 'Echec',
+    type: ToastData['type'] = 'danger',
+    delay = 7000
+  ) {
+
+    const message: string = error.error.message;
+    this.alertSubject.next({ message, title, type, delay });
+  }
+
   clear() {
-    this.alertSubject.next({ message: '', type: 'success' });
+    //this.alertSubject.next({ message: '', type: 'success' });
   }
 
 }

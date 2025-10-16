@@ -52,9 +52,10 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
     });
 
     this.currentUrl = this.router.url;
+    this.siret = this.sharedDataService.getSiret();
+
     if (this.currentUrl.includes('/edit')) {
       this.consultant = this.sharedDataService.getSelectedConsultant();
-      this.siret = this.sharedDataService.getSiret();
       this.isEdit = true;
       this.sharedMessagesService.setMessage(
         `Mise à jour de ${this.consultant?.firstName} ${this.consultant?.lastName}`
@@ -80,6 +81,7 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
         email: this.formConsultant.get('email')?.value,
         lastName: this.formConsultant.get('lastName')?.value,
         fonction: this.formConsultant.get('fonction')?.value,
+        hasPrestation: true
       };
 
       this.consultantService
@@ -87,7 +89,6 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             if (this.consultantId) {
-
               this.alertService.show('UPDATE', 'CONSULTANT', 'success');
             } else {
               this.alertService.show('ADD', 'CONSULTANT', 'success');
@@ -113,13 +114,7 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
 
 
   private onError(error: any) {
-    const message: string = error.message;
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('SERVER_ERROR', '', '', '', 'danger');
-    } else {
-      this.alertService.show('', message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
   ngOnDestroy(): void {
     this.alertService.clear();

@@ -11,6 +11,8 @@ import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-del
 import { AuthService } from '../../../services/auth/auth-service';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { AlertService } from '../../../services/alert/alertService';
+import { PrestationService } from '../../../services/prestations/prestation.service';
+import Prestation from '../../../models/Prestation';
 
 @Component({
   selector: 'bill-client-read',
@@ -22,9 +24,11 @@ import { AlertService } from '../../../services/alert/alertService';
 export class ClientReadComponent implements OnInit, OnDestroy {
   clients: Client[] = [];
   filtredClients: Client[] = [];
+  prestations!: Prestation[];
   isLoaded = false;
   isAdmin = false;
   parent = 'read';
+  siret: string = '';
 
   constructor(
     private readonly modalService: NgbModal,
@@ -33,14 +37,43 @@ export class ClientReadComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly sharedDataService: SharedDataService,
     private readonly sharedMessagesService: SharedMessagesService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly prestationService: PrestationService,
   ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
-    this.loadClients();
+    this.siret = this.sharedDataService.getSiret();
+    this.loadPrestations();
   }
 
+  loadPrestations() {
+    this.prestationService.getPrestationsBySiret(this.siret).subscribe({
+      next: (prestations) => {
+        this.prestations = prestations;
+        this.loadClients();
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
+  private disableClientDelete() {
+    if (this.prestations) {
+      const clientIdsAvecPrestation = new Set(this.prestations
+        .filter(prestations => prestations.client)
+        .map(prestation => prestation.client!.id)
+      );
+
+      this.filtredClients = this.clients.map(client => ({
+        ...client,
+        hasPrestation: clientIdsAvecPrestation.has(client.id)
+      }));
+
+    }
+  }
+  
   private loadClients() {
     this.clientService.findClients().subscribe({
       next: (clients) => {
@@ -48,7 +81,24 @@ export class ClientReadComponent implements OnInit, OnDestroy {
           this.clients = clients;
           this.filtredClients = this.clients;
           this.isLoaded = true;
+          this.disableClientDelete();
         }, 500);
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
+  deleteClientService(id: number) {
+    this.clientService.deleteClientById(id).subscribe({
+      next: () => {
+        this.filtredClients = this.clients.filter(
+          (item) => item.id !== id
+        );
+        this.clients = this.filtredClients;
+        this.disableClientDelete();
+        this.alertService.show('DELETE', 'CLIENT', 'success');
       },
       error: (err) => {
         this.onError(err);
@@ -68,11 +118,9 @@ export class ClientReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.alertService.show('DELETE', 'CLIENT', 'success');
-          this.filtredClients = this.clients.filter(
-            (item) => item.id !== client.id
-          );
-          this.clients = this.filtredClients;
+          if (client.id) {
+            this.deleteClientService(client.id);
+          }
         }
       })
       .catch(() => {
@@ -110,16 +158,9 @@ export class ClientReadComponent implements OnInit, OnDestroy {
     this.router.navigate(['clients/add']);
   }
 
-
   private onError(error: any) {
     this.isLoaded = true;
-    const message: string = error.message;
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('SERVER_ERROR', '', '', '', 'danger');
-    } else {
-      this.alertService.show('', message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {

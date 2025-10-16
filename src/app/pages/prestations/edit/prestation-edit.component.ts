@@ -153,13 +153,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
   }
 
   private onError(error: any) {
-    const message: string = error.message;
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('SERVER_ERROR', '', '', '', 'danger');
-    } else {
-      this.alertService.show('', message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {
