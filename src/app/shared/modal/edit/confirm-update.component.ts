@@ -15,7 +15,7 @@ export class ConfirmEditComponent {
   composant: any;
   state: boolean = false;
 
-  constructor(private readonly activeModal: NgbActiveModal) {}
+  constructor(private readonly activeModal: NgbActiveModal) { }
 
 
   cancel(): void {
@@ -53,17 +53,17 @@ export class ConfirmEditComponent {
     this.activeModal.close('confirm');
   }
 
-  editCompany(composant: any) {}
+  editCompany(composant: any) { }
 
-  editPrestation(composant: any) {}
+  editPrestation(composant: any) { }
 
-  editFacture(composant: any) {}
+  editFacture(composant: any) { }
 
-  editConsultant(composant: any) {}
+  editConsultant(composant: any) { }
 
-  editClient(composant: any) {}
+  editClient(composant: any) { }
 
-  editTva(composant: any) {}
+  editTva(composant: any) { }
 
-   editUser(composant: any) {}
+  editUser(composant: any) { }
 }

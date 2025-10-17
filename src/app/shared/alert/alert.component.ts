@@ -25,7 +25,6 @@ export class AlertComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.sub = this.alertService.toast$.subscribe((data) => {
-      ;
       this.addToast(data);
     });
   }
@@ -55,6 +54,13 @@ export class AlertComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.toasts = this.toasts.filter(x => x.id !== id);
     }, 300);
+  }
+
+  getAlert(): number {
+    if (this.toasts) {
+      return this.toasts.length;
+    }
+    return 0;
   }
 
   // si l'utilisateur clique sur la croix

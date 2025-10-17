@@ -76,6 +76,20 @@ export class UserReadComponent implements OnInit, OnDestroy {
     });
   }
 
+  deleteUserService(id: number) {
+    this.userService.deleteUser(id!).subscribe({
+      next: () => {
+        this.alertService.show('DELETE', 'USER', 'success');
+        this.filtredUsers = this.users.filter((item) => item.id !== id);
+        this.users = this.filtredUsers;
+        this.router.navigate(['/users/read']);
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
   deleteUser(event: Event, user: User) {
     event.preventDefault();
     const modal = this.modalService.open(ConfirmDeleteComponent, {
@@ -88,10 +102,9 @@ export class UserReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.alertService.show('DELETE', 'USER', 'success');
-          this.filtredUsers = this.users.filter((item) => item.id !== user.id);
-          this.users = this.filtredUsers;
-          this.router.navigate(['/users/read']);
+          if (user && user.id) {
+            this.deleteUserService(user.id);
+          }
         }
       })
       .catch(() => {

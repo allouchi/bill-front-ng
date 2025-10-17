@@ -73,14 +73,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     this.loadTvaInfo(this.selectedExercice);
   }
 
-  onSuccess1() {
-    this.alertService.show(
-      'La sauvegarde a réussi !',
-      'Succès',
-      'success'
-    );
-  }
-
   private loadTvaInfo(exercice: string) {
     this.tvaService.findTvaInfoByExercise(this.siret, exercice).subscribe({
       next: (tvaInfos) => {
@@ -230,6 +222,11 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
           this.sharedMessagesService.setMessage('Mise à jour de Facture');
           this.factureService.updateFacture(facture).subscribe({
             next: (factureModif) => {
+              if (this.selectedExercice === 'Tous') {
+                this.loadFacturesBySiret();
+              } else {
+                this.loadFacturesByExercise(this.selectedExercice);
+              }
               this.alertService.show('UPDATE', 'FACTURE', 'success');
               this.router.navigate(['/factures/read']);
             },
@@ -305,18 +302,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   private onError(error: any) {
     this.isLoaded = true;
-    const code: string = error.error.code;
-
-    switch (code) {
-      case 'PDF_ERROR': {
-        this.alertService.show('', "Le fichier n'existe pas ou endommagé", 'error');
-        break;
-      }
-      default: {
-        this.alertService.show('', 'Problème de connextion au serveur', 'error');
-        break;
-      }
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {

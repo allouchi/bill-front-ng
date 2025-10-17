@@ -66,7 +66,7 @@ export class ConfirmDeleteComponent {
     }
 
     if (this.item == 'User') {
-      this.deleteUser(this.composant.id);
+      //this.deleteUser(this.composant.id);
     }
 
     if (this.item == 'Operation') {

@@ -113,7 +113,14 @@ export class AlertService {
     delay = 7000
   ) {
 
-    const message: string = error.error.message;
+    let message: string;
+
+    if (error.message && error.message.includes('Http failure')) {
+      message = this.serverError;
+    } else {
+      message = error.error.message;
+    }
+
     this.alertSubject.next({ message, title, type, delay });
   }
 
