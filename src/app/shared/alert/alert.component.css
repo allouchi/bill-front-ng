@@ -1,17 +1,54 @@
-@keyframes blink {
-    0% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
+/* ==== Apparence générale ==== */
+.toast {
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.blinking {
-    animation: blink 1s linear infinite;
+/* Lorsqu’il devient visible */
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==== Styles par type ==== */
+
+/* Succès */
+.success-toast {
+  border-left: 6px solid #28a745;
+  background-color: #d4edda;
+  color: #155724;
+}
+
+/* Info */
+.info-toast {
+  border-left: 6px solid #17a2b8;
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+/* Avertissement */
+.warning-toast {
+  border-left: 6px solid #ffc107;
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* Erreur */
+.danger-toast {
+  border-left: 6px solid #dc3545;
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Bouton de fermeture plus visible */
+.toast .btn-close {
+  filter: invert(0.4);
+}
+
+.toast-body {
+  text-align: center;
+  font-weight: bold;
 }

@@ -9,7 +9,6 @@ import {
 import JoursOuvres from '../../../shared/utils/time-calcul';
 import Prestation from '../../../models/Prestation';
 import { Router } from '@angular/router';
-import { AlertService } from '../../../services/alert/alert-messages.service';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { CommonModule } from '@angular/common';
@@ -17,6 +16,7 @@ import { Subscription } from 'rxjs';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { FactureService } from '../../../services/factures/facture.service';
 import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-facture-add',
@@ -40,7 +40,7 @@ export class FactureAddComponent implements OnInit {
     private readonly factureService: FactureService,
     private readonly sharedDataService: SharedDataService,
     private readonly alertService: AlertService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.formFacture = this.fb.group({
@@ -84,20 +84,20 @@ export class FactureAddComponent implements OnInit {
    * 
    * @param prestation 
    */
-  private editFacture(prestation: Prestation) {    
+  private editFacture(prestation: Prestation) {
     prestation.id = this.selectedPrestation!.id;
     this.isUpload = false;
     this.factureService
       .createFacture(
         prestation,
-        this.siret,       
+        this.siret,
         this.selectedMonth,
         this.formFacture.get('newTemplate')?.value
       )
       .subscribe({
-        next: () => {        
+        next: () => {
           this.router.navigate(['/factures/read']);
-          this.onSuccess('ADD,FACTURE');
+          this.alertService.show('ADD', 'FACTURE', 'success');
           this.isUpload = false;
         },
         error: (err) => {
@@ -109,7 +109,7 @@ export class FactureAddComponent implements OnInit {
 
   addFacture() {
     if (this.formFacture.valid) {
-     
+
       let quantiteValue = this.formFacture.get('quantite')?.value;
       if (quantiteValue) {
         const nombreStr: string = quantiteValue.toString();
@@ -144,18 +144,8 @@ export class FactureAddComponent implements OnInit {
     }
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
-
   private onError(error: any) {
-    const message: string = error.message;
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
-    } else {
-      this.alertService.show(message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   cancel() {

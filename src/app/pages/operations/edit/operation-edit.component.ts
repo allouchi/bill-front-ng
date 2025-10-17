@@ -1,15 +1,14 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 
 import {
-  FormBuilder,  
+  FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertService } from '../../../services/alert/alert-messages.service';
 
 import Exercise from '../../../models/Exercise';
 import { CommonModule } from '@angular/common';
@@ -17,12 +16,14 @@ import Operation from '../../../models/Operation';
 import { OperationService } from '../../../services/dashboard/operation-service';
 import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-operation-edit',
   imports: [FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './operation-edit.component.html',
   styleUrl: './operation-edit.component.css',
+  encapsulation: ViewEncapsulation.None
 })
 export class OperationEditComponent implements OnInit, OnDestroy {
   formOperation!: FormGroup;
@@ -40,13 +41,13 @@ export class OperationEditComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly fb: FormBuilder,
     private readonly sharedMessagesService: SharedMessagesService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.exercises = this.sharedDataService.getExercices();
-    this.selectedOperation = this.sharedDataService.getSelectedOperration();
+    const exercisces = this.sharedDataService.getExercices();
+    this.selectedOperation = this.sharedDataService.getSelectedOperation();
     this.siret = this.sharedDataService.getSiret();
-    this.exercises = this.exercises!.filter((ex) => ex.exercise !== 'Tous');
+    this.exercises = exercisces!.filter((ex) => ex.exercise !== 'Tous');
     let formatedDate;
     if (this.selectedOperation) {
       const dateOperation = this.selectedOperation.dateOperation.split('/');
@@ -105,7 +106,7 @@ export class OperationEditComponent implements OnInit, OnDestroy {
 
       this.operationService.createOrUpdateOperation(operation).subscribe({
         next: () => {
-          this.onSuccess('UPDATE,OPERATION');
+          this.alertService.show('UPDATE', 'OPERATION', 'success');
           this.sharedMessagesService.setMessage('Liste des Opérations');
           this.router.navigate(['/operations/read']);
         },
@@ -126,17 +127,9 @@ export class OperationEditComponent implements OnInit, OnDestroy {
     this.router.navigate(['/operations/read']);
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
 
   private onError(error: any) {
-    const message: string = error.message;
-    if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
-    } else {
-      this.alertService.show(message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {

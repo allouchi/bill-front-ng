@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import Company from '../../../models/Company';
 import { Router } from '@angular/router';
 import { CompanyService } from '../../../services/companies/company-service';
-import { AlertService } from '../../../services/alert/alert-messages.service';
+
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
@@ -13,6 +13,7 @@ import { AuthService } from '../../../services/auth/auth-service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'company-read',
@@ -40,7 +41,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -72,6 +73,21 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     });
   }
 
+  deleteCompanySerice(id: number) {
+    this.companyService.deleteCompanyById(id).subscribe({
+      next: () => {
+        this.alertService.show('DELETE', 'SOCIETE', 'success');
+        this.filtredCompanies = this.companies.filter(
+          (item) => item.id !== id
+        );
+        this.companies = this.filtredCompanies;
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
   deleteCompany(event: Event, company: Company) {
     event.preventDefault();
     const modal = this.modalService.open(ConfirmDeleteComponent, {
@@ -87,11 +103,9 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.onSuccess('DELETE,COMPANY');
-          this.filtredCompanies = this.companies.filter(
-            (item) => item.id !== company.id
-          );
-          this.companies = this.filtredCompanies;
+          if (company.id) {
+            this.deleteCompanySerice(company.id);
+          }
         }
       })
       .catch(() => {
@@ -118,7 +132,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     this.sharedDataService.setSiret(company!.siret);
     this.libelleCompanyService.setMessage(this.authService.getLibelleHeader());
     this.companyService.createOrUpdateCompany(company!).subscribe({
-      next: () => {        
+      next: () => {
         this.libelleCompanyService.setMessage(company?.socialReason!);
       },
       error: (err) => {
@@ -127,9 +141,9 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     });
   }
 
-  editCompany(event: Event, company: Company) { 
-     event.preventDefault();
-     this.sharedMessagesService.setMessage('Modifier une Société');   
+  editCompany(event: Event, company: Company) {
+    event.preventDefault();
+    this.sharedMessagesService.setMessage('Modifier une Société');
     const modal = this.modalService.open(ConfirmEditComponent, {
       size: 'lg',
       backdrop: 'static',
@@ -153,23 +167,13 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   }
 
   addCampany() {
-    this.sharedMessagesService.setMessage("Ajout d'une Société");   
+    this.sharedMessagesService.setMessage("Ajout d'une Société");
     this.router.navigate(['/companies/add']);
-  }
-
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
   }
 
   private onError(error: any) {
     this.isLoaded = true;
-    const message: string = error.message;
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
-    } else {
-      this.alertService.show(message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {

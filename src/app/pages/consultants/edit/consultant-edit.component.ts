@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ConsultantService } from '../../../services/consultants/consultant-service';
-import { AlertService } from '../../../services/alert/alert-messages.service';
+
 import Consultant from '../../../models/Consultant';
 import { Router } from '@angular/router';
 import {
@@ -16,6 +16,7 @@ import { SharedDataService } from '../../../services/shared/shared-data-service'
 import { Subscription } from 'rxjs';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { customEmailValidator } from '../../../shared/utils/numeric-fr.validator';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-consultant-edit',
@@ -40,7 +41,7 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
     private readonly sharedDataService: SharedDataService,
     private readonly router: Router,
     private readonly sharedMessagesService: SharedMessagesService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.formConsultant = this.fb.group({
@@ -51,9 +52,10 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
     });
 
     this.currentUrl = this.router.url;
+    this.siret = this.sharedDataService.getSiret();
+
     if (this.currentUrl.includes('/edit')) {
       this.consultant = this.sharedDataService.getSelectedConsultant();
-      this.siret = this.sharedDataService.getSiret();
       this.isEdit = true;
       this.sharedMessagesService.setMessage(
         `Mise à jour de ${this.consultant?.firstName} ${this.consultant?.lastName}`
@@ -79,6 +81,7 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
         email: this.formConsultant.get('email')?.value,
         lastName: this.formConsultant.get('lastName')?.value,
         fonction: this.formConsultant.get('fonction')?.value,
+        hasPrestation: true
       };
 
       this.consultantService
@@ -86,9 +89,9 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             if (this.consultantId) {
-              this.onSuccess('UPDATE,CONSULTANT');
+              this.alertService.show('UPDATE', 'CONSULTANT', 'success');
             } else {
-              this.onSuccess('ADD,CONSULTANT');
+              this.alertService.show('ADD', 'CONSULTANT', 'success');
             }
             this.router.navigate(['/consultants/read']);
           },
@@ -109,18 +112,9 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
     this.router.navigate(['/consultants/read']);
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
 
   private onError(error: any) {
-    const message: string = error.message;
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
-    } else {
-      this.alertService.show(message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
   ngOnDestroy(): void {
     this.alertService.clear();

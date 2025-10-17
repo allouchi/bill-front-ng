@@ -22,7 +22,10 @@
   background-color: #f0fdf4 !important;
 }
 
-.table, .modal-content, .form-control, .btn {
+.table,
+.modal-content,
+.form-control,
+.btn {
   border-radius: 10px;
 }
 
@@ -30,14 +33,13 @@
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 }
 
-
-
 .table-striped tbody tr:hover {
   background-color: #f1f1f1;
   cursor: pointer;
 }
 
-th, td {
+th,
+td {
   vertical-align: middle;
   text-align: center;
   font-size: 0.95rem;
@@ -46,4 +48,15 @@ th, td {
 
 .btn-sm i {
   margin-right: 4px;
+}
+
+.card-body {
+  background-color: #f8f9fa;
+  /* couleur Bootstrap bg-light */
+}
+
+.toast.success-toast {
+  background-color: #28a745 !important; /* Vert Bootstrap */
+  color: #fff !important;
+  transform: scale(1.2);
 }

@@ -9,7 +9,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertService } from '../../../services/alert/alert-messages.service';
 
 import Exercise from '../../../models/Exercise';
 import { CommonModule } from '@angular/common';
@@ -18,6 +17,7 @@ import Operation from '../../../models/Operation';
 import { OperationService } from '../../../services/dashboard/operation-service';
 import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-operation-add',
@@ -42,7 +42,7 @@ export class OperationAddComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly fb: FormBuilder,
     private readonly sharedMessagesService: SharedMessagesService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadMonthYear();
@@ -97,7 +97,7 @@ export class OperationAddComponent implements OnInit, OnDestroy {
 
       this.operationService.createOrUpdateOperation(operation).subscribe({
         next: () => {
-          this.onSuccess('ADD,OPERATION');
+          this.alertService.show('ADD', 'OPERATION', 'success');
           this.sharedMessagesService.setMessage('Liste des Opérations');
           this.router.navigate(['/operations/read']);
         },
@@ -118,17 +118,9 @@ export class OperationAddComponent implements OnInit, OnDestroy {
     this.router.navigate(['/operations/read']);
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
 
   private onError(error: any) {
-    const message: string = error.message;
-    if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
-    } else {
-      this.alertService.show(message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {

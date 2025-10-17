@@ -6,4 +6,5 @@ export default interface Client {
   socialReason: string;
   email: string;
   adresseClient: Adresse;
+  hasPrestation: boolean
 }

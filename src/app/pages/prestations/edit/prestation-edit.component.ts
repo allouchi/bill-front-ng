@@ -2,7 +2,6 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PrestationService } from '../../../services/prestations/prestation.service';
-import { AlertService } from '../../../services/alert/alert-messages.service';
 import Prestation from '../../../models/Prestation';
 import Consultant from '../../../models/Consultant';
 import Client from '../../../models/Client';
@@ -13,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-prestation-edit',
@@ -42,7 +42,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
     private readonly consultantService: ConsultantService,
     private readonly sharedDataService: SharedDataService,
     private readonly sharedMessagesService: SharedMessagesService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.formPrestation = this.fb.group({
@@ -131,7 +131,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
         .createOrUpdatePrestation(prestation, this.siret, false, null)
         .subscribe({
           next: () => {
-            this.onSuccess('ADD,PRESTATION');
+            this.alertService.show('ADD', 'PRESTATION', 'success');
             this.router.navigate(['/prestations/read']);
           },
           error: (err) => {
@@ -152,18 +152,8 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
     this.router.navigate(['/prestations/read']);
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
-
   private onError(error: any) {
-    const message: string = error.message;
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
-    } else {
-      this.alertService.show(message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {

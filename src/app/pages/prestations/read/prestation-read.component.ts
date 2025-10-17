@@ -9,7 +9,6 @@ import { Router } from '@angular/router';
 import Prestation from '../../../models/Prestation';
 import { ConsultantNamePipe } from '../../../shared/pipes/consultantName-pipe';
 import { ClientNamePipe } from '../../../shared/pipes/clientName-pipe';
-import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import {
   FormBuilder,
@@ -28,6 +27,7 @@ import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-del
 import { AuthService } from '../../../services/auth/auth-service';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { Util } from '../../../shared/utils/utils';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-prestation-read',
@@ -65,7 +65,7 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
     private readonly sharedDataService: SharedDataService,
     private readonly modalService: NgbModal,
     private readonly authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -122,7 +122,7 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
       .updateDatePrestation(this.selectedPrestation)
       .subscribe({
         next: () => {
-          this.onSuccess('UPDATE,PRESTATION');
+          this.alertService.show('UPDATE', 'PRESTATION', 'success');
         },
         error: (err) => {
           this.onError(err);
@@ -157,19 +157,10 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
       });
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
 
   private onError(error: any) {
     this.isLoaded = true;
-    const message: string = error.message;
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
-    } else {
-      this.alertService.show(message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   prolongerPrestation(prestation: Prestation) {

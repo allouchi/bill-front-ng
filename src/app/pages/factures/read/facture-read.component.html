@@ -5,12 +5,7 @@
     <!-- Colonne de gauche : Exercice -->
     <div style="width: 200px">
       <label for="yearSelect" class="form-label fw-bold">Exercice</label>
-      <select
-        (change)="setYearValue($event)"
-        class="form-select"
-        id="yearSelect"
-        [(ngModel)]="selectedExercice"
-      >
+      <select (change)="setYearValue($event)" class="form-select" id="yearSelect" [(ngModel)]="selectedExercice">
         @for (year of exercises; track year.id) {
         <option [value]="year.exercise">{{ year.exercise }}</option>
         }
@@ -22,11 +17,11 @@
         <thead>
           <tr>
             <th scope="col">CA TTC</th>
-            <th scope="col">CA NET</th>            
+            <th scope="col">CA NET</th>
             <th scope="col">TOTAL TVA</th>
             <th scope="col">TOTAL NET</th>
             <th scope="col">TOTAL REGLE</th>
-            @if(tvaInfosFilterd.totalTvaRestant>0 ){
+            @if(tvaInfos && tvaInfos.totalTvaRestant>0 ){
             <th scope="col">RESTE A PAYER</th>
             }@else {
             <th scope="col">TROP PAYER</th>
@@ -35,29 +30,31 @@
         </thead>
         <tbody>
           <tr>
+            @if(tvaInfos){
             <td class="text-center">
-              {{ tvaInfosFilterd.totalTTC | customDecimalPipe }}
+              {{ tvaInfos.totalTTC | customDecimalPipe }}
             </td>
             <td style="text-align: center">
-              {{ tvaInfosFilterd.totalCAHorsTaxe | customDecimalPipe }}
-            </td>            
-            <td class="text-center">
-              {{ tvaInfosFilterd.totalTva | customDecimalPipe }}
+              {{ tvaInfos.totalCAHorsTaxe | customDecimalPipe }}
             </td>
             <td class="text-center">
-              {{ tvaInfosFilterd.totalTvaNet | customDecimalPipe }}
+              {{ tvaInfos.totalTva | customDecimalPipe }}
             </td>
             <td class="text-center">
-              {{ tvaInfosFilterd.totalTvaPaye | customDecimalPipe }}
+              {{ tvaInfos.totalTvaNet | customDecimalPipe }}
             </td>
-            @if(tvaInfosFilterd.totalTvaRestant>0 ){
-              <td class="text-center">
-              {{ tvaInfosFilterd.totalTvaRestant | customDecimalPipe }}
-            </td>
-             }@else {
             <td class="text-center">
-              {{ -tvaInfosFilterd.totalTvaRestant | customDecimalPipe }}
+              {{ tvaInfos.totalTvaPaye | customDecimalPipe }}
             </td>
+            @if(tvaInfos.totalTvaRestant > 0 ){
+            <td class="text-center">
+              {{ tvaInfos.totalTvaRestant | customDecimalPipe }}
+            </td>
+            }@else {
+            <td class="text-center">
+              {{ -tvaInfos.totalTvaRestant | customDecimalPipe }}
+            </td>
+            }
             }
           </tr>
         </tbody>
@@ -82,13 +79,11 @@
         </tr>
       </thead>
       <tbody>
-        @for (facture of filtredFactures; track facture.id) {
-        <tr
-          [ngClass]="{
+        @for (facture of factures; track facture.id) {
+        <tr [ngClass]="{
             'table-success': facture.factureStatus == 'OK',
             'table-danger': facture.factureStatus == 'KO'
-          }"
-        >
+          }">
           <td style="text-align: center">{{ facture.numeroFacture }}</td>
           <td>{{ facture.moisFacture }}</td>
           <td>{{ facture.tarifHT }}</td>
@@ -99,47 +94,27 @@
           <td>{{ facture.montantNetTVA | customDecimalPipe }}</td>
           <td>{{ facture.dateEcheance }}</td>
           <td>
-            <button
-              class="btn btn-outline-primary btn-sm me-2"
-              (click)="updateFacture($event, facture)"
-              title="Modifier Facture"
-              [disabled]="!isAdmin"
-            >
+            <button class="btn btn-outline-primary btn-sm me-2" (click)="updateFacture($event, facture)"
+              title="Modifier Facture" [disabled]="!isAdmin">
               <i class="bi bi-pencil"></i>
             </button>
 
-             <button
-              class="btn btn-outline-primary btn-sm me-2"
-              (click)="cancelModif($event, facture)"
-              title="Annuler statut Facture"
-              [disabled]="!isAdmin || facture.factureStatus == 'KO'"
-            >
+            <button class="btn btn-outline-primary btn-sm me-2" (click)="cancelModif($event, facture)"
+              title="Annuler statut Facture" [disabled]="!isAdmin || facture.factureStatus == 'KO'">
               <i class="bi bi-x-circle"></i>
             </button>
 
-            <button
-              class="btn btn-outline-primary btn-sm me-2"
-              (click)="detailFacture($event, facture)"
-              title="Statut Facture"
-              [disabled]="!isAdmin"
-            >
+            <button class="btn btn-outline-primary btn-sm me-2" (click)="detailFacture($event, facture)"
+              title="Statut Facture" [disabled]="!isAdmin">
               <i class="bi bi-info-circle"></i>
             </button>
-            <button
-              class="btn btn-outline-danger btn-sm me-2"
-              (click)="deleteFacture($event, facture)"
-              title="Supprimer Facture"
-              [disabled]="!isAdmin"
-            >
+            <button class="btn btn-outline-danger btn-sm me-2" (click)="deleteFacture($event, facture)"
+              title="Supprimer Facture" [disabled]="!isAdmin">
               <i class="bi bi-trash"></i>
             </button>
 
-            <button
-              class="btn btn-primary btn-sm me-2"
-              (click)="downloadFacture(facture)"
-              title="Télécharger Facture"
-              [disabled]="!isAdmin"
-            >
+            <button class="btn btn-primary btn-sm me-2" (click)="downloadFacture(facture)" title="Télécharger Facture"
+              [disabled]="!isAdmin">
               <i class="bi bi-download"></i>
             </button>
           </td>
@@ -149,6 +124,15 @@
         }
       </tbody>
     </table>
+    @if(totalPages > 1){
+    <!-- ✅ Pagination bien placée et centrée -->
+    <div class="pagination d-flex justify-content-center align-items-center gap-3 mt-3">
+      <button class="btn btn-outline-primary" (click)="previousPage()" [disabled]="page === 0">← Précédent</button>
+      <span>Page {{ page + 1 }} / {{ totalPages }}</span>
+      <button class="btn btn-outline-primary" (click)="nextPage()" [disabled]="page >= totalPages - 1">Suivant
+        →</button>
+    </div>
+    }
   </div>
 </div>
 

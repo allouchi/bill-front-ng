@@ -11,10 +11,12 @@ import Operation from '../../../models/Operation';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
-import { AlertService } from '../../../services/alert/alert-messages.service';
+
 import { CommonModule } from '@angular/common';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import TvaInfos from '../../../models/TvaInfos';
+import { AlertService } from '../../../services/alert/alertService';
+
 
 @Component({
   selector: 'bill-operation-read',
@@ -51,8 +53,10 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     private readonly tvaService: TvaService,
     private readonly modalService: NgbModal,
     private readonly sharedMessagesService: SharedMessagesService,
-    private readonly alertService: AlertService
-  ) {}
+    private readonly alertService: AlertService,
+    private readonly operationService: OperationService
+
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -61,6 +65,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     this.loadTvaInfo('Tous');
     this.loadOperations();
   }
+
 
   loadOperations() {
     this.operationSerice.getOperations(this.siret).subscribe({
@@ -197,6 +202,23 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     this.router.navigate(['/operations/edit']);
   }
 
+  deleteOperationService(id: number) {
+    this.operationService.deletedOperationById(id).subscribe({
+      next: () => {
+        this.alertService.show('DELETE', 'OPERATION', 'success')
+        this.operationsFiltred = this.operations.filter(
+          (oper) => oper.id !== id
+        );
+        this.operations = this.operationsFiltred;
+        this.calculTotal(this.operations);
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
+
   deleteOperation(event: Event, operation: Operation) {
     event.preventDefault();
     const modal = this.modalService.open(ConfirmDeleteComponent, {
@@ -209,11 +231,9 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.operationsFiltred = this.operations.filter(
-            (oper) => oper.id !== operation.id
-          );
-          this.operations = this.operationsFiltred;
-          this.calculTotal(this.operations);
+          if (operation.id) {
+            this.deleteOperationService(operation.id)
+          }
         }
       })
       .catch(() => {
@@ -223,13 +243,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
 
   private onError(error: any) {
     this.isLoaded = true;
-    const message: string = error.message;
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
-    } else {
-      this.alertService.show(message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {

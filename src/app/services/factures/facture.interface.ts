@@ -3,6 +3,7 @@ import Facture from "../../models/Facture";
 import Exercise from '../../models/Exercise';
 import Prestation from "../../models/Prestation";
 import DataPDF from '../../models/DataPDF';
+import { Page } from "../../models/Page";
 
 /**
  * Facture fetcher port
@@ -36,7 +37,7 @@ export interface IFactureService {
    * @param company company name
    * @returns Observable<Facture[]>
    */
-  findFacturesBySiret(siret: string): Observable<Facture[]>;
+  findFacturesBySiret(siret: string, page: number, size: number): Observable<Page<Facture>>;
 
   /**
    * Get all schemas if no project or all schemas for project name in otherwise
@@ -46,8 +47,9 @@ export interface IFactureService {
    */
   findFacturesByExercice(
     siret: string,
-    exercice: string
-  ): Observable<Facture[]>;
+    exercice: string,
+    page: number, size: number
+  ): Observable<Page<Facture>>;
 
   /**
    * Delete one facture by it's id

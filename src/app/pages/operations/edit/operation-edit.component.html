@@ -30,19 +30,18 @@
             <div class="mb-3">
               <label class="form-label fw-bold" for="montantOperation">Montant opération *</label>
               <input type="text" id="montantOperation" class="form-control" formControlName="montantOperation"
-               placeholder="Entrez un montant"
-                [class.is-invalid]="
+                placeholder="Entrez un montant" [class.is-invalid]="
                     formOperation.get('montantOperation')?.invalid &&
                     formOperation.get('montantOperation')?.touched
                   " />
-             <div *ngIf="
+              <div *ngIf="
                     formOperation.get('montantOperation')?.errors?.['required'] &&
                     formOperation.get('montantOperation')?.touched
                   " class="text-danger">
                 Ce champ est requis.
               </div>
 
-               <div *ngIf="
+              <div *ngIf="
                     formOperation.get('montantOperation')?.errors?.['notNumeric'] &&
                     formOperation.get('montantOperation')?.touched
                   " class="text-danger">

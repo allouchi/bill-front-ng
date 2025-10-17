@@ -2,7 +2,6 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FactureService } from '../../../services/factures/facture.service';
 import Facture from '../../../models/Facture';
 import { Router } from '@angular/router';
-import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import Exercise from '../../../models/Exercise';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
@@ -19,6 +18,8 @@ import { DetailFactureComponent } from '../../../shared/modal/detail/detail-fact
 import { CommonModule } from '@angular/common';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
+import { AlertService } from '../../../services/alert/alertService';
+
 
 @Component({
   selector: 'bill-facture-read',
@@ -35,10 +36,8 @@ import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 })
 export default class FactureReadComponent implements OnInit, OnDestroy {
   factures: Facture[] = [];
-  filtredFactures: Facture[] = [];
   exercises: Exercise[] = [];
   tvaInfos!: TvaInfos;
-  tvaInfosFilterd!: TvaInfos;
   tvas: Tva[] = [];
   filtredTvas: Tva[] = [];
   siret: string = '';
@@ -47,6 +46,10 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   observableEvent$ = new Subscription();
   parent = 'read';
   selectedExercice: string = '';
+  page = 0;
+  size = 12;
+  totalPages = 0;
+  totalElements = 0;
 
   private readonly router = inject(Router);
 
@@ -57,69 +60,23 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly modalService: NgbModal,
     private readonly authService: AuthService,
     private readonly tvaService: TvaService,
-    private readonly sharedMessagesService: SharedMessagesService
-  ) {}
+    private readonly sharedMessagesService: SharedMessagesService,
+
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
+    this.selectedExercice = new Date().getFullYear().toString();
     this.loadExercisesRef();
-    this.loadFactures();
-    const currentExercice = new Date().getFullYear();
-    this.loadTva(currentExercice.toString());
-    this.loadTvaInfo(currentExercice.toString());
+    this.loadFacturesByExercise(this.selectedExercice);
+    this.loadTvaInfo(this.selectedExercice);
   }
 
-  private loadFactures() {
-    this.factureService.findFacturesBySiret(this.siret).subscribe({
-      next: (factures) => {
-        setTimeout(() => {
-          this.factures = factures;
-          this.filtredFactures = factures;
-          this.isLoaded = true;
-          const currentExercice = new Date().getFullYear();
-          this.selectedExercice = currentExercice.toString();
-          this.filterFactures(currentExercice.toString());
-        }, 500);
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
-
-  private loadFacturesByExercice(exercice: string) {
-    this.factureService.findFacturesByExercice(this.siret, exercice).subscribe({
-      next: (factures) => {
-        setTimeout(() => {
-          this.factures = factures;
-          this.filtredFactures = factures;
-          this.isLoaded = true;
-          //this.filterFactures(exercice);
-        }, 500);
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
-
-  private loadTva(exercice: string) {
-    this.tvaService.findTvaByExercise(this.siret, exercice).subscribe({
-      next: (tvas) => {
-        this.tvas = tvas;
-        this.filtredTvas = tvas;
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
   private loadTvaInfo(exercice: string) {
     this.tvaService.findTvaInfoByExercise(this.siret, exercice).subscribe({
       next: (tvaInfos) => {
         this.tvaInfos = tvaInfos;
-        this.tvaInfosFilterd = tvaInfos;
       },
       error: (err) => {
         this.onError(err);
@@ -138,32 +95,90 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     });
   }
 
-  private filterFactures(selectedValue: string) {
-    if (this.factures && selectedValue !== 'Tous') {
-      this.filtredFactures = this.factures.filter(
-        (facture) => facture.dateFacturation.substring(6) == selectedValue
-      );
-    } else {
-      this.filtredFactures = this.factures;
+  loadFacturesBySiret() {
+    this.factureService
+      .findFacturesBySiret(this.siret, this.page, this.size)
+      .subscribe({
+        next: (data) => {
+          this.factures = data.content;
+          this.totalPages = data.totalPages;
+          this.totalElements = data.totalElements;
+          this.isLoaded = true;
+          this.loadTvaInfo(this.selectedExercice);
+        },
+        error: (err) => {
+          this.onError(err);
+        },
+      });
+  }
+
+  loadFacturesByExercise(exercice: string) {
+    this.factureService
+      .findFacturesByExercice(this.siret, exercice, this.page, this.size)
+      .subscribe({
+        next: (data) => {
+          this.factures = data.content;
+          this.totalPages = data.totalPages;
+          this.totalElements = data.totalElements;
+          this.isLoaded = true;
+          this.loadTvaInfo(this.selectedExercice);
+        },
+        error: (err) => {
+          this.onError(err);
+        },
+      });
+  }
+
+  nextPage(): void {
+    if (this.page < this.totalPages - 1) {
+      this.page++;
+      if (this.selectedExercice === 'Tous') {
+        this.loadFacturesBySiret();
+      } else {
+        this.loadFacturesByExercise(this.selectedExercice);
+      }
     }
   }
 
-  private filterTvas(selectedValue: string) {
-    if (this.tvas && selectedValue !== 'Tous') {
-      this.filtredTvas = this.tvas.filter(
-        (tva) => tva.exercise == selectedValue
-      );
-    } else {
-      this.filtredTvas = this.tvas;
+  previousPage(): void {
+    if (this.page > 0) {
+      this.page--;
+      if (this.selectedExercice === 'Tous') {
+        this.loadFacturesBySiret();
+      } else {
+        this.loadFacturesByExercise(this.selectedExercice);
+      }
     }
-    this.loadTvaInfo(selectedValue);
   }
 
   setYearValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
     this.selectedExercice = selectedValue;
-    this.filterFactures(selectedValue);
-    this.filterTvas(selectedValue);
+    this.page = 0;
+    if (this.selectedExercice === 'Tous') {
+      this.loadFacturesBySiret();
+    } else {
+      this.loadFacturesByExercise(this.selectedExercice);
+    }
+  }
+
+  deleteFactureService(id: number) {
+    this.factureService.deleteFactureById(id).subscribe({
+      next: () => {
+        const nbElements = (this.totalElements - 1) % this.size;
+        if (this.page > 0 && nbElements == 0) {
+          this.page--;
+        }
+        if (this.selectedExercice === 'Tous') {
+          this.loadFacturesBySiret();
+        } else {
+          this.loadFacturesByExercise(this.selectedExercice);
+        }
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
   }
 
   deleteFacture(event: Event, facture: Facture) {
@@ -180,13 +195,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.onSuccess('DELETE,FACTURE');
-          this.filtredFactures = this.factures.filter(
-            (item) => item.id !== facture.id
-          );
-          this.factures = this.filtredFactures;
-          this.filterFactures(this.selectedExercice);
-          this.loadTvaInfo(this.selectedExercice);
+          this.alertService.show('DELETE', 'FACTURE', 'success');
+          this.deleteFactureService(facture.id!);
         }
       })
       .catch(() => {
@@ -208,18 +218,16 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.onSuccess('UPDATE,FACTURE');
           this.sharedDataService.setSelectedFacture(facture);
           this.sharedMessagesService.setMessage('Mise à jour de Facture');
-          this.factureService.updateFacture(facture!).subscribe({
+          this.factureService.updateFacture(facture).subscribe({
             next: (factureModif) => {
-              this.filtredFactures = this.filtredFactures.filter(
-                (item) => item.id !== factureModif.id
-              );
-
-              this.filtredFactures.push(factureModif);
-              this.filtredFactures.sort((a, b) => b.id! - a.id!);
-              this.onSuccess('UPDATE,FACTURE');
+              if (this.selectedExercice === 'Tous') {
+                this.loadFacturesBySiret();
+              } else {
+                this.loadFacturesByExercise(this.selectedExercice);
+              }
+              this.alertService.show('UPDATE', 'FACTURE', 'success');
               this.router.navigate(['/factures/read']);
             },
             error: (err) => {
@@ -247,7 +255,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.onSuccess('UPDATE,FACTURE');
+          this.alertService.show('UPDATE', 'FACTURE', 'success');
           this.sharedDataService.setSelectedFacture(facture);
           this.sharedMessagesService.setMessage('Mise à jour de Facture');
           this.router.navigate(['factures/edit']);
@@ -292,24 +300,9 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     modal.componentInstance.facture = facture;
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
-
   private onError(error: any) {
     this.isLoaded = true;
-    const code: string = error.error.code;
-
-    switch (code) {
-      case 'PDF_ERROR': {
-        this.alertService.show("Le fichier n'existe pas ou endommagé", 'error');
-        break;
-      }
-      default: {
-        this.alertService.show('Problème de connextion au serveur', 'error');
-        break;
-      }
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {

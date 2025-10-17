@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import User from '../../../models/User';
 import { Router } from '@angular/router';
-import { AlertService } from '../../../services/alert/alert-messages.service';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
@@ -15,6 +14,7 @@ import { CompanyService } from '../../../services/companies/company-service';
 import Company from '../../../models/Company';
 import { RaisonSocialePipe } from '../../../shared/pipes/raison-sociale.pipe';
 import { CommonModule } from '@angular/common';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-User-read',
@@ -40,7 +40,7 @@ export class UserReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly authService: AuthService,
     private readonly companyService: CompanyService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -76,6 +76,20 @@ export class UserReadComponent implements OnInit, OnDestroy {
     });
   }
 
+  deleteUserService(id: number) {
+    this.userService.deleteUser(id!).subscribe({
+      next: () => {
+        this.alertService.show('DELETE', 'USER', 'success');
+        this.filtredUsers = this.users.filter((item) => item.id !== id);
+        this.users = this.filtredUsers;
+        this.router.navigate(['/users/read']);
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
   deleteUser(event: Event, user: User) {
     event.preventDefault();
     const modal = this.modalService.open(ConfirmDeleteComponent, {
@@ -88,10 +102,9 @@ export class UserReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.onSuccess('EDIT,USER');
-          this.filtredUsers = this.users.filter((item) => item.id !== user.id);
-          this.users = this.filtredUsers;
-          this.router.navigate(['/users/read']);
+          if (user && user.id) {
+            this.deleteUserService(user.id);
+          }
         }
       })
       .catch(() => {
@@ -124,23 +137,13 @@ export class UserReadComponent implements OnInit, OnDestroy {
   }
 
   addUser() {
-    this.sharedMessagesService.setMessage("Ajout d'un utilisateur");   
+    this.sharedMessagesService.setMessage("Ajout d'un utilisateur");
     this.router.navigate(['users/add']);
-  }
-
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
   }
 
   private onError(error: any) {
     this.isLoaded = true;
-    const message: string = error.message;
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
-    } else {
-      this.alertService.show(message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {

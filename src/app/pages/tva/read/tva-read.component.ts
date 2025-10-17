@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import Tva from '../../../models/Tva';
 import { TvaService } from '../../../services/tva/tva-service';
-import { AlertService } from '../../../services/alert/alert-messages.service';
+
 import Exercise from '../../../models/Exercise';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
@@ -17,6 +17,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
+import { AlertService } from '../../../services/alert/alertService';
 
 @Component({
   selector: 'bill-tva-read',
@@ -54,7 +55,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly modalService: NgbModal,
     private readonly authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.siret = this.sharedDataService.getSiret();
@@ -84,7 +85,6 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       next: (tvaInfos) => {
         this.tvaInfos = tvaInfos;
         this.tvaInfosFilterd = tvaInfos;
-        
       },
       error: (err) => {
         this.onError(err);
@@ -124,6 +124,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
 
   setYearValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
+    this.selectedExercice = selectedValue;
     this.loadTvaInfo(selectedValue);
     this.loadTva(selectedValue);
   }
@@ -144,6 +145,18 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     this.router.navigate(['/tvas/edit']);
   }
 
+  deleteTvaSerice(id: number) {
+    this.tvaService.deleteTvaById(id).subscribe({
+      next: () => {
+        this.alertService.show('DELETE', 'TVA', 'success');
+        this.loadTva(this.selectedExercice);
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
   deleteTva(event: Event, tva: Tva) {
     event.preventDefault();
     const modal = this.modalService.open(ConfirmDeleteComponent, {
@@ -156,6 +169,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result === 'confirm') {
+          this.deleteTvaSerice(tva.id!)
           this.filtredTvas = this.tvas.filter((t) => t.id !== tva.id);
           this.tvas = this.filtredTvas;
           this.loadTvaInfo(this.selectedExercice);
@@ -166,19 +180,9 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       });
   }
 
-  private onSuccess(respSuccess: any) {
-    this.alertService.show(respSuccess, 'success');
-  }
-
   private onError(error: any) {
     this.isLoaded = true;
-    const message: string = error.message;
-
-    if (message.includes('Http failure')) {
-      this.alertService.show('Problème serveur', 'error');
-    } else {
-      this.alertService.show(message, 'error');
-    }
+    this.alertService.showFunctionlError(error);
   }
 
   ngOnDestroy(): void {

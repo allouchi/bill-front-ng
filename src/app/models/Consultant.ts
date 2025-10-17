@@ -5,4 +5,5 @@ export default interface Consultant {
   lastName: string;
   fonction: string;
   email: string;
+  hasPrestation: boolean
 }

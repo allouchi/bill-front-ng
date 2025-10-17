@@ -1,13 +1,12 @@
-
-
 <body class="d-flex flex-column min-vh-100">
-    <bill-navbar></bill-navbar>    
-    <main class="flex-fill">
-        <router-outlet></router-outlet>
-    </main>
-    
+  <bill-navbar></bill-navbar>
+  <main class="flex-fill">
+    <router-outlet></router-outlet>
+    <alert-message></alert-message>
+  </main>
 
-    <div class="card" style="background-color: #e3f2fd;">
+
+  <div class="card" style="background-color: #e3f2fd;">
     <div class="card-header text-center">
       <bill-footer></bill-footer>
     </div>

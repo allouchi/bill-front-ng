@@ -48,7 +48,7 @@ export class SharedDataService {
     this.selectedCompany = company;
   }
 
-  getSelectedOperration(): Operation | null {
+  getSelectedOperation(): Operation | null {
     return this.selectedOperation;
   }
   setSelectOperation(company: Operation | null) {

@@ -24,7 +24,7 @@ export class ConsultantService implements IConsultantService {
     siret: string
   ): Observable<Consultant> {
     const isNew: boolean = !consultant.id || consultant.id === 0;
-  
+
     if (isNew) {
       return this.http.post<Consultant>(
         `${this.CONSULTANT_PATH}/${siret}`,
