@@ -21,7 +21,7 @@ export interface IFactureService {
     siret: string,
     moisFactureId: number,
     iTextGeneration: boolean
-  ): Observable<Prestation>;
+  ): Observable<Facture>;
 
   /**
    * Update facture for the current project or update it if already exists

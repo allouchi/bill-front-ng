@@ -64,15 +64,15 @@ export class FactureService implements IFactureService {
     siret: string,
     moisFacture: number | null,
     iTextGeneration: boolean
-  ): Observable<Prestation> {
+  ): Observable<Facture> {
     const isNew: boolean = prestation.id === 0 || prestation.id === null;
     if (isNew) {
-      return this.http.post<Prestation>(
+      return this.http.post<Facture>(
         `${this.FACTURES_PATH}/${siret}`,
         prestation
       );
     } else {
-      return this.http.put<Prestation>(
+      return this.http.put<Facture>(
         `${this.FACTURES_PATH}/${siret}/${moisFacture}/${iTextGeneration}`,
         prestation
       );

@@ -4,13 +4,18 @@
     @if(item && item === 'Logout'){
     <h4 class="modal-title text-danger fw-bold">
       <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirmer la déconnexion
-      </h4>
-    }@else{
+    </h4>
+    }@else if(item && item === 'Prestation'){
+    <h4 class="modal-title text-info fw-bold">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirmation de l'édition
+    </h4>
+    }
+    @else{
     <h4 class="modal-title text-danger fw-bold">
       <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirmation de la mise à jour
     </h4>
     }
-    
+
     <button type="button" class="btn-close" aria-label="Close" data-bs-toggle="tooltip" data-bs-placement="bottom"
       title="Fermer" (click)="cancel()"></button>
   </div>
@@ -31,8 +36,7 @@
       <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
         <i class="bi bi-info-circle-fill fs-5"></i>
         <div>
-          La prestation numéro <strong>{{ composant.numeroCommande }}</strong> en faveur du client <strong>{{
-            composant.client.socialReason }}</strong> va être mise à jour.
+          Edition d'une nouvelle facture concernant le client <strong>{{ composant.client.socialReason }}</strong>.
         </div>
       </div>
     </div>
@@ -100,8 +104,15 @@
       <button type="button" class="btn btn-secondary px-4" (click)="cancel()">
         <i class="bi bi-x-circle me-1"></i> Annuler
       </button>
+      @if(item && item === 'Prestation'){
+      <button type="button" class="btn btn-info px-4" (click)="confirmEdit()">
+        <i class="bi bi-pencil me-1"></i> Confirmer
+      </button>
+      }
+      @else{
       <button type="button" class="btn btn-danger px-4" (click)="confirmEdit()">
         <i class="bi bi-pencil me-1"></i> Confirmer
       </button>
+      }
     </div>
   </div>
