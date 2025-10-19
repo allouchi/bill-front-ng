@@ -20,7 +20,8 @@ export class AlertService {
   logoutMessage = 'A bientôt !';
   loginMessage = 'Bienvenue, vous êtes connecté !';
   female: boolean = true;
-  serverError = 'Le serveur est inaccessible !'
+  serverError = 'Le serveur est inaccessible !';
+  downloadFileError = "Le fichier inexistant ou endommagé"
 
   private readonly alertSubject = new Subject<ToastData>();
   toast$ = this.alertSubject.asObservable();
@@ -115,8 +116,10 @@ export class AlertService {
 
     let message: string;
 
-    if (error.message && error.message.includes('Http failure')) {
-      message = this.serverError;
+    if (error.error.code === 'PDF_ERROR') {
+      message = this.downloadFileError;
+    } else if (error.message && error.message.includes('Http failure')) {
+      message = message = this.serverError;
     } else {
       message = error.error.message;
     }
