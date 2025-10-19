@@ -14,11 +14,12 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { AlertService } from '../../../services/alert/alertService';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'company-read',
   standalone: true,
-  imports: [WaitingComponent, FormsModule],
+  imports: [WaitingComponent, FormsModule, CommonModule],
   templateUrl: './company-read.component.html',
   styleUrls: ['./company-read.component.scss'],
 })
@@ -41,7 +42,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly authService: AuthService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -64,6 +65,12 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
           );
           this.selectedSiret = company!.siret;
           this.sharedDataService.setSelectCompany(company!);
+
+          // Réorganiser : les éléments "checked" d'abord
+          this.companies.sort((a, b) => {
+            if (a.checked === b.checked) return 0;
+            return a.checked ? -1 : 1;
+          });
         }, 500);
       },
       error: (err) => {
@@ -77,9 +84,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     this.companyService.deleteCompanyById(id).subscribe({
       next: () => {
         this.alertService.show('DELETE', 'SOCIETE', 'success');
-        this.filtredCompanies = this.companies.filter(
-          (item) => item.id !== id
-        );
+        this.filtredCompanies = this.companies.filter((item) => item.id !== id);
         this.companies = this.filtredCompanies;
       },
       error: (err) => {
@@ -134,6 +139,11 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     this.companyService.createOrUpdateCompany(company!).subscribe({
       next: () => {
         this.libelleCompanyService.setMessage(company?.socialReason!);
+        // Réorganiser : les éléments "checked" d'abord
+        this.companies.sort((a, b) => {
+          if (a.checked === b.checked) return 0;
+          return a.checked ? -1 : 1;
+        });
       },
       error: (err) => {
         this.onError(err);

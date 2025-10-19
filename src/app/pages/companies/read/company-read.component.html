@@ -35,7 +35,10 @@
       </thead>
       <tbody>
         @for (company of filtredCompanies; track company.id) {
-        <tr>
+        <tr [ngClass]="{
+            'table-success': company.checked== true,
+            'table-danger': company.checked== false
+          }">
           <td style="text-align: center">{{ company.socialReason }}</td>
           <td>{{ company.siret }}</td>
           <td>{{ company.rcsName }}</td>
