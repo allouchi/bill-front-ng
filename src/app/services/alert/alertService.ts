@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
 export interface ToastData {
@@ -10,7 +11,7 @@ export interface ToastData {
 }
 
 @Injectable({ providedIn: 'root' })
-export class AlertService {
+export class AlertService implements OnInit {
   deleteMessageM = ' été supprimé avec succès !';
   deleteMessageF = ' été supprimée avec succès !';
   addMessageM = ' été ajouté avec succès !';
@@ -22,11 +23,23 @@ export class AlertService {
   female: boolean = true;
   serverError = 'Le serveur est inaccessible !';
   downloadFileError = "Le fichier inexistant ou endommagé"
+  currentLang = 'fr';
 
   private readonly alertSubject = new Subject<ToastData>();
   toast$ = this.alertSubject.asObservable();
 
-  constructor() {
+  constructor(private readonly translateService: TranslateService) {
+  }
+
+  ngOnInit(): void {
+    this.currentLang = this.translateService.currentLang;
+    this.translateService.onLangChange.subscribe((event: LangChangeEvent) => {
+      this.updateCurrentLang(event.lang);
+    });
+  }
+
+  updateCurrentLang(selectedLanguage: string): void {
+    this.currentLang = selectedLanguage;
   }
 
   show(

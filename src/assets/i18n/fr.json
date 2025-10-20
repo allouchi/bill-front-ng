@@ -1,0 +1,12 @@
+{
+    "alert": {
+        "deleteMessageF": " été supprimée avec succès !",
+        "deleteMessageM": " été supprimé avec succès !",
+        "addMessageM": "  été ajouté avec succès !",
+        "addMessageF": " été ajoutée avec succès !",
+        "updateMessageM": " été mis à jour avec succès !",
+        "updateMessageF": " été mise à jour avec succès !",
+        "logoutMessage": " 'A bientôt !'",
+        "loginMessage": "Bienvenue, vous êtes connecté !"
+    }
+}
