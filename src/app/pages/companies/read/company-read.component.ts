@@ -42,7 +42,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -51,32 +51,20 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   }
 
   loadCompanies() {
-    this.companyService.findCompanies().subscribe({
-      next: (companies) => {
-        setTimeout(() => {
-          this.companies = companies;
-          this.filtredCompanies = this.companies;
-          this.isLoaded = true;
-          const company = this.companies.find(
-            (company) => company.checked === true
-          );
-          this.libelleCompanyService.setMessage(
-            this.authService.getLibelleHeader()
-          );
-          this.selectedSiret = company!.siret;
-          this.sharedDataService.setSelectCompany(company!);
-
-          // Réorganiser : les éléments "checked" d'abord
-          this.companies.sort((a, b) => {
-            if (a.checked === b.checked) return 0;
-            return a.checked ? -1 : 1;
-          });
-        }, 500);
-      },
-      error: (err) => {
-        this.onError(err);
-        this.isLoaded = true;
-      },
+    this.companies = this.sharedDataService.getCompanies();
+    this.filtredCompanies = this.companies
+    const company = this.companies.find(
+      (company) => company.checked === true
+    );
+    this.libelleCompanyService.setMessage(
+      this.authService.getLibelleHeader()
+    );
+    this.sharedDataService.setSelectCompany(company!);
+    this.isLoaded = true;
+    // Réorganiser : les éléments "checked" d'abord
+    this.companies.sort((a, b) => {
+      if (a.checked === b.checked) return 0;
+      return a.checked ? -1 : 1;
     });
   }
 
@@ -166,7 +154,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
 
     modal.result
       .then((result) => {
-        if (result === 'confirm') {
+        if (result.comment === 'confirm') {
           this.sharedDataService.setSelectCompany(company);
           this.router.navigate(['/companies/edit']);
         }

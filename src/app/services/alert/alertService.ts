@@ -1,6 +1,7 @@
 import { Injectable, OnInit } from '@angular/core';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
+import { I18nService } from '../../shared/translate/i18nService';
 
 export interface ToastData {
   message: string;
@@ -28,14 +29,9 @@ export class AlertService implements OnInit {
   private readonly alertSubject = new Subject<ToastData>();
   toast$ = this.alertSubject.asObservable();
 
-  constructor(private readonly translateService: TranslateService) {
-  }
+  constructor(private readonly translateService: I18nService) { }
 
   ngOnInit(): void {
-    this.currentLang = this.translateService.currentLang;
-    this.translateService.onLangChange.subscribe((event: LangChangeEvent) => {
-      this.updateCurrentLang(event.lang);
-    });
   }
 
   updateCurrentLang(selectedLanguage: string): void {
@@ -116,6 +112,10 @@ export class AlertService implements OnInit {
       }
 
     }
+
+    this.translateService.getTranslation('alert.deleteMessageF').subscribe(msg => {
+      //console.log('Message traduit:', msg);
+    });
 
     this.alertSubject.next({ message, title, type, delay });
   }

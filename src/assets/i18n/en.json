@@ -1,4 +1,33 @@
 {
-    "HELLO": "HELLO",
-    "WELCOME": "WELCOME"
+    "menu": {
+        "companys": "COMPANIES",
+        "prestations": "PRESTATIONS",
+        "factures": "BILLS",
+        "clients": "CUSTOMERS",
+        "consultants": "CONSULTANTS",
+        "operations": "OPERTATIONS",
+        "tva": "TVAS"
+    },
+    "message": {
+        "deleteMessageF": " has been successfully deleted !",
+        "deleteMessageM": " has been successfully deleted !",
+        "addMessageM": "  has been successfully added !",
+        "addMessageF": " has been successfully added !",
+        "updateMessageM": " has been successfully updated !",
+        "updateMessageF": " has been successfully updated !",
+        "logoutMessage": "See you later !",
+        "loginMessage": "Welcome, you are logged in !"
+    },
+    "client:": {
+        "raisonSocial": "Social Raison",
+        "adresse": {
+            "libelle": "Client Adress",
+            "numero": "Number",
+            "codePostal": "Postal code",
+            "rue": "Street",
+            "commune": "Commune",
+            "email": "Email"
+        }
+    },
+    "error": {}
 }

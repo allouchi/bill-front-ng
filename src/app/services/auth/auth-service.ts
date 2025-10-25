@@ -23,7 +23,7 @@ export class AuthService {
     private readonly http: HttpClient,
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly sharedDataService: SharedDataService
-  ) {}
+  ) { }
 
   login(credentials: { username: string; password: string }) {
     return this.http
@@ -62,6 +62,15 @@ export class AuthService {
     localStorage.setItem('accessToken', token);
   }
 
+  setUserLang(lang: string) {
+    localStorage.setItem('userLang', lang);
+  }
+
+  getUserLang(): string | null {
+    return localStorage.getItem('userLang');
+  }
+
+
   saveRefreshToken(token: string) {
     localStorage.setItem('refreshToken', token);
   }
@@ -80,6 +89,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
   }
 
   getRoles(): Role[] {
@@ -102,6 +112,7 @@ export class AuthService {
     this.libelleHeader = libelleHeader;
     this.libelleCompanyService.setMessage(libelleHeader);
     this.sharedDataService.setSelectCompany(authResponse.company);
+    this.sharedDataService.setSelectedUser(authResponse.user);
     this.sharedDataService.setSiret(authResponse.company!.siret);
   }
 

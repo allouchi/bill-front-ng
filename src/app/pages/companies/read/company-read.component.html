@@ -3,17 +3,6 @@
   <div class="d-flex justify-content-between align-items-end">
     <div class="mb-3 me-2" style="width: 200px">
       <label for="companySelect" class="form-label fw-bold">Société</label>
-      <select
-        (change)="setCompanyValue($event)" [(ngModel)]="selectedSiret"
-        class="form-select" 
-        id="companySelect"
-      >
-        @for (company of companies; track company.id) {
-        <option value="{{ company.siret }}" [value]="company.siret">
-          {{ company.socialReason }}
-        </option>
-        }
-      </select>
     </div>
     <div class="mb-3">
       <button class="btn btn-pink" title="Nouveau" (click)="addCampany()">
@@ -47,30 +36,18 @@
 
           <td>
             <label for="companyCheck">
-              <input
-                class="form-check-input custom-checkbox me-4"
-                type="checkbox"
-                [checked]="company.checked"
-                disabled
-              />
+              <input class="form-check-input custom-checkbox me-4" type="checkbox" [checked]="company.checked"
+                id="companyCheck" disabled />
             </label>
 
-             <button
-              class="btn btn-outline-primary btn-sm me-2"
-              (click)="editCompany($event,company)"
-              title="Modifier Company"
-               [disabled]="!isAdmin"
-            >
+            <button class="btn btn-outline-primary btn-sm me-2" (click)="editCompany($event,company)"
+              title="Modifier Company" [disabled]="!isAdmin || !company.checked">
               <i class="bi bi-pencil"></i>
             </button>
-            <button
-              class="btn btn-outline-danger btn-sm"
-              (click)="deleteCompany($event,company)"
-              title="Supprimer Company"
-              [disabled]="!isAdmin"
-            >
+            <button class="btn btn-outline-danger btn-sm" (click)="deleteCompany($event,company)"
+              title="Supprimer Company" [disabled]="!isAdmin || !company.checked">
               <i class="bi bi-trash"></i>
-            </button>           
+            </button>
           </td>
         </tr>
         }

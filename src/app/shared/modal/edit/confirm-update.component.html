@@ -23,6 +23,36 @@
   <!-- Body -->
 
   <div class="modal-body mt-3">
+    <div *ngIf="item && item === 'SwitchParametres'">
+      <div class="alert alert-warning d-flex justify-content-center gap-2" role="alert">
+        <div class="mb-3 me-2" style="width: 200px">
+          <label for="languageSelect" class="form-label fw-bold text-center">Langue utilisateur</label>
+          <select [(ngModel)]="selectedLanguage" (change)="setLaguageValue($event)" class="form-select"
+            id="languageSelect">
+            @for (langue of languages; track langue.id) {
+            <option value="{{ langue.id }}" [value]="langue.id">
+              {{ langue.descr }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="item && item === 'SwitchParametres'">
+      <div class="alert alert-warning d-flex justify-content-center gap-2" role="alert">
+        <div class="mb-3 me-2" style="width: 200px">
+          <label for="companySelect" class="form-label fw-bold text-center">Sociétés</label>
+          <select [(ngModel)]="selectedSiret" (change)="setCompanyValue($event)" class="form-select" id="companySelect">
+            @for (company of companies; track company.id) {
+            <option value="{{ company.siret }}" [value]="company.siret">
+              {{ company.socialReason }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
 
     <div *ngIf="item && item === 'Logout'">
       <div class="alert alert-warning d-flex justify-content-center gap-2" role="alert">

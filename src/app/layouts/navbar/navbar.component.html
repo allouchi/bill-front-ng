@@ -9,30 +9,35 @@
       <ul class="navbar-nav ms-auto">
         @if(authService.isLoggedIn()){
         <li class="nav-item">
-          <a class="nav-link" routerLink="/companies/read" (click)="clicked($event)">SOCIETES</a>
+          <a class="nav-link" routerLink="/companies/read" (click)="clicked($event)"
+            [translate]="'menu.companys'">SOCIETE></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/prestations/read" (click)="clicked($event)">PRESTATIONS</a>
+          <a class="nav-link" routerLink="/prestations/read" (click)="clicked($event)"
+            [translate]="'menu.prestations'">PRESTATIONS</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/factures/read" (click)="clicked($event)">FACTURES</a>
+          <a class="nav-link" routerLink="/factures/read" (click)="clicked($event)"
+            [translate]="'menu.factures'">FACTURES</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/clients/read" (click)="clicked($event)">CLIENTS</a>
+          <a class="nav-link" routerLink="/clients/read" (click)="clicked($event)"
+            [translate]="'menu.clients'">CLIENTS</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/consultants/read" (click)="clicked($event)">CONSULTANTS</a>
+          <a class="nav-link" routerLink="/consultants/read" (click)="clicked($event)"
+            [translate]="'menu.consultants'">CONSULTANTS</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/operations/read" (click)="clicked($event)">OPERATIONS</a>
+          <a class="nav-link" routerLink="/operations/read" (click)="clicked($event)"
+            [translate]="'menu.operations'">OPERATIONS</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/tvas/read" (click)="clicked($event)">TVAS</a>
+          <a class="nav-link" routerLink="/tvas/read" (click)="clicked($event)" [translate]="'menu.tva'">TVAS</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" routerLink="/users/read" (click)="clicked($event)">ADMINS</a>
         </li>
-
         }
       </ul>
 
@@ -46,12 +51,19 @@
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
             <div *ngIf="!isAuth">
               <li>
-                <a class="dropdown-item fw-bold" routerLink="/login">Me connecter</a>
+                <a class="dropdown-item fw-bold" routerLink="/login">ME CONNECTER</a>
               </li>
             </div>
             <div *ngIf="isAuth">
               <li>
-                <a class="dropdown-item fw-bold" (click)="userLogout($event)">Me déconnecter</a>
+                <a class="dropdown-item fw-bold" (click)="switchParametres($event)">PARAMETRES</a>
+              </li>
+            </div>
+
+            <hr style="border-top: 1px solid #0d6efd; opacity: 0.5;">
+            <div *ngIf="isAuth">
+              <li>
+                <a class="dropdown-item fw-bold" (click)="userLogout($event)">ME DECONNECTER</a>
               </li>
             </div>
           </ul>

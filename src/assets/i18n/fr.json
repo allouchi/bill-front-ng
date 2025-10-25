@@ -1,5 +1,14 @@
 {
-    "alert": {
+    "menu": {
+        "companys": "SOCIETES",
+        "prestations": "PRESTATIONS",
+        "factures": "FACTURES",
+        "clients": "CLIENTS",
+        "consultants": "CONSULTANTS",
+        "operations": "OPERTATIONS",
+        "tva": "TVAS"
+    },
+    "message": {
         "deleteMessageF": " été supprimée avec succès !",
         "deleteMessageM": " été supprimé avec succès !",
         "addMessageM": "  été ajouté avec succès !",
@@ -8,5 +17,18 @@
         "updateMessageF": " été mise à jour avec succès !",
         "logoutMessage": " 'A bientôt !'",
         "loginMessage": "Bienvenue, vous êtes connecté !"
-    }
+    },
+    "client:": {
+        "raisonSocial": "Raison Social",
+        "adresse": {
+            "libelle": "Adresse client",
+            "numero": "Numéro",
+            "codePostal": "Code postal",
+            "rue": "Rue",
+            "pays": "Pays",
+            "commune": "Commune",
+            "email": "Email"
+        }
+    },
+    "error": {}
 }
