@@ -5,13 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import User from '../../../models/User';
 import Company from '../../../models/Company';
-
-
+import { AuthService } from '../../../services/auth/auth-service';
 
 interface Result {
   userLang: string;
   siret: string;
-  company: Company | null;
+  company: Company | undefined | null;
   comment: string;
 }
 
@@ -26,34 +25,36 @@ export class ConfirmEditComponent implements OnInit {
   composant: any;
   state: boolean = false;
   user: User | null = null;
-  selectedLanguage = 'fr';
+  selectedLanguage: string | null = 'fr';
   selectedSiret: string | undefined;
   companies: Company[] | null = [];
 
   languages = [
     { id: 'fr', descr: 'Français' },
-    { id: 'en', descr: 'Anglais' }
+    { id: 'en', descr: 'Anglais' },
   ];
 
   result: Result = {
     userLang: 'fr',
     siret: '',
     company: null,
-    comment: "confirm"
+    comment: 'confirm',
   };
 
-  constructor(private readonly activeModal: NgbActiveModal, private readonly sharedDataService: SharedDataService) { }
-
+  constructor(
+    private readonly activeModal: NgbActiveModal,
+    private readonly sharedDataService: SharedDataService,
+    private readonly authService: AuthService
+  ) {}
 
   ngOnInit(): void {
-
-    this.user = this.sharedDataService.getSelectedUser();
-    if (this.user) {
-      this.selectedLanguage = this.user?.language;
+    if (this.authService.getUserLang() != null) {
+      this.selectedLanguage = this.authService.getUserLang();
     }
+
     this.companies = this.sharedDataService.getCompanies();
     if (this.companies) {
-      this.selectedSiret = this.companies.find(c => c.checked == true)?.siret;
+      this.selectedSiret = this.companies.find((c) => c.checked == true)?.siret;
     }
   }
 
@@ -75,7 +76,6 @@ export class ConfirmEditComponent implements OnInit {
     if (this.item == 'Tva') {
     }
     if (this.item == 'User') {
-
     }
     if (this.item == 'Logout') {
     }
@@ -84,22 +84,22 @@ export class ConfirmEditComponent implements OnInit {
       this.selectedLanguage = this.composant.language;
     }
 
-
     this.activeModal.close(this.result);
   }
 
-
   setLaguageValue(event: any) {
     this.selectedLanguage = (event.target as HTMLSelectElement).value;
+    this.authService.setUserLang(this.selectedLanguage);
     this.result = {
-      ...this.result, userLang: this.selectedLanguage
+      ...this.result,
+      userLang: this.selectedLanguage,
     };
   }
 
   setCompanyValue(event: any) {
     const siret = (event.target as HTMLSelectElement).value;
     if (this.companies) {
-      const selectedCompany = this.companies.find(c => c.siret === siret);
+      const selectedCompany = this.companies.find((c) => c.siret === siret);
       if (selectedCompany != null) {
         this.companies.forEach((item) => {
           if (item.siret === selectedCompany.siret) {
@@ -112,7 +112,7 @@ export class ConfirmEditComponent implements OnInit {
         // 2. mise à jour de company
         this.result = {
           ...this.result,
-          company: selectedCompany
+          company: selectedCompany,
         };
       }
     }

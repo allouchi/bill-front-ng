@@ -25,7 +25,8 @@ import { CompanyService } from '../../services/companies/company-service';
     CommonModule,
     RouterLink,
     HeaderComponent,
-    FormsModule, TranslateModule
+    FormsModule,
+    TranslateModule,
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
@@ -52,10 +53,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private readonly userService: UserService,
     private readonly companyService: CompanyService,
     private readonly sharedDataService: SharedDataService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.translateService.switchLang('fr');
     this.authenticated$ = this.isAuthService
       .getAuthObservable()
       .subscribe((isAuth) => {
@@ -167,8 +167,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result.comment === 'confirm') {
-
-          this.translateService.switchLang(result.userLang);
+          const userLang = this.authService.getUserLang();
+          if (userLang) {
+            this.translateService.switchLang(userLang);
+          }
           if (result.company) {
             this.sharedDataService.setSelectCompany(result.company);
             this.sharedDataService.setSiret(result.company!.siret);
@@ -176,18 +178,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
           }
 
           if (this.user) {
-            this.user.language = result.userLang;
-            this.authService.setUserLang(result.userLang);
+            if (userLang) {
+              this.user.language = userLang;
+            }
             this.updateUserService(this.user);
             this.sharedDataService.setSelectedUser(this.user);
           }
         }
-
       })
       .catch(() => {
         console.log('Annulé');
       });
-
   }
 
   ngOnDestroy(): void {

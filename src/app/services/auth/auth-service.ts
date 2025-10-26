@@ -23,7 +23,7 @@ export class AuthService {
     private readonly http: HttpClient,
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly sharedDataService: SharedDataService
-  ) { }
+  ) {}
 
   login(credentials: { username: string; password: string }) {
     return this.http
@@ -70,7 +70,6 @@ export class AuthService {
     return localStorage.getItem('userLang');
   }
 
-
   saveRefreshToken(token: string) {
     localStorage.setItem('refreshToken', token);
   }
@@ -90,6 +89,12 @@ export class AuthService {
   logout() {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+  }
+
+  removeAll() {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userLang');
   }
 
   getRoles(): Role[] {

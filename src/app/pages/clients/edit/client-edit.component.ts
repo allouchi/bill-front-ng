@@ -53,7 +53,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const userLang = this.authService.getUserLang();
-    console.log("userLang : ", userLang)
+
     if (userLang) {
       this.i18nService.switchLang(userLang);
     }
