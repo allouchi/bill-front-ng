@@ -23,4 +23,5 @@ export default interface Facture {
   moisFacture: string;
   siret: string;
   exercice: string;
+  montantTvaPaye: number;
 }

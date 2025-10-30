@@ -8,30 +8,14 @@
       }
     </div>
     <div class="card-body">
-      <form
-        [formGroup]="formTva"
-        #form="ngForm"
-        (ngSubmit)="addTva()"
-        class="p-4 border rounded"
-      >
+      <form [formGroup]="formTva" #form="ngForm" (ngSubmit)="addTva()" class="p-4 border rounded">
         <div class="row">
           <!-- Colonne gauche -->
           <div class="col-md-6">
             <div class="mb-3">
-              <label for="companySelect" class="form-label fw-bold"
-                >Société *</label
-              >
-              <select
-                [(ngModel)]="selectedCompany.socialReason"
-                formControlName="company"
-                [class.is-invalid]="
-                  formTva.get('company')?.invalid &&
-                  formTva.get('company')?.touched
-                "
-                (change)="setCompanyValue($event)"
-                class="form-select"
-                id="companySelect"
-              >
+              <label for="companySelect" class="form-label fw-bold">Société *</label>
+              <select [(ngModel)]="selectedCompany.socialReason" formControlName="company"
+                (change)="setCompanyValue($event)" class="form-select" id="companySelect">
                 @for (company of companies; track company.id) {
                 <option value="{{ company.id }}" [value]="company.socialReason">
                   {{ company!.socialReason }}
@@ -39,71 +23,48 @@
                 }
               </select>
 
-              <div
-                *ngIf="
+              <div *ngIf="
                   formTva.get('company')?.invalid &&
                   formTva.get('company')?.touched
-                "
-                class="text-danger"
-              >
+                " class="text-danger">
                 Ce champ est requis.
               </div>
             </div>
 
             <div class="mb-3">
-              <label for="monthSelect" class="form-label fw-bold"
-                >Mois TVA *</label
-              >
-              <select
-                (change)="setMonthValue($event)"
-                class="form-select"
-                id="monthSelect"
-                formControlName="monthPayment"
-                [class.is-invalid]="
-                  formTva.get('monthPayment')?.invalid &&
-                  formTva.get('monthPayment')?.touched
-                "
-              >
-                @for (month of monthsYear; track month.id) {
-                <option value="{{ month.label }}" [value]="month.label">
-                  {{ month.label }}
+              <label for="numeroFacture" class="form-label fw-bold">Numéro Facture *</label>
+              <select (change)="setFactureNumero($event)" class="form-select" id="numeroFacture"
+                formControlName="numeroFacture" [class.is-invalid]="
+                  formTva.get('numeroFacture')?.invalid &&
+                  formTva.get('numeroFacture')?.touched
+                ">
+                @for (facture of factures; track facture.id) {
+                <option value="{{ facture.numeroFacture }}" [value]="facture.numeroFacture">
+                  {{ facture.numeroFacture }}
                 </option>
                 }
               </select>
 
-              <div
-                *ngIf="
-                  formTva.get('monthPayment')?.invalid &&
-                  formTva.get('monthPayment')?.touched
-                "
-                class="text-danger"
-              >
+              <div *ngIf="
+                  formTva.get('numFacture')?.invalid &&
+                  formTva.get('numFacture')?.touched
+                " class="text-danger">
                 Ce champ est requis.
               </div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label fw-bold" for="montantInput"
-                >Montant Paiement *</label
-              >
-              <input
-                type="text"
-                id="montantInput"
-                class="form-control"
-                formControlName="montantPayment"
+              <label class="form-label fw-bold" for="montantInput">Montant Paiement *</label>
+              <input type="text" id="montantInput" class="form-control" formControlName="montantPayment"
                 [class.is-invalid]="
                   formTva.get('montantPayment')?.invalid &&
                   formTva.get('montantPayment')?.touched
-                "
-              />
+                " />
 
-              <div
-                *ngIf="
+              <div *ngIf="
                                                           formTva.get('montantPayment')?.errors?.['notNumeric'] &&
                                                           formTva.get('montantPayment')?.touched
-                                  "
-                class="text-danger"
-              >
+                                  " class="text-danger">
                 Ce champ doit être numérique.
               </div>
             </div>
@@ -112,62 +73,37 @@
           <!-- Colonne droite -->
           <div class="col-md-6">
             <div class="mb-3">
-              <label for="exerciceSelect" class="form-label fw-bold"
-                >Exercice *</label
-              >
-              <select
-                formControlName="exercise"
-                [class.is-invalid]="
+              <label for="exerciceSelect" class="form-label fw-bold">Exercice *</label>
+              <select formControlName="exercise" [class.is-invalid]="
                   formTva.get('exercise')?.invalid &&
                   formTva.get('exercise')?.touched
-                "
-                (change)="setExerciceValue($event)"
-                class="form-select"
-                id="exerciceSelect"
-              >
+                " (change)="setExerciceValue($event)" class="form-select" id="exerciceSelect">
                 @for (exercice of exercices; track exercice.id) {
-                <option
-                  value="{{ exercice.exercise }}"
-                  [value]="exercice.exercise"
-                >
+                <option value="{{ exercice.exercise }}" [value]="exercice.exercise">
                   {{ exercice.exercise }}
                 </option>
                 }
               </select>
 
-              <div
-                *ngIf="
+              <div *ngIf="
                   formTva.get('exercise')?.invalid &&
                   formTva.get('exercise')?.touched
-                "
-                class="text-danger"
-              >
+                " class="text-danger">
                 Ce champ est requis.
               </div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label fw-bold" for="datePayment"
-                >Date de Paiement *</label
-              >
-              <input
-                type="date"
-                id="datePayment"
-                class="form-control"
-                formControlName="datePayment"
-                [class.is-invalid]="
+              <label class="form-label fw-bold" for="datePayment">Date de Paiement *</label>
+              <input type="date" id="datePayment" class="form-control" formControlName="datePayment" [class.is-invalid]="
                   formTva.get('datePayment')?.invalid &&
                   formTva.get('datePayment')?.touched
-                "
-              />
+                " />
 
-              <div
-                *ngIf="
+              <div *ngIf="
                   formTva.get('datePayment')?.invalid &&
                   formTva.get('datePayment')?.touched
-                "
-                class="text-danger"
-              >
+                " class="text-danger">
                 Ce champ est requis.
               </div>
             </div>

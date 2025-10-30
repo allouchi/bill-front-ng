@@ -19,7 +19,6 @@ import { AuthService } from '../../../services/auth/auth-service';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import { AlertService } from '../../../services/alert/alertService';
 import Facture from '../../../models/Facture';
-import { FactureService } from '../../../services/factures/facture.service';
 
 @Component({
   selector: 'bill-tva-read',
@@ -58,8 +57,8 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly modalService: NgbModal,
     private readonly authService: AuthService,
-    private readonly factureService: FactureService
-  ) {}
+
+  ) { }
 
   ngOnInit(): void {
     this.siret = this.sharedDataService.getSiret();
@@ -71,25 +70,14 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     this.selectedExercice = currentExercice.toString();
     this.loadTva(this.selectedExercice);
     this.loadTvaInfo(this.selectedExercice);
-    this.loadFacturesByExercise(this.selectedExercice);
+    this.sharedDataService.setSelectedExercise(this.selectedExercice);
+
   }
 
   private loadCompanies() {
     this.companyService.findCompanies().subscribe({
       next: (companies) => {
         this.companies = companies;
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
-
-  loadFacturesByExercise(exercice: string) {
-    this.factureService.findAllExercice(this.siret, exercice).subscribe({
-      next: (factures) => {
-        this.factures = factures;
-        console.log('this.factures : ', this.factures);
       },
       error: (err) => {
         this.onError(err);
@@ -130,6 +118,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
         this.tvas = tvas;
         setTimeout(() => {
           this.filtredTvas = tvas;
+
           this.isLoaded = true;
         }, 500);
       },
@@ -142,6 +131,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   setYearValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
     this.selectedExercice = selectedValue;
+    this.sharedDataService.setSelectedExercise(this.selectedExercice);
     this.loadTvaInfo(selectedValue);
     this.loadTva(selectedValue);
   }

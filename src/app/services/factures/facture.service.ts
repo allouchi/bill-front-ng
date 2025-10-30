@@ -53,7 +53,7 @@ export class FactureService implements IFactureService {
     );
   }
 
-  findAllExercice(siret: string, exercice: string): Observable<Facture[]> {
+  findBySiretAndExercice(siret: string, exercice: string): Observable<Facture[]> {
     return this.http.get<Facture[]>(
       `${this.FACTURES_PATH}/noPage/${siret}/${exercice}`
     );

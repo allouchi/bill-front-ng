@@ -6,4 +6,5 @@ export default interface Tva {
   exercise: string;
   siret: string;
   monthPayment: string;
+  numeroFacture: string
 }

@@ -19,6 +19,8 @@ import GetMonthsOfYear from '../../../shared/utils/month-year';
 import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { AlertService } from '../../../services/alert/alertService';
+import Facture from '../../../models/Facture';
+import { FactureService } from '../../../services/factures/facture.service';
 
 @Component({
   selector: 'bill-tva-edit',
@@ -29,8 +31,8 @@ import { AlertService } from '../../../services/alert/alertService';
 export class TvaEditComponent implements OnInit, OnDestroy {
   formTva!: FormGroup;
   tva: Tva | null = null;
-  monthsYear!: any;
   companies: Company[] | null = [];
+  factures: Facture[] = [];
   exercices: Exercise[] | null = [];
   selectedExercise: Exercise | null = null;
   tvaId!: number | null;
@@ -45,19 +47,18 @@ export class TvaEditComponent implements OnInit, OnDestroy {
     private readonly tvaService: TvaService,
     private readonly alertService: AlertService,
     private readonly fb: FormBuilder,
-    private readonly sharedMessagesService: SharedMessagesService
+    private readonly sharedMessagesService: SharedMessagesService,
+    private readonly factureService: FactureService
   ) { }
 
   ngOnInit(): void {
     this.formTva = this.fb.group({
       company: [{ value: '', disabled: true }],
-      exercise: ['', Validators.required],
+      exercise: [{ value: '', disabled: true }, Validators.required],
       datePayment: ['', Validators.required],
       montantPayment: ['', [Validators.required, numericFrValidator()]],
-      monthPayment: ['', Validators.required],
+      numeroFacture: ['', Validators.required],
     });
-
-    this.loadMonthYear();
 
     this.currentUrl = this.router.url;
 
@@ -100,24 +101,44 @@ export class TvaEditComponent implements OnInit, OnDestroy {
       const formattedMontant = this.tva.montantPayment.toFixed(2);
 
       this.formTva.patchValue({
-        monthPayment: this.tva.monthPayment,
+        numeroFacture: this.tva.numeroFacture,
         exercise: selectedExercice,
         datePayment: formatedDate,
         montantPayment: formattedMontant,
         company: selectedCompany,
       });
     }
+
+    const selectedExercice = this.sharedDataService.getSelectedExercise();
+
+    if (selectedExercice) {
+      this.loadFacturesByExercise(selectedExercice);
+    }
   }
 
-  private loadMonthYear() {
-    this.monthsYear = GetMonthsOfYear();
-  }
-
-  setMonthValue(event: Event) {
-    const selectedValue = (event.target as HTMLSelectElement).value;
-    this.formTva.patchValue({
-      monthPayment: selectedValue,
+  loadFacturesByExercise(exercice: string) {
+    this.factureService.findBySiretAndExercice(this.siret, exercice).subscribe({
+      next: (factures) => {
+        this.factures = factures;
+      },
+      error: (err) => {
+        this.onError(err);
+      },
     });
+  }
+
+  setFactureNumero(event: Event) {
+    const factureNumero = (event.target as HTMLSelectElement).value;
+    if (factureNumero) {
+      const selectedExercice = factureNumero.substring(0, 4);
+      this.formTva.patchValue({
+        numeroFacture: factureNumero,
+      });
+
+      this.formTva.patchValue({
+        exercise: selectedExercice,
+      });
+    }
   }
 
   setCompanyValue(event: Event) {
@@ -134,8 +155,21 @@ export class TvaEditComponent implements OnInit, OnDestroy {
     });
   }
 
+  private loadMonthYear(nbMonth: string): string | undefined {
+    let months;
+    const monthsYear = GetMonthsOfYear();
+    if (monthsYear) {
+      months = monthsYear.find(m => m.id === nbMonth)?.label;
+    }
+    return months;
+  }
+
   addTva() {
     if (this.formTva.valid) {
+      let monthPayment = this.formTva.get('numeroFacture')?.value;
+      monthPayment = monthPayment.substring(4, 6);
+      monthPayment = this.loadMonthYear(monthPayment);
+
       const selectedRaisonSocial = this.formTva.get('company')?.value;
       const selectedSiret = this.companies!.find(
         (c) => c.socialReason == selectedRaisonSocial
@@ -145,11 +179,12 @@ export class TvaEditComponent implements OnInit, OnDestroy {
         ?.value.replace(',', '.');
       let tvaModif: Tva = {
         id: this.tvaId,
-        monthPayment: this.formTva.get('monthPayment')?.value,
+        numeroFacture: this.formTva.get('numeroFacture')?.value,
         exercise: this.formTva.get('exercise')?.value,
         datePayment: this.formTva.get('datePayment')?.value,
         montantPayment: formattedMontant,
         siret: selectedSiret!,
+        monthPayment: monthPayment
       };
 
       this.tvaService.createOrUpdateTva(tvaModif).subscribe({

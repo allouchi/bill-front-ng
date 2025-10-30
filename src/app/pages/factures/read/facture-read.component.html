@@ -23,9 +23,11 @@
             <th scope="col">TOTAL REGLE</th>
             @if(tvaInfos && tvaInfos.totalTvaRestant>0 ){
             <th scope="col">RESTE A PAYER</th>
-            }@else {
-            <th scope="col">TROP PAYER</th>
-            }
+            }@else if(tvaInfos && tvaInfos.totalTvaRestant<0){ <th scope="col">TROP PAYER</th>
+              }
+              @else{
+              <th scope="col">Match (0:0)</th>
+              }
           </tr>
         </thead>
         <tbody>
@@ -73,7 +75,7 @@
           <th scope="col">Prix Total HT</th>
           <th scope="col">Prix Total TTC</th>
           <th scope="col">Total TVA</th>
-          <th scope="col">Total Net TVA</th>
+          <th scope="col">Débit TVA</th>
           <th scope="col">Date d'Echéance</th>
           <th scope="col">Actions</th>
         </tr>
@@ -91,7 +93,7 @@
           <td>{{ facture.prixTotalHT | customDecimalPipe }}</td>
           <td>{{ facture.prixTotalTTC | customDecimalPipe }}</td>
           <td>{{ facture.montantTVA | customDecimalPipe }}</td>
-          <td>{{ facture.montantNetTVA | customDecimalPipe }}</td>
+          <td>{{ facture.montantTvaPaye | customDecimalPipe }}</td>
           <td>{{ facture.dateEcheance }}</td>
           <td>
             <button class="btn btn-outline-primary btn-sm me-2" (click)="updateFacture($event, facture)"
@@ -100,7 +102,7 @@
             </button>
 
             <button class="btn btn-outline-primary btn-sm me-2" (click)="cancelModif($event, facture)"
-              title="Annuler statut Facture" [disabled]="!isAdmin || facture.factureStatus == 'KO'">
+              title="Annuler statut" [disabled]="!isAdmin || facture.factureStatus == 'KO'">
               <i class="bi bi-x-circle"></i>
             </button>
 

@@ -56,7 +56,7 @@ export interface IFactureService {
     size: number
   ): Observable<Page<Facture>>;
 
-  findAllExercice(siret: string, exercice: string): Observable<Facture[]>;
+  findBySiretAndExercice(siret: string, exercice: string): Observable<Facture[]>;
 
   /**
    * Delete one facture by it's id
