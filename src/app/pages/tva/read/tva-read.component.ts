@@ -56,9 +56,8 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     private readonly companyService: CompanyService,
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly modalService: NgbModal,
-    private readonly authService: AuthService,
-
-  ) { }
+    private readonly authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.siret = this.sharedDataService.getSiret();
@@ -71,7 +70,6 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     this.loadTva(this.selectedExercice);
     this.loadTvaInfo(this.selectedExercice);
     this.sharedDataService.setSelectedExercise(this.selectedExercice);
-
   }
 
   private loadCompanies() {
@@ -118,7 +116,6 @@ export class TvaReadComponent implements OnInit, OnDestroy {
         this.tvas = tvas;
         setTimeout(() => {
           this.filtredTvas = tvas;
-
           this.isLoaded = true;
         }, 500);
       },
@@ -172,7 +169,6 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     });
     modal.componentInstance.item = 'Tva';
     modal.componentInstance.composant = tva;
-
     modal.result
       .then((result) => {
         if (result === 'confirm') {

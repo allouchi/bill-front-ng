@@ -184,7 +184,8 @@ export class TvaEditComponent implements OnInit, OnDestroy {
         datePayment: this.formTva.get('datePayment')?.value,
         montantPayment: formattedMontant,
         siret: selectedSiret!,
-        monthPayment: monthPayment
+        monthPayment: monthPayment,
+        montantTTC: 0,
       };
 
       this.tvaService.createOrUpdateTva(tvaModif).subscribe({
