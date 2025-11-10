@@ -166,10 +166,9 @@ export class TvaEditComponent implements OnInit, OnDestroy {
 
   addTva() {
     if (this.formTva.valid) {
-      let monthPayment = this.formTva.get('numeroFacture')?.value;
-      monthPayment = monthPayment.substring(4, 6);
+      let monthPayment = this.formTva.get('datePayment')?.value;
+      monthPayment = monthPayment.substring(5, 7);
       monthPayment = this.loadMonthYear(monthPayment);
-
       const selectedRaisonSocial = this.formTva.get('company')?.value;
       const selectedSiret = this.companies!.find(
         (c) => c.socialReason == selectedRaisonSocial

@@ -57,7 +57,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly modalService: NgbModal,
     private readonly authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.siret = this.sharedDataService.getSiret();
@@ -102,7 +102,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     let months;
     const monthsYear = GetMonthsOfYear();
     if (monthsYear) {
-      months = monthsYear.find((m) => m.id === nbMonth)?.label;
+      months = monthsYear.find((m) => m.id === nbMonth)!.label;
     }
     return months;
   }
@@ -121,10 +121,14 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   private addLabelMonthTva() {
     if (this.tvas) {
       this.tvas.forEach((tva) => {
+        let montPaymentDate = tva.datePayment.substring(3, 5);
+        const monthPayment = this.loadMonthYear(montPaymentDate) || '';
         let month = tva.numeroFacture.substring(4, 6);
         const monthFacture = this.loadMonthYear(month);
-        tva.monthFacture =
-          tva.monthFacture + ' (' + monthFacture!.substring(0, 3) + '.)';
+        if (monthFacture) {
+          tva.monthFacture = ' (' + monthFacture!.substring(0, 3) + '.)';
+        }
+        tva.monthPayment = ' (' + monthPayment!.substring(0, 3) + '.)';
       });
     }
   }
