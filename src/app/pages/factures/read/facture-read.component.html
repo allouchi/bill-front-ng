@@ -72,8 +72,8 @@
           <th scope="col">Mois Facture</th>
           <th scope="col">Tarif HT</th>
           <th scope="col">Quantité</th>
-          <th scope="col">Prix Total HT</th>
           <th scope="col">Prix Total TTC</th>
+          <th scope="col">Prix Total HT</th>          
           <th scope="col">Total TVA</th>
           <th scope="col">Débit TVA</th>
           <th scope="col">Date d'Echéance</th>
@@ -90,8 +90,8 @@
           <td>{{ facture.moisFacture }}</td>
           <td>{{ facture.tarifHT }}</td>
           <td>{{ facture.quantite | customDecimalPipe }}</td>
-          <td>{{ facture.prixTotalHT | customDecimalPipe }}</td>
           <td>{{ facture.prixTotalTTC | customDecimalPipe }}</td>
+          <td>{{ facture.prixTotalHT | customDecimalPipe }}</td>          
           <td>{{ facture.montantTVA | customDecimalPipe }}</td>
           <td>{{ facture.montantTvaPaye | customDecimalPipe }}</td>
           <td>{{ facture.dateEcheance }}</td>

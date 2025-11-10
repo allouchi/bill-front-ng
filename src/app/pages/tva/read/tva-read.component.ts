@@ -63,13 +63,17 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     this.siret = this.sharedDataService.getSiret();
     this.isAdmin = this.authService.isAdmin();
     this.loadCompanies();
-    this.loadMonthYear();
+    this.loadMonthInYear();
     this.loadExercicesRef();
     const currentExercice = new Date().getFullYear();
     this.selectedExercice = currentExercice.toString();
     this.loadTva(this.selectedExercice);
     this.loadTvaInfo(this.selectedExercice);
     this.sharedDataService.setSelectedExercise(this.selectedExercice);
+  }
+
+  private loadMonthInYear() {
+    this.monthsYear = GetMonthsOfYear();
   }
 
   private loadCompanies() {
@@ -94,9 +98,13 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       },
     });
   }
-
-  private loadMonthYear() {
-    this.monthsYear = GetMonthsOfYear();
+  private loadMonthYear(nbMonth: string): string | undefined {
+    let months;
+    const monthsYear = GetMonthsOfYear();
+    if (monthsYear) {
+      months = monthsYear.find((m) => m.id === nbMonth)?.label;
+    }
+    return months;
   }
 
   private loadExercicesRef() {
@@ -110,14 +118,24 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     });
   }
 
+  private addLabelMonthTva() {
+    if (this.tvas) {
+      this.tvas.forEach((tva) => {
+        let month = tva.numeroFacture.substring(4, 6);
+        const monthFacture = this.loadMonthYear(month);
+        tva.monthFacture =
+          tva.monthFacture + ' (' + monthFacture!.substring(0, 3) + '.)';
+      });
+    }
+  }
+
   private loadTva(exercice: string) {
     this.tvaService.findTvaByExercise(this.siret, exercice).subscribe({
       next: (tvas) => {
         this.tvas = tvas;
-        setTimeout(() => {
-          this.filtredTvas = tvas;
-          this.isLoaded = true;
-        }, 500);
+        this.filtredTvas = tvas;
+        this.isLoaded = true;
+        this.addLabelMonthTva();
       },
       error: (err) => {
         this.onError(err);

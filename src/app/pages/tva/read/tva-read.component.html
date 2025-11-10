@@ -4,7 +4,12 @@
   <div class="d-flex justify-content-between align-items-end mb-3">
     <div style="width: 200px">
       <label for="yearSelect" class="form-label fw-bold">Exercice</label>
-      <select (change)="setYearValue($event)" class="form-select" id="yearSelect" [(ngModel)]="selectedExercice">
+      <select
+        (change)="setYearValue($event)"
+        class="form-select"
+        id="yearSelect"
+        [(ngModel)]="selectedExercice"
+      >
         @for (year of exercises; track year.id) {
         <option [value]="year.exercise">{{ year.exercise }}</option>
         }
@@ -22,11 +27,11 @@
             <th scope="col">TOTAL REGLE</th>
             @if(tvaInfos && tvaInfos.totalTvaRestant>0 ){
             <th scope="col">RESTE A PAYER</th>
-            }@else if(tvaInfos && tvaInfos.totalTvaRestant<0){ <th scope="col">TROP PAYER</th>
-              }
-              @else{
-              <th scope="col">Match (0:0)</th>
-              }
+            }@else if(tvaInfos && tvaInfos.totalTvaRestant<0){
+            <th scope="col">TROP PAYER</th>
+            } @else{
+            <th scope="col">Match (0:0)</th>
+            }
           </tr>
         </thead>
         <tbody>
@@ -55,8 +60,7 @@
             <td class="text-center">
               {{ -tvaInfosFilterd.totalTvaRestant | customDecimalPipe }}
             </td>
-            }
-            }
+            } }
           </tr>
         </tbody>
       </table>
@@ -75,35 +79,53 @@
         <tr>
           <th scope="col">Numéro Facture</th>
           <th scope="col">Montant Facture</th>
-           <th scope="col">Montant TVA</th>
-           <th scope="col">Mois TVA</th>
-           <th scope="col">Date de paiement</th> 
-          <th scope="col">Exercice</th>                  
+          <th scope="col">Montant TVA</th>
+          <th scope="col">Date de paiement</th>
+          <th scope="col">Exercice</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
       <tbody>
-        @for (tva of filtredTvas; track tva.id) {
+        @if(filtredTvas){ @for (tva of filtredTvas; track tva.id) {
         <tr>
-          <td style="text-align: center">{{ tva.numeroFacture }}</td>
-          <td style="text-align: center">{{ tva.montantTTC  | customDecimalPipe}}</td>
+          <td style="text-align: center">
+            <div
+              style="display: inline-block; text-align: left; min-width: 140px"
+            >
+              {{ tva.numeroFacture }}
+               (<strong>{{
+                tva.monthFacture + "."
+              }}</strong
+              >) 
+            </div>
+          </td>
+          <td style="text-align: center">
+            {{ tva.montantTTC | customDecimalPipe }}
+          </td>
           <td style="text-align: center">
             {{ tva.montantPayment | customDecimalPipe }}
           </td>
-           <td style="text-align: center">{{ tva.monthPayment }}</td>
-           <td style="text-align: center">{{ tva.datePayment }}</td>
-          <td style="text-align: center">{{ tva.exercise }}</td>           
+          <td style="text-align: center">{{ tva.datePayment }}</td>
+          <td style="text-align: center">{{ tva.exercise }}</td>
           <td>
-            <button class="btn btn-outline-primary btn-sm me-2" (click)="updateTva(tva)" title="Modifier TVA">
+            <button
+              class="btn btn-outline-primary btn-sm me-2"
+              (click)="updateTva(tva)"
+              title="Modifier TVA"
+            >
               <i class="bi bi-pencil"></i>
             </button>
-            <button class="btn btn-outline-danger btn-sm me-2" (click)="deleteTva($event, tva)" title="Supprimer TVA"
-              [disabled]="!isAdmin">
+            <button
+              class="btn btn-outline-danger btn-sm me-2"
+              (click)="deleteTva($event, tva)"
+              title="Supprimer TVA"
+              [disabled]="!isAdmin"
+            >
               <i class="bi bi-trash"></i>
             </button>
           </td>
         </tr>
-        } @empty {
+        } }@else {
         <p>Aucun TVA payée</p>
         }
       </tbody>
