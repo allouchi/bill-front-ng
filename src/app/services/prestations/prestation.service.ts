@@ -10,7 +10,7 @@ export class PrestationService implements IPrestationService {
   private readonly apiURL = env.apiURL;
   private readonly PRESTATION_PATH: string = `${this.apiURL}` + '/prestations';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
   createOrUpdatePrestation(
     prestation: Prestation,
     siret: string,
@@ -18,6 +18,7 @@ export class PrestationService implements IPrestationService {
     moisFacture: number | null
   ): Observable<Prestation> {
     const isNew: boolean = prestation.id === 0 || prestation.id === null;
+    console.log("isNew : ", isNew)
 
     if (isNew) {
       return this.http.post<Prestation>(
@@ -39,7 +40,7 @@ export class PrestationService implements IPrestationService {
   deletePrestationById(id: number): Observable<string> {
     return this.http.delete<string>(`${this.PRESTATION_PATH}/${id}`);
   }
-  getPrestationsBySiret(siret: string): Observable<Prestation[]> {   
+  getPrestationsBySiret(siret: string): Observable<Prestation[]> {
     return this.http.get<Prestation[]>(`${this.PRESTATION_PATH}/${siret}`);
   }
 }
