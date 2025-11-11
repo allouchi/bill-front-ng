@@ -8,5 +8,7 @@ export default interface Tva {
   monthPayment: string;
   numeroFacture: string;
   montantTTC: number;
+  montantTvaFacture: number;
   monthFacture: string;
+  dateEncaissement: string;
 }

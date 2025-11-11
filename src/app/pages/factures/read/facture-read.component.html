@@ -76,7 +76,7 @@
           <th scope="col">Prix Total HT</th>          
           <th scope="col">Total TVA</th>
           <th scope="col">Débit TVA</th>
-          <th scope="col">Date d'Echéance</th>
+          <th scope="col">Date Encaissement</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
@@ -94,7 +94,7 @@
           <td>{{ facture.prixTotalHT | customDecimalPipe }}</td>          
           <td>{{ facture.montantTVA | customDecimalPipe }}</td>
           <td>{{ facture.montantTvaPaye | customDecimalPipe }}</td>
-          <td>{{ facture.dateEcheance }}</td>
+          <td>{{ facture.dateEncaissement }}</td>
           <td>
             <button class="btn btn-outline-primary btn-sm me-2" (click)="updateFacture($event, facture)"
               title="Modifier Facture" [disabled]="!isAdmin">
