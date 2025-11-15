@@ -13,21 +13,19 @@
     </div>
     <!-- Colonne centrale : Tableau centré -->
     <div class="flex-grow-1 d-flex justify-content-center">
-      <table class="table table-bordered w-auto table-success">
+      <table class="table table-bordered w-auto table-dark">
         <thead>
           <tr>
             <th scope="col">CA TTC</th>
             <th scope="col">CA NET</th>
             <th scope="col">TOTAL TVA</th>
-            <!--
-            <th scope="col">TOTAL NET</th>
-            -->
-            <th scope="col">TOTAL TVA REGLE</th>
+            <!-- <th scope="col">TOTAL NET</th> -->
+            <th scope="col">TOTAL REGLE</th>
             @if(tvaInfos && tvaInfos.totalTvaRestant>0 ){
             <th scope="col">RESTE A PAYER</th>
-            }@else if(tvaInfos && tvaInfos.totalTvaRestant<0){ <th scope="col"> <i
-                class="bi bi-exclamation-circle-fill text-danger me-1"></i> TROP-PERÇU</th>
-              } @else{
+            }@else if(tvaInfos && tvaInfos.totalTvaRestant<0){ <th scope="col">TROP-PERÇU</th>
+              }
+              @else{
               <th scope="col">Match (0:0)</th>
               }
           </tr>
@@ -44,11 +42,11 @@
             <td class="text-center">
               {{ tvaInfos.totalTva | customDecimalPipe }}
             </td>
-            <!-- 
+            <!--
             <td class="text-center">
               {{ tvaInfos.totalTvaNet | customDecimalPipe }}
             </td>
-            -->
+             -->
             <td class="text-center">
               {{ tvaInfos.totalTvaPaye | customDecimalPipe }}
             </td>
@@ -57,7 +55,7 @@
               {{ tvaInfos.totalTvaRestant | customDecimalPipe }}
             </td>
             }@else {
-            <td class="text-center"> <i class="bi bi-exclamation-circle-fill text-danger me-1"></i>
+            <td class="text-center">
               {{ -tvaInfos.totalTvaRestant | customDecimalPipe }}
             </td>
             }
@@ -77,10 +75,10 @@
           <th scope="col">Tarif HT</th>
           <th scope="col">Quantité</th>
           <th scope="col">Prix Total TTC</th>
-          <th scope="col">Prix Total HT</th>
+          <th scope="col">Prix Total HT</th>  
+           <th scope="col">Date Encaissement</th>        
           <th scope="col">Total TVA</th>
-          <th scope="col">Débit TVA</th>
-          <th scope="col">Date Encaissement</th>
+          <th scope="col">Débit TVA</th>         
           <th scope="col">Actions</th>
         </tr>
       </thead>
@@ -96,9 +94,9 @@
           <td>{{ facture.quantite | customDecimalPipe }}</td>
           <td>{{ facture.prixTotalTTC | customDecimalPipe }}</td>
           <td>{{ facture.prixTotalHT | customDecimalPipe }}</td>
+          <td>{{ facture.dateEncaissement }}</td>          
           <td>{{ facture.montantTVA | customDecimalPipe }}</td>
-          <td>{{ facture.montantTvaPaye | customDecimalPipe }}</td>
-          <td>{{ facture.dateEncaissement }}</td>
+          <td>{{ facture.montantTvaPaye | customDecimalPipe }}</td>          
           <td>
             <button class="btn btn-outline-primary btn-sm me-2" (click)="updateFacture($event, facture)"
               title="Modifier Facture" [disabled]="!isAdmin">

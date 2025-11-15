@@ -1,4 +1,3 @@
-
 export default interface Tva {
   id: number | null;
   datePayment: string;

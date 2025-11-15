@@ -49,12 +49,12 @@ export class TvaEditComponent implements OnInit, OnDestroy {
     private readonly fb: FormBuilder,
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly factureService: FactureService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.formTva = this.fb.group({
       company: [{ value: '', disabled: true }],
-      exercise: [{ value: '', disabled: true }, Validators.required],
+      exercise: [{ value: '', disabled: false }, Validators.required],
       datePayment: ['', Validators.required],
       montantPayment: ['', [Validators.required, numericFrValidator()]],
       numeroFacture: ['', Validators.required],
@@ -130,13 +130,8 @@ export class TvaEditComponent implements OnInit, OnDestroy {
   setFactureNumero(event: Event) {
     const factureNumero = (event.target as HTMLSelectElement).value;
     if (factureNumero) {
-      const selectedExercice = factureNumero.substring(0, 4);
       this.formTva.patchValue({
         numeroFacture: factureNumero,
-      });
-
-      this.formTva.patchValue({
-        exercise: selectedExercice,
       });
     }
   }
@@ -159,13 +154,15 @@ export class TvaEditComponent implements OnInit, OnDestroy {
     let months;
     const monthsYear = GetMonthsOfYear();
     if (monthsYear) {
-      months = monthsYear.find(m => m.id === nbMonth)?.label;
+      months = monthsYear.find((m) => m.id === nbMonth)?.label;
     }
     return months;
   }
 
   addTva() {
     if (this.formTva.valid) {
+      const exo = this.formTva.get('exercise')?.value;
+
       let monthPayment = this.formTva.get('datePayment')?.value;
       monthPayment = monthPayment.substring(5, 7);
       monthPayment = this.loadMonthYear(monthPayment);
