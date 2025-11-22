@@ -184,6 +184,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
             this.updateUserService(this.user);
             this.sharedDataService.setSelectedUser(this.user);
           }
+           this.logout();
         }
       })
       .catch(() => {

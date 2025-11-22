@@ -60,9 +60,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly modalService: NgbModal,
     private readonly authService: AuthService,
     private readonly tvaService: TvaService,
-    private readonly sharedMessagesService: SharedMessagesService,
-
-  ) { }
+    private readonly sharedMessagesService: SharedMessagesService
+  ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
