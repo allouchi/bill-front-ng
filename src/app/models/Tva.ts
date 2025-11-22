@@ -1,4 +1,3 @@
-
 export default interface Tva {
   id: number | null;
   datePayment: string;
@@ -6,4 +5,9 @@ export default interface Tva {
   exercise: string;
   siret: string;
   monthPayment: string;
+  numeroFacture: string;
+  montantTTC: number;
+  montantTvaFacture: number;
+  monthFacture: string;
+  dateEncaissement: string;
 }

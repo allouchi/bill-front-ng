@@ -18,6 +18,7 @@ import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-del
 import { AuthService } from '../../../services/auth/auth-service';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import { AlertService } from '../../../services/alert/alertService';
+import Facture from '../../../models/Facture';
 
 @Component({
   selector: 'bill-tva-read',
@@ -34,6 +35,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   isLoaded = false;
   tvas: Tva[] = [];
   filtredTvas: Tva[] = [];
+  factures: Facture[] = [];
   companies: Company[] = [];
   exercises: Exercise[] = [];
   tvaInfos!: TvaInfos;
@@ -61,12 +63,17 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     this.siret = this.sharedDataService.getSiret();
     this.isAdmin = this.authService.isAdmin();
     this.loadCompanies();
-    this.loadMonthYear();
+    this.loadMonthInYear();
     this.loadExercicesRef();
     const currentExercice = new Date().getFullYear();
     this.selectedExercice = currentExercice.toString();
     this.loadTva(this.selectedExercice);
     this.loadTvaInfo(this.selectedExercice);
+    this.sharedDataService.setSelectedExercise(this.selectedExercice);
+  }
+
+  private loadMonthInYear() {
+    this.monthsYear = GetMonthsOfYear();
   }
 
   private loadCompanies() {
@@ -91,9 +98,13 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       },
     });
   }
-
-  private loadMonthYear() {
-    this.monthsYear = GetMonthsOfYear();
+  private loadMonthYear(nbMonth: string): string | undefined {
+    let months;
+    const monthsYear = GetMonthsOfYear();
+    if (monthsYear) {
+      months = monthsYear.find((m) => m.id === nbMonth)!.label;
+    }
+    return months;
   }
 
   private loadExercicesRef() {
@@ -107,14 +118,28 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     });
   }
 
+  private addLabelMonthTva() {
+    if (this.tvas) {
+      this.tvas.forEach((tva) => {
+        let montPaymentDate = tva.datePayment.substring(3, 5);
+        const monthPayment = this.loadMonthYear(montPaymentDate) || '';
+        let month = tva.numeroFacture.substring(4, 6);
+        const monthFacture = this.loadMonthYear(month);
+        if (monthFacture) {
+          tva.monthFacture = ' (' + monthFacture!.substring(0, 3) + '.)';
+        }
+        tva.monthPayment = ' (' + monthPayment!.substring(0, 3) + '.)';
+      });
+    }
+  }
+
   private loadTva(exercice: string) {
     this.tvaService.findTvaByExercise(this.siret, exercice).subscribe({
       next: (tvas) => {
         this.tvas = tvas;
-        setTimeout(() => {
-          this.filtredTvas = tvas;
-          this.isLoaded = true;
-        }, 500);
+        this.filtredTvas = tvas;
+        this.isLoaded = true;
+        this.addLabelMonthTva();
       },
       error: (err) => {
         this.onError(err);
@@ -125,6 +150,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   setYearValue(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
     this.selectedExercice = selectedValue;
+    this.sharedDataService.setSelectedExercise(this.selectedExercice);
     this.loadTvaInfo(selectedValue);
     this.loadTva(selectedValue);
   }
@@ -165,11 +191,10 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     });
     modal.componentInstance.item = 'Tva';
     modal.componentInstance.composant = tva;
-
     modal.result
       .then((result) => {
         if (result === 'confirm') {
-          this.deleteTvaSerice(tva.id!)
+          this.deleteTvaSerice(tva.id!);
           this.filtredTvas = this.tvas.filter((t) => t.id !== tva.id);
           this.tvas = this.filtredTvas;
           this.loadTvaInfo(this.selectedExercice);

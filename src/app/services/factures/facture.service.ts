@@ -22,17 +22,21 @@ export class FactureService implements IFactureService {
   private readonly EXERCISE_PATH: string =
     `${this.apiURL}` + '/tvas/exerciceRef';
   private readonly EDITION_PATH: string = `${this.apiURL}` + '/editions';
-  constructor(private readonly http: HttpClient) { }
+  constructor(private readonly http: HttpClient) {}
 
   updateFacture(facture: Facture): Observable<Facture> {
     return this.http.put<Facture>(this.FACTURES_PATH, facture);
   }
 
-  findFacturesBySiret(siret: string, page: number, size: number): Observable<Page<Facture>> {
-    let params = new HttpParams()
-      .set('page', page)
-      .set('size', size);
-    return this.http.get<Page<Facture>>(`${this.FACTURES_PATH}/${siret}`, { params });
+  findFacturesBySiret(
+    siret: string,
+    page: number,
+    size: number
+  ): Observable<Page<Facture>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    return this.http.get<Page<Facture>>(`${this.FACTURES_PATH}/${siret}`, {
+      params,
+    });
   }
 
   findFacturesByExercice(
@@ -41,13 +45,17 @@ export class FactureService implements IFactureService {
     page: number,
     size: number
   ): Observable<Page<Facture>> {
-
-    let params = new HttpParams()
-      .set('page', page)
-      .set('size', size);
+    let params = new HttpParams().set('page', page).set('size', size);
 
     return this.http.get<Page<Facture>>(
-      `${this.FACTURES_PATH}/${siret}/${exercice}`, { params }
+      `${this.FACTURES_PATH}/${siret}/${exercice}`,
+      { params }
+    );
+  }
+
+  findBySiretAndExercice(siret: string, exercice: string): Observable<Facture[]> {
+    return this.http.get<Facture[]>(
+      `${this.FACTURES_PATH}/noPage/${siret}/${exercice}`
     );
   }
 
@@ -64,15 +72,15 @@ export class FactureService implements IFactureService {
     siret: string,
     moisFacture: number | null,
     iTextGeneration: boolean
-  ): Observable<Prestation> {
+  ): Observable<Facture> {
     const isNew: boolean = prestation.id === 0 || prestation.id === null;
     if (isNew) {
-      return this.http.post<Prestation>(
+      return this.http.post<Facture>(
         `${this.FACTURES_PATH}/${siret}`,
         prestation
       );
     } else {
-      return this.http.put<Prestation>(
+      return this.http.put<Facture>(
         `${this.FACTURES_PATH}/${siret}/${moisFacture}/${iTextGeneration}`,
         prestation
       );

@@ -18,13 +18,16 @@
             <th scope="col">CA TTC</th>
             <th scope="col">CA NET</th>
             <th scope="col">TOTAL TVA</th>
+            <!--
             <th scope="col">TOTAL NET</th>
+            -->
             <th scope="col">TOTAL REGLE</th>
-            @if(tvaInfosFilterd && tvaInfosFilterd.totalTvaRestant>0 ){
+            @if(tvaInfos && tvaInfos.totalTvaRestant>0 ){
             <th scope="col">RESTE A PAYER</th>
-            }@else {
-            <th scope="col">TROP PAYER</th>
-            }
+            }@else if(tvaInfos && tvaInfos.totalTvaRestant<0){ <th scope="col">TROP-PERÇU</th>
+              } @else{
+              <th scope="col">Match (0:0)</th>
+              }
           </tr>
         </thead>
         <tbody>
@@ -39,9 +42,11 @@
             <td class="text-center">
               {{ tvaInfosFilterd.totalTva | customDecimalPipe }}
             </td>
+            <!--
             <td class="text-center">
               {{ tvaInfosFilterd.totalTvaNet | customDecimalPipe }}
             </td>
+            -->
             <td style="text-align: center">
               {{ tvaInfosFilterd.totalTvaPaye | customDecimalPipe }}
             </td>
@@ -53,8 +58,7 @@
             <td class="text-center">
               {{ -tvaInfosFilterd.totalTvaRestant | customDecimalPipe }}
             </td>
-            }
-            }
+            } }
           </tr>
         </tbody>
       </table>
@@ -71,23 +75,44 @@
     <table class="table table-success table-striped">
       <thead class="table-dark">
         <tr>
+          <th scope="col">Numéro Facture</th>
+          <th scope="col">Montant Facture</th>
+           <th scope="col">Date Encaissement</th>
+          <th scope="col">TVA Facture</th>
+          <th scope="col">Débit TVA</th>
+          <th scope="col">Date de paiement TVA</th>
           <th scope="col">Exercice</th>
-          <th scope="col">Mois TVA</th>
-          <th scope="col">Date de paiement</th>
-          <th scope="col">Montant</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
+
       <tbody>
+        @if (filtredTvas && filtredTvas.length > 0) {
         @for (tva of filtredTvas; track tva.id) {
         <tr>
-          <td style="text-align: center">{{ tva.exercise }}</td>
-          <td style="text-align: center">{{ tva.monthPayment }}</td>
-          <td style="text-align: center">{{ tva.datePayment }}</td>
+          <td style="text-align: center">
+            <div style="display: inline-block; text-align: left; min-width: 140px">
+              {{ tva.numeroFacture }}
+              <strong>{{ tva.monthFacture }}</strong>
+            </div>
+          </td>
+          <td style="text-align: center">
+            {{ tva.montantTTC | customDecimalPipe }}
+          </td>
+          <td style="text-align: center">
+            {{ tva.dateEncaissement }}
+          </td>
+           <td style="text-align: center">
+            {{ tva.montantTvaFacture | customDecimalPipe }}
+          </td>
           <td style="text-align: center">
             {{ tva.montantPayment | customDecimalPipe }}
           </td>
-
+          <td style="text-align: center">
+            {{ tva.datePayment }}
+            <strong>{{ tva.monthPayment }}</strong>
+          </td>
+          <td style="text-align: center">{{ tva.exercise }}</td>
           <td>
             <button class="btn btn-outline-primary btn-sm me-2" (click)="updateTva(tva)" title="Modifier TVA">
               <i class="bi bi-pencil"></i>
@@ -98,8 +123,13 @@
             </button>
           </td>
         </tr>
-        } @empty {
-        <p>Aucun TVA payée</p>
+        }
+        } @else {
+        <tr>
+          <td colspan="6" class="text-center text-muted py-3">
+            Aucune TVA payée
+          </td>
+        </tr>
         }
       </tbody>
     </table>

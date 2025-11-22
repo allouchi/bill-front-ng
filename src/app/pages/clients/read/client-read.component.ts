@@ -73,7 +73,7 @@ export class ClientReadComponent implements OnInit, OnDestroy {
 
     }
   }
-  
+
   private loadClients() {
     this.clientService.findClients().subscribe({
       next: (clients) => {
@@ -142,7 +142,7 @@ export class ClientReadComponent implements OnInit, OnDestroy {
 
     modal.result
       .then((result) => {
-        if (result === 'confirm') {
+        if (result.comment === 'confirm') {
           this.sharedDataService.setSelectedClient(client);
           this.sharedMessagesService.setMessage("Mise à jour d'un Client");
           this.router.navigate(['clients/edit']);

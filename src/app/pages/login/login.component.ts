@@ -15,6 +15,11 @@ import { AuthResponse } from '../../models/AuthResponse';
 import { AuthResquest } from '../../models/AuthRequest';
 import { customEmailValidator } from '../../shared/utils/numeric-fr.validator';
 import { AlertService } from '../../services/alert/alertService';
+import { I18nService } from '../../shared/translate/i18nService';
+import User from '../../models/User';
+import { CompanyService } from '../../services/companies/company-service';
+import Company from '../../models/Company';
+import { SharedDataService } from '../../services/shared/shared-data-service';
 
 
 @Component({
@@ -26,13 +31,19 @@ import { AlertService } from '../../services/alert/alertService';
 export class LoginComponent implements OnInit, OnDestroy {
   formLogin!: FormGroup;
   isSubmit: boolean = false;
+  currentLang = 'fr';
+  companies: Company[] = [];
 
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly fb: FormBuilder,
     private readonly alertService: AlertService,
-    private readonly isAuthService: IsAuthService
+    private readonly isAuthService: IsAuthService,
+    private readonly i18nService: I18nService,
+    private readonly companyService: CompanyService,
+    private readonly sharedDataService: SharedDataService
+
   ) { }
 
   ngOnInit(): void {
@@ -54,7 +65,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     authRequest.password = password;
     authRequest.rememberMe = rememberMe;
 
-
     this.authService.login(authRequest).subscribe({
       next: (response) => {
         this.onResponseSuccess(response);
@@ -64,9 +74,12 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   private onResponseSuccess(authResponse: AuthResponse) {
+    this.updateCurrentLang(authResponse.user);
     this.isAuthService.setIsAuth(true);
+    this.authService.setUserLang(authResponse.user.language);
     this.authService.setUser(authResponse);
     this.alertService.show('AUTHENT', '', 'success');
+    this.loadCompanies();
     this.router.navigate(['dashboard']);
   }
 
@@ -82,6 +95,31 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private showMessage(error: any) {
     this.alertService.showFunctionlError(error);
+  }
+
+  updateCurrentLang(user: User): void {
+    this.currentLang = user.language;
+    this.i18nService.switchLang(this.currentLang);
+  }
+
+
+  loadCompanies() {
+    this.companyService.findCompanies().subscribe({
+      next: (companies) => {
+        this.companies = companies;
+
+        // Réorganiser : les éléments "checked" d'abord
+        this.companies.sort((a, b) => {
+          if (a.checked === b.checked) return 0;
+          return a.checked ? -1 : 1;
+        });
+
+        this.sharedDataService.setCompanies(this.companies);
+      },
+      error: (err) => {
+        this.onResponseError(err);
+      }
+    });
   }
 
   ngOnDestroy(): void {

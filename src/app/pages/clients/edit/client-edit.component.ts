@@ -17,11 +17,14 @@ import { Subscription } from 'rxjs';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { customEmailValidator } from '../../../shared/utils/numeric-fr.validator';
 import { AlertService } from '../../../services/alert/alertService';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { I18nService } from '../../../shared/translate/i18nService';
+import { AuthService } from '../../../services/auth/auth-service';
 
 @Component({
   selector: 'bill-client-edit',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, TranslateModule],
   templateUrl: './client-edit.component.html',
   styleUrl: './client-edit.component.css',
 })
@@ -42,10 +45,19 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly router: Router,
     private readonly sharedDataService: SharedDataService,
-    private readonly sharedMessagesService: SharedMessagesService
+    private readonly sharedMessagesService: SharedMessagesService,
+    private readonly translateService: TranslateService,
+    private readonly i18nService: I18nService,
+    private readonly authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    const userLang = this.authService.getUserLang();
+
+    if (userLang) {
+      this.i18nService.switchLang(userLang);
+    }
+
     this.formClient = this.fb.group({
       socialReason: ['', Validators.required],
       email: ['', [Validators.required, customEmailValidator]],

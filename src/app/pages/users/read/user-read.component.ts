@@ -126,7 +126,7 @@ export class UserReadComponent implements OnInit, OnDestroy {
 
     modal.result
       .then((result) => {
-        if (result === 'confirm') {
+        if (result.comment === 'confirm') {
           this.sharedDataService.setSelectedUser(user);
           this.router.navigate(['users/edit']);
         }

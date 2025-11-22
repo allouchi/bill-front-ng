@@ -10,4 +10,5 @@ export default interface User {
   siret: string;
   roles: Role[];
   activated: boolean;
+  language: string;
 }

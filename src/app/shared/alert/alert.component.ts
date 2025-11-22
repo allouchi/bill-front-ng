@@ -56,13 +56,6 @@ export class AlertComponent implements OnInit, OnDestroy {
     }, 300);
   }
 
-  getAlert(): number {
-    if (this.toasts) {
-      return this.toasts.length;
-    }
-    return 0;
-  }
-
   // si l'utilisateur clique sur la croix
   closeClicked(id: number) {
     this.hideToast(id);

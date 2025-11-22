@@ -60,9 +60,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly modalService: NgbModal,
     private readonly authService: AuthService,
     private readonly tvaService: TvaService,
-    private readonly sharedMessagesService: SharedMessagesService,
-
-  ) { }
+    private readonly sharedMessagesService: SharedMessagesService
+  ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -217,7 +216,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     facture.dateEncaissement = '';
     modal.result
       .then((result) => {
-        if (result === 'confirm') {
+        if (result.comment === 'confirm') {
           this.sharedDataService.setSelectedFacture(facture);
           this.sharedMessagesService.setMessage('Mise à jour de Facture');
           this.factureService.updateFacture(facture).subscribe({
@@ -254,7 +253,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
     modal.result
       .then((result) => {
-        if (result === 'confirm') {
+        if (result.comment === 'confirm') {
           this.alertService.show('UPDATE', 'FACTURE', 'success');
           this.sharedDataService.setSelectedFacture(facture);
           this.sharedMessagesService.setMessage('Mise à jour de Facture');
@@ -276,11 +275,12 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: 'application/pdf' });
         const url = window.URL.createObjectURL(blob);
-
         const a = document.createElement('a');
         a.href = url;
         a.download = dataPDF.fileName;
+        document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
       },
       error: (err) => {

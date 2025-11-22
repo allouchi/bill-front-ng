@@ -176,6 +176,7 @@ export class EditUserComponent {
         password: this.user!.password,
         roles: selectedRoles,
         activated: true,
+        language: 'fr'
       };
 
       this.userService.editUser(user).subscribe({

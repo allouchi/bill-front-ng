@@ -156,7 +156,7 @@ export class ConsultantReadComponent {
 
     modal.result
       .then((result) => {
-        if (result === 'confirm') {
+        if (result.comment === 'confirm') {
           this.sharedDataService.setSelectedConsultant(consultant);
           this.sharedMessagesService.setMessage("Mise à jour d'un Consultant");
           this.router.navigate(['consultants/edit']);

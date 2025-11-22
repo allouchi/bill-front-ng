@@ -132,6 +132,7 @@ export class AddUserComponent implements OnInit, OnDestroy {
         password: this.userForm.get('password')?.value,
         roles: selected,
         activated: true,
+        language: 'fr'
       };
 
       this.userService.createUser(user).subscribe({

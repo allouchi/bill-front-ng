@@ -21,7 +21,7 @@ export interface IFactureService {
     siret: string,
     moisFactureId: number,
     iTextGeneration: boolean
-  ): Observable<Prestation>;
+  ): Observable<Facture>;
 
   /**
    * Update facture for the current project or update it if already exists
@@ -37,7 +37,11 @@ export interface IFactureService {
    * @param company company name
    * @returns Observable<Facture[]>
    */
-  findFacturesBySiret(siret: string, page: number, size: number): Observable<Page<Facture>>;
+  findFacturesBySiret(
+    siret: string,
+    page: number,
+    size: number
+  ): Observable<Page<Facture>>;
 
   /**
    * Get all schemas if no project or all schemas for project name in otherwise
@@ -48,8 +52,11 @@ export interface IFactureService {
   findFacturesByExercice(
     siret: string,
     exercice: string,
-    page: number, size: number
+    page: number,
+    size: number
   ): Observable<Page<Facture>>;
+
+  findBySiretAndExercice(siret: string, exercice: string): Observable<Facture[]>;
 
   /**
    * Delete one facture by it's id

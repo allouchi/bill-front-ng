@@ -123,7 +123,7 @@ export class SharedDataService {
   }
 
   getCompanies() {
-    return this.companies;
+    return this.companies || [];
   }
 
   setExercices(exercices: Exercise[]) {
