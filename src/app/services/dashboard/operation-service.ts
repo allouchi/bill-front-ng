@@ -1,9 +1,10 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from '@angular/common/http';
 
-import { Observable } from "rxjs";
-import { env } from "../../../environments/env";
-import { Injectable } from "@angular/core";
-import Operation from "../../models/Operation";
+import { Observable } from 'rxjs';
+import { env } from '../../../environments/env';
+import { Injectable } from '@angular/core';
+import Operation from '../../models/Operation';
+import { Page } from '../../models/Page';
 
 /**
  *
@@ -27,8 +28,20 @@ export class OperationService {
     }
   }
 
-  getOperations(siret: string): Observable<Operation[]> {
-    return this.http.get<Operation[]>(`${this.OPERATION_PATH}/${siret}`);
+  getOperations(
+    siret: string,
+    exercice: string,
+    type: string,
+    page: number,
+    size: number
+  ): Observable<Page<Operation>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    return this.http.get<Page<Operation>>(
+      `${this.OPERATION_PATH}/${siret}/${exercice}/${type}`,
+      {
+        params,
+      }
+    );
   }
 
   deletedOperationById(id: number): Observable<string> {

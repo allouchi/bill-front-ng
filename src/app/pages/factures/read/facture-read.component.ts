@@ -38,8 +38,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   factures: Facture[] = [];
   exercises: Exercise[] = [];
   tvaInfos!: TvaInfos;
-  tvas: Tva[] = [];
-  filtredTvas: Tva[] = [];
   siret: string = '';
   isLoaded = false;
   isAdmin = false;
@@ -50,6 +48,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   size = 12;
   totalPages = 0;
   totalElements = 0;
+  totalTvaFacture!: number;
+  totalDebitTva!: number;
 
   private readonly router = inject(Router);
 
@@ -72,10 +72,23 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     this.loadTvaInfo(this.selectedExercice);
   }
 
+  calculateTotals() {
+    if (!this.factures) return;
+    this.totalTvaFacture = this.factures.reduce(
+      (sum, t) => sum + (t.montantTVA || 0),
+      0
+    );
+    this.totalDebitTva = this.factures.reduce(
+      (sum, t) => sum + (t.montantTvaPaye || 0),
+      0
+    );
+  }
+
   private loadTvaInfo(exercice: string) {
     this.tvaService.findTvaInfoByExercise(this.siret, exercice).subscribe({
       next: (tvaInfos) => {
         this.tvaInfos = tvaInfos;
+        this.calculateTotals();
       },
       error: (err) => {
         this.onError(err);

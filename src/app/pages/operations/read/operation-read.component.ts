@@ -42,9 +42,14 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   isAdmin = false;
   parent = 'read';
   siret: string = '';
-
   totalOperation: number = 0;
   typeOperations: string[] = ['Tous', 'DIV', 'NDF'];
+
+  page = 0;
+  size = 12;
+  totalPages = 0;
+  totalElements = 0;
+
   router = inject(Router);
   constructor(
     private readonly sharedDataService: SharedDataService,
@@ -55,33 +60,34 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly alertService: AlertService,
     private readonly operationService: OperationService
-
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
     this.loadExercicesRef();
     this.loadTvaInfo('Tous');
-    this.loadOperations();
+    this.loadOperations('Tous', 'Tous');
   }
 
-
-  loadOperations() {
-    this.operationSerice.getOperations(this.siret).subscribe({
-      next: (operations) => {
-        this.operations = operations;
-        this.operationsFiltred = operations;
-        this.selectedType = 'Tous';
-        this.selectedExercice = 'Tous';
-        this.isLoaded = true;
-        this.calculTotal(operations);
-      },
-      error: (err) => {
-        this.onError(err);
-        this.isLoaded = true;
-      },
-    });
+  loadOperations(selectedExercice: string, type: string) {
+    this.operationSerice
+      .getOperations(this.siret, selectedExercice, type, this.page, this.size)
+      .subscribe({
+        next: (data) => {
+          this.operations = data.content;
+          this.operationsFiltred = data.content;
+          this.totalPages = data.totalPages;
+          this.totalElements = data.totalElements;
+          this.selectedType = 'Tous';
+          this.isLoaded = true;
+          this.calculTotal(data.content);
+        },
+        error: (err) => {
+          this.onError(err);
+          this.isLoaded = true;
+        },
+      });
   }
 
   loadTvaInfo(exercice: string) {
@@ -135,6 +141,20 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     this.loadTvaInfo(selectedExeciceValue);
   }
 
+  nextPage(): void {
+    if (this.page < this.totalPages - 1) {
+      this.page++;
+      this.loadOperations(this.selectedExercice, this.selectedType);
+    }
+  }
+
+  previousPage(): void {
+    if (this.page > 0) {
+      this.page--;
+      this.loadOperations(this.selectedExercice, this.selectedType);
+    }
+  }
+
   filterByType(selectedTypeValue: string) {
     if (this.operations) {
       if (selectedTypeValue == 'Tous') {
@@ -175,7 +195,8 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     this.totalOperation = 0;
     const selectedValue = (event.target as HTMLSelectElement).value;
     this.selectedExercice = selectedValue;
-    this.filterByExercice(selectedValue);
+    //this.filterByExercice(selectedValue);
+    this.loadOperations(selectedValue, this.selectedType);
   }
 
   private loadExercicesRef() {
@@ -205,7 +226,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   deleteOperationService(id: number) {
     this.operationService.deletedOperationById(id).subscribe({
       next: () => {
-        this.alertService.show('DELETE', 'OPERATION', 'success')
+        this.alertService.show('DELETE', 'OPERATION', 'success');
         this.operationsFiltred = this.operations.filter(
           (oper) => oper.id !== id
         );
@@ -217,7 +238,6 @@ export class OperationReadComponent implements OnInit, OnDestroy {
       },
     });
   }
-
 
   deleteOperation(event: Event, operation: Operation) {
     event.preventDefault();
@@ -232,7 +252,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
       .then((result) => {
         if (result === 'confirm') {
           if (operation.id) {
-            this.deleteOperationService(operation.id)
+            this.deleteOperationService(operation.id);
           }
         }
       })

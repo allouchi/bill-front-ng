@@ -40,7 +40,7 @@
               {{ tvaInfosFilterd.totalCAHorsTaxe | customDecimalPipe }}
             </td>
             <td class="text-center">
-              {{ tvaInfosFilterd.totalTva | customDecimalPipe }}
+              {{ tvaInfosFilterd.montantTvaFacture | customDecimalPipe }}
             </td>
             <!--
             <td class="text-center">
@@ -122,16 +122,29 @@
               <i class="bi bi-trash"></i>
             </button>
           </td>
-        </tr>
+        </tr>       
         }
+           
         } @else {
         <tr>
-          <td colspan="6" class="text-center text-muted py-3">
+          <td colspan="8" class="text-center text-muted py-3">
             Aucune TVA payée
           </td>
         </tr>
-        }
-      </tbody>
+        }        
+      </tbody>    
+         <!-- LIGNE TOTAUX -->
+      <tfoot class="fw-bold table-dark">
+        <tr>
+          <td>Total</td>
+          <td></td>
+          <td></td>
+
+          <td class="text-center">{{ totalTvaFacture | customDecimalPipe }}</td>
+          <td class="text-center">{{ totalDebitTva | customDecimalPipe }}</td>
+          <td colspan="3"></td>
+        </tr>
+      </tfoot>   
     </table>
   </div>
 </div>

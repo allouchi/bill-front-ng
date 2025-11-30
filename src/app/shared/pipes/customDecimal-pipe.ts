@@ -8,7 +8,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class CustomDecimalPipe implements PipeTransform {
   transform(value: number): string {
     if (value == null) {
-      return '';
+      return '0';
     }
     const withPoint = value.toFixed(2).toString().replace('.', ',');
     return withPoint.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');

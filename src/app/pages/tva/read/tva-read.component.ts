@@ -47,6 +47,8 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   observableEvent$ = new Subscription();
   router = inject(Router);
   isAdmin = false;
+  totalTvaFacture!: number;
+  totalDebitTva!: number;
   parent = 'read';
 
   constructor(
@@ -57,7 +59,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly modalService: NgbModal,
     private readonly authService: AuthService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.siret = this.sharedDataService.getSiret();
@@ -85,6 +87,19 @@ export class TvaReadComponent implements OnInit, OnDestroy {
         this.onError(err);
       },
     });
+  }
+
+  calculateTotals() {
+    if (!this.tvaInfosFilterd) return;
+    console.log(this.tvaInfosFilterd);
+    this.totalTvaFacture = this.filtredTvas.reduce(
+      (sum, t) => sum + (t.montantTvaFacture || 0),
+      0
+    );
+    this.totalDebitTva = this.filtredTvas.reduce(
+      (sum, t) => sum + (t.montantPayment || 0),
+      0
+    );
   }
 
   loadTvaInfo(exercice: string) {
@@ -140,6 +155,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
         this.filtredTvas = tvas;
         this.isLoaded = true;
         this.addLabelMonthTva();
+        this.calculateTotals();
       },
       error: (err) => {
         this.onError(err);

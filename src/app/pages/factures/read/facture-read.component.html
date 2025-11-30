@@ -5,7 +5,12 @@
     <!-- Colonne de gauche : Exercice -->
     <div style="width: 200px">
       <label for="yearSelect" class="form-label fw-bold">Exercice</label>
-      <select (change)="setYearValue($event)" class="form-select" id="yearSelect" [(ngModel)]="selectedExercice">
+      <select
+        (change)="setYearValue($event)"
+        class="form-select"
+        id="yearSelect"
+        [(ngModel)]="selectedExercice"
+      >
         @for (year of exercises; track year.id) {
         <option [value]="year.exercise">{{ year.exercise }}</option>
         }
@@ -23,11 +28,11 @@
             <th scope="col">TOTAL REGLE</th>
             @if(tvaInfos && tvaInfos.totalTvaRestant>0 ){
             <th scope="col">RESTE A PAYER</th>
-            }@else if(tvaInfos && tvaInfos.totalTvaRestant<0){ <th scope="col">TROP-PERÇU</th>
-              }
-              @else{
-              <th scope="col">Match (0:0)</th>
-              }
+            }@else if(tvaInfos && tvaInfos.totalTvaRestant<0){
+            <th scope="col">TROP-PERÇU</th>
+            } @else{
+            <th scope="col">Match (0:0)</th>
+            }
           </tr>
         </thead>
         <tbody>
@@ -40,7 +45,7 @@
               {{ tvaInfos.totalCAHorsTaxe | customDecimalPipe }}
             </td>
             <td class="text-center">
-              {{ tvaInfos.totalTva | customDecimalPipe }}
+              {{ tvaInfos.montantTvaFacture | customDecimalPipe }}
             </td>
             <!--
             <td class="text-center">
@@ -58,8 +63,7 @@
             <td class="text-center">
               {{ -tvaInfos.totalTvaRestant | customDecimalPipe }}
             </td>
-            }
-            }
+            } }
           </tr>
         </tbody>
       </table>
@@ -75,66 +79,121 @@
           <th scope="col">Tarif HT</th>
           <th scope="col">Quantité</th>
           <th scope="col">Prix Total TTC</th>
-          <th scope="col">Prix Total HT</th>  
-           <th scope="col">Date Encaissement</th>        
+          <th scope="col">Prix Total HT</th>
+          <th scope="col">Date Encaissement</th>
           <th scope="col">Total TVA</th>
-          <th scope="col">Débit TVA</th>         
+          <th scope="col">Débit TVA</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
       <tbody>
         @for (facture of factures; track facture.id) {
-        <tr [ngClass]="{
+        <tr
+          [ngClass]="{
             'table-success': facture.factureStatus == 'OK',
             'table-danger': facture.factureStatus == 'KO'
-          }">
+          }"
+        >
           <td style="text-align: center">{{ facture.numeroFacture }}</td>
           <td>{{ facture.moisFacture }}</td>
           <td>{{ facture.tarifHT }}</td>
           <td>{{ facture.quantite | customDecimalPipe }}</td>
           <td>{{ facture.prixTotalTTC | customDecimalPipe }}</td>
           <td>{{ facture.prixTotalHT | customDecimalPipe }}</td>
-          <td>{{ facture.dateEncaissement }}</td>          
+          <td>{{ facture.dateEncaissement }}</td>
           <td>{{ facture.montantTVA | customDecimalPipe }}</td>
-          <td>{{ facture.montantTvaPaye | customDecimalPipe }}</td>          
+          <td>{{ facture.montantTvaPaye | customDecimalPipe }}</td>
           <td>
-            <button class="btn btn-outline-primary btn-sm me-2" (click)="updateFacture($event, facture)"
-              title="Modifier Facture" [disabled]="!isAdmin">
+            <button
+              class="btn btn-outline-primary btn-sm me-2"
+              (click)="updateFacture($event, facture)"
+              title="Modifier Facture"
+              [disabled]="!isAdmin"
+            >
               <i class="bi bi-pencil"></i>
             </button>
 
-            <button class="btn btn-outline-primary btn-sm me-2" (click)="cancelModif($event, facture)"
-              title="Annuler statut" [disabled]="!isAdmin || facture.factureStatus == 'KO'">
+            <button
+              class="btn btn-outline-primary btn-sm me-2"
+              (click)="cancelModif($event, facture)"
+              title="Annuler statut"
+              [disabled]="!isAdmin || facture.factureStatus == 'KO'"
+            >
               <i class="bi bi-x-circle"></i>
             </button>
 
-            <button class="btn btn-outline-primary btn-sm me-2" (click)="detailFacture($event, facture)"
-              title="Statut Facture" [disabled]="!isAdmin">
+            <button
+              class="btn btn-outline-primary btn-sm me-2"
+              (click)="detailFacture($event, facture)"
+              title="Statut Facture"
+              [disabled]="!isAdmin"
+            >
               <i class="bi bi-info-circle"></i>
             </button>
-            <button class="btn btn-outline-danger btn-sm me-2" (click)="deleteFacture($event, facture)"
-              title="Supprimer Facture" [disabled]="!isAdmin">
+            <button
+              class="btn btn-outline-danger btn-sm me-2"
+              (click)="deleteFacture($event, facture)"
+              title="Supprimer Facture"
+              [disabled]="!isAdmin"
+            >
               <i class="bi bi-trash"></i>
             </button>
 
-            <button class="btn btn-primary btn-sm me-2" (click)="downloadFacture(facture)" title="Télécharger Facture"
-              [disabled]="!isAdmin">
+            <button
+              class="btn btn-primary btn-sm me-2"
+              (click)="downloadFacture(facture)"
+              title="Télécharger Facture"
+              [disabled]="!isAdmin"
+            >
               <i class="bi bi-download"></i>
             </button>
           </td>
         </tr>
         } @empty {
-        <p>Aucun Facture</p>
+        <tr>
+          <td colspan="10" class="text-center text-muted py-3">
+            Aucune Facture
+          </td>
+        </tr>
         }
       </tbody>
+
+      <!-- LIGNE TOTAUX -->
+      <tfoot class="fw-bold table-dark">
+        <tr>
+          <td>Total</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td class="text-center">{{ totalTvaFacture | customDecimalPipe }}</td>
+          <td class="text-center">{{ totalDebitTva | customDecimalPipe }}</td>
+          <td colspan="6"></td>
+        </tr>
+      </tfoot>
     </table>
     @if(totalPages > 1){
     <!-- ✅ Pagination bien placée et centrée -->
-    <div class="pagination d-flex justify-content-center align-items-center gap-3 mt-3">
-      <button class="btn btn-outline-primary" (click)="previousPage()" [disabled]="page === 0">← Précédent</button>
+    <div
+      class="pagination d-flex justify-content-center align-items-center gap-3 mt-3"
+    >
+      <button
+        class="btn btn-outline-primary"
+        (click)="previousPage()"
+        [disabled]="page === 0"
+      >
+        ← Précédent
+      </button>
       <span>Page {{ page + 1 }} / {{ totalPages }}</span>
-      <button class="btn btn-outline-primary" (click)="nextPage()" [disabled]="page >= totalPages - 1">Suivant
-        →</button>
+      <button
+        class="btn btn-outline-primary"
+        (click)="nextPage()"
+        [disabled]="page >= totalPages - 1"
+      >
+        Suivant →
+      </button>
     </div>
     }
   </div>
