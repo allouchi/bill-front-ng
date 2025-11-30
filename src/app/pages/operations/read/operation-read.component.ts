@@ -68,6 +68,8 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     this.loadExercicesRef();
     this.loadTvaInfo('Tous');
     this.loadOperations('Tous', 'Tous');
+    this.selectedType = 'Tous';
+    this.selectedExercice = 'Tous';
   }
 
   loadOperations(selectedExercice: string, type: string) {
@@ -79,7 +81,6 @@ export class OperationReadComponent implements OnInit, OnDestroy {
           this.operationsFiltred = data.content;
           this.totalPages = data.totalPages;
           this.totalElements = data.totalElements;
-          this.selectedType = 'Tous';
           this.isLoaded = true;
           this.calculTotal(data.content);
         },
@@ -88,6 +89,21 @@ export class OperationReadComponent implements OnInit, OnDestroy {
           this.isLoaded = true;
         },
       });
+  }
+
+  nextPage(): void {
+    if (this.page < this.totalPages - 1) {
+      this.page++;
+      console.log('selected', this.selectedExercice, this.selectedType);
+      this.loadOperations(this.selectedExercice, this.selectedType);
+    }
+  }
+
+  previousPage(): void {
+    if (this.page > 0) {
+      this.page--;
+      this.loadOperations(this.selectedExercice, this.selectedType);
+    }
   }
 
   loadTvaInfo(exercice: string) {
@@ -141,20 +157,6 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     this.loadTvaInfo(selectedExeciceValue);
   }
 
-  nextPage(): void {
-    if (this.page < this.totalPages - 1) {
-      this.page++;
-      this.loadOperations(this.selectedExercice, this.selectedType);
-    }
-  }
-
-  previousPage(): void {
-    if (this.page > 0) {
-      this.page--;
-      this.loadOperations(this.selectedExercice, this.selectedType);
-    }
-  }
-
   filterByType(selectedTypeValue: string) {
     if (this.operations) {
       if (selectedTypeValue == 'Tous') {
@@ -188,7 +190,8 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     this.totalOperation = 0;
     const selectedValue = (event.target as HTMLSelectElement).value;
     this.selectedType = selectedValue;
-    this.filterByType(selectedValue);
+    //this.filterByType(selectedValue);
+    this.loadOperations(this.selectedExercice, this.selectedType);
   }
 
   setExerciceValue(event: Event) {
@@ -196,7 +199,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     const selectedValue = (event.target as HTMLSelectElement).value;
     this.selectedExercice = selectedValue;
     //this.filterByExercice(selectedValue);
-    this.loadOperations(selectedValue, this.selectedType);
+    this.loadOperations(this.selectedExercice, this.selectedType);
   }
 
   private loadExercicesRef() {
