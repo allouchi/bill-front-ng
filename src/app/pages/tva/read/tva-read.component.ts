@@ -34,7 +34,6 @@ import Facture from '../../../models/Facture';
 export class TvaReadComponent implements OnInit, OnDestroy {
   isLoaded = false;
   tvas: Tva[] = [];
-  filtredTvas: Tva[] = [];
   factures: Facture[] = [];
   companies: Company[] = [];
   exercises: Exercise[] = [];
@@ -49,6 +48,10 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   isAdmin = false;
   totalTvaFacture!: number;
   totalDebitTva!: number;
+  page = 0;
+  size = 12;
+  totalPages = 0;
+  totalElements = 0;
   parent = 'read';
 
   constructor(
@@ -91,12 +94,12 @@ export class TvaReadComponent implements OnInit, OnDestroy {
 
   calculateTotals() {
     if (!this.tvaInfosFilterd) return;
-    console.log(this.tvaInfosFilterd);
-    this.totalTvaFacture = this.filtredTvas.reduce(
+
+    this.totalTvaFacture = this.tvas.reduce(
       (sum, t) => sum + (t.montantTvaFacture || 0),
       0
     );
-    this.totalDebitTva = this.filtredTvas.reduce(
+    this.totalDebitTva = this.tvas.reduce(
       (sum, t) => sum + (t.montantPayment || 0),
       0
     );
@@ -149,18 +152,35 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   }
 
   private loadTva(exercice: string) {
-    this.tvaService.findTvaByExercise(this.siret, exercice).subscribe({
-      next: (tvas) => {
-        this.tvas = tvas;
-        this.filtredTvas = tvas;
-        this.isLoaded = true;
-        this.addLabelMonthTva();
-        this.calculateTotals();
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
+    this.tvaService
+      .findTvaByExercise(this.siret, exercice, this.page, this.size)
+      .subscribe({
+        next: (data) => {
+          this.tvas = data.content;
+          this.totalPages = data.totalPages;
+          this.totalElements = data.totalElements;
+          this.isLoaded = true;
+          this.addLabelMonthTva();
+          this.calculateTotals();
+        },
+        error: (err) => {
+          this.onError(err);
+        },
+      });
+  }
+
+  nextPage(): void {
+    if (this.page < this.totalPages - 1) {
+      this.page++;
+      this.loadTva(this.selectedExercice);
+    }
+  }
+
+  previousPage(): void {
+    if (this.page > 0) {
+      this.page--;
+      this.loadTva(this.selectedExercice);
+    }
   }
 
   setYearValue(event: Event) {
@@ -211,8 +231,6 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       .then((result) => {
         if (result === 'confirm') {
           this.deleteTvaSerice(tva.id!);
-          this.filtredTvas = this.tvas.filter((t) => t.id !== tva.id);
-          this.tvas = this.filtredTvas;
           this.loadTvaInfo(this.selectedExercice);
         }
       })

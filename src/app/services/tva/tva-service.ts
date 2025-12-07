@@ -1,12 +1,12 @@
 import { Observable, of } from "rxjs";
 import Tva from "../../models/Tva";
 import { ITvaService } from "./tva.interface";
-import { HttpClient } from "@angular/common/http";
-import Exercise from "../../models/Exercise";
-import TvaInfos from "../../models/TvaInfos";
-import { env } from "../../../environments/env";
-import { Injectable } from "@angular/core";
-
+import { HttpClient, HttpParams } from '@angular/common/http';
+import Exercise from '../../models/Exercise';
+import TvaInfos from '../../models/TvaInfos';
+import { env } from '../../../environments/env';
+import { Injectable } from '@angular/core';
+import { Page } from '../../models/Page';
 
 /**
  * Adapter for ITvaService
@@ -26,7 +26,7 @@ export class TvaService implements ITvaService {
   constructor(private readonly http: HttpClient) {}
 
   createOrUpdateTva(tva: Tva): Observable<Tva> {
-    const isNew: boolean = !tva.id || tva.id === null;   
+    const isNew: boolean = !tva.id || tva.id === null;
 
     if (isNew) {
       return this.http.post<Tva>(this.TVA_PATH, tva);
@@ -35,8 +35,16 @@ export class TvaService implements ITvaService {
     }
   }
 
-  findTvaByExercise(siret: string, exercise: string): Observable<Tva[]> {
-    return this.http.get<Tva[]>(`${this.TVA_PATH}/${siret}/${exercise}`);
+  findTvaByExercise(
+    siret: string,
+    exercise: string,
+    page: number,
+    size: number
+  ): Observable<Page<Tva>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    return this.http.get<Page<Tva>>(`${this.TVA_PATH}/${siret}/${exercise}`, {
+      params,
+    });
   }
 
   findTvaInfoByExercise(siret: string, exercise: string): Observable<TvaInfos> {
@@ -50,6 +58,6 @@ export class TvaService implements ITvaService {
   }
 
   deleteTvaById(id: number): Observable<string> {
-    return this.http.delete<string>(`${this.TVA_PATH}/${id}`);   
+    return this.http.delete<string>(`${this.TVA_PATH}/${id}`);
   }
 }
