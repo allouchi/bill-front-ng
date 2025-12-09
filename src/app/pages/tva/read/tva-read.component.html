@@ -50,12 +50,14 @@
             <td style="text-align: center">
               {{ tvaInfosFilterd.totalTvaPaye | customDecimalPipe }}
             </td>
-            @if(tvaInfosFilterd.totalTvaRestant>0 ){
+            @if(tvaInfosFilterd.totalTvaRestant>=0 ){
             <td class="text-center">
+              <i class="bi bi-check-lg text-success me-1"></i>
               {{ tvaInfosFilterd.totalTvaRestant | customDecimalPipe }}
             </td>
             }@else {
             <td class="text-center">
+              <i class="bi bi-x-octagon text-danger me-1"></i>
               {{ -tvaInfosFilterd.totalTvaRestant | customDecimalPipe }}
             </td>
             } }
@@ -77,7 +79,7 @@
         <tr>
           <th scope="col">Numéro Facture</th>
           <th scope="col">Montant Facture</th>
-           <th scope="col">Date Encaissement</th>
+          <th scope="col">Date Encaissement</th>
           <th scope="col">TVA Facture</th>
           <th scope="col">Débit TVA</th>
           <th scope="col">Date de paiement TVA</th>
@@ -102,7 +104,7 @@
           <td style="text-align: center">
             {{ tva.dateEncaissement }}
           </td>
-           <td style="text-align: center">
+          <td style="text-align: center">
             {{ tva.montantTvaFacture | customDecimalPipe }}
           </td>
           <td style="text-align: center">
@@ -122,18 +124,18 @@
               <i class="bi bi-trash"></i>
             </button>
           </td>
-        </tr>       
+        </tr>
         }
-           
+
         } @else {
         <tr>
           <td colspan="8" class="text-center text-muted py-3">
             Aucune TVA payée
           </td>
         </tr>
-        }        
-      </tbody>    
-         <!-- LIGNE TOTAUX -->
+        }
+      </tbody>
+      <!-- LIGNE TOTAUX -->
       <tfoot class="fw-bold table-dark">
         <tr>
           <td>Total</td>
@@ -144,27 +146,17 @@
           <td class="text-center">{{ totalDebitTva | customDecimalPipe }}</td>
           <td colspan="3"></td>
         </tr>
-      </tfoot>   
+      </tfoot>
     </table>
 
-     @if(totalPages > 1){
+    @if(totalPages > 1){
     <!-- ✅ Pagination bien placée et centrée -->
-    <div
-      class="pagination d-flex justify-content-center align-items-center gap-3 mt-3"
-    >
-      <button
-        class="btn btn-outline-primary"
-        (click)="previousPage()"
-        [disabled]="page === 0"
-      >
+    <div class="pagination d-flex justify-content-center align-items-center gap-3 mt-3">
+      <button class="btn btn-outline-primary" (click)="previousPage()" [disabled]="page === 0">
         ← Précédent
       </button>
       <span>Page {{ page + 1 }} / {{ totalPages }}</span>
-      <button
-        class="btn btn-outline-primary"
-        (click)="nextPage()"
-        [disabled]="page >= totalPages - 1"
-      >
+      <button class="btn btn-outline-primary" (click)="nextPage()" [disabled]="page >= totalPages - 1">
         Suivant →
       </button>
     </div>

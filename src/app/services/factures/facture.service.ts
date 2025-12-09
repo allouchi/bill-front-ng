@@ -22,7 +22,7 @@ export class FactureService implements IFactureService {
   private readonly EXERCISE_PATH: string =
     `${this.apiURL}` + '/tvas/exerciceRef';
   private readonly EDITION_PATH: string = `${this.apiURL}` + '/editions';
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   updateFacture(facture: Facture): Observable<Facture> {
     return this.http.put<Facture>(this.FACTURES_PATH, facture);

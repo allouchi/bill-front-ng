@@ -49,7 +49,7 @@ export class TvaEditComponent implements OnInit, OnDestroy {
     private readonly fb: FormBuilder,
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly factureService: FactureService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.formTva = this.fb.group({

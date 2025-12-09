@@ -53,7 +53,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private readonly userService: UserService,
     private readonly companyService: CompanyService,
     private readonly sharedDataService: SharedDataService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.authenticated$ = this.isAuthService
@@ -99,8 +99,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.router.navigate(['/dashboard']);
-    });   
-   
+    });
+
   }
 
   userLogout(event: Event) {
@@ -128,7 +128,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   updateUserService(user: User) {
     this.userService.editUser(user).subscribe({
       next: () => {
-        this.alertService.show('UPDATE', 'USER', 'success');
+        //this.alertService.show('UPDATE', 'USER', 'success');
       },
       error: (err) => this.onError(err),
     });
@@ -143,7 +143,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   updateCompanyService(company: Company) {
     this.companyService.createOrUpdateCompany(company).subscribe({
       next: () => {
-        this.alertService.show('UPDATE', 'COMPANY', 'success');
+        //this.alertService.show('UPDATE', 'COMPANY', 'success');
         this.reload();
       },
       error: (err) => this.onError(err),
@@ -188,7 +188,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
             this.updateUserService(this.user);
             //this.sharedDataService.setSelectedUser(this.user);
           }
-           this.logout();
+          this.logout();
         }
       })
       .catch(() => {
