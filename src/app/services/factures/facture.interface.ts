@@ -68,4 +68,8 @@ export interface IFactureService {
   findExercisesRef(): Observable<Exercise[]>;
 
   downloadPdfFacture(id: number): Observable<DataPDF>;
+
+  getClientMails(id: number): Observable<[]>;
+
+  envoyerFacture(id: number, mails: string[]): Observable<string>;
 }

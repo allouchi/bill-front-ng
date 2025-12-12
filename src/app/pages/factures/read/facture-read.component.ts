@@ -19,6 +19,8 @@ import { CommonModule } from '@angular/common';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import { AlertService } from '../../../services/alert/alertService';
+import { ClientService } from '../../../services/clients/client-service';
+import Client from '../../../models/Client';
 
 
 @Component({
@@ -50,6 +52,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   totalElements = 0;
   totalTvaFacture!: number;
   totalDebitTva!: number;
+  emailAdresses: string[] = [];
 
   private readonly router = inject(Router);
 
@@ -60,8 +63,9 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly modalService: NgbModal,
     private readonly authService: AuthService,
     private readonly tvaService: TvaService,
-    private readonly sharedMessagesService: SharedMessagesService
-  ) {}
+    private readonly sharedMessagesService: SharedMessagesService,
+    private readonly clientService: ClientService
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -233,7 +237,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
           this.sharedDataService.setSelectedFacture(facture);
           this.sharedMessagesService.setMessage('Mise à jour de Facture');
           this.factureService.updateFacture(facture).subscribe({
-            next: (factureModif) => {
+            next: () => {
               if (this.selectedExercice === 'Tous') {
                 this.loadFacturesBySiret();
               } else {
@@ -302,6 +306,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     });
   }
 
+
   detailFacture(event: Event, facture: Facture) {
     event.preventDefault();
     const modal = this.modalService.open(DetailFactureComponent, {
@@ -311,6 +316,50 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       centered: true,
     });
     modal.componentInstance.facture = facture;
+  }
+
+  envoyerFacture(id: number, mails: string[]) {
+    this.factureService.envoyerFacture(id, mails).subscribe({
+      next: () => {
+        this.alertService.show('SEND', 'MAIL', 'success');
+      },
+      error: (err) => {
+        this.onError(err);
+      }
+    })
+  }
+
+  choixDestinataires(event: Event, id: number, mailsAdresse: string[]) {
+
+    event.preventDefault();
+    const modal = this.modalService.open(ConfirmEditComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false,
+      centered: true,
+    });
+    modal.componentInstance.item = 'ChoiceDest';
+    modal.componentInstance.composant = mailsAdresse;
+
+    modal.result
+      .then((result) => {
+        if (result.comment === 'confirm') {
+          this.envoyerFacture(id, result.mails);
+        }
+      })
+      .catch(() => {
+        console.log('Annulé');
+      });
+  }
+
+  getClientMails(event: Event, facture: Facture) {
+    const id = facture.id;
+    this.factureService.getClientMails(id!).subscribe({
+      next: (mails) => {
+        this.emailAdresses = mails;
+        this.choixDestinataires(event, id!, mails);
+      }
+    })
   }
 
   private onError(error: any) {

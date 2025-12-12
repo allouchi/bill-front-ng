@@ -10,9 +10,9 @@
       <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirmation de l'édition
     </h4>
     }
-    @else{
-    <h4 class="modal-title text-danger fw-bold">
-      <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirmation de la mise à jour
+    @else if(item && item === 'ChoiceDest'){
+    <h4 class="modal-title text-info fw-bold">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i> Envoi de la facture
     </h4>
     }
 
@@ -53,6 +53,20 @@
         </div>
       </div>
     </div>
+
+    <div *ngIf="item && item === 'ChoiceDest'">
+      <div class="alert alert-warning d-flex justify-content-center gap-2" role="alert">
+        <div class="mb-3 me-2" style="width: 300px">
+          <label for="mailSelect" class="form-label fw-bold text-center">Destinataires :</label>
+          <select multiple (change)="setEmailValue($event)" class="form-select" id="mailSelect" style="height: 80px;">
+            @for (mail of emails; track mail) {
+            <option [value]="mail">{{ mail }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+
 
     <div *ngIf="item && item === 'Logout'">
       <div class="alert alert-warning d-flex justify-content-center gap-2" role="alert">

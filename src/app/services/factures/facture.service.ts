@@ -24,6 +24,7 @@ export class FactureService implements IFactureService {
   private readonly EDITION_PATH: string = `${this.apiURL}` + '/editions';
   constructor(private readonly http: HttpClient) { }
 
+
   updateFacture(facture: Facture): Observable<Facture> {
     return this.http.put<Facture>(this.FACTURES_PATH, facture);
   }
@@ -89,5 +90,13 @@ export class FactureService implements IFactureService {
 
   downloadPdfFacture(factureId: number): Observable<DataPDF> {
     return this.http.get<DataPDF>(`${this.EDITION_PATH}/${factureId}`);
+  }
+
+  getClientMails(factureId: number): Observable<[]> {
+    return this.http.get<[]>(`${this.EDITION_PATH}/mail/${factureId}`);
+  }
+
+  envoyerFacture(factureId: number, mailsTo: string[]): Observable<string> {
+    return this.http.post<string>(`${this.EDITION_PATH}/mail/${factureId}`, mailsTo);
   }
 }

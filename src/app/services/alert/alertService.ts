@@ -23,7 +23,8 @@ export class AlertService implements OnInit {
   loginMessage = 'Bienvenue, vous êtes connecté !';
   female: boolean = true;
   serverError = 'Le serveur est inaccessible !';
-  downloadFileError = "Le fichier inexistant ou endommagé"
+  downloadFileError = "Le fichier inexistant ou endommagé";
+  messageSendSuccess = "La facture a été envoyée avec succès";
   currentLang = 'fr';
 
   private readonly alertSubject = new Subject<ToastData>();
@@ -53,6 +54,11 @@ export class AlertService implements OnInit {
           this.female = false;
           break;
         }
+
+      case 'MAIL':
+        {
+          break;
+        }
       case 'CONSULTANT':
       case 'CLIENT': {
         composant = 'Le ' + composant;
@@ -76,6 +82,11 @@ export class AlertService implements OnInit {
     }
 
     switch (action) {
+      case 'SEND': {
+        message = this.messageSendSuccess;
+        break;
+      }
+
       case 'DELETE': {
         if (this.female) {
           message = composant + this.deleteMessageF;

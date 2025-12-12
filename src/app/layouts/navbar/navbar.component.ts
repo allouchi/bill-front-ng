@@ -176,8 +176,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
             this.translateService.switchLang(userLang);
           }
           if (result.company) {
-            //this.sharedDataService.setSelectCompany(result.company);
-            //this.sharedDataService.setSiret(result.company!.siret);
             this.updateCompanyService(result.company);
           }
 
@@ -186,7 +184,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
               this.user.language = userLang;
             }
             this.updateUserService(this.user);
-            //this.sharedDataService.setSelectedUser(this.user);
           }
           this.logout();
         }

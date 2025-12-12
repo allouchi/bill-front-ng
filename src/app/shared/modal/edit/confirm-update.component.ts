@@ -6,12 +6,14 @@ import { SharedDataService } from '../../../services/shared/shared-data-service'
 import User from '../../../models/User';
 import Company from '../../../models/Company';
 import { AuthService } from '../../../services/auth/auth-service';
+import { ConnectableObservable } from 'rxjs';
 
 interface Result {
   userLang: string;
   siret: string;
   company: Company | undefined | null;
   comment: string;
+  mails: string[];
 }
 
 @Component({
@@ -28,6 +30,8 @@ export class ConfirmEditComponent implements OnInit {
   selectedLanguage: string | null = 'fr';
   selectedSiret: string | undefined;
   companies: Company[] | null = [];
+  selectedEmails: string[] = [];
+  emails: string[] = [];
 
   languages = [
     { id: 'fr', descr: 'Français' },
@@ -38,6 +42,7 @@ export class ConfirmEditComponent implements OnInit {
     userLang: 'fr',
     siret: '',
     company: null,
+    mails: [],
     comment: 'confirm',
   };
 
@@ -45,7 +50,7 @@ export class ConfirmEditComponent implements OnInit {
     private readonly activeModal: NgbActiveModal,
     private readonly sharedDataService: SharedDataService,
     private readonly authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     if (this.authService.getUserLang() != null) {
@@ -56,6 +61,7 @@ export class ConfirmEditComponent implements OnInit {
     if (this.companies) {
       this.selectedSiret = this.companies.find((c) => c.checked == true)?.siret;
     }
+    this.emails = this.composant;
   }
 
   cancel(): void {
@@ -85,6 +91,15 @@ export class ConfirmEditComponent implements OnInit {
     }
 
     this.activeModal.close(this.result);
+  }
+
+  setEmailValue(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    const values = Array.from(select.selectedOptions).map(opt => opt.value);
+    this.result = {
+      ...this.result,
+      mails: values,
+    };
   }
 
   setLaguageValue(event: any) {

@@ -15,8 +15,8 @@
           <div class="col-md-6">
             <div class="mb-3">
               <label class="form-label fw-bold" for="socialReason">
-  {{ 'client.raisonSocial' | translate }} *
-</label>
+                {{ 'client.raisonSocial' | translate }} *
+              </label>
               <input type="text" id="socialReason" class="form-control" formControlName="socialReason"
                 [class.is-invalid]="formClient.get('socialReason')?.invalid && formClient.get('socialReason')?.touched" />
               <div *ngIf="formClient.get('socialReason')?.invalid && formClient.get('socialReason')?.touched"
@@ -28,7 +28,7 @@
 
           <div class="col-md-6">
             <div class="mb-3">
-              <label class="form-label fw-bold" htmlFor="email" >{{ 'client.email' | translate }} *</label>
+              <label class="form-label fw-bold" htmlFor="email">{{ 'client.email' | translate }} *</label>
               <input type="text" id="email" class="form-control" formControlName="email"
                 [class.is-invalid]="formClient.get('email')?.invalid && formClient.get('email')?.touched" />
               <div *ngIf="formClient.get('email')?.invalid && formClient.get('email')?.touched" class="text-danger">
@@ -71,7 +71,7 @@
           <div class="col-md-6">
             <div class="mb-3">
               <label class="form-label fw-bold" htmlFor="codePostal">{{ 'client.adresse.codePostal' | translate }}
-                 *</label>
+                *</label>
               <input type="text" id="codePostal" class="form-control" formControlName="codePostal"
                 (keypress)="allowOnlyNumbers($event)"
                 [class.is-invalid]="formClient.get('codePostal')?.invalid && formClient.get('codePostal')?.touched" />

@@ -121,6 +121,11 @@
               [disabled]="!isAdmin">
               <i class="bi bi-download"></i>
             </button>
+
+            <button class="btn btn-primary btn-sm me-2" (click)="getClientMails($event,facture)" title="Envoyer Facture"
+              [disabled]="!isAdmin">
+              <i class="bi bi-send"></i>
+            </button>
           </td>
         </tr>
         } @empty {
