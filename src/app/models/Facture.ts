@@ -24,4 +24,5 @@ export default interface Facture {
   siret: string;
   exercice: string;
   montantTvaPaye: number;
+  sended?: boolean
 }

@@ -8,6 +8,7 @@ import Exercise from '../../models/Exercise';
 import Prestation from "../../models/Prestation";
 import DataPDF from '../../models/DataPDF';
 import { Page } from "../../models/Page";
+import EmailClient from "../../models/EmailClient";
 
 /**
  * Adapter for IFactureService
@@ -96,7 +97,7 @@ export class FactureService implements IFactureService {
     return this.http.get<[]>(`${this.EDITION_PATH}/mail/${factureId}`);
   }
 
-  envoyerFacture(factureId: number, mailsTo: string[]): Observable<string> {
+  envoyerFacture(factureId: number, mailsTo: EmailClient[]): Observable<string> {
     return this.http.post<string>(`${this.EDITION_PATH}/mail/${factureId}`, mailsTo);
   }
 }

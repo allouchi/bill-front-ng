@@ -4,6 +4,7 @@ import Exercise from '../../models/Exercise';
 import Prestation from "../../models/Prestation";
 import DataPDF from '../../models/DataPDF';
 import { Page } from "../../models/Page";
+import EmailClient from "../../models/EmailClient";
 
 /**
  * Facture fetcher port
@@ -71,5 +72,5 @@ export interface IFactureService {
 
   getClientMails(id: number): Observable<[]>;
 
-  envoyerFacture(id: number, mails: string[]): Observable<string>;
+  envoyerFacture(id: number, mails: EmailClient[]): Observable<string>;
 }

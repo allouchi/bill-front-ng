@@ -1,54 +1,102 @@
 <div class="container mt-5">
   <div class="card">
     <div class="card-header bg-primary text-white">
-      @if(isEdit){
+      @if (isEdit) {
       <h4>Mise à jour d'un client</h4>
-      }@else{
-      <h4>Ajout d'une client</h4>
+      } @else {
+      <h4>Ajout d'un client</h4>
       }
     </div>
-    <div class="card-body">
-      <form [formGroup]="formClient" #form="ngForm" (ngSubmit)="addClient()" class="p-4 border rounded">
 
-        <!-- Première ligne : Raison Sociale / Email -->
+    <div class="card-body">
+      <form [formGroup]="formClient" (ngSubmit)="addClient()" class="p-4 border rounded">
+
+        <!-- ===================== -->
+        <!-- RAISON SOCIALE + EMAILS -->
+        <!-- ===================== -->
         <div class="row">
+
+          <!-- RAISON SOCIALE -->
           <div class="col-md-6">
             <div class="mb-3">
               <label class="form-label fw-bold" for="socialReason">
                 {{ 'client.raisonSocial' | translate }} *
               </label>
+
               <input type="text" id="socialReason" class="form-control" formControlName="socialReason"
-                [class.is-invalid]="formClient.get('socialReason')?.invalid && formClient.get('socialReason')?.touched" />
-              <div *ngIf="formClient.get('socialReason')?.invalid && formClient.get('socialReason')?.touched"
-                class="text-danger">
+                [class.is-invalid]="
+                  formClient.get('socialReason')?.invalid &&
+                  formClient.get('socialReason')?.touched
+                " />
+
+              <div *ngIf="
+                  formClient.get('socialReason')?.invalid &&
+                  formClient.get('socialReason')?.touched
+                " class="text-danger">
                 Ce champ est requis.
               </div>
             </div>
           </div>
 
+          <!-- EMAILS -->
           <div class="col-md-6">
-            <div class="mb-3">
-              <label class="form-label fw-bold" htmlFor="email">{{ 'client.email' | translate }} *</label>
-              <input type="text" id="email" class="form-control" formControlName="email"
-                [class.is-invalid]="formClient.get('email')?.invalid && formClient.get('email')?.touched" />
-              <div *ngIf="formClient.get('email')?.invalid && formClient.get('email')?.touched" class="text-danger">
-                Ce champ est requis.
+            <div class="mb-3" formArrayName="emails">
+              <label class="form-label fw-bold">
+                {{ 'client.email' | translate }} *
+              </label>
+
+              <!-- 🔽 CHAQUE EMAIL EST UN FORM GROUP -->
+              <div *ngFor="let emailGroup of emailsFormArray.controls; let i = index" [formGroupName]="i"
+                class="d-flex align-items-center mb-2">
+                <input type="email" class="form-control me-2" formControlName="email" placeholder="email@exemple.com"
+                  [class.is-invalid]="
+                    emailGroup.get('email')?.invalid &&
+                    emailGroup.get('email')?.touched
+                  " />
+
+                <button type="button" class="btn btn-outline-danger" (click)="removeEmail(i)"
+                  *ngIf="emailsFormArray.length > 1">
+                  ✕
+                </button>
+              </div>
+
+              <button type="button" class="btn btn-outline-primary btn-sm mt-2" (click)="addEmail()">
+                + Ajouter un email
+              </button>
+
+              <div *ngIf="
+                  emailsFormArray.invalid &&
+                  emailsFormArray.touched
+                " class="text-danger mt-1">
+                Au moins un email valide est requis.
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Section Adresse -->
-        <div class="mb-3 fw-bold">{{ 'client.adresse.libelle' | translate }} :</div>
+        <!-- ===================== -->
+        <!-- ADRESSE -->
+        <!-- ===================== -->
+        <div class="mb-3 fw-bold">
+          {{ 'client.adresse.libelle' | translate }} :
+        </div>
 
-        <!-- Ligne : Numéro / Rue -->
+        <!-- NUMÉRO / RUE -->
         <div class="row">
           <div class="col-md-6">
             <div class="mb-3">
-              <label class="form-label fw-bold" htmlFor="numero">{{ 'client.adresse.numero' | translate }} *</label>
+              <label class="form-label fw-bold" for="numero">
+                {{ 'client.adresse.numero' | translate }} *
+              </label>
               <input type="text" id="numero" class="form-control" formControlName="numero"
-                [class.is-invalid]="formClient.get('numero')?.invalid && formClient.get('numero')?.touched" />
-              <div *ngIf="formClient.get('numero')?.invalid && formClient.get('numero')?.touched" class="text-danger">
+                (keypress)="allowOnlyNumbers($event)" [class.is-invalid]="
+                  formClient.get('numero')?.invalid &&
+                  formClient.get('numero')?.touched
+                " />
+              <div *ngIf="
+                  formClient.get('numero')?.invalid &&
+                  formClient.get('numero')?.touched
+                " class="text-danger">
                 Ce champ est requis.
               </div>
             </div>
@@ -56,27 +104,39 @@
 
           <div class="col-md-6">
             <div class="mb-3">
-              <label class="form-label fw-bold" htmlFor="rue">{{ 'client.adresse.rue' | translate }} *</label>
-              <input type="text" id="rue" class="form-control" formControlName="rue"
-                [class.is-invalid]="formClient.get('rue')?.invalid && formClient.get('rue')?.touched" />
-              <div *ngIf="formClient.get('rue')?.invalid && formClient.get('rue')?.touched" class="text-danger">
+              <label class="form-label fw-bold" for="rue">
+                {{ 'client.adresse.rue' | translate }} *
+              </label>
+              <input type="text" id="rue" class="form-control" formControlName="rue" [class.is-invalid]="
+                  formClient.get('rue')?.invalid &&
+                  formClient.get('rue')?.touched
+                " />
+              <div *ngIf="
+                  formClient.get('rue')?.invalid &&
+                  formClient.get('rue')?.touched
+                " class="text-danger">
                 Ce champ est requis.
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Ligne : Code postal / Commune -->
+        <!-- CODE POSTAL / LOCALITÉ -->
         <div class="row">
           <div class="col-md-6">
             <div class="mb-3">
-              <label class="form-label fw-bold" htmlFor="codePostal">{{ 'client.adresse.codePostal' | translate }}
-                *</label>
+              <label class="form-label fw-bold" for="codePostal">
+                {{ 'client.adresse.codePostal' | translate }} *
+              </label>
               <input type="text" id="codePostal" class="form-control" formControlName="codePostal"
-                (keypress)="allowOnlyNumbers($event)"
-                [class.is-invalid]="formClient.get('codePostal')?.invalid && formClient.get('codePostal')?.touched" />
-              <div *ngIf="formClient.get('codePostal')?.invalid && formClient.get('codePostal')?.touched"
-                class="text-danger">
+                (keypress)="allowOnlyNumbers($event)" [class.is-invalid]="
+                  formClient.get('codePostal')?.invalid &&
+                  formClient.get('codePostal')?.touched
+                " />
+              <div *ngIf="
+                  formClient.get('codePostal')?.invalid &&
+                  formClient.get('codePostal')?.touched
+                " class="text-danger">
                 Ce champ est requis.
               </div>
             </div>
@@ -84,36 +144,52 @@
 
           <div class="col-md-6">
             <div class="mb-3">
-              <label class="form-label fw-bold" htmlFor="localite">{{ 'client.adresse.commune' | translate }}
-                *</label>
-              <input type="text" id="localite" class="form-control" formControlName="localite"
-                [class.is-invalid]="formClient.get('localite')?.invalid && formClient.get('localite')?.touched" />
-              <div *ngIf="formClient.get('localite')?.invalid && formClient.get('localite')?.touched"
-                class="text-danger">
+              <label class="form-label fw-bold" for="localite">
+                {{ 'client.adresse.commune' | translate }} *
+              </label>
+              <input type="text" id="localite" class="form-control" formControlName="localite" [class.is-invalid]="
+                  formClient.get('localite')?.invalid &&
+                  formClient.get('localite')?.touched
+                " />
+              <div *ngIf="
+                  formClient.get('localite')?.invalid &&
+                  formClient.get('localite')?.touched
+                " class="text-danger">
                 Ce champ est requis.
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Ligne : Pays seul (centré si tu veux) -->
+        <!-- PAYS -->
         <div class="row">
           <div class="col-md-6">
             <div class="mb-3">
-              <label class="form-label fw-bold" htmlFor="pays">{{ 'client.adresse.pays' | translate }} *</label>
-              <input type="text" id="pays" class="form-control" formControlName="pays"
-                [class.is-invalid]="formClient.get('pays')?.invalid && formClient.get('pays')?.touched" />
-              <div *ngIf="formClient.get('pays')?.invalid && formClient.get('pays')?.touched" class="text-danger">
+              <label class="form-label fw-bold" for="pays">
+                {{ 'client.adresse.pays' | translate }} *
+              </label>
+              <input type="text" id="pays" class="form-control" formControlName="pays" [class.is-invalid]="
+                  formClient.get('pays')?.invalid &&
+                  formClient.get('pays')?.touched
+                " />
+              <div *ngIf="
+                  formClient.get('pays')?.invalid &&
+                  formClient.get('pays')?.touched
+                " class="text-danger">
                 Ce champ est requis.
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Boutons -->
+        <!-- ACTIONS -->
         <div class="d-flex justify-content-center gap-3">
-          <button class="btn btn-secondary me-2" (click)="cancel()">Annuler</button>
-          <button class="btn btn-primary" type="submit">Valider</button>
+          <button type="button" class="btn btn-secondary" (click)="cancel()">
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Valider
+          </button>
         </div>
 
       </form>

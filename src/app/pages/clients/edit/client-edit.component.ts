@@ -1,43 +1,47 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
+  AbstractControl,
+  FormArray,
   FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+
 import { ClientService } from '../../../services/clients/client-service';
+import { SharedDataService } from '../../../services/shared/shared-data-service';
+import { SharedMessagesService } from '../../../services/shared/messages.service';
+import { AlertService } from '../../../services/alert/alertService';
+import { I18nService } from '../../../shared/translate/i18nService';
+import { AuthService } from '../../../services/auth/auth-service';
 
 import Client from '../../../models/Client';
 import Adresse from '../../../models/Adresse';
-import { Router } from '@angular/router';
-import { SharedDataService } from '../../../services/shared/shared-data-service';
-import { Subscription } from 'rxjs';
-import { SharedMessagesService } from '../../../services/shared/messages.service';
-import { customEmailValidator } from '../../../shared/utils/numeric-fr.validator';
-import { AlertService } from '../../../services/alert/alertService';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { I18nService } from '../../../shared/translate/i18nService';
-import { AuthService } from '../../../services/auth/auth-service';
+import EmailClient from '../../../models/EmailClient';
 
 @Component({
   selector: 'bill-client-edit',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule, TranslateModule],
   templateUrl: './client-edit.component.html',
-  styleUrl: './client-edit.component.css',
+  styleUrls: ['./client-edit.component.css'],
 })
 export class ClientEditComponent implements OnInit, OnDestroy {
   formClient!: FormGroup;
   client: Client | null = null;
   clientId: number | null = null;
-  addresseId: number | null = null;
-  siret: string = '';
-  observableEvent$ = new Subscription();
-  currentUrl: string = '';
-  isEdit: boolean = false;
-  socialReason: string = '';
+  adresseId: number | null = null;
+  siret = '';
+  currentUrl = '';
+  isEdit = false;
+
+  private subscriptions = new Subscription();
 
   constructor(
     private readonly fb: FormBuilder,
@@ -46,21 +50,36 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly sharedDataService: SharedDataService,
     private readonly sharedMessagesService: SharedMessagesService,
-    private readonly translateService: TranslateService,
     private readonly i18nService: I18nService,
     private readonly authService: AuthService
   ) { }
 
+  // ========================
+  // INIT
+  // ========================
   ngOnInit(): void {
     const userLang = this.authService.getUserLang();
-
     if (userLang) {
       this.i18nService.switchLang(userLang);
     }
 
+    this.initForm();
+
+    this.currentUrl = this.router.url;
+    this.siret = this.sharedDataService.getSiret();
+
+    if (this.currentUrl.includes('/edit')) {
+      this.initEditMode();
+    }
+  }
+
+  // ========================
+  // FORM INIT
+  // ========================
+  private initForm(): void {
     this.formClient = this.fb.group({
       socialReason: ['', Validators.required],
-      email: ['', [Validators.required, customEmailValidator]],
+      emails: this.fb.array([], atLeastOneEmailValidator),
       numero: ['', Validators.required],
       rue: ['', Validators.required],
       codePostal: ['', Validators.required],
@@ -68,92 +87,168 @@ export class ClientEditComponent implements OnInit, OnDestroy {
       pays: ['', Validators.required],
     });
 
-    this.currentUrl = this.router.url;
-    this.siret = this.sharedDataService.getSiret();
+    this.addEmail();
+  }
 
-    if (this.currentUrl.includes('/edit')) {
-      this.client = this.sharedDataService.getSelectedClient();
-      this.isEdit = true;
-      this.socialReason = this.client!.socialReason;
-      this.sharedMessagesService.setMessage(
-        `Mise à jour de ${this.client?.socialReason}`
+  // ========================
+  // GETTERS
+  // ========================
+  get emailsFormArray(): FormArray {
+    return this.formClient.get('emails') as FormArray;
+  }
+
+  // ========================
+  // EDIT MODE
+  // ========================
+  private initEditMode(): void {
+    this.client = this.sharedDataService.getSelectedClient();
+    if (!this.client) return;
+
+    this.isEdit = true;
+    this.clientId = this.client.id;
+    this.adresseId = this.client.adresseClient.id;
+
+    this.sharedMessagesService.setMessage(
+      `Mise à jour de ${this.client.socialReason}`
+    );
+
+    this.emailsFormArray.clear();
+
+    this.client.emails.forEach((mail: EmailClient) => {
+      this.emailsFormArray.push(
+        this.fb.group({
+          id: [mail.id],
+          email: [mail.email, [Validators.required, Validators.email]],
+        })
       );
-    }
+    });
 
-    if (this.client) {
-      this.clientId = this.client.id;
-      this.addresseId = this.client.adresseClient.id;
+    this.formClient.patchValue({
+      socialReason: this.client.socialReason,
+      numero: this.client.adresseClient.numero,
+      rue: this.client.adresseClient.rue,
+      codePostal: this.client.adresseClient.codePostal,
+      localite: this.client.adresseClient.localite,
+      pays: this.client.adresseClient.pays,
+    });
+  }
 
-      this.formClient.patchValue({
-        socialReason: this.client.socialReason,
-        email: this.client.email,
-        numero: this.client.adresseClient.numero,
-        rue: this.client.adresseClient.rue,
-        codePostal: this.client.adresseClient.codePostal,
-        localite: this.client.adresseClient.localite,
-        pays: this.client.adresseClient.pays,
-      });
+  // ========================
+  // EMAIL ACTIONS
+  // ========================
+  addEmail(): void {
+    this.emailsFormArray.push(
+      this.fb.group({
+        id: [null],
+        email: ['', [Validators.required, Validators.email]],
+      })
+    );
+  }
+
+  removeEmail(index: number): void {
+    if (this.emailsFormArray.length > 1) {
+      this.emailsFormArray.removeAt(index);
     }
   }
 
-  allowOnlyNumbers(event: KeyboardEvent) {
-    const charCode = event.key;
-    if (!/^\d$/.test(charCode)) {
-      event.preventDefault(); // bloque la touche si ce n'est pas un chiffre
+  // ========================
+  // INPUT HELPERS
+  // ========================
+  allowOnlyNumbers(event: KeyboardEvent): void {
+    if (!/^\d$/.test(event.key)) {
+      event.preventDefault();
     }
   }
 
-  addClient() {
-    if (this.formClient.valid) {
-      let adresseClient: Adresse = {
-        id: this.addresseId,
-        numero: this.formClient.get('numero')?.value,
-        rue: this.formClient.get('rue')?.value,
-        codePostal: this.formClient.get('codePostal')?.value,
-        localite: this.formClient.get('localite')?.value,
-        pays: this.formClient.get('pays')?.value,
-      };
+  // ========================
+  // SUBMIT
+  // ========================
+  addClient(): void {
+    if (this.formClient.invalid) {
+      this.markFormGroupTouched(this.formClient);
+      return;
+    }
 
-      let client: Client = {
-        id: this.clientId,
-        socialReason: this.formClient.get('socialReason')?.value,
-        email: this.formClient.get('email')?.value,
-        adresseClient: adresseClient,
-        hasPrestation: true
-      };
+    const adresseClient: Adresse = {
+      id: this.adresseId,
+      numero: this.formClient.value.numero,
+      rue: this.formClient.value.rue,
+      codePostal: this.formClient.value.codePostal,
+      localite: this.formClient.value.localite,
+      pays: this.formClient.value.pays,
+    };
 
-      this.clientService.createOrUpdateClient(client, this.siret).subscribe({
+    const emailClient: EmailClient[] =
+      this.formClient.value.emails.map(
+        (mail: { id: number | null; email: string }) => ({
+          id: mail.id,
+          email: mail.email,
+        })
+      );
+
+    const client: Client = {
+      id: this.clientId,
+      socialReason: this.formClient.value.socialReason,
+      emails: emailClient,
+      adresseClient,
+      hasPrestation: true,
+    };
+
+    this.clientService
+      .createOrUpdateClient(client, this.siret)
+      .subscribe({
         next: () => {
-          if (this.clientId) {
-            this.alertService.show('UPDATE', 'CLIENT', 'success');
-          } else {
-            this.alertService.show('ADD', 'CLIENT', 'success');
-          }
-
+          this.alertService.show(
+            this.clientId ? 'UPDATE' : 'ADD',
+            'CLIENT',
+            'success'
+          );
           this.router.navigate(['/clients/read']);
         },
-        error: (err) => {
-          this.onError(err);
-        },
+        error: (err) => this.onError(err),
       });
-    } else {
-      for (const [, control] of Object.entries(this.formClient.controls)) {
-        if (control.invalid) {
-          control.markAsTouched();
-        }
-      }
-    }
   }
 
-  cancel() {
+  cancel(): void {
     this.router.navigate(['/clients/read']);
   }
 
+  // ========================
+  // VALIDATION HELPER
+  // ========================
+  private markFormGroupTouched(
+    control: FormGroup | FormArray
+  ): void {
+    Object.values(control.controls).forEach(ctrl => {
+      if (ctrl instanceof FormGroup || ctrl instanceof FormArray) {
+        this.markFormGroupTouched(ctrl);
+      } else {
+        ctrl.markAsTouched();
+      }
+    });
+  }
 
-  private onError(error: any) {
+  // ========================
+  // ERROR / CLEANUP
+  // ========================
+  private onError(error: any): void {
     this.alertService.showFunctionlError(error);
   }
+
   ngOnDestroy(): void {
     this.alertService.clear();
+    this.subscriptions.unsubscribe();
   }
+}
+
+/* ========================
+   CUSTOM VALIDATOR
+======================== */
+export function atLeastOneEmailValidator(
+  control: AbstractControl
+): ValidationErrors | null {
+  const emails = control as FormArray;
+  return emails && emails.length > 0
+    ? null
+    : { required: true };
 }

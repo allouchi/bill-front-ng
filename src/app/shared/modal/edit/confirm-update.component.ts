@@ -6,14 +6,14 @@ import { SharedDataService } from '../../../services/shared/shared-data-service'
 import User from '../../../models/User';
 import Company from '../../../models/Company';
 import { AuthService } from '../../../services/auth/auth-service';
-import { ConnectableObservable } from 'rxjs';
+import EmailClient from '../../../models/EmailClient';
 
 interface Result {
   userLang: string;
   siret: string;
   company: Company | undefined | null;
   comment: string;
-  mails: string[];
+  mails: EmailClient[];
 }
 
 @Component({
@@ -30,8 +30,8 @@ export class ConfirmEditComponent implements OnInit {
   selectedLanguage: string | null = 'fr';
   selectedSiret: string | undefined;
   companies: Company[] | null = [];
-  selectedEmails: string[] = [];
-  emails: string[] = [];
+  selectedEmails: EmailClient[] = [];
+  emails: EmailClient[] = [];
 
   languages = [
     { id: 'fr', descr: 'Français' },
@@ -95,10 +95,17 @@ export class ConfirmEditComponent implements OnInit {
 
   setEmailValue(event: Event) {
     const select = event.target as HTMLSelectElement;
-    const values = Array.from(select.selectedOptions).map(opt => opt.value);
+
+    // Récupère tous les IDs sélectionnés
+    const selectedIds = Array.from(select.selectedOptions)
+      .map(option => Number(option.value));
+
+    // Récupère les objets Email correspondants
+    const selectedEmails = this.emails.filter(mail => selectedIds.includes(mail.id!));
+
     this.result = {
       ...this.result,
-      mails: values,
+      mails: selectedEmails,
     };
   }
 

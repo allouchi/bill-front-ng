@@ -11,7 +11,7 @@ import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-del
 import { AuthService } from '../../../services/auth/auth-service';
 import { TvaService } from '../../../services/tva/tva-service';
 import TvaInfos from '../../../models/TvaInfos';
-import Tva from '../../../models/Tva';
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { DetailFactureComponent } from '../../../shared/modal/detail/detail-facture.component';
@@ -19,8 +19,8 @@ import { CommonModule } from '@angular/common';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import { AlertService } from '../../../services/alert/alertService';
-import { ClientService } from '../../../services/clients/client-service';
-import Client from '../../../models/Client';
+
+import EmailClient from '../../../models/EmailClient';
 
 
 @Component({
@@ -45,6 +45,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   isAdmin = false;
   observableEvent$ = new Subscription();
   parent = 'read';
+  sendMail = false;
   selectedExercice: string = '';
   page = 0;
   size = 12;
@@ -63,8 +64,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly modalService: NgbModal,
     private readonly authService: AuthService,
     private readonly tvaService: TvaService,
-    private readonly sharedMessagesService: SharedMessagesService,
-    private readonly clientService: ClientService
+    private readonly sharedMessagesService: SharedMessagesService
+
   ) { }
 
   ngOnInit(): void {
@@ -306,7 +307,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     });
   }
 
-
   detailFacture(event: Event, facture: Facture) {
     event.preventDefault();
     const modal = this.modalService.open(DetailFactureComponent, {
@@ -318,19 +318,28 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     modal.componentInstance.facture = facture;
   }
 
-  envoyerFacture(id: number, mails: string[]) {
+  private envoyerFacture(id: number, mails: EmailClient[]) {
+    this.isLoaded = false;
+    this.sendMail = true;
+    this.factures.forEach(facture => {
+      if (facture.id == id) {
+        facture.sended = true;
+      }
+    })
+
     this.factureService.envoyerFacture(id, mails).subscribe({
       next: () => {
+        this.isLoaded = true;
         this.alertService.show('SEND', 'MAIL', 'success');
       },
       error: (err) => {
+        this.isLoaded = true;
         this.onError(err);
       }
     })
   }
 
   choixDestinataires(event: Event, id: number, mailsAdresse: string[]) {
-
     event.preventDefault();
     const modal = this.modalService.open(ConfirmEditComponent, {
       size: 'lg',
@@ -352,7 +361,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       });
   }
 
-  getClientMails(event: Event, facture: Facture) {
+  sendFacture(event: Event, facture: Facture) {
     const id = facture.id;
     this.factureService.getClientMails(id!).subscribe({
       next: (mails) => {

@@ -9,12 +9,18 @@ import { Component, Input, OnInit } from '@angular/core';
 export class WaitingComponent implements OnInit {
 
   @Input() edit: string = 'read';
+  @Input() sendMail: boolean = false;
 
   isEdit: boolean = false;
+  isSending: boolean = false;
 
-  ngOnInit(): void {   
+  ngOnInit(): void {
     if (this.edit === 'edit') {
       this.isEdit = true;
+    }
+
+    if (this.sendMail) {
+      this.isSending = true;
     }
   }
 }
