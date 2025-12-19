@@ -40,7 +40,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   factures: Facture[] = [];
   exercises: Exercise[] = [];
   tvaInfos!: TvaInfos;
-  siret: string = '';
+  siret: string | null = '';
   isLoaded = false;
   isAdmin = false;
   observableEvent$ = new Subscription();
@@ -90,7 +90,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   }
 
   private loadTvaInfo(exercice: string) {
-    this.tvaService.findTvaInfoByExercise(this.siret, exercice).subscribe({
+    this.tvaService.findTvaInfoByExercise(this.siret!, exercice).subscribe({
       next: (tvaInfos) => {
         this.tvaInfos = tvaInfos;
         this.calculateTotals();
@@ -114,7 +114,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   loadFacturesBySiret() {
     this.factureService
-      .findFacturesBySiret(this.siret, this.page, this.size)
+      .findFacturesBySiret(this.siret!, this.page, this.size)
       .subscribe({
         next: (data) => {
           this.factures = data.content;
@@ -131,7 +131,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   loadFacturesByExercise(exercice: string) {
     this.factureService
-      .findFacturesByExercice(this.siret, exercice, this.page, this.size)
+      .findFacturesByExercice(this.siret!, exercice, this.page, this.size)
       .subscribe({
         next: (data) => {
           this.factures = data.content;
@@ -333,7 +333,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
         this.alertService.show('SEND', 'MAIL', 'success');
       },
       error: (err) => {
-        this.isLoaded = true;
         this.onError(err);
       }
     })
@@ -367,6 +366,9 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       next: (mails) => {
         this.emailAdresses = mails;
         this.choixDestinataires(event, id!, mails);
+      },
+      error: (err) => {
+        this.onError(err);
       }
     })
   }

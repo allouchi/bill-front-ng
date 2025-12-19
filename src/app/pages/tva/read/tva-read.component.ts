@@ -42,7 +42,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   data: Map<string, any> = new Map();
   monthsYear: any;
   selectedExercice: string = '';
-  siret: string = '';
+  siret: string | null = '';
   observableEvent$ = new Subscription();
   router = inject(Router);
   isAdmin = false;
@@ -106,7 +106,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   }
 
   loadTvaInfo(exercice: string) {
-    this.tvaService.findTvaInfoByExercise(this.siret, exercice).subscribe({
+    this.tvaService.findTvaInfoByExercise(this.siret!, exercice).subscribe({
       next: (tvaInfos) => {
         this.tvaInfos = tvaInfos;
         this.tvaInfosFilterd = tvaInfos;
@@ -153,7 +153,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
 
   private loadTva(exercice: string) {
     this.tvaService
-      .findTvaByExercise(this.siret, exercice, this.page, this.size)
+      .findTvaByExercise(this.siret!, exercice, this.page, this.size)
       .subscribe({
         next: (data) => {
           this.tvas = data.content;

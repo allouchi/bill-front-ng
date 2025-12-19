@@ -1,19 +1,35 @@
-<div class="overlay-loader">
-  <div class="d-flex justify-content-center align-items-center vh-50">
-    <div class="text-center bg-white p-4 rounded shadow">
-      <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-        <span class="visually-hidden">Chargement en cours...</span>
-      </div>
-      <div class="mt-3">
-        <i class="bi bi-lightning-charge-fill text-primary fs-2"></i>
-      </div>
-      @if(isEdit){
-      <p class="mt-2 fw-bold blink">Edition de la facture en cours...</p>
-      }
-      @if(isSending ){
-      <p class="mt-2 fw-bold blink">Envoi de la facture en cours...</p>
-      }
+<div class="overlay-loader" *ngIf="isLoading">
+  <div class="loader-glass">
 
-    </div>
+    <!-- Spinner SVG -->
+    <svg class="tech-spinner" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="techGradient" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#00e5ff" />
+          <stop offset="100%" stop-color="#7c4dff" />
+        </linearGradient>
+      </defs>
+
+      <circle cx="50" cy="50" r="42" fill="none" stroke="url(#techGradient)" stroke-width="6" stroke-linecap="round"
+        stroke-dasharray="200" stroke-dashoffset="100">
+      </circle>
+    </svg>
+
+    <!-- Texte dynamique -->
+    <p class="loader-text">
+      <ng-container *ngIf="isEdit">
+        Édition de la facture en cours…
+      </ng-container>
+      <ng-container *ngIf="isSending">
+        Envoi de la facture en cours…
+      </ng-container>
+      <ng-container *ngIf="!isEdit && !isSending">
+        Chargement en cours…
+      </ng-container>
+    </p>
+
+    <!-- Pulse -->
+    <div class="pulse-line"></div>
+
   </div>
 </div>

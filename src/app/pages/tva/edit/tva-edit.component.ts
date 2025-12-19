@@ -36,7 +36,7 @@ export class TvaEditComponent implements OnInit, OnDestroy {
   exercices: Exercise[] | null = [];
   selectedExercise: Exercise | null = null;
   tvaId!: number | null;
-  siret: string = '';
+ siret: string | null = '';
   selectedCompany!: Company;
   currentUrl: string = '';
   isEdit: boolean = false;
@@ -117,7 +117,7 @@ export class TvaEditComponent implements OnInit, OnDestroy {
   }
 
   loadFacturesByExercise(exercice: string) {
-    this.factureService.findBySiretAndExercice(this.siret, exercice).subscribe({
+    this.factureService.findBySiretAndExercice(this.siret!, exercice).subscribe({
       next: (factures) => {
         this.factures = factures;
       },

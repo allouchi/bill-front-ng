@@ -29,7 +29,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
 
   consultants: Consultant[] = [];
   clients: Client[] = [];
-  siret: string = '';
+  siret: string | null = '';
   observableEvent$ = new Subscription();
 
   router = inject(Router);
@@ -128,7 +128,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
       };
 
       this.prestationService
-        .createOrUpdatePrestation(prestation, this.siret, false, null)
+        .createOrUpdatePrestation(prestation, this.siret!, false, null)
         .subscribe({
           next: () => {
             this.alertService.show('ADD', 'PRESTATION', 'success');

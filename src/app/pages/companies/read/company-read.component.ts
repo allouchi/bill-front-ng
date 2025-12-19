@@ -27,9 +27,8 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   companies: Company[] = [];
   filtredCompanies: Company[] = [];
   isLoaded = false;
-  selectedSiret: string = '';
   observableEvent$ = new Subscription();
-  siret: string = '';
+  siret: string | null = '';
   isAdmin = false;
   parent = 'read';
 

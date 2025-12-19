@@ -46,7 +46,7 @@ import { AlertService } from '../../../services/alert/alertService';
 export class PrestationReadComponent implements OnInit, OnDestroy {
   prestations!: Prestation[];
   isLoaded = false;
-  siret: string = '';
+  siret: string  | null = '';
   selectedPrestation!: Prestation;
   selectedMonth: number = 0;
   selectedDate: Date = new Date();
@@ -55,7 +55,7 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
   observableEvent$ = new Subscription();
   isAdmin = false;
   parent = 'read';
-
+ 
   private readonly router = inject(Router);
   constructor(
     private readonly fb: FormBuilder,
@@ -77,13 +77,18 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
   }
 
   loadPrestations() {
-    this.prestationService.getPrestationsBySiret(this.siret).subscribe({
+    this.prestationService.getPrestationsBySiret(this.siret!).subscribe({
       next: (prestations) => {
         setTimeout(() => {
-          this.prestations = prestations;
-          this.prestations.forEach((p) => {
+          this.prestations = prestations;          
+          this.prestations.forEach((p) => {            
             p.isPrestaNoteValid = Util.isPrestaNotValid(p.dateFin!);
-          });
+            if(p.facture && p.facture.length>0){
+              p.deletePresta = false;
+            }else{
+               p.deletePresta = true;
+            }
+          });         
           this.isLoaded = true;
         }, 500);
       },

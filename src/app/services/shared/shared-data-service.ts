@@ -8,9 +8,11 @@ import Client from '../../models/Client';
 import Exercise from '../../models/Exercise';
 import User from '../../models/User';
 import Operation from '../../models/Operation';
+import { AuthService } from '../auth/auth-service';
 
 @Injectable({ providedIn: 'root' })
 export class SharedDataService {
+ 
   selectedCompany: Company | null = null;
   selectedOperation: Operation | null = null;
   selectedPrestation: Prestation | null = null;
@@ -24,7 +26,7 @@ export class SharedDataService {
   companies: Company[] | null = null;
   exercices: Exercise[] | null = null;
   selectedExercise: string | null = null;
-  siret: string = '';
+siret: string | null = '';
   selectedUser: User | null = null;
 
   getSelectedExercise(): string | null {
@@ -33,12 +35,13 @@ export class SharedDataService {
   setSelectedExercise(exercise: string) {
     this.selectedExercise = exercise;
   }
-  setSiret(siret: string) {
-    this.siret = siret;
+
+  setSiret(siret: string): void {
+    localStorage.setItem('siret', siret);
   }
 
-  getSiret() {
-    return this.selectedCompany!.siret;
+  getSiret(): string | null{
+     return localStorage.getItem('siret') || null;
   }
 
   getSelectedCompany(): Company | null {

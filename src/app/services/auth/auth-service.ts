@@ -84,7 +84,7 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.getAccessToken();
-  }
+  }  
 
   logout() {
     localStorage.removeItem('accessToken');

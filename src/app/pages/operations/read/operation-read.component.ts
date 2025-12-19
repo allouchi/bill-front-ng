@@ -41,7 +41,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   selectedType: string = '';
   isAdmin = false;
   parent = 'read';
-  siret: string = '';
+ siret: string | null = '';
   totalOperation: number = 0;
   typeOperations: string[] = ['Tous', 'DIV', 'NDF'];
 
@@ -74,7 +74,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
 
   loadOperations(selectedExercice: string, type: string) {
     this.operationSerice
-      .getOperations(this.siret, selectedExercice, type, this.page, this.size)
+      .getOperations(this.siret!, selectedExercice, type, this.page, this.size)
       .subscribe({
         next: (data) => {
           this.operations = data.content;
@@ -107,7 +107,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   }
 
   loadTvaInfo(exercice: string) {
-    this.tvaService.findTvaInfoByExercise(this.siret, exercice).subscribe({
+    this.tvaService.findTvaInfoByExercise(this.siret!, exercice).subscribe({
       next: (tvaInfos) => {
         this.tvaInfos = tvaInfos;
         this.tvaInfosFilterd = tvaInfos;

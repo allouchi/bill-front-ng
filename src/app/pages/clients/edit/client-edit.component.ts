@@ -66,7 +66,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     this.initForm();
 
     this.currentUrl = this.router.url;
-    this.siret = this.sharedDataService.getSiret();
+    this.siret = this.sharedDataService.getSiret()!;
 
     if (this.currentUrl.includes('/edit')) {
       this.initEditMode();

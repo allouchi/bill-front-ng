@@ -29,7 +29,7 @@ export class FactureAddComponent implements OnInit {
   selectedPrestation: Prestation | null = null;
   selectedMonth: number = 0;
   monthsYear: any;
-  siret: string = '';
+siret: string | null = '';
   isUpload: boolean = true;
   observableEvent$ = new Subscription();
   parent = 'edit';
@@ -90,7 +90,7 @@ export class FactureAddComponent implements OnInit {
     this.factureService
       .createFacture(
         prestation,
-        this.siret,
+        this.siret!,
         this.selectedMonth,
         this.formFacture.get('newTemplate')?.value
       )

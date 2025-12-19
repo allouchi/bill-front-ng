@@ -51,7 +51,7 @@
               class="btn btn-outline-danger btn-sm me-2"
               (click)="deletePrestation($event, prestation)"
               title="Supprimer Prestation"
-              [disabled]="!isAdmin"
+              [disabled]="!isAdmin || !prestation.deletePresta"
             >
               <i class="bi bi-trash"></i>
             </button>           

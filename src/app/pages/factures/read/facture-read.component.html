@@ -1,3 +1,7 @@
+@if(!isLoaded){
+<bill-waiting [sendMail]="sendMail" [edit]="parent"></bill-waiting>
+}@else {
+
 <div class="mt-4 mx-5">
   <div class="d-flex justify-content-between align-items-end mb-3">
     <!-- Colonne de gauche : Exercice -->
@@ -165,7 +169,4 @@
     }
   </div>
 </div>
-
-@if(!isLoaded || sendMail){
-<bill-waiting [sendMail]="sendMail" [edit]="parent"></bill-waiting>
 }

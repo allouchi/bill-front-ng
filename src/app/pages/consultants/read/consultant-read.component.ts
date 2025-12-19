@@ -25,7 +25,7 @@ export class ConsultantReadComponent {
   consultants: Consultant[] = [];
   prestations!: Prestation[];
   isLoaded = false;
-  siret: string = '';
+siret: string | null = '';
   observableEvent$ = new Subscription();
   isAdmin = false;
 
@@ -75,7 +75,7 @@ export class ConsultantReadComponent {
 
 
   loadPrestations() {
-    this.prestationService.getPrestationsBySiret(this.siret).subscribe({
+    this.prestationService.getPrestationsBySiret(this.siret!).subscribe({
       next: (prestations) => {
         this.prestations = prestations;
         this.loadConsultants();
