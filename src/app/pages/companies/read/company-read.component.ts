@@ -122,7 +122,6 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
 
     this.sharedDataService.setSelectCompany(company!);
     this.sharedDataService.setPrestations(company!.prestations!);
-    this.sharedDataService.setSiret(company!.siret);
     this.libelleCompanyService.setMessage(this.authService.getLibelleHeader());
     this.companyService.createOrUpdateCompany(company!).subscribe({
       next: () => {
