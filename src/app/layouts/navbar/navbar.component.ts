@@ -182,10 +182,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
           if (this.user) {
             if (userLang) {
               this.user.language = userLang;
+              //this.logout();
             }
             this.updateUserService(this.user);
-          }
-          this.logout();
+          }          
         }
       })
       .catch(() => {

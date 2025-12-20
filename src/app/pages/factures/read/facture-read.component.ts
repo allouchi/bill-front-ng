@@ -134,7 +134,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       .findFacturesByExercice(this.siret!, exercice, this.page, this.size)
       .subscribe({
         next: (data) => {
-          this.factures = data.content;
+          this.factures = data.content;         
           this.totalPages = data.totalPages;
           this.totalElements = data.totalElements;
           this.isLoaded = true;
