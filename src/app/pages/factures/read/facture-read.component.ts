@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FactureService } from '../../../services/factures/facture.service';
 import Facture from '../../../models/Facture';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import Exercise from '../../../models/Exercise';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
@@ -54,6 +54,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   totalTvaFacture!: number;
   totalDebitTva!: number;
   emailAdresses: string[] = [];
+  isEdition: string | null = null;
+
 
   private readonly router = inject(Router);
 
@@ -65,14 +67,20 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly tvaService: TvaService,
     private readonly sharedMessagesService: SharedMessagesService
-
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
     this.selectedExercice = new Date().getFullYear().toString();
     this.loadExercisesRef();
+    this.isEdition = this.sharedDataService.getIsEditionFacture();
+
+    if (this.isEdition) {
+      this.selectedExercice = 'Tous';
+      this.sharedDataService.setIsEditionFacture('');
+    }
     this.loadFacturesByExercise(this.selectedExercice);
     this.loadTvaInfo(this.selectedExercice);
   }
@@ -134,7 +142,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       .findFacturesByExercice(this.siret!, exercice, this.page, this.size)
       .subscribe({
         next: (data) => {
-          this.factures = data.content;         
+          this.factures = data.content;
           this.totalPages = data.totalPages;
           this.totalElements = data.totalElements;
           this.isLoaded = true;

@@ -12,7 +12,7 @@ import { AuthService } from '../auth/auth-service';
 
 @Injectable({ providedIn: 'root' })
 export class SharedDataService {
- 
+
   selectedCompany: Company | null = null;
   selectedOperation: Operation | null = null;
   selectedPrestation: Prestation | null = null;
@@ -26,8 +26,9 @@ export class SharedDataService {
   companies: Company[] | null = null;
   exercices: Exercise[] | null = null;
   selectedExercise: string | null = null;
-siret: string | null = '';
+  isEditionFacture = '';
   selectedUser: User | null = null;
+
 
   getSelectedExercise(): string | null {
     return this.selectedExercise;
@@ -36,12 +37,20 @@ siret: string | null = '';
     this.selectedExercise = exercise;
   }
 
+  setIsEditionFacture(isEdition: string) {
+    localStorage.setItem('isEdition', isEdition);
+
+  }
+  getIsEditionFacture(): string | null {
+    return localStorage.getItem('isEdition');
+  }
+
   setSiret(siret: string): void {
     localStorage.setItem('siret', siret);
   }
 
-  getSiret(): string | null{
-     return localStorage.getItem('siret') || null;
+  getSiret(): string | null {
+    return localStorage.getItem('siret') || null;
   }
 
   getSelectedCompany(): Company | null {

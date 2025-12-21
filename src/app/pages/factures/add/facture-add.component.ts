@@ -29,7 +29,7 @@ export class FactureAddComponent implements OnInit {
   selectedPrestation: Prestation | null = null;
   selectedMonth: number = 0;
   monthsYear: any;
-siret: string | null = '';
+  siret: string | null = '';
   isUpload: boolean = true;
   observableEvent$ = new Subscription();
   parent = 'edit';
@@ -96,6 +96,7 @@ siret: string | null = '';
       )
       .subscribe({
         next: () => {
+          this.sharedDataService.setIsEditionFacture("true");
           this.router.navigate(['/factures/read']);
           this.alertService.show('ADD', 'FACTURE', 'success');
           this.isUpload = false;
