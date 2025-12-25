@@ -72,12 +72,20 @@ export class FactureAddComponent implements OnInit {
   }
 
   setMonthValue(event: Event) {
-    const selectedValue = (event.target as HTMLSelectElement).value;
-    const nbJoursOuvres = JoursOuvres(selectedValue);
-    this.selectedMonth = +selectedValue;
-    this.formFacture.patchValue({
-      quantite: nbJoursOuvres,
-    });
+    const selectedMonth = (event.target as HTMLSelectElement).value;
+    const year = new Date().getFullYear();
+    this.factureService.getWorkingDays(year, +selectedMonth).subscribe({
+      next: (nbJours) => {
+        const nbJoursOuvres = nbJours;
+        this.selectedMonth = +selectedMonth;
+        this.formFacture.patchValue({
+          quantite: nbJoursOuvres,
+        });
+      },
+      error: (err) => {
+        this.onError(err);
+      }
+    })
   }
 
   /**

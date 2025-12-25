@@ -112,7 +112,6 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
     this.router.navigate(['/consultants/read']);
   }
 
-
   private onError(error: any) {
     this.alertService.showFunctionlError(error);
   }

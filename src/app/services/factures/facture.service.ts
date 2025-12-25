@@ -26,6 +26,7 @@ export class FactureService implements IFactureService {
   constructor(private readonly http: HttpClient) { }
 
 
+
   updateFacture(facture: Facture): Observable<Facture> {
     return this.http.put<Facture>(this.FACTURES_PATH, facture);
   }
@@ -99,5 +100,9 @@ export class FactureService implements IFactureService {
 
   envoyerFacture(factureId: number, mailsTo: EmailClient[]): Observable<string> {
     return this.http.post<string>(`${this.EDITION_PATH}/mail/${factureId}`, mailsTo);
+  }
+
+  getWorkingDays(year: number, month: number): Observable<number> {
+    return this.http.get<number>(`${this.EDITION_PATH}/workingDays/${year}/${month}`);
   }
 }

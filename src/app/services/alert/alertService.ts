@@ -142,12 +142,13 @@ export class AlertService implements OnInit {
 
     if (error.error.code === 'PDF_ERROR') {
       message = this.downloadFileError;
+    } else if (error.error.code === 'DUPLICATE_DATA') {
+      message = error.error.message;
     } else if (error.message && error.message.includes('Http failure')) {
-      message = message = this.serverError;
+      message = this.serverError;
     } else {
       message = error.error.message;
     }
-
     this.alertSubject.next({ message, title, type, delay });
   }
 
