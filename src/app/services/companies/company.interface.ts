@@ -45,4 +45,6 @@ export interface ICompanyService {
    * @param id facture id to delete
    */
   deleteCompanyById(id: number): Observable<string>;
+
+  switchCompany(company: Company): Observable<void>;
 }

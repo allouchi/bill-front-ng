@@ -157,8 +157,8 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.tvas = data.content;
-          this.totalPages = data.totalPages;
-          this.totalElements = data.totalElements;
+          this.totalPages = data.page.totalPages;
+          this.totalElements = data.page.totalElements;
           this.isLoaded = true;
           this.addLabelMonthTva();
           this.calculateTotals();

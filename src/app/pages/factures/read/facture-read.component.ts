@@ -56,7 +56,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   emailAdresses: string[] = [];
   isEdition: string | null = null;
 
-
   private readonly router = inject(Router);
 
   constructor(
@@ -67,8 +66,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly tvaService: TvaService,
     private readonly sharedMessagesService: SharedMessagesService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -126,8 +124,9 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.factures = data.content;
-          this.totalPages = data.totalPages;
-          this.totalElements = data.totalElements;
+
+          this.totalPages = data.page.totalPages;
+          this.totalElements = data.page.totalElements;
           this.isLoaded = true;
           this.loadTvaInfo(this.selectedExercice);
         },
@@ -142,9 +141,10 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       .findFacturesByExercice(this.siret!, exercice, this.page, this.size)
       .subscribe({
         next: (data) => {
+          console.log(data);
           this.factures = data.content;
-          this.totalPages = data.totalPages;
-          this.totalElements = data.totalElements;
+          this.totalPages = data.page.totalPages;
+          this.totalElements = data.page.totalElements;
           this.isLoaded = true;
           this.loadTvaInfo(this.selectedExercice);
         },
@@ -329,11 +329,11 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   private envoyerFacture(id: number, mails: EmailClient[]) {
     this.isLoaded = false;
     this.sendMail = true;
-    this.factures.forEach(facture => {
+    this.factures.forEach((facture) => {
       if (facture.id == id) {
         facture.sended = true;
       }
-    })
+    });
 
     this.factureService.envoyerFacture(id, mails).subscribe({
       next: () => {
@@ -342,8 +342,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.onError(err);
-      }
-    })
+      },
+    });
   }
 
   choixDestinataires(event: Event, id: number, mailsAdresse: string[]) {
@@ -377,8 +377,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.onError(err);
-      }
-    })
+      },
+    });
   }
 
   private onError(error: any) {

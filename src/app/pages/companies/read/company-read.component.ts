@@ -50,7 +50,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   }
 
   loadCompanies() {
-    this.companies = this.sharedDataService.getCompanies();
+    this.companies = this.sharedDataService.getCompanies();   
     this.filtredCompanies = this.companies
     const company = this.companies.find(
       (company) => company.checked === true
@@ -91,7 +91,6 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
 
     modal.componentInstance.item = 'Company';
     modal.componentInstance.composant = company;
-
     modal.result
       .then((result) => {
         if (result === 'confirm') {
@@ -149,7 +148,6 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
 
     modal.componentInstance.item = 'Company';
     modal.componentInstance.composant = company;
-
     modal.result
       .then((result) => {
         if (result.comment === 'confirm') {

@@ -79,8 +79,8 @@ export class OperationReadComponent implements OnInit, OnDestroy {
         next: (data) => {
           this.operations = data.content;
           this.operationsFiltred = data.content;
-          this.totalPages = data.totalPages;
-          this.totalElements = data.totalElements;
+          this.totalPages = data.page.totalPages;
+          this.totalElements = data.page.totalElements;
           this.isLoaded = true;
           this.calculTotal(data.content);
         },

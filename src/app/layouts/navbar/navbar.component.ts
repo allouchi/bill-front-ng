@@ -53,7 +53,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private readonly userService: UserService,
     private readonly companyService: CompanyService,
     private readonly sharedDataService: SharedDataService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.authenticated$ = this.isAuthService
@@ -96,11 +96,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.sharedMessagesService.setMessage('');
     this.libelleCompanyService.setMessage('');
     this.alertService.show('LOGOUT', '', 'success');
-
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.router.navigate(['/dashboard']);
     });
-
   }
 
   userLogout(event: Event) {
@@ -113,7 +111,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
 
     modal.componentInstance.item = 'Logout';
-
     modal.result
       .then((result) => {
         if (result.comment === 'confirm') {
@@ -127,9 +124,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   updateUserService(user: User) {
     this.userService.editUser(user).subscribe({
-      next: () => {
-        //this.alertService.show('UPDATE', 'USER', 'success');
-      },
+      next: () => {},
       error: (err) => this.onError(err),
     });
   }
@@ -140,10 +135,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateCompanyService(company: Company) {
-    this.companyService.createOrUpdateCompany(company).subscribe({
+  switchCompanyService(company: Company) {
+    this.companyService.switchCompany(company).subscribe({
       next: () => {
-        //this.alertService.show('UPDATE', 'COMPANY', 'success');
         this.reload();
       },
       error: (err) => this.onError(err),
@@ -174,18 +168,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
           const userLang = this.authService.getUserLang();
           if (userLang) {
             this.translateService.switchLang(userLang);
+            alert('1');
           }
           if (result.company) {
-            this.updateCompanyService(result.company);
+            this.switchCompanyService(result.company);
+            alert('2');
+            this.logout();
           }
 
           if (this.user) {
             if (userLang) {
+              alert('3');
               this.user.language = userLang;
               //this.logout();
             }
             this.updateUserService(this.user);
-          }          
+          }
         }
       })
       .catch(() => {
