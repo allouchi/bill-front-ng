@@ -165,24 +165,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result.comment === 'confirm') {
-          const userLang = this.authService.getUserLang();
-          if (userLang) {
-            this.translateService.switchLang(userLang);
-            alert('1');
+          if (result.userLang) {
+            this.user!.language = result.userLang;
+            this.translateService.switchLang(result.userLang);
+            this.updateUserService(this.user!);
           }
           if (result.company) {
             this.switchCompanyService(result.company);
-            alert('2');
-            this.logout();
-          }
-
-          if (this.user) {
-            if (userLang) {
-              alert('3');
-              this.user.language = userLang;
-              //this.logout();
-            }
-            this.updateUserService(this.user);
+            this.sharedDataService.setSiret(result.company.siret);
           }
         }
       })

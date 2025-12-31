@@ -55,6 +55,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   totalDebitTva!: number;
   emailAdresses: string[] = [];
   isEdition: string | null = null;
+  nbLignesFacture = 0;
 
   private readonly router = inject(Router);
 
@@ -124,7 +125,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.factures = data.content;
-
+          this.nbLignesFacture = this.factures.length;
           this.totalPages = data.page.totalPages;
           this.totalElements = data.page.totalElements;
           this.isLoaded = true;
@@ -141,10 +142,10 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       .findFacturesByExercice(this.siret!, exercice, this.page, this.size)
       .subscribe({
         next: (data) => {
-          console.log(data);
           this.factures = data.content;
           this.totalPages = data.page.totalPages;
           this.totalElements = data.page.totalElements;
+          this.nbLignesFacture = this.factures.length;
           this.isLoaded = true;
           this.loadTvaInfo(this.selectedExercice);
         },

@@ -27,7 +27,7 @@ export class ConfirmEditComponent implements OnInit {
   composant: any;
   state: boolean = false;
   user: User | null = null;
-  selectedLanguage: string | null = 'fr';
+  selectedLanguage: string | null = '';
   selectedSiret: string | undefined;
   companies: Company[] | null = [];
   selectedEmails: EmailClient[] = [];
@@ -39,7 +39,7 @@ export class ConfirmEditComponent implements OnInit {
   ];
 
   result: Result = {
-    userLang: 'fr',
+    userLang: '',
     siret: '',
     company: null,
     mails: [],
@@ -50,7 +50,7 @@ export class ConfirmEditComponent implements OnInit {
     private readonly activeModal: NgbActiveModal,
     private readonly sharedDataService: SharedDataService,
     private readonly authService: AuthService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     if (this.authService.getUserLang() != null) {
@@ -97,11 +97,14 @@ export class ConfirmEditComponent implements OnInit {
     const select = event.target as HTMLSelectElement;
 
     // Récupère tous les IDs sélectionnés
-    const selectedIds = Array.from(select.selectedOptions)
-      .map(option => Number(option.value));
+    const selectedIds = Array.from(select.selectedOptions).map((option) =>
+      Number(option.value)
+    );
 
     // Récupère les objets Email correspondants
-    const selectedEmails = this.emails.filter(mail => selectedIds.includes(mail.id!));
+    const selectedEmails = this.emails.filter((mail) =>
+      selectedIds.includes(mail.id!)
+    );
 
     this.result = {
       ...this.result,

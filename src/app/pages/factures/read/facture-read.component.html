@@ -35,13 +35,13 @@
           <tr>
             @if(tvaInfos){
             <td class="text-center">
-              {{ tvaInfos.totalTTC | customDecimalPipe }}
+              {{ tvaInfos.totalTTC | customDecimalPipe }} €
             </td>
             <td style="text-align: center">
-              {{ tvaInfos.totalCAHorsTaxe | customDecimalPipe }}
+              {{ tvaInfos.totalCAHorsTaxe | customDecimalPipe }} €
             </td>
             <td class="text-center">
-              {{ tvaInfos.montantTvaFacture | customDecimalPipe }}
+              {{ tvaInfos.montantTvaFacture | customDecimalPipe }} €
             </td>
             <!--
             <td class="text-center">
@@ -49,17 +49,17 @@
             </td>
              -->
             <td class="text-center">
-              {{ tvaInfos.totalTvaPaye | customDecimalPipe }}
+              {{ tvaInfos.totalTvaPaye | customDecimalPipe }} €
             </td>
             @if(tvaInfos.totalTvaRestant >= 0 ){
             <td class="text-center">
               <i class="bi bi-check-lg text-success me-1"></i>
-              {{ tvaInfos.totalTvaRestant | customDecimalPipe }}
+              {{ tvaInfos.totalTvaRestant | customDecimalPipe }} €
             </td>
             }@else {
             <td class="text-center">
               <i class="bi bi-x-octagon text-danger me-1"></i>
-              {{ -tvaInfos.totalTvaRestant | customDecimalPipe }}
+              {{ -tvaInfos.totalTvaRestant | customDecimalPipe }} €
             </td>
             } }
           </tr>
@@ -74,13 +74,13 @@
         <tr>
           <th scope="col">Numéro Facture</th>
           <th scope="col">Mois Facture</th>
-          <th scope="col">Tarif HT</th>
+          <th scope="col">Tarif HT (€)</th>
           <th scope="col">Quantité</th>
-          <th scope="col">Prix Total TTC</th>
-          <th scope="col">Prix Total HT</th>
+          <th scope="col">Prix Total TTC (€)</th>
+          <th scope="col">Prix Total HT (€)</th>
           <th scope="col">Date Encaissement</th>
-          <th scope="col">Total TVA</th>
-          <th scope="col">Débit TVA</th>
+          <th scope="col">Total TVA (€)</th>
+          <th scope="col">Débit TVA (€)</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
@@ -140,20 +140,22 @@
       </tbody>
 
       <!-- LIGNE TOTAUX -->
+      @if(nbLignesFacture > 0){
       <tfoot class="fw-bold table-dark">
         <tr>
-          <td>Total</td>
+          <td class="text-left">Total</td>
+          <td class="text-center">{{nbLignesFacture}} mois</td>
           <td></td>
           <td></td>
           <td></td>
           <td></td>
           <td></td>
-          <td></td>
-          <td class="text-center">{{ totalTvaFacture | customDecimalPipe }}</td>
-          <td class="text-center">{{ totalDebitTva | customDecimalPipe }}</td>
+          <td class="text-center">{{ totalTvaFacture | customDecimalPipe }} €</td>
+          <td class="text-center">{{ totalDebitTva | customDecimalPipe }} €</td>
           <td colspan="6"></td>
         </tr>
       </tfoot>
+    }
     </table>
     @if(totalPages > 1){
     <!-- ✅ Pagination bien placée et centrée -->

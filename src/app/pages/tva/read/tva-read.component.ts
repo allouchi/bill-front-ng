@@ -53,6 +53,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   totalPages = 0;
   totalElements = 0;
   parent = 'read';
+  nbLignesTva = 0;
 
   constructor(
     private readonly tvaService: TvaService,
@@ -157,6 +158,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.tvas = data.content;
+          this.nbLignesTva = this.tvas.length;
           this.totalPages = data.page.totalPages;
           this.totalElements = data.page.totalElements;
           this.isLoaded = true;
