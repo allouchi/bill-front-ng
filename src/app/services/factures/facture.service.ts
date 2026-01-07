@@ -23,6 +23,9 @@ export class FactureService implements IFactureService {
   private readonly EXERCISE_PATH: string =
     `${this.apiURL}` + '/tvas/exerciceRef';
   private readonly EDITION_PATH: string = `${this.apiURL}` + '/editions';
+  private readonly BATCH_PATH: string = `${this.apiURL}` + '/batchs';
+
+
   constructor(private readonly http: HttpClient) { }
 
 
@@ -104,5 +107,9 @@ export class FactureService implements IFactureService {
 
   getWorkingDays(year: number, month: number): Observable<number> {
     return this.http.get<number>(`${this.EDITION_PATH}/workingDays/${year}/${month}`);
+  }
+
+  runBatch(): Observable<Facture[]> {
+    return this.http.get<Facture[]>(`${this.BATCH_PATH}`);
   }
 }

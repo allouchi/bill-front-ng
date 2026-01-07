@@ -53,7 +53,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private readonly userService: UserService,
     private readonly companyService: CompanyService,
     private readonly sharedDataService: SharedDataService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.authenticated$ = this.isAuthService
@@ -124,7 +124,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   updateUserService(user: User) {
     this.userService.editUser(user).subscribe({
-      next: () => {},
+      next: () => { },
       error: (err) => this.onError(err),
     });
   }
@@ -158,7 +158,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
 
     this.user = this.sharedDataService.getSelectedUser();
-    this.company = this.sharedDataService.getSelectedCompany();
     modal.componentInstance.item = 'SwitchParametres';
     modal.componentInstance.composant = this.user;
 
@@ -173,6 +172,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
           if (result.company) {
             this.switchCompanyService(result.company);
             this.sharedDataService.setSiret(result.company.siret);
+            this.sharedDataService.setSelectCompany(result.company);
           }
         }
       })

@@ -75,4 +75,6 @@ export interface IFactureService {
   envoyerFacture(id: number, mails: EmailClient[]): Observable<string>;
 
   getWorkingDays(year: number, month: number): Observable<number>;
+
+  runBatch(): Observable<Facture[]>;
 }

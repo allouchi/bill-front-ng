@@ -38,6 +38,7 @@ import EmailClient from '../../../models/EmailClient';
 })
 export default class FactureReadComponent implements OnInit, OnDestroy {
   factures: Facture[] = [];
+  facturesRetard: Facture[] = [];
   exercises: Exercise[] = [];
   tvaInfos!: TvaInfos;
   siret: string | null = '';
@@ -56,6 +57,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   emailAdresses: string[] = [];
   isEdition: string | null = null;
   nbLignesFacture = 0;
+  showPenalite = true;
+  hidePenalite = false;
 
   private readonly router = inject(Router);
 
@@ -67,7 +70,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly tvaService: TvaService,
     private readonly sharedMessagesService: SharedMessagesService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -380,6 +383,24 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
         this.onError(err);
       },
     });
+  }
+
+  runBatch() {
+    this.factureService.runBatch().subscribe({
+      next: (factures) => {
+        this.facturesRetard = factures;
+        this.showPenalite = false;
+        this.hidePenalite = true;
+      },
+      error: (err) => {
+        this.onError(err);
+      }
+    })
+  }
+
+  hide() {
+    this.showPenalite = true;
+    this.hidePenalite = false;
   }
 
   private onError(error: any) {
