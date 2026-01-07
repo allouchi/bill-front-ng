@@ -77,6 +77,38 @@
                 }"
               />
             </div>
+
+            <div class="mb-3">
+              <label for="nbJourRetard" class="form-label fw-bold"
+                >Jours retard
+              </label>
+              <input
+                type="text"
+                id="nbJourRetard"
+                class="form-control"
+                formControlName="nbJourRetard"
+                 [ngClass]="{
+                  'is-valid': status,
+                  'is-invalid': !status
+                }"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="penalite" class="form-label fw-bold"
+                >Pénalités
+              </label>
+              <input
+                type="text"
+                id="penalite"
+                class="form-control"
+                formControlName="penalite"
+                 [ngClass]="{
+                  'is-valid': status,
+                  'is-invalid': !status
+                }"
+              />
+            </div>
           </div>
         </div>
       </div>

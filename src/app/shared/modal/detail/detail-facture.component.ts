@@ -32,6 +32,8 @@ export class DetailFactureComponent implements OnInit {
       ],
       factureStatus: [{ value: this.facture?.factureStatus, disabled: true }],
       statusDesc: [{ value: this.facture?.statusDesc, disabled: true }],
+      penalite: [{ value: this.facture?.fraisRetard, disabled: true }],
+      nbJourRetard: [{ value: this.facture?.nbJourRetard, disabled: true }],
     });
 
     this.numeroFacture = this.facture.numeroFacture;
