@@ -37,9 +37,7 @@
           </select>
         </div>
       </div>
-    </div>
 
-    <div>
       <div class="alert alert-warning d-flex justify-content-center gap-2" role="alert">
         <div class="mb-3 me-2" style="width: 200px">
           <label for="companySelect" class="form-label fw-bold text-center">Sociétés</label>
@@ -53,12 +51,10 @@
         </div>
       </div>
     </div>
-
     <div *ngIf="item && item === 'ChoiceDest'">
       <div class="alert alert-warning d-flex justify-content-center gap-2" role="alert">
         <div class="mb-3 me-2" style="width: 300px">
           <label for="mailSelect" class="form-label fw-bold text-center">Destinataires :</label>
-
           <select id="mailSelect" class="form-select" multiple size="5" (change)="setEmailValue($event)">
             @for (mail of emails; track mail.id) {
             <option [value]="mail.id">{{ mail.email }}</option>
