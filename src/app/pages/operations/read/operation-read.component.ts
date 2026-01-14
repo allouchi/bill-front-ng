@@ -198,6 +198,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   setExerciceValue(event: Event) {
     this.totalOperation = 0;
     const selectedValue = (event.target as HTMLSelectElement).value;
+    alert(selectedValue);
     this.selectedExercice = selectedValue;
     //this.filterByExercice(selectedValue);
     this.loadOperations(this.selectedExercice, this.selectedType);
