@@ -41,7 +41,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   selectedType: string = '';
   isAdmin = false;
   parent = 'read';
- siret: string | null = '';
+  siret: string | null = '';
   totalOperation: number = 0;
   typeOperations: string[] = ['Tous', 'DIV', 'NDF'];
 
@@ -60,7 +60,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly alertService: AlertService,
     private readonly operationService: OperationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -83,6 +83,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
           this.totalElements = data.page.totalElements;
           this.isLoaded = true;
           this.calculTotal(data.content);
+          this.loadTvaInfo(selectedExercice);
         },
         error: (err) => {
           this.onError(err);

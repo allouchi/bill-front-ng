@@ -90,7 +90,7 @@
           <th scope="col">Quantité</th>
           <th scope="col">Prix Total TTC (€)</th>
           <th scope="col">Prix Total HT (€)</th>
-          <th scope="col">Date Encaissement</th>          
+          <th scope="col">Date Encaissement</th>
           <th scope="col">Total TVA (€)</th>
           <th scope="col">Débit TVA (€)</th>
           <th scope="col">Actions</th>
@@ -108,7 +108,7 @@
           <td>{{ facture.quantite | customDecimalPipe }}</td>
           <td>{{ facture.prixTotalTTC | customDecimalPipe }}</td>
           <td>{{ facture.prixTotalHT | customDecimalPipe }}</td>
-          <td>{{ facture.dateEncaissement }}</td>          
+          <td>{{ facture.dateEncaissement }}</td>
           <td>{{ facture.montantTVA | customDecimalPipe }}</td>
           <td>{{ facture.montantTvaPaye | customDecimalPipe }}</td>
           <td>
@@ -211,6 +211,13 @@
       }
     </tbody>
   </table>
+  }@else if(hidePenalite){
+  <div class="text-center text-muted py-3">
+    <h4>
+      <hr />
+      Aucune Facture avec pénalité
+    </h4>
+  </div>
   }
 </div>
 }

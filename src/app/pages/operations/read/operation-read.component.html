@@ -1,37 +1,28 @@
 @if(isLoaded){
 
 <div class="mt-4 mx-5">
- <div class="d-flex justify-content-between align-items-end mb-3" style="gap: 10px;">
-    <div style="width: 150px ; margin-right: 0;">   
+  <div class="d-flex justify-content-between align-items-end mb-3" style="gap: 10px;">
+    <div style="width: 150px ; margin-right: 0;">
       <label for="yearSelect" class="form-label fw-bold">Exercice</label>
-      <select
-        (change)="setExerciceValue($event)"
-        class="form-select"
-        id="yearSelect"       
-      >
+      <select (change)="setExerciceValue($event)" class="form-select" id="yearSelect">
         @for (year of exercises; track year.id) {
         <option [value]="year.exercise">{{ year.exercise }}</option>
         }
-      </select>      
+      </select>
     </div>
 
-     <div style="width: 150px; margin-left: 0;">   
+    <div style="width: 150px; margin-left: 0;">
       <label for="typeSelect" class="form-label fw-bold">Type</label>
-      <select
-        (change)="setTypeValue($event)"
-        class="form-select"
-        id="typeSelect"       
-      >
+      <select (change)="setTypeValue($event)" class="form-select" id="typeSelect">
         @for (type of typeOperations; track type) {
         <option [value]="type">{{ type }}</option>
         }
-      </select>      
+      </select>
     </div>
 
     @if(tvaInfosFilterd){
-      <div><strong>CA NET : </strong> {{ tvaInfosFilterd!.totalCAHorsTaxe | customDecimalPipe}}</div>
+    <div><strong>CA NET : </strong> {{ tvaInfosFilterd!.totalCAHorsTaxe | customDecimalPipe}}</div>
     }
-     
 
     <div><strong>Total Opérations : </strong> {{totalOperation | customDecimalPipe }}</div>
     <div>
@@ -62,19 +53,12 @@
           <td style="text-align: center">{{ operation.dateOperation }}</td>
 
           <td>
-            <button
-              class="btn btn-outline-primary btn-sm me-2"
-              (click)="updateOperation(operation)"
-              title="Modifier opération"
-            >
+            <button class="btn btn-outline-primary btn-sm me-2" (click)="updateOperation(operation)"
+              title="Modifier opération">
               <i class="bi bi-pencil"></i>
             </button>
-            <button
-              class="btn btn-outline-danger btn-sm me-2"
-              (click)="deleteOperation($event, operation)"
-              title="Supprimer opération"
-              [disabled]="!isAdmin"
-            >
+            <button class="btn btn-outline-danger btn-sm me-2" (click)="deleteOperation($event, operation)"
+              title="Supprimer opération" [disabled]="!isAdmin">
               <i class="bi bi-trash"></i>
             </button>
           </td>
@@ -88,24 +72,14 @@
         }
       </tbody>
     </table>
-        @if(totalPages > 1){
+    @if(totalPages > 1){
     <!-- ✅ Pagination bien placée et centrée -->
-    <div
-      class="pagination d-flex justify-content-center align-items-center gap-3 mt-3"
-    >
-      <button
-        class="btn btn-outline-primary"
-        (click)="previousPage()"
-        [disabled]="page === 0"
-      >
+    <div class="pagination d-flex justify-content-center align-items-center gap-3 mt-3">
+      <button class="btn btn-outline-primary" (click)="previousPage()" [disabled]="page === 0">
         ← Précédent
       </button>
       <span>Page {{ page + 1 }} / {{ totalPages }}</span>
-      <button
-        class="btn btn-outline-primary"
-        (click)="nextPage()"
-        [disabled]="page >= totalPages - 1"
-      >
+      <button class="btn btn-outline-primary" (click)="nextPage()" [disabled]="page >= totalPages - 1">
         Suivant →
       </button>
     </div>
