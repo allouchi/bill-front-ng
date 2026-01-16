@@ -47,7 +47,7 @@ export class FactureAddComponent implements OnInit {
       monthFacture: ['', Validators.required],
       numeroCommande: [{ value: '', disabled: true }],
       quantite: ['', [Validators.required, numericFrValidator()]],
-      newTemplate: [true, Validators.required],
+      newTemplate: [{ value: true, disabled: true }],
       clientPrestation: [{ value: '', disabled: true }],
     });
 
@@ -110,7 +110,7 @@ export class FactureAddComponent implements OnInit {
           this.isUpload = false;
         },
         error: (err) => {
-          this.isUpload = false;
+          this.isUpload = true;
           this.onError(err);
         },
       });
@@ -118,7 +118,6 @@ export class FactureAddComponent implements OnInit {
 
   addFacture() {
     if (this.formFacture.valid) {
-
       let quantiteValue = this.formFacture.get('quantite')?.value;
       if (quantiteValue) {
         const nombreStr: string = quantiteValue.toString();

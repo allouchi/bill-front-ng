@@ -15,10 +15,12 @@
                                                 userForm.get('email')?.invalid &&
                                                 userForm.get('email')?.touched
                                               " />
-            <div *ngIf="userForm.get('email')?.errors?.['required'] && userForm.get('email')?.touched" class="text-danger">
+            <div *ngIf="userForm.get('email')?.errors?.['required'] && userForm.get('email')?.touched"
+              class="text-danger">
               L'adresse Email est requise.
             </div>
-            <div *ngIf="userForm.get('email')?.errors?.['invalidEmail'] && userForm.get('email')?.touched" class="text-danger">
+            <div *ngIf="userForm.get('email')?.errors?.['invalidEmail'] && userForm.get('email')?.touched"
+              class="text-danger">
               L'adresse e-mail n'est pas valide.
             </div>
           </div>
@@ -44,6 +46,11 @@
               Le nom est requis.
             </div>
           </div>
+          <div class="d-flex align-items-center mb-3">
+            <label for="activated" class="me-2 fw-bold">Actif :</label>
+            <input type="checkbox" id="activated" class="form-check-input" formControlName="activated" />
+          </div>
+
           <button (click)="showPassord()"><strong>{{message}}</strong></button>
           @if(showPassword==true){
           <div>
@@ -84,8 +91,8 @@
           </div>
           <div class="mb-3 me-2" style="width: 200px">
             <label for="companySelect" class="form-label fw-bold">Société :</label>
-            <select [(ngModel)]="selectedCompany" formControlName="siret" (change)="setCompanyValue($event)" class="form-select"
-              id="companySelect">
+            <select [(ngModel)]="selectedCompany" formControlName="siret" (change)="setCompanyValue($event)"
+              class="form-select" id="companySelect">
               @for (company of companies; track company.id) {
               <option value="{{ company.siret }}" [value]="company.siret">
                 {{ company.socialReason }}

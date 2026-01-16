@@ -90,7 +90,7 @@ export class SharedDataService {
     this.selectedFacture = facture;
   }
 
-  gertSelectedFacture() {
+  getSelectedFacture() {
     return this.selectedFacture;
   }
 

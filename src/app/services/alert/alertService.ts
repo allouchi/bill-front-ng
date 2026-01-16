@@ -140,7 +140,10 @@ export class AlertService implements OnInit {
 
     let message: string;
 
-    if (error.error.code === 'PDF_ERROR') {
+    if (error.error.code === 'DB_ERROR') {
+      message = error.error.message;
+    }
+    else if (error.error.code === 'PDF_ERROR') {
       message = this.downloadFileError;
     } else if (error.error.code === 'DUPLICATE_DATA') {
       message = error.error.message;

@@ -270,7 +270,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       });
   }
 
-  updateFacture(event: Event, facture: Facture) {
+  encaissementFacture(event: Event, facture: Facture) {
     event.preventDefault();
     const modal = this.modalService.open(ConfirmEditComponent, {
       size: 'lg',
@@ -284,7 +284,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result.comment === 'confirm') {
-          //this.alertService.show('UPDATE', 'FACTURE', 'success');
           this.sharedDataService.setSelectedFacture(facture);
           this.sharedMessagesService.setMessage('Mise à jour de Facture');
           this.router.navigate(['factures/edit']);

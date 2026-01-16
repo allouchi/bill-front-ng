@@ -112,8 +112,8 @@
           <td>{{ facture.montantTVA | customDecimalPipe }}</td>
           <td>{{ facture.montantTvaPaye | customDecimalPipe }}</td>
           <td>
-            <button class="btn btn-outline-primary btn-sm me-2" (click)="updateFacture($event, facture)"
-              title="Modifier Facture" [disabled]="!isAdmin">
+            <button class="btn btn-outline-primary btn-sm me-2" (click)="encaissementFacture($event, facture)"
+              title="Marquer Encaissement Facture" [disabled]="!isAdmin">
               <i class="bi bi-pencil"></i>
             </button>
 

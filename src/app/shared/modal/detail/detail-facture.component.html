@@ -36,7 +36,6 @@
                   'is-invalid': !status
                 }" />
             </div>
-
             <div class="mb-3">
               <label for="statusDesc" class="form-label fw-bold">Description
               </label>
@@ -45,7 +44,6 @@
                   'is-invalid': !status
                 }" />
             </div>
-            {{ facture!.nbJourRetard}}
             <div *ngIf="facture && facture.nbJourRetard && facture.nbJourRetard > 0">
               <div class="mb-3">
                 <label for="nbJourRetard" class="form-label fw-bold">Jours retard

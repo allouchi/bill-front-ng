@@ -50,6 +50,7 @@ export class EditUserComponent {
   ngOnInit(): void {
     this.loadRoles();
     this.user = this.sharedDataService.getSelectedUser();
+
     this.userForm = this.fb.group({
       email: [
         { value: this.user?.email, disabled: true },
@@ -67,6 +68,7 @@ export class EditUserComponent {
       passwordConfirm: [''],
       siret: [{ value: this.user?.siret }, Validators.required],
       roles: this.fb.array([]),
+      activated: [this.user?.activated, Validators.required]
     });
     this.loadCompanies();
     this.initPassword();
@@ -167,6 +169,8 @@ export class EditUserComponent {
       if (password) {
         this.user!.password = password;
       }
+
+
       let user: User = {
         id: this.user!.id,
         email: this.user!.email,
@@ -175,7 +179,7 @@ export class EditUserComponent {
         siret: this.userForm.get('siret')?.value,
         password: this.user!.password,
         roles: selectedRoles,
-        activated: true,
+        activated: this.userForm.get('activated')?.value,
         language: 'fr'
       };
 

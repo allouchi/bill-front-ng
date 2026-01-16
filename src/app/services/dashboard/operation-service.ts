@@ -5,6 +5,7 @@ import { env } from '../../../environments/env';
 import { Injectable } from '@angular/core';
 import Operation from '../../models/Operation';
 import { Page } from '../../models/Page';
+import Compte from '../../models/Compte';
 
 /**
  *
@@ -16,8 +17,9 @@ import { Page } from '../../models/Page';
 export class OperationService {
   private readonly apiURL = env.apiURL;
   private readonly OPERATION_PATH: string = `${this.apiURL}` + '/operations';
+  private readonly COMPTE_PATH: string = `${this.apiURL}` + '/compte/import';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   createOrUpdateOperation(operation: Operation): Observable<Operation> {
     const isNew: boolean = !operation.id || operation.id === 0;
@@ -46,5 +48,9 @@ export class OperationService {
 
   deletedOperationById(id: number): Observable<string> {
     return this.http.delete<string>(`${this.OPERATION_PATH}/${id}`);
+  }
+
+  importOperations(siret: string): Observable<Compte[]> {
+    return this.http.get<Compte[]>(`${this.COMPTE_PATH}/${siret}`);
   }
 }
