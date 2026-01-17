@@ -67,6 +67,25 @@ export const BILLING_ROUTE: Routes = [
   },
 
   {
+    path: 'compte',
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'read',
+        loadComponent: () => OperationReadComponent,
+      },
+      {
+        path: 'edit',
+        loadComponent: () => OperationEditComponent,
+      },
+      {
+        path: 'add',
+        loadComponent: () => OperationAddComponent,
+      },
+    ],
+  },
+
+  {
     path: 'companies',
     canActivate: [AuthGuard],
     children: [
