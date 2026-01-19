@@ -17,7 +17,7 @@ import Compte from '../../models/Compte';
 export class OperationService {
   private readonly apiURL = env.apiURL;
   private readonly OPERATION_PATH: string = `${this.apiURL}` + '/operations';
-  private readonly COMPTE_PATH: string = `${this.apiURL}` + '/compte/import';
+  private readonly COMPTE_PATH: string = `${this.apiURL}` + '/compte';
 
   constructor(private readonly http: HttpClient) { }
 
@@ -51,6 +51,22 @@ export class OperationService {
   }
 
   importOperations(siret: string): Observable<Compte[]> {
-    return this.http.get<Compte[]>(`${this.COMPTE_PATH}/${siret}`);
+    return this.http.get<Compte[]>(`${this.COMPTE_PATH}/import/${siret}`);
+  }
+
+  getComptes(
+    siret: string,
+    exercice: string,
+    type: string,
+    page: number,
+    size: number
+  ): Observable<Page<Compte>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    return this.http.get<Page<Compte>>(
+      `${this.COMPTE_PATH}/${siret}/${exercice}/${type}`,
+      {
+        params,
+      }
+    );
   }
 }

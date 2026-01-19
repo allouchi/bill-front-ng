@@ -70,19 +70,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     this.loadOperations('Tous', 'Tous');
     this.selectedType = 'Tous';
     this.selectedExercice = 'Tous';
-    this.importOperations();
 
-  }
-
-  importOperations() {
-    this.operationService.importOperations(this.siret!).subscribe({
-      next: comptes => {
-        console.log("comptes : ", comptes);
-      },
-      error: error => {
-        this.onError(error);
-      }
-    })
   }
 
   loadOperations(selectedExercice: string, type: string) {

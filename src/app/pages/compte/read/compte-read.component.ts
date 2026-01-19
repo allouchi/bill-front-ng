@@ -8,18 +8,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth-service';
 import { OperationService } from '../../../services/dashboard/operation-service';
 import Operation from '../../../models/Operation';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
-import { SharedMessagesService } from '../../../services/shared/messages.service';
-
 import { CommonModule } from '@angular/common';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import TvaInfos from '../../../models/TvaInfos';
 import { AlertService } from '../../../services/alert/alertService';
+import Compte from '../../../models/Compte';
 
 
 @Component({
-  selector: 'bill-operation-read',
+  selector: 'bill-compte-read',
   imports: [
     CommonModule,
     WaitingComponent,
@@ -27,13 +24,13 @@ import { AlertService } from '../../../services/alert/alertService';
     CustomDecimalPipe,
     FormsModule,
   ],
-  templateUrl: './operation-read.component.html',
-  styleUrl: './operation-read.component.css',
+  templateUrl: './compte-read.component.html',
+  styleUrl: './compte-read.component.css',
 })
-export class OperationReadComponent implements OnInit, OnDestroy {
+export class CompteReadComponent implements OnInit, OnDestroy {
   isLoaded = false;
-  operations: Operation[] = [];
-  operationsFiltred: Operation[] = [];
+  operations: Compte[] = [];
+  operationsFiltred: Compte[] = [];
   exercises: Exercise[] = [];
   selectedExercice: string = '';
   tvaInfos: TvaInfos | null = null;
@@ -43,7 +40,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   parent = 'read';
   siret: string | null = '';
   totalOperation: number = 0;
-  typeOperations: string[] = ['Tous', 'DIV', 'NDF'];
+  typeOperations: string[] = ['Tous', 'DIV', 'NDF', 'AUTRE'];
 
   page = 0;
   size = 12;
@@ -53,31 +50,26 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   router = inject(Router);
   constructor(
     private readonly sharedDataService: SharedDataService,
-    private readonly operationSerice: OperationService,
+    private readonly operationService: OperationService,
     private readonly authService: AuthService,
-    private readonly tvaService: TvaService,
-    private readonly modalService: NgbModal,
-    private readonly sharedMessagesService: SharedMessagesService,
     private readonly alertService: AlertService,
-    private readonly operationService: OperationService
+    private readonly tvaService: TvaService
   ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
     this.loadExercicesRef();
-    this.loadTvaInfo('Tous');
-    this.loadOperations('Tous', 'Tous');
     this.selectedType = 'Tous';
     this.selectedExercice = 'Tous';
-    this.importOperations();
-
+    this.loadOperations(this.selectedExercice, this.selectedType);
   }
 
   importOperations() {
     this.operationService.importOperations(this.siret!).subscribe({
-      next: comptes => {
-        console.log("comptes : ", comptes);
+      next: operations => {
+        this.operations = operations;
+        this.operationsFiltred = operations;
       },
       error: error => {
         this.onError(error);
@@ -86,17 +78,16 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   }
 
   loadOperations(selectedExercice: string, type: string) {
-    this.operationSerice
-      .getOperations(this.siret!, selectedExercice, type, this.page, this.size)
+    this.operationService
+      .getComptes(this.siret!, selectedExercice, type, this.page, this.size)
       .subscribe({
         next: (data) => {
           this.operations = data.content;
+          console.log(this.operations)
           this.operationsFiltred = data.content;
           this.totalPages = data.page.totalPages;
           this.totalElements = data.page.totalElements;
           this.isLoaded = true;
-          this.calculTotal(data.content);
-          this.loadTvaInfo(selectedExercice);
         },
         error: (err) => {
           this.onError(err);
@@ -108,7 +99,6 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   nextPage(): void {
     if (this.page < this.totalPages - 1) {
       this.page++;
-      console.log('selected', this.selectedExercice, this.selectedType);
       this.loadOperations(this.selectedExercice, this.selectedType);
     }
   }
@@ -120,26 +110,6 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadTvaInfo(exercice: string) {
-    this.tvaService.findTvaInfoByExercise(this.siret!, exercice).subscribe({
-      next: (tvaInfos) => {
-        this.tvaInfos = tvaInfos;
-        this.tvaInfosFilterd = tvaInfos;
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
-
-  calculTotal(operations: Operation[]) {
-    this.totalOperation = 0;
-    if (operations) {
-      operations.forEach((oper) => {
-        this.totalOperation += oper.montantOperation;
-      });
-    }
-  }
 
   filterByExercice(selectedExeciceValue: string) {
     if (this.operations) {
@@ -168,7 +138,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
         this.totalOperation += oper.montantOperation;
       });
     }
-    this.loadTvaInfo(selectedExeciceValue);
+
   }
 
   filterByType(selectedTypeValue: string) {
@@ -223,57 +193,6 @@ export class OperationReadComponent implements OnInit, OnDestroy {
         this.onError(err);
       },
     });
-  }
-
-  addOperation() {
-    this.sharedMessagesService.setMessage("Ajout d'une Opération");
-    this.sharedDataService.setExercices(this.exercises);
-    this.router.navigate(['/operations/add']);
-  }
-
-  updateOperation(operation: Operation) {
-    this.sharedMessagesService.setMessage("Edition d'une Opération");
-    this.sharedDataService.setExercices(this.exercises);
-    this.sharedDataService.setSelectOperation(operation);
-    this.router.navigate(['/operations/edit']);
-  }
-
-  deleteOperationService(id: number) {
-    this.operationService.deletedOperationById(id).subscribe({
-      next: () => {
-        this.alertService.show('DELETE', 'OPERATION', 'success');
-        this.operationsFiltred = this.operations.filter(
-          (oper) => oper.id !== id
-        );
-        this.operations = this.operationsFiltred;
-        this.calculTotal(this.operations);
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
-
-  deleteOperation(event: Event, operation: Operation) {
-    event.preventDefault();
-    const modal = this.modalService.open(ConfirmDeleteComponent, {
-      size: 'lg',
-      backdrop: 'static',
-    });
-    modal.componentInstance.item = 'Operation';
-    modal.componentInstance.composant = operation;
-
-    modal.result
-      .then((result) => {
-        if (result === 'confirm') {
-          if (operation.id) {
-            this.deleteOperationService(operation.id);
-          }
-        }
-      })
-      .catch(() => {
-        console.log('Annulé');
-      });
   }
 
   private onError(error: any) {

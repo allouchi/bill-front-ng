@@ -20,16 +20,11 @@
       </select>
     </div>
 
-    @if(tvaInfosFilterd){
-    <div><strong>CA NET : </strong> {{ tvaInfosFilterd!.totalCAHorsTaxe | customDecimalPipe}}</div>
-    }
-
-    <div><strong>Total Opérations : </strong> {{totalOperation | customDecimalPipe }}</div>
     <div>
-      <label class="form-label invisible" for="add">Ajouter</label>
-      <button id="add" class="btn btn-pink" (click)="addOperation()" title="Ajouter une opération">
+      <label class="form-label invisible" for="add">Importer</label>
+      <button id="add" class="btn btn-pink" (click)="importOperations()" title="Ajouter une opération">
         <i class="bi bi-plus-circle me-1"></i>
-        Ajouter
+        Importer
       </button>
     </div>
   </div>
@@ -37,31 +32,22 @@
     <table class="table table-success table-striped">
       <thead class="table-dark">
         <tr>
-          <th scope="col">Type Opération</th>
-          <th scope="col">Exercice</th>
-          <th scope="col">Montant Opération</th>
           <th scope="col">Date Opération</th>
-          <th scope="col">Actions</th>
+          <th scope="col">Déscription</th>
+          <th scope="col">Type</th>
+          <th scope="col">Montant</th>
+          <th scope="col">Exercice</th>
+
         </tr>
       </thead>
       <tbody>
         @for (operation of operationsFiltred; track operation.id) {
         <tr>
-          <td style="text-align: center">{{ operation.typeOperation }}</td>
-          <td style="text-align: center">{{ operation.exercise }}</td>
-          <td style="text-align: center">{{ operation.montantOperation | customDecimalPipe }}</td>
           <td style="text-align: center">{{ operation.dateOperation }}</td>
-
-          <td>
-            <button class="btn btn-outline-primary btn-sm me-2" (click)="updateOperation(operation)"
-              title="Modifier opération">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button class="btn btn-outline-danger btn-sm me-2" (click)="deleteOperation($event, operation)"
-              title="Supprimer opération" [disabled]="!isAdmin">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
+          <td style="text-align: left">{{ operation.descriptionOperation }}</td>
+          <td style="text-align: center">{{ operation.typeOperation }}</td>
+          <td style="text-align: center">{{ operation.montantOperation | customDecimalPipe }}</td>
+          <td style="text-align: center">{{ operation.exercise }}</td>
         </tr>
         } @empty {
         <tr>

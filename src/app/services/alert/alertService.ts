@@ -32,6 +32,9 @@ export class AlertService implements OnInit {
 
   constructor(private readonly translateService: I18nService) { }
 
+  FUNCIONAL_ERROR = ['RESOURCE_NOT_FOUND', 'DB_ERROR', 'DUPLICATE_DATA']
+
+
   ngOnInit(): void {
   }
 
@@ -140,14 +143,13 @@ export class AlertService implements OnInit {
 
     let message: string;
 
-    if (error.error.code === 'DB_ERROR') {
+    if (this.FUNCIONAL_ERROR.includes(error.error.code)) {
       message = error.error.message;
     }
     else if (error.error.code === 'PDF_ERROR') {
       message = this.downloadFileError;
-    } else if (error.error.code === 'DUPLICATE_DATA') {
-      message = error.error.message;
-    } else if (error.message && error.message.includes('Http failure')) {
+    }
+    else if (error.message && error.message.includes('Http failure')) {
       message = this.serverError;
     } else {
       message = error.error.message;
