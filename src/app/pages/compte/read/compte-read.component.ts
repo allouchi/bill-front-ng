@@ -13,6 +13,7 @@ import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import TvaInfos from '../../../models/TvaInfos';
 import { AlertService } from '../../../services/alert/alertService';
 import Compte from '../../../models/Compte';
+import GetMonthsOfYear from '../../../shared/utils/month-year';
 
 
 @Component({
@@ -40,7 +41,8 @@ export class CompteReadComponent implements OnInit, OnDestroy {
   parent = 'read';
   siret: string | null = '';
   totalOperation: number = 0;
-  typeOperations: string[] = ['Tous', 'DIV', 'NDF', 'AUTRE'];
+  typeOperations: string[] = ['Tous', 'DIV', 'NDF', 'DGFIP', 'AUTRE'];
+  monthsYear: any;
 
   page = 0;
   size = 12;
@@ -63,6 +65,7 @@ export class CompteReadComponent implements OnInit, OnDestroy {
     this.selectedType = 'Tous';
     this.selectedExercice = 'Tous';
     this.loadOperations(this.selectedExercice, this.selectedType);
+    this.monthsYear = GetMonthsOfYear();
   }
 
   importOperations() {
@@ -70,6 +73,7 @@ export class CompteReadComponent implements OnInit, OnDestroy {
       next: operations => {
         this.operations = operations;
         this.operationsFiltred = operations;
+        this.alertService.show('IMPORT', 'COMPTE', 'success');
       },
       error: error => {
         this.onError(error);
@@ -83,11 +87,11 @@ export class CompteReadComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.operations = data.content;
-          console.log(this.operations)
           this.operationsFiltred = data.content;
           this.totalPages = data.page.totalPages;
           this.totalElements = data.page.totalElements;
           this.isLoaded = true;
+          this.totalOperation = this.operations.length;
         },
         error: (err) => {
           this.onError(err);
@@ -110,6 +114,18 @@ export class CompteReadComponent implements OnInit, OnDestroy {
     }
   }
 
+
+  setMonthValue(event: Event) {
+    const selectedMonth = (event.target as HTMLSelectElement).value;
+    console.log(selectedMonth)
+    if (this.operations) {
+      if (selectedMonth != "00") {
+        this.operationsFiltred = this.operations.filter(oper => oper.dateOperation.substring(3, 5) == selectedMonth);
+      } else {
+        this.operationsFiltred = this.operations;
+      }
+    }
+  }
 
   filterByExercice(selectedExeciceValue: string) {
     if (this.operations) {

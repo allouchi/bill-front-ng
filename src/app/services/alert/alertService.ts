@@ -25,6 +25,7 @@ export class AlertService implements OnInit {
   serverError = 'Le serveur est inaccessible !';
   downloadFileError = "Le fichier inexistant ou endommagé";
   messageSendSuccess = "La facture a été envoyée avec succès";
+  messageImport = "Le fichier a été importé avec succès"
   currentLang = 'fr';
 
   private readonly alertSubject = new Subject<ToastData>();
@@ -122,6 +123,11 @@ export class AlertService implements OnInit {
       }
       case 'LOGOUT': {
         message = this.logoutMessage;
+        break;
+      }
+
+      case 'IMPORT': {
+        message = this.messageImport;
         break;
       }
 

@@ -12,6 +12,15 @@
     </div>
 
     <div style="width: 150px; margin-left: 0;">
+      <label for="typeSelect" class="form-label fw-bold">Mois</label>
+      <select (change)="setMonthValue($event)" class="form-select" id="typeSelect">
+        @for (month of monthsYear; track month.id) {
+        <option value="{{ month.id }}">{{ month.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div style="width: 150px; margin-left: 0;">
       <label for="typeSelect" class="form-label fw-bold">Type</label>
       <select (change)="setTypeValue($event)" class="form-select" id="typeSelect">
         @for (type of typeOperations; track type) {
@@ -37,7 +46,6 @@
           <th scope="col">Type</th>
           <th scope="col">Montant</th>
           <th scope="col">Exercice</th>
-
         </tr>
       </thead>
       <tbody>
@@ -57,6 +65,19 @@
         </tr>
         }
       </tbody>
+      <!-- LIGNE TOTAUX -->
+      @if(totalOperation > 0){
+      <tfoot class="fw-bold table-dark">
+        <tr>
+          <td>Total</td>
+          <td class="text-center">{{totalOperation}}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td colspan="3"></td>
+        </tr>
+      </tfoot>
+      }
     </table>
     @if(totalPages > 1){
     <!-- ✅ Pagination bien placée et centrée -->

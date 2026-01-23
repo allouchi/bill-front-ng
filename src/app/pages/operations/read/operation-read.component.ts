@@ -70,7 +70,6 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     this.loadOperations('Tous', 'Tous');
     this.selectedType = 'Tous';
     this.selectedExercice = 'Tous';
-
   }
 
   loadOperations(selectedExercice: string, type: string) {
@@ -96,7 +95,6 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   nextPage(): void {
     if (this.page < this.totalPages - 1) {
       this.page++;
-      console.log('selected', this.selectedExercice, this.selectedType);
       this.loadOperations(this.selectedExercice, this.selectedType);
     }
   }
