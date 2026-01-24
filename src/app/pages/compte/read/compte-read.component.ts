@@ -37,6 +37,7 @@ export class CompteReadComponent implements OnInit, OnDestroy {
   tvaInfos: TvaInfos | null = null;
   tvaInfosFilterd: TvaInfos | null = null;
   selectedType: string = '';
+  selectedMonth: string = '';
   isAdmin = false;
   parent = 'read';
   siret: string | null = '';
@@ -55,8 +56,8 @@ export class CompteReadComponent implements OnInit, OnDestroy {
     private readonly operationService: OperationService,
     private readonly authService: AuthService,
     private readonly alertService: AlertService,
-    private readonly tvaService: TvaService
-  ) { }
+    private readonly tvaService: TvaService,
+  ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -64,26 +65,25 @@ export class CompteReadComponent implements OnInit, OnDestroy {
     this.loadExercicesRef();
     this.selectedType = 'Tous';
     this.selectedExercice = 'Tous';
-    this.loadOperations(this.selectedExercice, this.selectedType);
+    this.selectedMonth = 'Tous';
+    this.loadOperations(
+      this.selectedExercice,
+      this.selectedType,
+      this.selectedMonth,
+    );
     this.monthsYear = GetMonthsOfYear();
   }
 
-  importOperations() {
-    this.operationService.importOperations(this.siret!).subscribe({
-      next: operations => {
-        this.operations = operations;
-        this.operationsFiltred = operations;
-        this.alertService.show('IMPORT', 'COMPTE', 'success');
-      },
-      error: error => {
-        this.onError(error);
-      }
-    })
-  }
-
-  loadOperations(selectedExercice: string, type: string) {
+  loadOperations(selectedExercice: string, type: string, month: string) {
     this.operationService
-      .getComptes(this.siret!, selectedExercice, type, this.page, this.size)
+      .getComptes(
+        this.siret!,
+        selectedExercice,
+        type,
+        month,
+        this.page,
+        this.size,
+      )
       .subscribe({
         next: (data) => {
           this.operations = data.content;
@@ -103,28 +103,59 @@ export class CompteReadComponent implements OnInit, OnDestroy {
   nextPage(): void {
     if (this.page < this.totalPages - 1) {
       this.page++;
-      this.loadOperations(this.selectedExercice, this.selectedType);
+      this.loadOperations(
+        this.selectedExercice,
+        this.selectedType,
+        this.selectedMonth,
+      );
     }
   }
 
   previousPage(): void {
     if (this.page > 0) {
       this.page--;
-      this.loadOperations(this.selectedExercice, this.selectedType);
+      this.loadOperations(
+        this.selectedExercice,
+        this.selectedType,
+        this.selectedMonth,
+      );
     }
   }
 
-
   setMonthValue(event: Event) {
     const selectedMonth = (event.target as HTMLSelectElement).value;
-    console.log(selectedMonth)
-    if (this.operations) {
-      if (selectedMonth != "00") {
-        this.operationsFiltred = this.operations.filter(oper => oper.dateOperation.substring(3, 5) == selectedMonth);
-      } else {
-        this.operationsFiltred = this.operations;
-      }
+    this.selectedMonth = selectedMonth;
+    if (selectedMonth == '00') {
+      this.selectedMonth = 'Tous';
     }
+
+    this.loadOperations(
+      this.selectedExercice,
+      this.selectedType,
+      this.selectedMonth,
+    );
+  }
+
+  setTypeValue(event: Event) {
+    this.totalOperation = 0;
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    this.selectedType = selectedValue;
+    this.loadOperations(
+      this.selectedExercice,
+      this.selectedType,
+      this.selectedMonth,
+    );
+  }
+
+  setExerciceValue(event: Event) {
+    this.totalOperation = 0;
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    this.selectedExercice = selectedValue;
+    this.loadOperations(
+      this.selectedExercice,
+      this.selectedType,
+      this.selectedMonth,
+    );
   }
 
   filterByExercice(selectedExeciceValue: string) {
@@ -134,19 +165,19 @@ export class CompteReadComponent implements OnInit, OnDestroy {
           this.operationsFiltred = this.operations;
         } else {
           this.operationsFiltred = this.operations.filter(
-            (o) => o.typeOperation == this.selectedType
+            (o) => o.typeOperation == this.selectedType,
           );
         }
       } else {
         if (this.selectedType == 'Tous') {
           this.operationsFiltred = this.operations.filter(
-            (o) => o.exercise == selectedExeciceValue
+            (o) => o.exercise == selectedExeciceValue,
           );
         } else {
           this.operationsFiltred = this.operations.filter(
             (o) =>
               o.exercise == selectedExeciceValue &&
-              o.typeOperation == this.selectedType
+              o.typeOperation == this.selectedType,
           );
         }
       }
@@ -154,7 +185,6 @@ export class CompteReadComponent implements OnInit, OnDestroy {
         this.totalOperation += oper.montantOperation;
       });
     }
-
   }
 
   filterByType(selectedTypeValue: string) {
@@ -164,19 +194,19 @@ export class CompteReadComponent implements OnInit, OnDestroy {
           this.operationsFiltred = this.operations;
         } else {
           this.operationsFiltred = this.operations.filter(
-            (o) => o.exercise == this.selectedExercice
+            (o) => o.exercise == this.selectedExercice,
           );
         }
       } else {
         if (this.selectedExercice == 'Tous') {
           this.operationsFiltred = this.operations.filter(
-            (o) => o.typeOperation == selectedTypeValue
+            (o) => o.typeOperation == selectedTypeValue,
           );
         } else {
           this.operationsFiltred = this.operations.filter(
             (o) =>
               o.exercise == this.selectedExercice &&
-              o.typeOperation == selectedTypeValue
+              o.typeOperation == selectedTypeValue,
           );
         }
       }
@@ -186,20 +216,6 @@ export class CompteReadComponent implements OnInit, OnDestroy {
     }
   }
 
-  setTypeValue(event: Event) {
-    this.totalOperation = 0;
-    const selectedValue = (event.target as HTMLSelectElement).value;
-    this.selectedType = selectedValue;
-    this.loadOperations(this.selectedExercice, this.selectedType);
-  }
-
-  setExerciceValue(event: Event) {
-    this.totalOperation = 0;
-    const selectedValue = (event.target as HTMLSelectElement).value;
-    this.selectedExercice = selectedValue;
-    this.loadOperations(this.selectedExercice, this.selectedType);
-  }
-
   private loadExercicesRef() {
     this.tvaService.findExercisesRef().subscribe({
       next: (exercises) => {
@@ -207,6 +223,19 @@ export class CompteReadComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.onError(err);
+      },
+    });
+  }
+
+  importOperations() {
+    this.operationService.importOperations(this.siret!).subscribe({
+      next: (operations) => {
+        this.operations = operations;
+        this.operationsFiltred = operations;
+        this.alertService.show('IMPORT', 'COMPTE', 'success');
+      },
+      error: (error) => {
+        this.onError(error);
       },
     });
   }

@@ -19,7 +19,7 @@ export class OperationService {
   private readonly OPERATION_PATH: string = `${this.apiURL}` + '/operations';
   private readonly COMPTE_PATH: string = `${this.apiURL}` + '/compte';
 
-  constructor(private readonly http: HttpClient) { }
+  constructor(private readonly http: HttpClient) {}
 
   createOrUpdateOperation(operation: Operation): Observable<Operation> {
     const isNew: boolean = !operation.id || operation.id === 0;
@@ -35,14 +35,14 @@ export class OperationService {
     exercice: string,
     type: string,
     page: number,
-    size: number
+    size: number,
   ): Observable<Page<Operation>> {
     let params = new HttpParams().set('page', page).set('size', size);
     return this.http.get<Page<Operation>>(
       `${this.OPERATION_PATH}/${siret}/${exercice}/${type}`,
       {
         params,
-      }
+      },
     );
   }
 
@@ -58,15 +58,16 @@ export class OperationService {
     siret: string,
     exercice: string,
     type: string,
+    month: string,
     page: number,
-    size: number
+    size: number,
   ): Observable<Page<Compte>> {
     let params = new HttpParams().set('page', page).set('size', size);
     return this.http.get<Page<Compte>>(
-      `${this.COMPTE_PATH}/${siret}/${exercice}/${type}`,
+      `${this.COMPTE_PATH}/${siret}/${exercice}/${type}/${month}`,
       {
         params,
-      }
+      },
     );
   }
 }
