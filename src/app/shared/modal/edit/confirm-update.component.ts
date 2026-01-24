@@ -6,12 +6,14 @@ import { SharedDataService } from '../../../services/shared/shared-data-service'
 import User from '../../../models/User';
 import Company from '../../../models/Company';
 import { AuthService } from '../../../services/auth/auth-service';
+import EmailClient from '../../../models/EmailClient';
 
 interface Result {
   userLang: string;
   siret: string;
   company: Company | undefined | null;
   comment: string;
+  mails: EmailClient[];
 }
 
 @Component({
@@ -25,9 +27,11 @@ export class ConfirmEditComponent implements OnInit {
   composant: any;
   state: boolean = false;
   user: User | null = null;
-  selectedLanguage: string | null = 'fr';
+  selectedLanguage: string | null = '';
   selectedSiret: string | undefined;
   companies: Company[] | null = [];
+  selectedEmails: EmailClient[] = [];
+  emails: EmailClient[] = [];
 
   languages = [
     { id: 'fr', descr: 'Français' },
@@ -35,9 +39,10 @@ export class ConfirmEditComponent implements OnInit {
   ];
 
   result: Result = {
-    userLang: 'fr',
+    userLang: '',
     siret: '',
     company: null,
+    mails: [],
     comment: 'confirm',
   };
 
@@ -56,6 +61,7 @@ export class ConfirmEditComponent implements OnInit {
     if (this.companies) {
       this.selectedSiret = this.companies.find((c) => c.checked == true)?.siret;
     }
+    this.emails = this.composant;
   }
 
   cancel(): void {
@@ -85,6 +91,25 @@ export class ConfirmEditComponent implements OnInit {
     }
 
     this.activeModal.close(this.result);
+  }
+
+  setEmailValue(event: Event) {
+    const select = event.target as HTMLSelectElement;
+
+    // Récupère tous les IDs sélectionnés
+    const selectedIds = Array.from(select.selectedOptions).map((option) =>
+      Number(option.value)
+    );
+
+    // Récupère les objets Email correspondants
+    const selectedEmails = this.emails.filter((mail) =>
+      selectedIds.includes(mail.id!)
+    );
+
+    this.result = {
+      ...this.result,
+      mails: selectedEmails,
+    };
   }
 
   setLaguageValue(event: any) {

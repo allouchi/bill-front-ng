@@ -8,6 +8,7 @@ import Exercise from '../../models/Exercise';
 import Prestation from "../../models/Prestation";
 import DataPDF from '../../models/DataPDF';
 import { Page } from "../../models/Page";
+import EmailClient from "../../models/EmailClient";
 
 /**
  * Adapter for IFactureService
@@ -22,7 +23,12 @@ export class FactureService implements IFactureService {
   private readonly EXERCISE_PATH: string =
     `${this.apiURL}` + '/tvas/exerciceRef';
   private readonly EDITION_PATH: string = `${this.apiURL}` + '/editions';
-  constructor(private readonly http: HttpClient) {}
+  private readonly BATCH_PATH: string = `${this.apiURL}` + '/batchs';
+
+
+  constructor(private readonly http: HttpClient) { }
+
+
 
   updateFacture(facture: Facture): Observable<Facture> {
     return this.http.put<Facture>(this.FACTURES_PATH, facture);
@@ -89,5 +95,21 @@ export class FactureService implements IFactureService {
 
   downloadPdfFacture(factureId: number): Observable<DataPDF> {
     return this.http.get<DataPDF>(`${this.EDITION_PATH}/${factureId}`);
+  }
+
+  getClientMails(factureId: number): Observable<[]> {
+    return this.http.get<[]>(`${this.EDITION_PATH}/mail/${factureId}`);
+  }
+
+  envoyerFacture(factureId: number, mailsTo: EmailClient[]): Observable<string> {
+    return this.http.post<string>(`${this.EDITION_PATH}/mail/${factureId}`, mailsTo);
+  }
+
+  getWorkingDays(year: number, month: number): Observable<number> {
+    return this.http.get<number>(`${this.EDITION_PATH}/workingDays/${year}/${month}`);
+  }
+
+  runBatch(): Observable<Facture[]> {
+    return this.http.get<Facture[]>(`${this.BATCH_PATH}`);
   }
 }

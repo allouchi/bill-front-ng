@@ -27,9 +27,8 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   companies: Company[] = [];
   filtredCompanies: Company[] = [];
   isLoaded = false;
-  selectedSiret: string = '';
   observableEvent$ = new Subscription();
-  siret: string = '';
+  siret: string | null = '';
   isAdmin = false;
   parent = 'read';
 
@@ -51,7 +50,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   }
 
   loadCompanies() {
-    this.companies = this.sharedDataService.getCompanies();
+    this.companies = this.sharedDataService.getCompanies();   
     this.filtredCompanies = this.companies
     const company = this.companies.find(
       (company) => company.checked === true
@@ -92,7 +91,6 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
 
     modal.componentInstance.item = 'Company';
     modal.componentInstance.composant = company;
-
     modal.result
       .then((result) => {
         if (result === 'confirm') {
@@ -122,7 +120,6 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
 
     this.sharedDataService.setSelectCompany(company!);
     this.sharedDataService.setPrestations(company!.prestations!);
-    this.sharedDataService.setSiret(company!.siret);
     this.libelleCompanyService.setMessage(this.authService.getLibelleHeader());
     this.companyService.createOrUpdateCompany(company!).subscribe({
       next: () => {
@@ -151,7 +148,6 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
 
     modal.componentInstance.item = 'Company';
     modal.componentInstance.composant = company;
-
     modal.result
       .then((result) => {
         if (result.comment === 'confirm') {

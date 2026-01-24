@@ -8,18 +8,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth-service';
 import { OperationService } from '../../../services/dashboard/operation-service';
 import Operation from '../../../models/Operation';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
-import { SharedMessagesService } from '../../../services/shared/messages.service';
-
 import { CommonModule } from '@angular/common';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import TvaInfos from '../../../models/TvaInfos';
 import { AlertService } from '../../../services/alert/alertService';
+import Compte from '../../../models/Compte';
+import GetMonthsOfYear from '../../../shared/utils/month-year';
 
 
 @Component({
-  selector: 'bill-operation-read',
+  selector: 'bill-compte-read',
   imports: [
     CommonModule,
     WaitingComponent,
@@ -27,23 +25,25 @@ import { AlertService } from '../../../services/alert/alertService';
     CustomDecimalPipe,
     FormsModule,
   ],
-  templateUrl: './operation-read.component.html',
-  styleUrl: './operation-read.component.css',
+  templateUrl: './compte-read.component.html',
+  styleUrl: './compte-read.component.css',
 })
-export class OperationReadComponent implements OnInit, OnDestroy {
+export class CompteReadComponent implements OnInit, OnDestroy {
   isLoaded = false;
-  operations: Operation[] = [];
-  operationsFiltred: Operation[] = [];
+  operations: Compte[] = [];
+  operationsFiltred: Compte[] = [];
   exercises: Exercise[] = [];
   selectedExercice: string = '';
   tvaInfos: TvaInfos | null = null;
   tvaInfosFilterd: TvaInfos | null = null;
   selectedType: string = '';
+  selectedMonth: string = '';
   isAdmin = false;
   parent = 'read';
   siret: string | null = '';
   totalOperation: number = 0;
-  typeOperations: string[] = ['Tous', 'DIV', 'NDF'];
+  typeOperations: string[] = ['Tous', 'DIV', 'NDF', 'DGFIP', 'AUTRE'];
+  monthsYear: any;
 
   page = 0;
   size = 12;
@@ -53,28 +53,37 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   router = inject(Router);
   constructor(
     private readonly sharedDataService: SharedDataService,
-    private readonly operationSerice: OperationService,
+    private readonly operationService: OperationService,
     private readonly authService: AuthService,
-    private readonly tvaService: TvaService,
-    private readonly modalService: NgbModal,
-    private readonly sharedMessagesService: SharedMessagesService,
     private readonly alertService: AlertService,
-    private readonly operationService: OperationService
-  ) { }
+    private readonly tvaService: TvaService,
+  ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
     this.loadExercicesRef();
-    this.loadTvaInfo('Tous');
-    this.loadOperations('Tous', 'Tous');
     this.selectedType = 'Tous';
     this.selectedExercice = 'Tous';
+    this.selectedMonth = 'Tous';
+    this.loadOperations(
+      this.selectedExercice,
+      this.selectedType,
+      this.selectedMonth,
+    );
+    this.monthsYear = GetMonthsOfYear();
   }
 
-  loadOperations(selectedExercice: string, type: string) {
-    this.operationSerice
-      .getOperations(this.siret!, selectedExercice, type, this.page, this.size)
+  loadOperations(selectedExercice: string, type: string, month: string) {
+    this.operationService
+      .getComptes(
+        this.siret!,
+        selectedExercice,
+        type,
+        month,
+        this.page,
+        this.size,
+      )
       .subscribe({
         next: (data) => {
           this.operations = data.content;
@@ -82,8 +91,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
           this.totalPages = data.page.totalPages;
           this.totalElements = data.page.totalElements;
           this.isLoaded = true;
-          this.calculTotal(data.content);
-          this.loadTvaInfo(selectedExercice);
+          this.totalOperation = this.operations.length;
         },
         error: (err) => {
           this.onError(err);
@@ -95,36 +103,59 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   nextPage(): void {
     if (this.page < this.totalPages - 1) {
       this.page++;
-      this.loadOperations(this.selectedExercice, this.selectedType);
+      this.loadOperations(
+        this.selectedExercice,
+        this.selectedType,
+        this.selectedMonth,
+      );
     }
   }
 
   previousPage(): void {
     if (this.page > 0) {
       this.page--;
-      this.loadOperations(this.selectedExercice, this.selectedType);
+      this.loadOperations(
+        this.selectedExercice,
+        this.selectedType,
+        this.selectedMonth,
+      );
     }
   }
 
-  loadTvaInfo(exercice: string) {
-    this.tvaService.findTvaInfoByExercise(this.siret!, exercice).subscribe({
-      next: (tvaInfos) => {
-        this.tvaInfos = tvaInfos;
-        this.tvaInfosFilterd = tvaInfos;
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
+  setMonthValue(event: Event) {
+    const selectedMonth = (event.target as HTMLSelectElement).value;
+    this.selectedMonth = selectedMonth;
+    if (selectedMonth == '00') {
+      this.selectedMonth = 'Tous';
+    }
+
+    this.loadOperations(
+      this.selectedExercice,
+      this.selectedType,
+      this.selectedMonth,
+    );
   }
 
-  calculTotal(operations: Operation[]) {
+  setTypeValue(event: Event) {
     this.totalOperation = 0;
-    if (operations) {
-      operations.forEach((oper) => {
-        this.totalOperation += oper.montantOperation;
-      });
-    }
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    this.selectedType = selectedValue;
+    this.loadOperations(
+      this.selectedExercice,
+      this.selectedType,
+      this.selectedMonth,
+    );
+  }
+
+  setExerciceValue(event: Event) {
+    this.totalOperation = 0;
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    this.selectedExercice = selectedValue;
+    this.loadOperations(
+      this.selectedExercice,
+      this.selectedType,
+      this.selectedMonth,
+    );
   }
 
   filterByExercice(selectedExeciceValue: string) {
@@ -134,19 +165,19 @@ export class OperationReadComponent implements OnInit, OnDestroy {
           this.operationsFiltred = this.operations;
         } else {
           this.operationsFiltred = this.operations.filter(
-            (o) => o.typeOperation == this.selectedType
+            (o) => o.typeOperation == this.selectedType,
           );
         }
       } else {
         if (this.selectedType == 'Tous') {
           this.operationsFiltred = this.operations.filter(
-            (o) => o.exercise == selectedExeciceValue
+            (o) => o.exercise == selectedExeciceValue,
           );
         } else {
           this.operationsFiltred = this.operations.filter(
             (o) =>
               o.exercise == selectedExeciceValue &&
-              o.typeOperation == this.selectedType
+              o.typeOperation == this.selectedType,
           );
         }
       }
@@ -154,7 +185,6 @@ export class OperationReadComponent implements OnInit, OnDestroy {
         this.totalOperation += oper.montantOperation;
       });
     }
-    this.loadTvaInfo(selectedExeciceValue);
   }
 
   filterByType(selectedTypeValue: string) {
@@ -164,19 +194,19 @@ export class OperationReadComponent implements OnInit, OnDestroy {
           this.operationsFiltred = this.operations;
         } else {
           this.operationsFiltred = this.operations.filter(
-            (o) => o.exercise == this.selectedExercice
+            (o) => o.exercise == this.selectedExercice,
           );
         }
       } else {
         if (this.selectedExercice == 'Tous') {
           this.operationsFiltred = this.operations.filter(
-            (o) => o.typeOperation == selectedTypeValue
+            (o) => o.typeOperation == selectedTypeValue,
           );
         } else {
           this.operationsFiltred = this.operations.filter(
             (o) =>
               o.exercise == this.selectedExercice &&
-              o.typeOperation == selectedTypeValue
+              o.typeOperation == selectedTypeValue,
           );
         }
       }
@@ -184,20 +214,6 @@ export class OperationReadComponent implements OnInit, OnDestroy {
         this.totalOperation += oper.montantOperation;
       });
     }
-  }
-
-  setTypeValue(event: Event) {
-    this.totalOperation = 0;
-    const selectedValue = (event.target as HTMLSelectElement).value;
-    this.selectedType = selectedValue;
-    this.loadOperations(this.selectedExercice, this.selectedType);
-  }
-
-  setExerciceValue(event: Event) {
-    this.totalOperation = 0;
-    const selectedValue = (event.target as HTMLSelectElement).value;
-    this.selectedExercice = selectedValue;
-    this.loadOperations(this.selectedExercice, this.selectedType);
   }
 
   private loadExercicesRef() {
@@ -211,55 +227,17 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     });
   }
 
-  addOperation() {
-    this.sharedMessagesService.setMessage("Ajout d'une Opération");
-    this.sharedDataService.setExercices(this.exercises);
-    this.router.navigate(['/operations/add']);
-  }
-
-  updateOperation(operation: Operation) {
-    this.sharedMessagesService.setMessage("Edition d'une Opération");
-    this.sharedDataService.setExercices(this.exercises);
-    this.sharedDataService.setSelectOperation(operation);
-    this.router.navigate(['/operations/edit']);
-  }
-
-  deleteOperationService(id: number) {
-    this.operationService.deletedOperationById(id).subscribe({
-      next: () => {
-        this.alertService.show('DELETE', 'OPERATION', 'success');
-        this.operationsFiltred = this.operations.filter(
-          (oper) => oper.id !== id
-        );
-        this.operations = this.operationsFiltred;
-        this.calculTotal(this.operations);
+  importOperations() {
+    this.operationService.importOperations(this.siret!).subscribe({
+      next: (operations) => {
+        this.operations = operations;
+        this.operationsFiltred = operations;
+        this.alertService.show('IMPORT', 'COMPTE', 'success');
       },
-      error: (err) => {
-        this.onError(err);
+      error: (error) => {
+        this.onError(error);
       },
     });
-  }
-
-  deleteOperation(event: Event, operation: Operation) {
-    event.preventDefault();
-    const modal = this.modalService.open(ConfirmDeleteComponent, {
-      size: 'lg',
-      backdrop: 'static',
-    });
-    modal.componentInstance.item = 'Operation';
-    modal.componentInstance.composant = operation;
-
-    modal.result
-      .then((result) => {
-        if (result === 'confirm') {
-          if (operation.id) {
-            this.deleteOperationService(operation.id);
-          }
-        }
-      })
-      .catch(() => {
-        console.log('Annulé');
-      });
   }
 
   private onError(error: any) {

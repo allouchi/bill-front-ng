@@ -2,8 +2,7 @@ import { Observable } from "rxjs";
 import Tva from "../../models/Tva";
 import TvaInfos from "../../models/TvaInfos";
 import Exercise from "../../models/Exercise";
-
-
+import { Page } from '../../models/Page';
 
 /**
  * Tva fetcher port
@@ -24,7 +23,12 @@ export interface ITvaService {
    * @param Tva Tva name
    * @returns Observable<Tva>
    */
-  findTvaByExercise(siret: string, exercise: string): Observable<Tva[]>;
+  findTvaByExercise(
+    siret: string,
+    exercise: string,
+    page: number,
+    size: number
+  ): Observable<Page<Tva>>;
 
   /**
    * Get all schemas if no project or all schemas for project name in otherwise

@@ -84,7 +84,7 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.getAccessToken();
-  }
+  }  
 
   logout() {
     localStorage.removeItem('accessToken');
@@ -117,8 +117,7 @@ export class AuthService {
     this.libelleHeader = libelleHeader;
     this.libelleCompanyService.setMessage(libelleHeader);
     this.sharedDataService.setSelectCompany(authResponse.company);
-    this.sharedDataService.setSelectedUser(authResponse.user);
-    this.sharedDataService.setSiret(authResponse.company!.siret);
+    this.sharedDataService.setSelectedUser(authResponse.user);    
   }
 
   getUser(): User | null {

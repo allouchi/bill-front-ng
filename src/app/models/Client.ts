@@ -1,10 +1,11 @@
 import Adresse from "./Adresse";
+import EmailClient from "./EmailClient";
 
 
 export default interface Client {
   id: number | null;
   socialReason: string;
-  email: string;
   adresseClient: Adresse;
-  hasPrestation: boolean
+  hasPrestation: boolean;
+  emails: EmailClient[]
 }

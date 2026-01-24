@@ -6,6 +6,7 @@
     "clients": "CUSTOMERS",
     "consultants": "CONSULTANTS",
     "operations": "OPERTATIONS",
+    "compte": "COMPTE",
     "tva": "TVAS"
   },
   "message": {

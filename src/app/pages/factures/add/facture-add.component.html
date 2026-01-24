@@ -10,7 +10,8 @@
         <div class="row">
           <div class="mb-3">
             <label for="monthSelect" class="form-label fw-bold">Mois de la Facture : *</label>
-            <select (change)="setMonthValue($event)" class="form-select" id="monthSelect" formControlName="monthFacture">
+            <select (change)="setMonthValue($event)" class="form-select" id="monthSelect"
+              formControlName="monthFacture">
               @for (month of monthsYear; track month.id) {
               <option value="{{ month.id }}">{{ month.label }}</option>
               }
@@ -39,12 +40,11 @@
           </div>
           <div class="mb-3">
             <label for="exampleInput" class="form-label fw-bold">Quantité : *</label>
-            <input formControlName="quantite" type="text" class="form-control" id="quantite" placeholder="Saisir le nombre de jours"
-              [class.is-invalid]="
+            <input formControlName="quantite" type="text" class="form-control" id="quantite"
+              placeholder="Saisir le nombre de jours" [class.is-invalid]="
                                                                                             formFacture.get('quantite')?.invalid &&
                                                                                             formFacture.get('quantite')?.touched
-                                                                                          "
-                  />
+                                                                                          " />
             <div *ngIf="
                                             formFacture.get('quantite')?.errors?.['required'] &&
                                             formFacture.get('quantite')?.touched
@@ -75,7 +75,7 @@
           </div>
           <div class="form-check mb-3">
             <input type="checkbox" class="form-check-input" id="newTemplate" formControlName="newTemplate" />
-            <label for="newTemplate" class="form-check-label fw-bold">J'opte pour le nouvau template?</label>
+            <label for="newTemplate" class="form-check-label fw-bold">Le nouvau template par défaut</label>
           </div>
 
           <div class="d-flex justify-content-center gap-3">

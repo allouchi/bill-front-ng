@@ -44,4 +44,8 @@ export class CompanyService implements ICompanyService {
   deleteCompanyById(id: number): Observable<string> {
     return this.http.delete<string>(`${this.COMPNAY_PATH}/${id}`);
   }
+
+  switchCompany(company: Company): Observable<void> {
+    return this.http.put<void>(`${this.COMPNAY_PATH}/switch`, company);
+  }
 }

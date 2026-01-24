@@ -29,8 +29,9 @@ export class FactureAddComponent implements OnInit {
   selectedPrestation: Prestation | null = null;
   selectedMonth: number = 0;
   monthsYear: any;
-  siret: string = '';
+  siret: string | null = '';
   isUpload: boolean = true;
+  defaultMonth = '';
   observableEvent$ = new Subscription();
   parent = 'edit';
 
@@ -39,21 +40,23 @@ export class FactureAddComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly factureService: FactureService,
     private readonly sharedDataService: SharedDataService,
-    private readonly alertService: AlertService
-  ) { }
+    private readonly alertService: AlertService,
+  ) {}
 
   ngOnInit(): void {
+    this.defaultMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');    
     this.formFacture = this.fb.group({
-      monthFacture: ['', Validators.required],
+      monthFacture: [this.defaultMonth, Validators.required],
       numeroCommande: [{ value: '', disabled: true }],
       quantite: ['', [Validators.required, numericFrValidator()]],
-      newTemplate: [true, Validators.required],
+      newTemplate: [{ value: true, disabled: true }],
       clientPrestation: [{ value: '', disabled: true }],
     });
 
     this.selectedPrestation = this.sharedDataService.getSelectedPrestation();
     this.monthsYear = GetMonthsOfYear();
     this.siret = this.sharedDataService.getSiret();
+
     this.formFacture.patchValue({
       id: this.selectedPrestation!.id,
       tarifHT: this.selectedPrestation!.tarifHT,
@@ -69,20 +72,35 @@ export class FactureAddComponent implements OnInit {
       dateFin: this.selectedPrestation!.dateFin,
       siret: this.selectedPrestation!.siret,
     });
+
+     this.getWorkingDays( this.defaultMonth);
+  }
+
+  getWorkingDays(month: string){
+  const year = new Date().getFullYear();
+     this.factureService.getWorkingDays(year, +month).subscribe({
+      next: (nbJours) => {
+        const nbJoursOuvres = nbJours;
+        this.selectedMonth = +month;
+        this.formFacture.patchValue({
+          quantite: nbJoursOuvres,
+        });
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+
   }
 
   setMonthValue(event: Event) {
-    const selectedValue = (event.target as HTMLSelectElement).value;
-    const nbJoursOuvres = JoursOuvres(selectedValue);
-    this.selectedMonth = +selectedValue;
-    this.formFacture.patchValue({
-      quantite: nbJoursOuvres,
-    });
+    const selectedMonth = (event.target as HTMLSelectElement).value;
+    this.getWorkingDays(selectedMonth);   
   }
 
   /**
-   * 
-   * @param prestation 
+   *
+   * @param prestation
    */
   private editFacture(prestation: Prestation) {
     prestation.id = this.selectedPrestation!.id;
@@ -90,18 +108,19 @@ export class FactureAddComponent implements OnInit {
     this.factureService
       .createFacture(
         prestation,
-        this.siret,
+        this.siret!,
         this.selectedMonth,
-        this.formFacture.get('newTemplate')?.value
+        this.formFacture.get('newTemplate')?.value,
       )
       .subscribe({
         next: () => {
+          this.sharedDataService.setIsEditionFacture('true');
           this.router.navigate(['/factures/read']);
           this.alertService.show('ADD', 'FACTURE', 'success');
           this.isUpload = false;
         },
         error: (err) => {
-          this.isUpload = false;
+          this.isUpload = true;
           this.onError(err);
         },
       });
@@ -109,7 +128,6 @@ export class FactureAddComponent implements OnInit {
 
   addFacture() {
     if (this.formFacture.valid) {
-
       let quantiteValue = this.formFacture.get('quantite')?.value;
       if (quantiteValue) {
         const nombreStr: string = quantiteValue.toString();

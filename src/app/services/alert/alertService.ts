@@ -23,13 +23,18 @@ export class AlertService implements OnInit {
   loginMessage = 'Bienvenue, vous êtes connecté !';
   female: boolean = true;
   serverError = 'Le serveur est inaccessible !';
-  downloadFileError = "Le fichier inexistant ou endommagé"
+  downloadFileError = "Le fichier inexistant ou endommagé";
+  messageSendSuccess = "La facture a été envoyée avec succès";
+  messageImport = "Le fichier a été importé avec succès"
   currentLang = 'fr';
 
   private readonly alertSubject = new Subject<ToastData>();
   toast$ = this.alertSubject.asObservable();
 
   constructor(private readonly translateService: I18nService) { }
+
+  FUNCIONAL_ERROR = ['RESOURCE_NOT_FOUND', 'DB_ERROR', 'DUPLICATE_DATA']
+
 
   ngOnInit(): void {
   }
@@ -51,6 +56,11 @@ export class AlertService implements OnInit {
         {
           composant = "L'utilisateur ";
           this.female = false;
+          break;
+        }
+
+      case 'MAIL':
+        {
           break;
         }
       case 'CONSULTANT':
@@ -76,6 +86,11 @@ export class AlertService implements OnInit {
     }
 
     switch (action) {
+      case 'SEND': {
+        message = this.messageSendSuccess;
+        break;
+      }
+
       case 'DELETE': {
         if (this.female) {
           message = composant + this.deleteMessageF;
@@ -111,6 +126,11 @@ export class AlertService implements OnInit {
         break;
       }
 
+      case 'IMPORT': {
+        message = this.messageImport;
+        break;
+      }
+
     }
 
     this.translateService.getTranslation('alert.deleteMessageF').subscribe(msg => {
@@ -129,14 +149,17 @@ export class AlertService implements OnInit {
 
     let message: string;
 
-    if (error.error.code === 'PDF_ERROR') {
+    if (this.FUNCIONAL_ERROR.includes(error.error.code)) {
+      message = error.error.message;
+    }
+    else if (error.error.code === 'PDF_ERROR') {
       message = this.downloadFileError;
-    } else if (error.message && error.message.includes('Http failure')) {
-      message = message = this.serverError;
+    }
+    else if (error.message && error.message.includes('Http failure')) {
+      message = this.serverError;
     } else {
       message = error.error.message;
     }
-
     this.alertSubject.next({ message, title, type, delay });
   }
 

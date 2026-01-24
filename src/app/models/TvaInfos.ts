@@ -2,7 +2,7 @@ export default interface TvaInfos {
   totalTvaPaye: number;
   totalTvaRestant: number;
   totalTTC: number;
-  totalTva: number;
+  montantTvaFacture: number;
   totalTvaNet: number;
   totalCAHorsTaxe: number;
 }

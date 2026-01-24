@@ -28,7 +28,7 @@ export class ClientReadComponent implements OnInit, OnDestroy {
   isLoaded = false;
   isAdmin = false;
   parent = 'read';
-  siret: string = '';
+  siret: string | null = '';
 
   constructor(
     private readonly modalService: NgbModal,
@@ -48,7 +48,7 @@ export class ClientReadComponent implements OnInit, OnDestroy {
   }
 
   loadPrestations() {
-    this.prestationService.getPrestationsBySiret(this.siret).subscribe({
+    this.prestationService.getPrestationsBySiret(this.siret!).subscribe({
       next: (prestations) => {
         this.prestations = prestations;
         this.loadClients();

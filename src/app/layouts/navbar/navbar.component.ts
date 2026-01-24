@@ -53,7 +53,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private readonly userService: UserService,
     private readonly companyService: CompanyService,
     private readonly sharedDataService: SharedDataService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.authenticated$ = this.isAuthService
@@ -95,8 +95,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.authService.logout();
     this.sharedMessagesService.setMessage('');
     this.libelleCompanyService.setMessage('');
-    this.router.navigate(['/dashboard']);
     this.alertService.show('LOGOUT', '', 'success');
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate(['/dashboard']);
+    });
   }
 
   userLogout(event: Event) {
@@ -109,7 +111,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
 
     modal.componentInstance.item = 'Logout';
-
     modal.result
       .then((result) => {
         if (result.comment === 'confirm') {
@@ -123,23 +124,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   updateUserService(user: User) {
     this.userService.editUser(user).subscribe({
-      next: () => {
-        this.alertService.show('UPDATE', 'USER', 'success');
-      },
+      next: () => { },
       error: (err) => this.onError(err),
     });
   }
 
   reload() {
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate(['/companies/read']);
+      this.router.navigate(['/dashboard']);
     });
   }
 
-  updateCompanyService(company: Company) {
-    this.companyService.createOrUpdateCompany(company).subscribe({
+  switchCompanyService(company: Company) {
+    this.companyService.switchCompany(company).subscribe({
       next: () => {
-        this.alertService.show('UPDATE', 'COMPANY', 'success');
         this.reload();
       },
       error: (err) => this.onError(err),
@@ -160,31 +158,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
 
     this.user = this.sharedDataService.getSelectedUser();
-    this.company = this.sharedDataService.getSelectedCompany();
     modal.componentInstance.item = 'SwitchParametres';
     modal.componentInstance.composant = this.user;
 
     modal.result
       .then((result) => {
         if (result.comment === 'confirm') {
-          const userLang = this.authService.getUserLang();
-          if (userLang) {
-            this.translateService.switchLang(userLang);
+          if (result.userLang) {
+            this.user!.language = result.userLang;
+            this.translateService.switchLang(result.userLang);
+            this.updateUserService(this.user!);
           }
           if (result.company) {
+            this.switchCompanyService(result.company);
+            this.sharedDataService.setSiret(result.company.siret);
             this.sharedDataService.setSelectCompany(result.company);
-            this.sharedDataService.setSiret(result.company!.siret);
-            this.updateCompanyService(result.company);
           }
-
-          if (this.user) {
-            if (userLang) {
-              this.user.language = userLang;
-            }
-            this.updateUserService(this.user);
-            this.sharedDataService.setSelectedUser(this.user);
-          }
-           this.logout();
         }
       })
       .catch(() => {

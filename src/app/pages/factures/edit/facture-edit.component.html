@@ -1,47 +1,35 @@
-
 <div class="container mt-5">
   <div class="card">
     <div class="card-header bg-primary text-white">
       <h4>Mise à jour de la facture numéro : {{numeroFacture}}</h4>
     </div>
     <div class="card-body">
-<form [formGroup]="formFacture" #form="ngForm"
-  (ngSubmit)="updateFacture()"
-  class="p-4 border rounded"
->
-  <div class="row"> 
-      <div class="mb-3">
-        <label class="form-label fw-bold" for="dateEncaissement fw-bold"> Date d'Encaissment</label>
-        <input
-          type="date"
-          id="dateEncaissement"
-          class="form-control"
-          formControlName="dateEncaissement"
-          [class.is-invalid]="
+      <form [formGroup]="formFacture" #form="ngForm" (ngSubmit)="encaisserFacture()" class="p-4 border rounded">
+        <div class="row">
+          <div class="mb-3">
+            <label class="form-label fw-bold" for="dateEncaissement fw-bold"> Date d'Encaissment</label>
+            <input type="date" id="dateEncaissement" class="form-control" formControlName="dateEncaissement"
+              [class.is-invalid]="
             formFacture.get('dateEncaissement')?.invalid &&
             formFacture.get('dateEncaissement')?.touched
-          "
-        />
+          " />
 
-        <div
-          *ngIf="
+            <div *ngIf="
             formFacture.get('dateEncaissement')?.invalid &&
             formFacture.get('dateEncaissement')?.touched
-          "
-          class="text-danger"
-        >
-          Ce champ est requis.
+          " class="text-danger">
+              Ce champ est requis.
+            </div>
+          </div>
         </div>
-      </div>
+
+
+        <div class="d-flex justify-content-center gap-3">
+          <button class="btn btn-secondary me-2" (click)="cancel()">Annuler</button>
+          <button class="btn btn-primary" type="submit">Valider</button>
+        </div>
+      </form>
+
     </div>
-  
-
-  <div class="d-flex justify-content-center gap-3">
-    <button class="btn btn-secondary me-2" (click)="cancel()">Annuler</button>
-    <button class="btn btn-primary" type="submit">Valider</button>
   </div>
-</form>
-
-</div>
-</div>
 </div>

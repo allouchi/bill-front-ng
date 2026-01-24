@@ -1,6 +1,6 @@
 export const GetMonthsOfYear = () => {
   const month = [
-    { id: '00', label: '' },
+    { id: '00', label: 'Tous' },
     { id: '01', label: 'Janvier' },
     { id: '02', label: 'Février' },
     { id: '03', label: 'Mars' },

@@ -29,7 +29,7 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
   formConsultant!: FormGroup;
   consultant: Consultant | null = null;
   consultantId: number | null = null;
-  siret: string = '';
+  siret: string | null = '';
   observableEvent$ = new Subscription();
   currentUrl: string = '';
   isEdit: boolean = false;
@@ -85,7 +85,7 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
       };
 
       this.consultantService
-        .createOrUpdateConsultant(consultant, this.siret)
+        .createOrUpdateConsultant(consultant, this.siret!)
         .subscribe({
           next: () => {
             if (this.consultantId) {
@@ -111,7 +111,6 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
   cancel() {
     this.router.navigate(['/consultants/read']);
   }
-
 
   private onError(error: any) {
     this.alertService.showFunctionlError(error);

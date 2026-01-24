@@ -4,6 +4,7 @@ import Exercise from '../../models/Exercise';
 import Prestation from "../../models/Prestation";
 import DataPDF from '../../models/DataPDF';
 import { Page } from "../../models/Page";
+import EmailClient from "../../models/EmailClient";
 
 /**
  * Facture fetcher port
@@ -68,4 +69,12 @@ export interface IFactureService {
   findExercisesRef(): Observable<Exercise[]>;
 
   downloadPdfFacture(id: number): Observable<DataPDF>;
+
+  getClientMails(id: number): Observable<[]>;
+
+  envoyerFacture(id: number, mails: EmailClient[]): Observable<string>;
+
+  getWorkingDays(year: number, month: number): Observable<number>;
+
+  runBatch(): Observable<Facture[]>;
 }

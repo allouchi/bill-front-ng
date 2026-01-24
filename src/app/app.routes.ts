@@ -25,6 +25,7 @@ import { AddUserComponent } from './pages/users/add/user-add.component';
 import { OperationAddComponent } from './pages/operations/add/operation-add.component';
 import { OperationEditComponent } from './pages/operations/edit/operation-edit.component';
 import { OperationReadComponent } from './pages/operations/read/operation-read.component';
+import { CompteReadComponent } from './pages/compte/read/compte-read.component';
 
 
 export const BILLING_ROUTE: Routes = [
@@ -63,6 +64,17 @@ export const BILLING_ROUTE: Routes = [
         path: 'add',
         loadComponent: () => OperationAddComponent,
       },
+    ],
+  },
+
+  {
+    path: 'compte',
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'read',
+        loadComponent: () => CompteReadComponent,
+      }
     ],
   },
 

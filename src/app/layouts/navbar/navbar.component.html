@@ -7,7 +7,7 @@
 
     <div class="collapse navbar-collapse" id="navbar">
       <ul class="navbar-nav ms-auto">
-        @if(authService.isLoggedIn()){
+        @if(isAuth){
         <li class="nav-item">
           <a class="nav-link" routerLink="/companies/read" (click)="clicked($event)"
             [translate]="'menu.companys'">SOCIETE></a>
@@ -31,6 +31,11 @@
         <li class="nav-item">
           <a class="nav-link" routerLink="/operations/read" (click)="clicked($event)"
             [translate]="'menu.operations'">OPERATIONS</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/compte/read" (click)="clicked($event)"
+            [translate]="'menu.compte'">Compte</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" routerLink="/tvas/read" (click)="clicked($event)" [translate]="'menu.tva'">TVAS</a>

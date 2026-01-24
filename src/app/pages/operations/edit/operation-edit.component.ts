@@ -32,7 +32,7 @@ export class OperationEditComponent implements OnInit, OnDestroy {
   selectedExercise: string | null = null;
   selectedOperation!: Operation | null;
   typeOperationValue: string[] = ['DIV', 'NDF'];
-  siret: string = '';
+  siret: string | null = '';
   router = inject(Router);
 
   constructor(
@@ -101,7 +101,7 @@ export class OperationEditComponent implements OnInit, OnDestroy {
         exercise: this.formOperation.get('exercise')?.value,
         typeOperation: this.formOperation.get('typeOperation')?.value,
         dateOperation: formatedDate,
-        siret: this.siret,
+        siret: this.siret!,
       };
 
       this.operationService.createOrUpdateOperation(operation).subscribe({

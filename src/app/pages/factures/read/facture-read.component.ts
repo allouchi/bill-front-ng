@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FactureService } from '../../../services/factures/facture.service';
 import Facture from '../../../models/Facture';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import Exercise from '../../../models/Exercise';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
@@ -11,7 +11,7 @@ import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-del
 import { AuthService } from '../../../services/auth/auth-service';
 import { TvaService } from '../../../services/tva/tva-service';
 import TvaInfos from '../../../models/TvaInfos';
-import Tva from '../../../models/Tva';
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { DetailFactureComponent } from '../../../shared/modal/detail/detail-facture.component';
@@ -19,6 +19,8 @@ import { CommonModule } from '@angular/common';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import { AlertService } from '../../../services/alert/alertService';
+
+import EmailClient from '../../../models/EmailClient';
 
 
 @Component({
@@ -36,20 +38,27 @@ import { AlertService } from '../../../services/alert/alertService';
 })
 export default class FactureReadComponent implements OnInit, OnDestroy {
   factures: Facture[] = [];
+  facturesRetard: Facture[] = [];
   exercises: Exercise[] = [];
   tvaInfos!: TvaInfos;
-  tvas: Tva[] = [];
-  filtredTvas: Tva[] = [];
-  siret: string = '';
+  siret: string | null = '';
   isLoaded = false;
   isAdmin = false;
   observableEvent$ = new Subscription();
   parent = 'read';
+  sendMail = false;
   selectedExercice: string = '';
   page = 0;
   size = 12;
   totalPages = 0;
   totalElements = 0;
+  totalTvaFacture!: number;
+  totalDebitTva!: number;
+  emailAdresses: string[] = [];
+  isEdition: string | null = null;
+  nbLignesFacture = 0;
+  showPenalite = true;
+  hidePenalite = false;
 
   private readonly router = inject(Router);
 
@@ -61,21 +70,40 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly tvaService: TvaService,
     private readonly sharedMessagesService: SharedMessagesService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
     this.selectedExercice = new Date().getFullYear().toString();
     this.loadExercisesRef();
+    this.isEdition = this.sharedDataService.getIsEditionFacture();
+
+    if (this.isEdition) {
+      this.selectedExercice = 'Tous';
+      this.sharedDataService.setIsEditionFacture('');
+    }
     this.loadFacturesByExercise(this.selectedExercice);
     this.loadTvaInfo(this.selectedExercice);
   }
 
+  calculateTotals() {
+    if (!this.factures) return;
+    this.totalTvaFacture = this.factures.reduce(
+      (sum, t) => sum + (t.montantTVA || 0),
+      0
+    );
+    this.totalDebitTva = this.factures.reduce(
+      (sum, t) => sum + (t.montantTvaPaye || 0),
+      0
+    );
+  }
+
   private loadTvaInfo(exercice: string) {
-    this.tvaService.findTvaInfoByExercise(this.siret, exercice).subscribe({
+    this.tvaService.findTvaInfoByExercise(this.siret!, exercice).subscribe({
       next: (tvaInfos) => {
         this.tvaInfos = tvaInfos;
+        this.calculateTotals();
       },
       error: (err) => {
         this.onError(err);
@@ -96,12 +124,13 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   loadFacturesBySiret() {
     this.factureService
-      .findFacturesBySiret(this.siret, this.page, this.size)
+      .findFacturesBySiret(this.siret!, this.page, this.size)
       .subscribe({
         next: (data) => {
           this.factures = data.content;
-          this.totalPages = data.totalPages;
-          this.totalElements = data.totalElements;
+          this.nbLignesFacture = this.factures.length;
+          this.totalPages = data.page.totalPages;
+          this.totalElements = data.page.totalElements;
           this.isLoaded = true;
           this.loadTvaInfo(this.selectedExercice);
         },
@@ -113,12 +142,13 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   loadFacturesByExercise(exercice: string) {
     this.factureService
-      .findFacturesByExercice(this.siret, exercice, this.page, this.size)
+      .findFacturesByExercice(this.siret!, exercice, this.page, this.size)
       .subscribe({
         next: (data) => {
           this.factures = data.content;
-          this.totalPages = data.totalPages;
-          this.totalElements = data.totalElements;
+          this.totalPages = data.page.totalPages;
+          this.totalElements = data.page.totalElements;
+          this.nbLignesFacture = this.factures.length;
           this.isLoaded = true;
           this.loadTvaInfo(this.selectedExercice);
         },
@@ -220,7 +250,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
           this.sharedDataService.setSelectedFacture(facture);
           this.sharedMessagesService.setMessage('Mise à jour de Facture');
           this.factureService.updateFacture(facture).subscribe({
-            next: (factureModif) => {
+            next: () => {
               if (this.selectedExercice === 'Tous') {
                 this.loadFacturesBySiret();
               } else {
@@ -240,7 +270,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       });
   }
 
-  updateFacture(event: Event, facture: Facture) {
+  encaissementFacture(event: Event, facture: Facture) {
     event.preventDefault();
     const modal = this.modalService.open(ConfirmEditComponent, {
       size: 'lg',
@@ -254,7 +284,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     modal.result
       .then((result) => {
         if (result.comment === 'confirm') {
-          this.alertService.show('UPDATE', 'FACTURE', 'success');
           this.sharedDataService.setSelectedFacture(facture);
           this.sharedMessagesService.setMessage('Mise à jour de Facture');
           this.router.navigate(['factures/edit']);
@@ -298,6 +327,79 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       centered: true,
     });
     modal.componentInstance.facture = facture;
+  }
+
+  private envoyerFacture(id: number, mails: EmailClient[]) {
+    this.isLoaded = false;
+    this.sendMail = true;
+    this.factures.forEach((facture) => {
+      if (facture.id == id) {
+        facture.sended = true;
+      }
+    });
+
+    this.factureService.envoyerFacture(id, mails).subscribe({
+      next: () => {
+        this.isLoaded = true;
+        this.alertService.show('SEND', 'MAIL', 'success');
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
+  choixDestinataires(event: Event, id: number, mailsAdresse: string[]) {
+    event.preventDefault();
+    const modal = this.modalService.open(ConfirmEditComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false,
+      centered: true,
+    });
+    modal.componentInstance.item = 'ChoiceDest';
+    modal.componentInstance.composant = mailsAdresse;
+
+    modal.result
+      .then((result) => {
+        if (result.comment === 'confirm') {
+          this.envoyerFacture(id, result.mails);
+        }
+      })
+      .catch(() => {
+        console.log('Annulé');
+      });
+  }
+
+  sendFacture(event: Event, facture: Facture) {
+    const id = facture.id;
+    this.factureService.getClientMails(id!).subscribe({
+      next: (mails) => {
+        this.emailAdresses = mails;
+        this.choixDestinataires(event, id!, mails);
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
+  runBatch() {
+    this.factureService.runBatch().subscribe({
+      next: (factures) => {
+        this.facturesRetard = factures;
+        this.showPenalite = false;
+        this.hidePenalite = true;
+      },
+      error: (err) => {
+        this.onError(err);
+      }
+    })
+  }
+
+  hide() {
+    this.showPenalite = true;
+    this.hidePenalite = false;
   }
 
   private onError(error: any) {

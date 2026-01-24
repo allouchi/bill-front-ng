@@ -8,6 +8,7 @@ import Client from '../../models/Client';
 import Exercise from '../../models/Exercise';
 import User from '../../models/User';
 import Operation from '../../models/Operation';
+import { AuthService } from '../auth/auth-service';
 
 @Injectable({ providedIn: 'root' })
 export class SharedDataService {
@@ -24,7 +25,7 @@ export class SharedDataService {
   companies: Company[] | null = null;
   exercices: Exercise[] | null = null;
   selectedExercise: string | null = null;
-  siret: string = '';
+  isEditionFacture = '';
   selectedUser: User | null = null;
 
   getSelectedExercise(): string | null {
@@ -33,12 +34,20 @@ export class SharedDataService {
   setSelectedExercise(exercise: string) {
     this.selectedExercise = exercise;
   }
-  setSiret(siret: string) {
-    this.siret = siret;
+
+  setIsEditionFacture(isEdition: string) {
+    localStorage.setItem('isEdition', isEdition);
+  }
+  getIsEditionFacture(): string | null {
+    return localStorage.getItem('isEdition');
   }
 
-  getSiret() {
-    return this.selectedCompany!.siret;
+  setSiret(siret: string): void {
+    localStorage.setItem('siret', siret);
+  }
+
+  getSiret(): string | null {
+    return localStorage.getItem('siret') || null;
   }
 
   getSelectedCompany(): Company | null {
@@ -81,7 +90,7 @@ export class SharedDataService {
     this.selectedFacture = facture;
   }
 
-  gertSelectedFacture() {
+  getSelectedFacture() {
     return this.selectedFacture;
   }
 

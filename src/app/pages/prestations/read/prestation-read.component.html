@@ -51,14 +51,18 @@
               class="btn btn-outline-danger btn-sm me-2"
               (click)="deletePrestation($event, prestation)"
               title="Supprimer Prestation"
-              [disabled]="!isAdmin"
+              [disabled]="!isAdmin || !prestation.deletePresta"
             >
               <i class="bi bi-trash"></i>
             </button>           
           </td>
         </tr>
         } @empty {
-        <p>Aucun Prestation</p>
+        <tr>
+          <td colspan="8" class="text-center text-muted py-3">
+            Aucune Prestation
+          </td>
+        </tr>
         }
       </tbody>
     </table>

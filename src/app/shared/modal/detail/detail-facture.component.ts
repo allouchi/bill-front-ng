@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
+import Facture from '../../../models/Facture';
 
 @Component({
   selector: 'bill-detail-facture',
@@ -10,7 +11,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './detail-facture.component.css',
 })
 export class DetailFactureComponent implements OnInit {
-  facture: any;
+  facture: Facture | null = null;
   factureForm!: FormGroup;
   numeroFacture: string = '';
   dateFacturation: string = '';
@@ -19,7 +20,7 @@ export class DetailFactureComponent implements OnInit {
   constructor(
     private readonly activeModal: NgbActiveModal,
     private readonly fb: FormBuilder
-  ) {}
+  ) { }
   ngOnInit(): void {
     this.factureForm = this.fb.group({
       dateEncaissement: [
@@ -32,11 +33,13 @@ export class DetailFactureComponent implements OnInit {
       ],
       factureStatus: [{ value: this.facture?.factureStatus, disabled: true }],
       statusDesc: [{ value: this.facture?.statusDesc, disabled: true }],
+      penalite: [{ value: this.facture?.fraisRetard, disabled: true }],
+      nbJourRetard: [{ value: this.facture?.nbJourRetard, disabled: true }],
     });
 
-    this.numeroFacture = this.facture.numeroFacture;
-    this.dateFacturation = this.facture.dateFacturation;
-    if (this.facture.dateEncaissement) {
+    this.numeroFacture = this.facture!.numeroFacture;
+    this.dateFacturation = this.facture!.dateFacturation;
+    if (this.facture!.dateEncaissement) {
       this.status = true;
     }
   }
