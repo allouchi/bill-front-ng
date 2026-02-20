@@ -94,7 +94,7 @@ export class FactureService implements IFactureService {
   }
 
   downloadPdfFacture(factureId: number): Observable<DataPDF> {
-    return this.http.get<DataPDF>(`${this.EDITION_PATH}/${factureId}`);
+    return this.http.get<DataPDF>(`${this.EDITION_PATH}/download/${factureId}`);
   }
 
   getClientMails(factureId: number): Observable<[]> {
