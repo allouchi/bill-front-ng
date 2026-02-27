@@ -102,7 +102,10 @@ export class FactureService implements IFactureService {
   }
 
   envoyerFacture(factureId: number, mailsTo: EmailClient[]): Observable<string> {
-    return this.http.post<string>(`${this.EDITION_PATH}/mail/${factureId}`, mailsTo);
+    return this.http.post<string>(
+      `${this.EDITION_PATH}/sendMail/${factureId}`,
+      mailsTo,
+    );
   }
 
   getWorkingDays(year: number, month: number): Observable<number> {
