@@ -42,7 +42,7 @@ export class CompteReadComponent implements OnInit, OnDestroy {
   parent = 'read';
   siret: string | null = '';
   totalOperation: number = 0;
-  typeOperations: string[] = ['Tous', 'DIV', 'NDF', 'DGFIP', 'AUTRE'];
+  typeOperations: string[] = ['Tous', 'DIV', 'NDF', 'TVA', 'AUTRE'];
   monthsYear: any;
 
   page = 0;
