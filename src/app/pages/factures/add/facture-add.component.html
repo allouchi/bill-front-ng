@@ -27,7 +27,7 @@
 
           <!-- Champ de saisie -->
           <div class="mb-3">
-            <label for="exampleInput" class="form-label fw-bold">Numéro de commande : *
+            <label for="numeroCommande" class="form-label fw-bold">Numéro de commande : *
             </label>
             <input formControlName="numeroCommande" type="text" class="form-control" id="numeroCommande"
               placeholder="Entrez Numéro de commande" />
@@ -73,6 +73,17 @@
               Ce champ est requis.
             </div>
           </div>
+           <div class="mb-3 me-2" style="width: 200px">
+          <label for="taxTypesSelect" class="form-label fw-bold text-center">Type impôts</label>
+          <select formControlName="taxType"  class="form-select"
+            id="taxTypesSelect">
+            @for (tax of taxTypes; track tax.id) {
+            <option value="{{ tax.id }}">
+              {{ tax.descr }}
+            </option>
+            }
+          </select>
+        </div>
           <div class="form-check mb-3">
             <input type="checkbox" class="form-check-input" id="newTemplate" formControlName="newTemplate" />
             <label for="newTemplate" class="form-check-label fw-bold">Le nouvau template par défaut</label>

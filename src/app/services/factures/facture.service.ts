@@ -25,10 +25,7 @@ export class FactureService implements IFactureService {
   private readonly EDITION_PATH: string = `${this.apiURL}` + '/editions';
   private readonly BATCH_PATH: string = `${this.apiURL}` + '/batchs';
 
-
-  constructor(private readonly http: HttpClient) { }
-
-
+  constructor(private readonly http: HttpClient) {}
 
   updateFacture(facture: Facture): Observable<Facture> {
     return this.http.put<Facture>(this.FACTURES_PATH, facture);
@@ -37,7 +34,7 @@ export class FactureService implements IFactureService {
   findFacturesBySiret(
     siret: string,
     page: number,
-    size: number
+    size: number,
   ): Observable<Page<Facture>> {
     let params = new HttpParams().set('page', page).set('size', size);
     return this.http.get<Page<Facture>>(`${this.FACTURES_PATH}/${siret}`, {
@@ -49,19 +46,22 @@ export class FactureService implements IFactureService {
     siret: string,
     exercice: string,
     page: number,
-    size: number
+    size: number,
   ): Observable<Page<Facture>> {
     let params = new HttpParams().set('page', page).set('size', size);
 
     return this.http.get<Page<Facture>>(
       `${this.FACTURES_PATH}/${siret}/${exercice}`,
-      { params }
+      { params },
     );
   }
 
-  findBySiretAndExercice(siret: string, exercice: string): Observable<Facture[]> {
+  findBySiretAndExercice(
+    siret: string,
+    exercice: string,
+  ): Observable<Facture[]> {
     return this.http.get<Facture[]>(
-      `${this.FACTURES_PATH}/noPage/${siret}/${exercice}`
+      `${this.FACTURES_PATH}/noPage/${siret}/${exercice}`,
     );
   }
 
@@ -77,18 +77,19 @@ export class FactureService implements IFactureService {
     prestation: Prestation,
     siret: string,
     moisFacture: number | null,
-    iTextGeneration: boolean
+    iTextGeneration: boolean,
+    taxType: string,
   ): Observable<Facture> {
     const isNew: boolean = prestation.id === 0 || prestation.id === null;
     if (isNew) {
       return this.http.post<Facture>(
         `${this.FACTURES_PATH}/${siret}`,
-        prestation
+        prestation,
       );
     } else {
       return this.http.put<Facture>(
-        `${this.FACTURES_PATH}/${siret}/${moisFacture}/${iTextGeneration}`,
-        prestation
+        `${this.FACTURES_PATH}/${siret}/${moisFacture}/${iTextGeneration}/${taxType}`,
+        prestation,
       );
     }
   }
@@ -101,7 +102,10 @@ export class FactureService implements IFactureService {
     return this.http.get<[]>(`${this.EDITION_PATH}/mail/${factureId}`);
   }
 
-  envoyerFacture(factureId: number, mailsTo: EmailClient[]): Observable<string> {
+  envoyerFacture(
+    factureId: number,
+    mailsTo: EmailClient[],
+  ): Observable<string> {
     return this.http.post<string>(
       `${this.EDITION_PATH}/sendMail/${factureId}`,
       mailsTo,
@@ -109,7 +113,9 @@ export class FactureService implements IFactureService {
   }
 
   getWorkingDays(year: number, month: number): Observable<number> {
-    return this.http.get<number>(`${this.EDITION_PATH}/workingDays/${year}/${month}`);
+    return this.http.get<number>(
+      `${this.EDITION_PATH}/workingDays/${year}/${month}`,
+    );
   }
 
   runBatch(): Observable<Facture[]> {

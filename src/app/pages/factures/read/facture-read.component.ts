@@ -57,6 +57,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   emailAdresses: string[] = [];
   isEdition: string | null = null;
   nbLignesFacture = 0;
+  totalCANet = 0;
+  totalCATTC = 0;
   showPenalite = true;
   hidePenalite = false;
 
@@ -69,8 +71,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly modalService: NgbModal,
     private readonly authService: AuthService,
     private readonly tvaService: TvaService,
-    private readonly sharedMessagesService: SharedMessagesService
-  ) { }
+    private readonly sharedMessagesService: SharedMessagesService,
+  ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -91,11 +93,21 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     if (!this.factures) return;
     this.totalTvaFacture = this.factures.reduce(
       (sum, t) => sum + (t.montantTVA || 0),
-      0
+      0,
     );
     this.totalDebitTva = this.factures.reduce(
       (sum, t) => sum + (t.montantTvaPaye || 0),
-      0
+      0,
+    );
+
+    this.totalCANet = this.factures.reduce(
+      (sum, t) => sum + (t.prixTotalHT || 0),
+      0,
+    );
+
+    this.totalCATTC = this.factures.reduce(
+      (sum, t) => sum + (t.prixTotalTTC || 0),
+      0,
     );
   }
 
@@ -393,8 +405,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.onError(err);
-      }
-    })
+      },
+    });
   }
 
   hide() {

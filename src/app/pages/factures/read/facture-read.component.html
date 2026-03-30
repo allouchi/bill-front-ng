@@ -17,8 +17,8 @@
     <div class="flex-grow-1 d-flex justify-content-center">
       <table class="table table-bordered w-auto table-dark">
         <thead>
-          <tr>
-            <th scope="col">CA TTC</th>
+          <tr>           
+             <th scope="col">CA TTC</th>
             <th scope="col">CA NET</th>
             <th scope="col">TOTAL TVA</th>
             <!-- <th scope="col">TOTAL NET</th> -->
@@ -33,13 +33,13 @@
         </thead>
         <tbody>
           <tr>
-            @if(tvaInfos){
-            <td class="text-center">
+            @if(tvaInfos){   
+               <td class="text-center">
               {{ tvaInfos.totalTTC | customDecimalPipe }} €
             </td>
             <td style="text-align: center">
               {{ tvaInfos.totalCAHorsTaxe | customDecimalPipe }} €
-            </td>
+            </td>        
             <td class="text-center">
               {{ tvaInfos.montantTvaFacture | customDecimalPipe }} €
             </td>
@@ -90,6 +90,7 @@
           <th scope="col">Quantité</th>
           <th scope="col">Prix Total TTC (€)</th>
           <th scope="col">Prix Total HT (€)</th>
+            <th scope="col">Date Facturation</th>
           <th scope="col">Date Encaissement</th>
           <th scope="col">Total TVA (€)</th>
           <th scope="col">Débit TVA (€)</th>
@@ -108,6 +109,7 @@
           <td>{{ facture.quantite | customDecimalPipe }}</td>
           <td>{{ facture.prixTotalTTC | customDecimalPipe }}</td>
           <td>{{ facture.prixTotalHT | customDecimalPipe }}</td>
+          <td>{{ facture.dateFacturation }}</td>
           <td>{{ facture.dateEncaissement }}</td>
           <td>{{ facture.montantTVA | customDecimalPipe }}</td>
           <td>{{ facture.montantTvaPaye | customDecimalPipe }}</td>
@@ -159,8 +161,8 @@
           <td class="text-center">{{nbLignesFacture}} mois</td>
           <td></td>
           <td></td>
-          <td></td>
-          <td></td>
+          <td class="text-center">{{ totalCATTC | customDecimalPipe }} €</td>
+          <td class="text-center">{{ totalCANet | customDecimalPipe }} €</td>
           <td></td>
           <td class="text-center">{{ totalTvaFacture | customDecimalPipe }} €</td>
           <td class="text-center">{{ totalDebitTva | customDecimalPipe }} €</td>
