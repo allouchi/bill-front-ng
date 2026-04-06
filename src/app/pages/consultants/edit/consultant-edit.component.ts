@@ -84,21 +84,19 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
         hasPrestation: true
       };
 
-      this.consultantService
-        .createOrUpdateConsultant(consultant, this.siret!)
-        .subscribe({
-          next: () => {
-            if (this.consultantId) {
-              this.alertService.show('UPDATE', 'CONSULTANT', 'success');
-            } else {
-              this.alertService.show('ADD', 'CONSULTANT', 'success');
-            }
-            this.router.navigate(['/consultants/read']);
-          },
-          error: (err) => {
-            this.onError(err);
-          },
-        });
+      this.consultantService.createOrUpdateConsultant(consultant).subscribe({
+        next: () => {
+          if (this.consultantId) {
+            this.alertService.show('UPDATE', 'CONSULTANT', 'success');
+          } else {
+            this.alertService.show('ADD', 'CONSULTANT', 'success');
+          }
+          this.router.navigate(['/consultants/read']);
+        },
+        error: (err) => {
+          this.onError(err);
+        },
+      });
     } else {
       for (const [, control] of Object.entries(this.formConsultant.controls)) {
         if (control.invalid) {

@@ -15,7 +15,10 @@ export interface IConsultantService {
    * @param consultant Consultant to create or to update
    * @returns Observable<Consultant>
    */
-  createOrUpdateConsultant(consultant: Consultant, siret: string): Observable<Consultant>;
+  createOrUpdateConsultant(
+    consultant: Consultant,
+    siret: string,
+  ): Observable<Consultant>;
 
   /**
    * Delete one facture by it's id
@@ -23,14 +26,6 @@ export interface IConsultantService {
    * @param id facture id to delete
    */
   deleteConsultantById(id: number): Observable<string>;
-
-  /**
-   * Get all schemas if no project or all schemas for project name in otherwise
-   *
-   * @param consultant consultant name
-   * @returns Observable<Consultant>
-   */
-  findConsultantsSiret(siret: string): Observable<Consultant[]>;
 
   /**
    * Get all schemas if no project or all schemas for project name in otherwise

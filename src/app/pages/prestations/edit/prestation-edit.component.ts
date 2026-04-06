@@ -56,6 +56,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
     });
 
     this.siret = this.sharedDataService.getSiret();
+    console.log(this.siret);
     this.selectedPrestation = this.sharedDataService.getSelectedPrestation();
     this.loadClients();
     this.loadConsultants();
@@ -71,6 +72,8 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
       },
     });
   }
+
+  
 
   private loadConsultants() {
     this.consultantService.findConsultants().subscribe({

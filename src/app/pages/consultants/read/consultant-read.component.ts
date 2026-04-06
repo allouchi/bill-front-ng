@@ -43,7 +43,7 @@ siret: string | null = '';
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
-    this.loadPrestations();
+    this.loadConsultants();   
   }
 
   private disableConsultantDelete() {
@@ -73,18 +73,6 @@ siret: string | null = '';
     });
   }
 
-
-  loadPrestations() {
-    this.prestationService.getPrestationsBySiret(this.siret!).subscribe({
-      next: (prestations) => {
-        this.prestations = prestations;
-        this.loadConsultants();
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
 
   deleteConsultantService(id: number) {
     this.consultantService.deleteConsultantById(id).subscribe({

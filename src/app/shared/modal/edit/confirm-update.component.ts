@@ -58,6 +58,7 @@ export class ConfirmEditComponent implements OnInit {
     }
 
     this.companies = this.sharedDataService.getCompanies();
+
     if (this.companies) {
       this.selectedSiret = this.companies.find((c) => c.checked == true)?.siret;
     }

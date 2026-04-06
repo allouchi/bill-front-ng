@@ -1,7 +1,6 @@
 import { Observable } from "rxjs";
 import Company from "../../models/Company";
 
-
 /**
  * Company fetcher port
  *

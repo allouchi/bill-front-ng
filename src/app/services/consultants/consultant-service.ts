@@ -15,46 +15,31 @@ import { Injectable } from "@angular/core";
 @Injectable({ providedIn: 'root' })
 export class ConsultantService implements IConsultantService {
   private readonly apiURL = env.apiURL;
-  private readonly CONSULTANT_PATH: string = `${this.apiURL}` + "/consultants";
+  private readonly CONSULTANT_PATH: string = `${this.apiURL}` + '/consultants';
 
-  constructor(private readonly http: HttpClient) { }
+  constructor(private readonly http: HttpClient) {}
 
-  createOrUpdateConsultant(
-    consultant: Consultant,
-    siret: string
-  ): Observable<Consultant> {
+  createOrUpdateConsultant(consultant: Consultant): Observable<Consultant> {
     const isNew: boolean = !consultant.id || consultant.id === 0;
 
     if (isNew) {
       return this.http.post<Consultant>(
-        `${this.CONSULTANT_PATH}/${siret}`,
-        consultant
+        `${this.CONSULTANT_PATH}/add`,
+        consultant,
       );
     } else {
       return this.http.put<Consultant>(
-        `${this.CONSULTANT_PATH}/${siret}`,
-        consultant
+        `${this.CONSULTANT_PATH}/update`,
+        consultant,
       );
     }
   }
 
-  findConsultantsSiret(siret: string): Observable<Consultant[]> {
-    return this.http.get<Consultant[]>(
-      `${this.CONSULTANT_PATH}/${siret}`
-    );
-  }
-
   findConsultants(): Observable<Consultant[]> {
-    return this.http.get<Consultant[]>(
-      `${this.CONSULTANT_PATH}`
-    );
-
+    return this.http.get<Consultant[]>(`${this.CONSULTANT_PATH}`);
   }
 
   deleteConsultantById(id: number): Observable<string> {
-    return this.http.delete<string>(
-      `${this.CONSULTANT_PATH}/${id}`
-    );
-
+    return this.http.delete<string>(`${this.CONSULTANT_PATH}/${id}`);
   }
 }

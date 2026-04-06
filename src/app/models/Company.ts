@@ -20,8 +20,8 @@ export default interface Company {
   numeroBic: string;
   companyAdresse: Adresse;
   users?: Partial<User[]>;
-  clients?: Client[];
-  consultants?: Consultant[];
+  //clients?: Client[];
+  //consultants?: Consultant[];
   prestations?: Prestation[];
-  checked?: boolean;
+  checked: boolean;
 }

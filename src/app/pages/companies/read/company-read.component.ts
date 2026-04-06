@@ -50,21 +50,31 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   }
 
   loadCompanies() {
-    this.companies = this.sharedDataService.getCompanies();   
-    this.filtredCompanies = this.companies
-    const company = this.companies.find(
-      (company) => company.checked === true
-    );
-    this.libelleCompanyService.setMessage(
-      this.authService.getLibelleHeader()
-    );
-    this.sharedDataService.setSelectCompany(company!);
-    this.isLoaded = true;
-    // Réorganiser : les éléments "checked" d'abord
-    this.companies.sort((a, b) => {
-      if (a.checked === b.checked) return 0;
-      return a.checked ? -1 : 1;
-    });
+
+       this.companyService.findCompanies().subscribe({
+         next: (companies) => {
+           this.companies = companies;
+           this.sharedDataService.setCompanies(this.companies);
+
+           this.filtredCompanies = companies;
+           const company = this.companies.find(
+             (company) => company.checked === true,
+           );
+           this.libelleCompanyService.setMessage(
+             this.authService.getLibelleHeader(),
+           );
+           this.sharedDataService.setSelectCompany(company!);
+           this.isLoaded = true;
+           // Réorganiser : les éléments "checked" d'abord
+           this.companies.sort((a, b) => {
+             if (a.checked === b.checked) return 0;
+             return a.checked ? -1 : 1;
+           });
+         },
+         error: (err) => {
+           this.onError(err);
+         },
+       });     
   }
 
   deleteCompanySerice(id: number) {
