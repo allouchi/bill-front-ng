@@ -5,14 +5,24 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import Exercise from '../../../models/Exercise';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
-import { Subscription } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  of,
+  Subject,
+  Subscription,
+  switchMap,
+} from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
 import { TvaService } from '../../../services/tva/tva-service';
 import TvaInfos from '../../../models/TvaInfos';
 
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { DetailFactureComponent } from '../../../shared/modal/detail/detail-facture.component';
 import { CommonModule } from '@angular/common';
@@ -21,7 +31,6 @@ import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import { AlertService } from '../../../services/alert/alertService';
 
 import EmailClient from '../../../models/EmailClient';
-
 
 @Component({
   selector: 'bill-facture-read',
@@ -61,6 +70,10 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   totalCATTC = 0;
   showPenalite = true;
   hidePenalite = false;
+  searchText: string = '';
+  private searchSubject = new Subject<string>();
+  private subscription!: Subscription;
+  searchControl = new FormControl('');
 
   private readonly router = inject(Router);
 
@@ -87,6 +100,47 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     }
     this.loadFacturesByExercise(this.selectedExercice);
     this.loadTvaInfo(this.selectedExercice);
+
+    this.subscription = this.searchControl.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        switchMap((value: string | null) => {
+          const search = value?.trim();
+          this.hide();
+
+          if (!search) {
+            // 👇 pas de debounce ici, retour direct
+            return this.factureService
+              .findFacturesByExercice(
+                this.siret!,
+                this.selectedExercice,
+                this.page,
+                this.size,
+              )
+              .pipe(
+                map((data) => {
+                  this.totalPages = data.page.totalPages;
+                  this.totalElements = data.page.totalElements;
+                  this.nbLignesFacture = data.content.length;
+                  this.isLoaded = true;
+                  this.loadTvaInfo(this.selectedExercice);
+                  return data.content;
+                }),
+              );
+          }
+
+          // 👇 recherche classique
+          return this.factureService.search(this.siret!, search);
+        }),
+        catchError((err) => {
+          this.onError(err);
+          return of([]);
+        }),
+      )
+      .subscribe((factures) => {
+        this.factures = factures;
+      });
   }
 
   calculateTotals() {
@@ -397,7 +451,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   }
 
   runBatch() {
-    this.factureService.runBatch().subscribe({
+    this.factureService.runBatch(this.siret!).subscribe({
       next: (factures) => {
         this.facturesRetard = factures;
         this.showPenalite = false;
@@ -421,5 +475,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.alertService.clear();
+    this.subscription.unsubscribe(); // évite les fuites mémoire
   }
 }

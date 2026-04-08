@@ -131,7 +131,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   reload() {
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/companies/read']);
     });
   }
 

@@ -118,7 +118,13 @@ export class FactureService implements IFactureService {
     );
   }
 
-  runBatch(): Observable<Facture[]> {
-    return this.http.get<Facture[]>(`${this.BATCH_PATH}`);
+  runBatch(siret: string): Observable<Facture[]> {
+    return this.http.get<Facture[]>(`${this.BATCH_PATH}/${siret}`);
+  }
+
+  search(siret: string, pattern: string): Observable<Facture[]> {
+    const url = `${this.FACTURES_PATH}/search/${siret}`;
+    // Envoi du pattern dans le body
+    return this.http.post<Facture[]>(url, pattern);
   }
 }
