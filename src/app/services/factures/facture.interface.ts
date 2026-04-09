@@ -82,5 +82,10 @@ export interface IFactureService {
 
   runBatch(siret: string): Observable<Facture[]>;
 
-  search(siret: string, pattern: string): Observable<Facture[]>;
+  searchFactures(
+    siret: string,
+    pattern: string,
+    page: number,
+    size: number,
+  ): Observable<Page<Facture>>;
 }

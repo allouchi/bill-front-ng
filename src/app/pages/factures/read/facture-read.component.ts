@@ -15,6 +15,7 @@ import {
   Subject,
   Subscription,
   switchMap,
+  tap,
 } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
@@ -70,8 +71,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   totalCATTC = 0;
   showPenalite = true;
   hidePenalite = false;
-  searchText: string = '';
-  private searchSubject = new Subject<string>();
+  searchTerm: string = '';
   private subscription!: Subscription;
   searchControl = new FormControl('');
 
@@ -104,42 +104,48 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     this.subscription = this.searchControl.valueChanges
       .pipe(
         debounceTime(500),
-        distinctUntilChanged(),
-        switchMap((value: string | null) => {
-          const search = value?.trim();
+        distinctUntilChanged((a, b) => a?.trim() === b?.trim()),
+        tap(() => {
+          this.isLoaded = false;
           this.hide();
+        }),
+        map((value: string | null) => value?.trim() || ''),
+        switchMap((search) => {
+          this.searchTerm = search;
 
-          if (!search) {
-            // 👇 pas de debounce ici, retour direct
-            return this.factureService
-              .findFacturesByExercice(
+          const request$ = search
+            ? this.factureService.searchFactures(
+                this.siret!,
+                search,
+                this.page,
+                this.size,
+              )
+            : this.factureService.findFacturesByExercice(
                 this.siret!,
                 this.selectedExercice,
                 this.page,
                 this.size,
-              )
-              .pipe(
-                map((data) => {
-                  this.totalPages = data.page.totalPages;
-                  this.totalElements = data.page.totalElements;
-                  this.nbLignesFacture = data.content.length;
-                  this.isLoaded = true;
-                  this.loadTvaInfo(this.selectedExercice);
-                  return data.content;
-                }),
               );
-          }
 
-          // 👇 recherche classique
-          return this.factureService.search(this.siret!, search);
+          return request$;
         }),
         catchError((err) => {
           this.onError(err);
-          return of([]);
+          return of({
+            content: [],
+            page: { totalPages: 0, totalElements: 0 },
+          });
         }),
       )
-      .subscribe((factures) => {
-        this.factures = factures;
+      .subscribe((data) => {
+        this.factures = data.content;
+        this.totalPages = data.page.totalPages;
+        console.log(this.totalPages);
+        this.totalElements = data.page.totalElements;
+        this.nbLignesFacture = data.content.length;
+        this.isLoaded = true;
+        //this.loadTvaInfo(this.selectedExercice);
+        this.calculateTotals();
       });
   }
 
@@ -223,14 +229,32 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
         },
       });
   }
+  searchFactures() {
+    this.factureService
+      .searchFactures(this.siret!, this.searchTerm, this.page, this.size)
+      .subscribe((data) => {
+        this.factures = data.content;
+        this.totalPages = data.page.totalPages;
+        this.totalElements = data.page.totalElements;
+        this.nbLignesFacture = data.content.length;
+        this.isLoaded = true;
+        //this.loadTvaInfo(this.selectedExercice);
+        this.calculateTotals();
+      });
+  }
 
   nextPage(): void {
     if (this.page < this.totalPages - 1) {
       this.page++;
-      if (this.selectedExercice === 'Tous') {
-        this.loadFacturesBySiret();
+
+      if (this.searchTerm) {
+        this.searchFactures();
       } else {
-        this.loadFacturesByExercise(this.selectedExercice);
+        if (this.selectedExercice === 'Tous') {
+          this.loadFacturesBySiret();
+        } else {
+          this.loadFacturesByExercise(this.selectedExercice);
+        }
       }
     }
   }
@@ -238,10 +262,14 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   previousPage(): void {
     if (this.page > 0) {
       this.page--;
-      if (this.selectedExercice === 'Tous') {
-        this.loadFacturesBySiret();
+      if (this.searchTerm) {
+        this.searchFactures();
       } else {
-        this.loadFacturesByExercise(this.selectedExercice);
+        if (this.selectedExercice === 'Tous') {
+          this.loadFacturesBySiret();
+        } else {
+          this.loadFacturesByExercise(this.selectedExercice);
+        }
       }
     }
   }

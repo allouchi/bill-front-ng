@@ -65,9 +65,7 @@
           </tr>
         </tbody>
       </table>
-    </div>
-
-   
+    </div>   
 
  <div class="d-flex align-items-center gap-1">
   <!-- Search -->
@@ -104,7 +102,7 @@
           <th scope="col">Quantité</th>
           <th scope="col">Prix Total TTC (€)</th>
           <th scope="col">Prix Total HT (€)</th>
-            <th scope="col">Date Facturation</th>
+          <th scope="col">Date Facturation</th>
           <th scope="col">Date Encaissement</th>
           <th scope="col">Total TVA (€)</th>
           <th scope="col">Débit TVA (€)</th>
@@ -178,6 +176,7 @@
           <td class="text-center">{{ totalCATTC | customDecimalPipe }} €</td>
           <td class="text-center">{{ totalCANet | customDecimalPipe }} €</td>
           <td></td>
+           <td></td>
           <td class="text-center">{{ totalTvaFacture | customDecimalPipe }} €</td>
           <td class="text-center">{{ totalDebitTva | customDecimalPipe }} €</td>
           <td colspan="6"></td>

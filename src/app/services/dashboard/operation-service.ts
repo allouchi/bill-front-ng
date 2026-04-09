@@ -70,4 +70,32 @@ export class OperationService {
       },
     );
   }
+
+  searchOperations(
+    siret: string,
+    pattern: string,
+    page: number,
+    size: number,
+  ): Observable<Page<Operation>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    const url = `${this.OPERATION_PATH}/search/${siret}`;
+    // Envoi du pattern dans le body
+    return this.http.post<Page<Operation>>(url, pattern, {
+      params,
+    });
+  }
+
+  searchComptes(
+    siret: string,
+    pattern: string,
+    page: number,
+    size: number,
+  ): Observable<Page<Compte>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    const url = `${this.COMPTE_PATH}/search/${siret}`;
+    // Envoi du pattern dans le body
+    return this.http.post<Page<Compte>>(url, pattern, {
+      params,
+    });
+  }
 }

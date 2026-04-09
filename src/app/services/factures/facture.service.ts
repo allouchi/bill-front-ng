@@ -122,9 +122,15 @@ export class FactureService implements IFactureService {
     return this.http.get<Facture[]>(`${this.BATCH_PATH}/${siret}`);
   }
 
-  search(siret: string, pattern: string): Observable<Facture[]> {
+  searchFactures(
+    siret: string,
+    pattern: string,
+    page: number,
+    size: number,
+  ): Observable<Page<Facture>> {
+    let params = new HttpParams().set('page', page).set('size', size);
     const url = `${this.FACTURES_PATH}/search/${siret}`;
     // Envoi du pattern dans le body
-    return this.http.post<Facture[]>(url, pattern);
+    return this.http.post<Page<Facture>>(url, pattern, { params });
   }
 }
