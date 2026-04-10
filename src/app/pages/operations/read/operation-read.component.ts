@@ -198,65 +198,6 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     }
   }
 
-  filterByExercice(selectedExeciceValue: string) {
-    if (this.operations) {
-      if (selectedExeciceValue == 'Tous') {
-        if (this.selectedType == 'Tous') {
-          this.operationsFiltred = this.operations;
-        } else {
-          this.operationsFiltred = this.operations.filter(
-            (o) => o.typeOperation == this.selectedType,
-          );
-        }
-      } else {
-        if (this.selectedType == 'Tous') {
-          this.operationsFiltred = this.operations.filter(
-            (o) => o.exercise == selectedExeciceValue,
-          );
-        } else {
-          this.operationsFiltred = this.operations.filter(
-            (o) =>
-              o.exercise == selectedExeciceValue &&
-              o.typeOperation == this.selectedType,
-          );
-        }
-      }
-      this.operationsFiltred.forEach((oper) => {
-        this.totalOperation += oper.montantOperation;
-      });
-    }
-    this.loadTvaInfo(selectedExeciceValue);
-  }
-
-  filterByType(selectedTypeValue: string) {
-    if (this.operations) {
-      if (selectedTypeValue == 'Tous') {
-        if (this.selectedExercice == 'Tous') {
-          this.operationsFiltred = this.operations;
-        } else {
-          this.operationsFiltred = this.operations.filter(
-            (o) => o.exercise == this.selectedExercice,
-          );
-        }
-      } else {
-        if (this.selectedExercice == 'Tous') {
-          this.operationsFiltred = this.operations.filter(
-            (o) => o.typeOperation == selectedTypeValue,
-          );
-        } else {
-          this.operationsFiltred = this.operations.filter(
-            (o) =>
-              o.exercise == this.selectedExercice &&
-              o.typeOperation == selectedTypeValue,
-          );
-        }
-      }
-      this.operationsFiltred.forEach((oper) => {
-        this.totalOperation += oper.montantOperation;
-      });
-    }
-  }
-
   setTypeValue(event: Event) {
     this.totalOperation = 0;
     const selectedValue = (event.target as HTMLSelectElement).value;
