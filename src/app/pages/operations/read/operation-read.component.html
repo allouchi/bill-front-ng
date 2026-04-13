@@ -27,14 +27,11 @@
     <div><strong>Total Opérations : </strong> {{totalOperation | customDecimalPipe }}</div>
 
      <div class="d-flex align-items-center gap-0">
-      <!-- Search -->
-      <input
-      type="text"
-      class="form-control shadow-sm rounded-pill px-4"
-      style="width: 250px; transition: all 0.3s ease;"
-      [formControl]="searchControl"
-      placeholder="🔍 Chercher opérations..."
-    />
+     <bill-search
+          (search)="onSearch($event)"
+          placeholder="🔍 Chercher opération..."
+          >
+      </bill-search>
     <div>
       <label class="form-label invisible" for="add">Ajouter</label>
       <button id="add" class="btn btn-pink" (click)="importerOperations()" title="Importer opérations">

@@ -91,13 +91,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.formLogin.patchValue({
       password: '',
     });
-
-    this.showMessage(error);
-  }
-
-  private showMessage(error: any) {
-    this.alertService.showFunctionlError(error);
-  }
+  }  
 
   updateCurrentLang(user: User): void {
     this.currentLang = user.language;

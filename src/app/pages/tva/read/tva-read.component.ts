@@ -9,21 +9,33 @@ import { Router } from '@angular/router';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
 import { CompanyService } from '../../../services/companies/company-service';
 import Company from '../../../models/Company';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import TvaInfos from '../../../models/TvaInfos';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
-import { Subscription } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  of,
+  Subject,
+  Subscription,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import { AlertService } from '../../../services/alert/alertService';
 import Facture from '../../../models/Facture';
+import { SearchComponent } from '../../../shared/search/search.component';
 
 @Component({
   selector: 'bill-tva-read',
   imports: [
     WaitingComponent,
+    SearchComponent,
     ReactiveFormsModule,
     CustomDecimalPipe,
     FormsModule,
@@ -44,6 +56,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   selectedExercice: string = '';
   siret: string | null = '';
   observableEvent$ = new Subscription();
+  private searchSubject = new Subject<string>();
   router = inject(Router);
   isAdmin = false;
   totalTvaFacture!: number;
@@ -54,6 +67,8 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   totalElements = 0;
   parent = 'read';
   nbLignesTva = 0;
+  searchTerm: string = '';
+  searchControl = new FormControl('');
 
   constructor(
     private readonly tvaService: TvaService,
@@ -62,7 +77,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     private readonly companyService: CompanyService,
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly modalService: NgbModal,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -76,6 +91,46 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     this.loadTva(this.selectedExercice);
     this.loadTvaInfo(this.selectedExercice);
     this.sharedDataService.setSelectedExercise(this.selectedExercice);
+
+    this.searchSubject
+      .pipe(
+        map((value: string | null) => value?.trim() || ''),
+        switchMap((search) => {
+          this.searchTerm = search;
+          const request$ = search
+            ? this.tvaService.searchTvas(
+                this.siret!,
+                search,
+                this.page,
+                this.size,
+              )
+            : this.tvaService.findTvaByExercise(
+                this.siret!,
+                this.selectedExercice,
+                this.page,
+                this.size,
+              );
+          return request$;
+        }),
+        catchError((err) => {
+          this.onError(err);
+          return of({
+            content: [],
+            page: { totalPages: 0, totalElements: 0 },
+          });
+        }),
+      )
+      .subscribe((data) => {
+        this.tvas = data.content;
+        this.totalPages = data.page.totalPages;
+        this.totalElements = data.page.totalElements;
+        this.isLoaded = true;
+        this.calculateTotals();
+      });
+  }
+
+  onSearch(query: string) {
+    this.searchSubject.next(query);
   }
 
   private loadMonthInYear() {
@@ -98,11 +153,11 @@ export class TvaReadComponent implements OnInit, OnDestroy {
 
     this.totalTvaFacture = this.tvas.reduce(
       (sum, t) => sum + (t.montantTvaFacture || 0),
-      0
+      0,
     );
     this.totalDebitTva = this.tvas.reduce(
       (sum, t) => sum + (t.montantPayment || 0),
-      0
+      0,
     );
   }
 
@@ -171,17 +226,36 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       });
   }
 
+  searchTvas() {
+    return this.tvaService
+      .searchTvas(this.siret!, this.searchTerm, this.page, this.size)
+      .subscribe((data) => {
+        this.tvas = data.content;
+        this.totalPages = data.page.totalPages;
+        this.totalElements = data.page.totalElements;
+        this.isLoaded = true;
+      });
+  }
+
   nextPage(): void {
     if (this.page < this.totalPages - 1) {
       this.page++;
-      this.loadTva(this.selectedExercice);
+      if (this.searchTerm) {
+        this.searchTvas();
+      } else {
+        this.loadTva(this.selectedExercice);
+      }
     }
   }
 
   previousPage(): void {
     if (this.page > 0) {
       this.page--;
-      this.loadTva(this.selectedExercice);
+      if (this.searchTerm) {
+        this.searchTvas();
+      } else {
+        this.loadTva(this.selectedExercice);
+      }
     }
   }
 
@@ -247,6 +321,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.searchSubject.unsubscribe();
     this.alertService.clear();
   }
 }

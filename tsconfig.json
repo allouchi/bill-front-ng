@@ -3,7 +3,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "./dist/out-tsc",
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -17,10 +16,7 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "ES2022",
-    "types": [
-      "jspdf",
-      "html2canvas"
-    ]
+    "types": ["jspdf", "html2canvas"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

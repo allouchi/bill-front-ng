@@ -4,7 +4,7 @@ import Exercise from '../../../models/Exercise';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { Router } from '@angular/router';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth-service';
 import { OperationService } from '../../../services/dashboard/operation-service';
 import { CommonModule } from '@angular/common';
@@ -17,17 +17,18 @@ import {
   catchError,
   debounceTime,
   distinctUntilChanged,
-  map,
   of,
-  Subscription,
+  Subject,
   switchMap,
 } from 'rxjs';
+import { SearchComponent } from '../../../shared/search/search.component';
 
 @Component({
   selector: 'bill-compte-read',
   imports: [
     CommonModule,
     WaitingComponent,
+    SearchComponent,
     ReactiveFormsModule,
     CustomDecimalPipe,
     FormsModule,
@@ -56,9 +57,8 @@ export class CompteReadComponent implements OnInit, OnDestroy {
   size = 12;
   totalPages = 0;
   totalElements = 0;
-  searchControl = new FormControl('');
   searchTerm = '';
-  private subscription!: Subscription;
+  private searchSubject = new Subject<string>();
 
   router = inject(Router);
   constructor(
@@ -83,7 +83,7 @@ export class CompteReadComponent implements OnInit, OnDestroy {
     );
     this.monthsYear = GetMonthsOfYear();
 
-    this.subscription = this.searchControl.valueChanges
+    this.searchSubject
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
@@ -125,6 +125,10 @@ export class CompteReadComponent implements OnInit, OnDestroy {
         this.totalOperation = this.operations.length;
         this.isLoaded = true;
       });
+  }
+
+  onSearch(query: string) {
+    this.searchSubject.next(query);
   }
   searchComptes() {
     this.operationService
@@ -318,6 +322,6 @@ export class CompteReadComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.alertService.clear();
-    this.subscription.unsubscribe();
+    this.searchSubject.unsubscribe();
   }
 }

@@ -164,7 +164,7 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
 
 
   private onError(error: any) {
-    this.isLoaded = true;
+    this.isLoaded = true;     
     this.alertService.showFunctionlError(error);
   }
 

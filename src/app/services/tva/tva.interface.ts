@@ -27,7 +27,7 @@ export interface ITvaService {
     siret: string,
     exercise: string,
     page: number,
-    size: number
+    size: number,
   ): Observable<Page<Tva>>;
 
   /**
@@ -52,4 +52,18 @@ export interface ITvaService {
    * @param id facture id to delete
    */
   deleteTvaById(id: number): Observable<string>;
+
+  /**
+   *
+   * @param siret
+   * @param pattern
+   * @param page
+   * @param size
+   */
+  searchTvas(
+    siret: string,
+    pattern: string,
+    page: number,
+    size: number,
+  ): Observable<Page<Tva>>;
 }

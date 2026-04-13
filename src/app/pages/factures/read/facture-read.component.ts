@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FactureService } from '../../../services/factures/facture.service';
 import Facture from '../../../models/Facture';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import Exercise from '../../../models/Exercise';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
@@ -9,7 +9,6 @@ import {
   catchError,
   debounceTime,
   distinctUntilChanged,
-  filter,
   map,
   of,
   Subject,
@@ -23,7 +22,7 @@ import { AuthService } from '../../../services/auth/auth-service';
 import { TvaService } from '../../../services/tva/tva-service';
 import TvaInfos from '../../../models/TvaInfos';
 
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { DetailFactureComponent } from '../../../shared/modal/detail/detail-facture.component';
 import { CommonModule } from '@angular/common';
@@ -32,6 +31,7 @@ import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import { AlertService } from '../../../services/alert/alertService';
 
 import EmailClient from '../../../models/EmailClient';
+import { SearchComponent } from '../../../shared/search/search.component';
 
 @Component({
   selector: 'bill-facture-read',
@@ -39,6 +39,7 @@ import EmailClient from '../../../models/EmailClient';
   imports: [
     CommonModule,
     WaitingComponent,
+    SearchComponent,
     ReactiveFormsModule,
     CustomDecimalPipe,
     FormsModule,
@@ -72,8 +73,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   showPenalite = true;
   hidePenalite = false;
   searchTerm: string = '';
-  private subscription!: Subscription;
-  searchControl = new FormControl('');
+  private searchSubject = new Subject<string>();
 
   private readonly router = inject(Router);
 
@@ -101,7 +101,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     this.loadFacturesByExercise(this.selectedExercice);
     this.loadTvaInfo(this.selectedExercice);
 
-    this.subscription = this.searchControl.valueChanges
+    this.searchSubject
       .pipe(
         debounceTime(500),
         distinctUntilChanged((a, b) => a?.trim() === b?.trim()),
@@ -144,9 +144,12 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
         this.totalElements = data.page.totalElements;
         this.nbLignesFacture = data.content.length;
         this.isLoaded = true;
-        //this.loadTvaInfo(this.selectedExercice);
         this.calculateTotals();
       });
+  }
+
+  onSearch(query: string) {
+    this.searchSubject.next(query);
   }
 
   calculateTotals() {
@@ -503,6 +506,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.alertService.clear();
-    this.subscription.unsubscribe(); // évite les fuites mémoire
+    this.searchSubject.unsubscribe(); // évite les fuites mémoire
   }
 }

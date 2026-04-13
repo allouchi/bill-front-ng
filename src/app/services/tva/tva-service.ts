@@ -39,7 +39,7 @@ export class TvaService implements ITvaService {
     siret: string,
     exercise: string,
     page: number,
-    size: number
+    size: number,
   ): Observable<Page<Tva>> {
     let params = new HttpParams().set('page', page).set('size', size);
     return this.http.get<Page<Tva>>(`${this.TVA_PATH}/${siret}/${exercise}`, {
@@ -49,7 +49,7 @@ export class TvaService implements ITvaService {
 
   findTvaInfoByExercise(siret: string, exercise: string): Observable<TvaInfos> {
     return this.http.get<TvaInfos>(
-      `${this.TVA_INFO_PATH}/${siret}/${exercise}`
+      `${this.TVA_INFO_PATH}/${siret}/${exercise}`,
     );
   }
 
@@ -59,5 +59,17 @@ export class TvaService implements ITvaService {
 
   deleteTvaById(id: number): Observable<string> {
     return this.http.delete<string>(`${this.TVA_PATH}/${id}`);
+  }
+
+  searchTvas(
+    siret: string,
+    pattern: string,
+    page: number,
+    size: number,
+  ): Observable<Page<Tva>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    const url = `${this.TVA_PATH}/search/${siret}`;
+    // Envoi du pattern dans le body
+    return this.http.post<Page<Tva>>(url, pattern, { params });
   }
 }

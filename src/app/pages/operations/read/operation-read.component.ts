@@ -4,7 +4,7 @@ import Exercise from '../../../models/Exercise';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
 import { Router } from '@angular/router';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth-service';
 import { OperationService } from '../../../services/dashboard/operation-service';
 import Operation from '../../../models/Operation';
@@ -20,17 +20,18 @@ import {
   catchError,
   debounceTime,
   distinctUntilChanged,
-  map,
   of,
-  Subscription,
+  Subject,
   switchMap,
 } from 'rxjs';
+import { SearchComponent } from '../../../shared/search/search.component';
 
 @Component({
   selector: 'bill-operation-read',
   imports: [
     CommonModule,
     WaitingComponent,
+    SearchComponent,
     ReactiveFormsModule,
     CustomDecimalPipe,
     FormsModule,
@@ -56,9 +57,8 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   size = 12;
   totalPages = 0;
   totalElements = 0;
-  searchControl = new FormControl('');
   searchTerm = '';
-  private subscription!: Subscription;
+  private searchSubject = new Subject<string>();
 
   router = inject(Router);
   constructor(
@@ -80,7 +80,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     this.selectedType = 'Tous';
     this.selectedExercice = 'Tous';
 
-    this.subscription = this.searchControl.valueChanges
+    this.searchSubject
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
@@ -120,6 +120,10 @@ export class OperationReadComponent implements OnInit, OnDestroy {
         this.totalOperation = this.operations.length;
         this.isLoaded = true;
       });
+  }
+
+  onSearch(query: string) {
+    this.searchSubject.next(query);
   }
 
   searchOperations() {
@@ -281,6 +285,6 @@ export class OperationReadComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.alertService.clear();
-    this.subscription.unsubscribe(); // évite les fuites mémoire
+    this.searchSubject.unsubscribe(); // évite les fuites mémoire
   }
 }
