@@ -1,11 +1,21 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FactureService } from '../../../services/factures/facture.service';
 import Facture from '../../../models/Facture';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import Exercise from '../../../models/Exercise';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
-import { Subscription } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  of,
+  Subject,
+  Subscription,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
@@ -21,7 +31,7 @@ import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import { AlertService } from '../../../services/alert/alertService';
 
 import EmailClient from '../../../models/EmailClient';
-
+import { SearchComponent } from '../../../shared/search/search.component';
 
 @Component({
   selector: 'bill-facture-read',
@@ -29,6 +39,7 @@ import EmailClient from '../../../models/EmailClient';
   imports: [
     CommonModule,
     WaitingComponent,
+    SearchComponent,
     ReactiveFormsModule,
     CustomDecimalPipe,
     FormsModule,
@@ -57,8 +68,12 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   emailAdresses: string[] = [];
   isEdition: string | null = null;
   nbLignesFacture = 0;
+  totalCANet = 0;
+  totalCATTC = 0;
   showPenalite = true;
   hidePenalite = false;
+  searchTerm: string = '';
+  private searchSubject = new Subject<string>();
 
   private readonly router = inject(Router);
 
@@ -69,8 +84,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly modalService: NgbModal,
     private readonly authService: AuthService,
     private readonly tvaService: TvaService,
-    private readonly sharedMessagesService: SharedMessagesService
-  ) { }
+    private readonly sharedMessagesService: SharedMessagesService,
+  ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -85,17 +100,77 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     }
     this.loadFacturesByExercise(this.selectedExercice);
     this.loadTvaInfo(this.selectedExercice);
+
+    this.searchSubject
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged((a, b) => a?.trim() === b?.trim()),
+        tap(() => {
+          this.isLoaded = false;
+          this.hide();
+        }),
+        map((value: string | null) => value?.trim() || ''),
+        switchMap((search) => {
+          this.searchTerm = search;
+
+          const request$ = search
+            ? this.factureService.searchFactures(
+                this.siret!,
+                search,
+                this.page,
+                this.size,
+              )
+            : this.factureService.findFacturesByExercice(
+                this.siret!,
+                this.selectedExercice,
+                this.page,
+                this.size,
+              );
+
+          return request$;
+        }),
+        catchError((err) => {
+          this.onError(err);
+          return of({
+            content: [],
+            page: { totalPages: 0, totalElements: 0 },
+          });
+        }),
+      )
+      .subscribe((data) => {
+        this.factures = data.content;
+        this.totalPages = data.page.totalPages;
+        console.log(this.totalPages);
+        this.totalElements = data.page.totalElements;
+        this.nbLignesFacture = data.content.length;
+        this.isLoaded = true;
+        this.calculateTotals();
+      });
+  }
+
+  onSearch(query: string) {
+    this.searchSubject.next(query);
   }
 
   calculateTotals() {
     if (!this.factures) return;
     this.totalTvaFacture = this.factures.reduce(
       (sum, t) => sum + (t.montantTVA || 0),
-      0
+      0,
     );
     this.totalDebitTva = this.factures.reduce(
       (sum, t) => sum + (t.montantTvaPaye || 0),
-      0
+      0,
+    );
+
+    this.totalCANet = this.factures.reduce(
+      (sum, t) => sum + (t.prixTotalHT || 0),
+      0,
+    );
+
+    this.totalCATTC = this.factures.reduce(
+      (sum, t) => sum + (t.prixTotalTTC || 0),
+      0,
     );
   }
 
@@ -157,14 +232,32 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
         },
       });
   }
+  searchFactures() {
+    this.factureService
+      .searchFactures(this.siret!, this.searchTerm, this.page, this.size)
+      .subscribe((data) => {
+        this.factures = data.content;
+        this.totalPages = data.page.totalPages;
+        this.totalElements = data.page.totalElements;
+        this.nbLignesFacture = data.content.length;
+        this.isLoaded = true;
+        //this.loadTvaInfo(this.selectedExercice);
+        this.calculateTotals();
+      });
+  }
 
   nextPage(): void {
     if (this.page < this.totalPages - 1) {
       this.page++;
-      if (this.selectedExercice === 'Tous') {
-        this.loadFacturesBySiret();
+
+      if (this.searchTerm) {
+        this.searchFactures();
       } else {
-        this.loadFacturesByExercise(this.selectedExercice);
+        if (this.selectedExercice === 'Tous') {
+          this.loadFacturesBySiret();
+        } else {
+          this.loadFacturesByExercise(this.selectedExercice);
+        }
       }
     }
   }
@@ -172,10 +265,14 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   previousPage(): void {
     if (this.page > 0) {
       this.page--;
-      if (this.selectedExercice === 'Tous') {
-        this.loadFacturesBySiret();
+      if (this.searchTerm) {
+        this.searchFactures();
       } else {
-        this.loadFacturesByExercise(this.selectedExercice);
+        if (this.selectedExercice === 'Tous') {
+          this.loadFacturesBySiret();
+        } else {
+          this.loadFacturesByExercise(this.selectedExercice);
+        }
       }
     }
   }
@@ -385,7 +482,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   }
 
   runBatch() {
-    this.factureService.runBatch().subscribe({
+    this.factureService.runBatch(this.siret!).subscribe({
       next: (factures) => {
         this.facturesRetard = factures;
         this.showPenalite = false;
@@ -393,8 +490,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.onError(err);
-      }
-    })
+      },
+    });
   }
 
   hide() {
@@ -409,5 +506,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.alertService.clear();
+    this.searchSubject.unsubscribe(); // évite les fuites mémoire
   }
 }

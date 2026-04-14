@@ -8,7 +8,7 @@
       }
     </div>
     <div class="card-body">
-      <form [formGroup]="formCompany" #form="ngForm" (ngSubmit)="addCompany()" class="p-4 border rounded">
+      <form [formGroup]="formCompany" #form="ngForm" (ngSubmit)="editCompany()" class="p-4 border rounded">
         <div class="row">
 
           <div class="mb-3 fw-bold">
@@ -40,11 +40,11 @@
                             formCompany.get('siret')?.touched
                           " />
 
-              <div *ngIf="
-                            formCompany.get('siret')?.invalid &&
-                            formCompany.get('siret')?.touched
-                          " class="text-danger">
-                Ce champ est requis.
+                <div *ngIf="formCompany.get('siret')?.errors?.['required']">
+                   Le SIRET est obligatoire
+                </div>
+                <div *ngIf="formCompany.get('siret')?.errors?.['pattern']">
+                  Le SIRET doit contenir exactement 14 chiffres
                 </div>
             </div>
           </div>
@@ -124,13 +124,17 @@
                                             formCompany.get('numeroIban')?.invalid &&
                                             formCompany.get('numeroIban')?.touched
                                           " />
+              <div *ngIf="formCompany.get('numeroIban')?.invalid && 
+                        (formCompany.get('numeroIban')?.touched || formCompany.get('numeroIban')?.dirty)">
 
-              <div *ngIf="
-                                            formCompany.get('numeroIban')?.invalid &&
-                                            formCompany.get('numeroIban')?.touched
-                                          " class="text-danger">
-                Ce champ est requis.
+                <div *ngIf="formCompany.get('numeroIban')?.errors?.['required']">
+                  Le numéro IBAN est obligatoire
                 </div>
+
+                <div *ngIf="formCompany.get('numeroIban')?.errors?.['pattern']">
+                  Format numéro IBAN est invalide
+                </div>
+              </div>
             </div>
           </div>
 
@@ -150,8 +154,6 @@
                 </div>
             </div>
           </div>
-
-
         </div>
 
         <div class="mb-3 fw-bold">
@@ -196,15 +198,20 @@
             <div class="mb-3">
               <label class="form-label fw-bold" htmlFor="codePostal">Code Postal *</label>
               <input type="text" id="codePostal" class="form-control" formControlName="codePostal"
-                (keypress)="allowOnlyNumbers($event)"
-                [class.is-invalid]="formCompany.get('codePostal')?.invalid &&
+                (keypress)="allowOnlyNumbers($event)" 
+                                [class.is-invalid]="formCompany.get('codePostal')?.invalid &&
                                                                                     formCompany.get('codePostal')?.touched" />
-              <div *ngIf="
-                                    formCompany.get('codePostal')?.invalid &&
-                                    formCompany.get('codePostal')?.touched
-                                  " class="text-danger">
-                Ce champ est requis.
+              <div *ngIf="formCompany.get('codePostal')?.invalid && 
+                        (formCompany.get('codePostal')?.touched || formCompany.get('codePostal')?.dirty)">
+
+                <div *ngIf="formCompany.get('codePostal')?.errors?.['required']" class="text-danger">
+                  Le code postal est obligatoire
                 </div>
+
+                <div *ngIf="formCompany.get('codePostal')?.errors?.['pattern']" class="text-danger">
+                  Le code postal est invalide
+                </div>
+              </div>
             </div>
           </div>
 

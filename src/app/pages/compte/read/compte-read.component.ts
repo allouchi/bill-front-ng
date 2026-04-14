@@ -7,20 +7,28 @@ import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth-service';
 import { OperationService } from '../../../services/dashboard/operation-service';
-import Operation from '../../../models/Operation';
 import { CommonModule } from '@angular/common';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import TvaInfos from '../../../models/TvaInfos';
 import { AlertService } from '../../../services/alert/alertService';
 import Compte from '../../../models/Compte';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
-
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  of,
+  Subject,
+  switchMap,
+} from 'rxjs';
+import { SearchComponent } from '../../../shared/search/search.component';
 
 @Component({
   selector: 'bill-compte-read',
   imports: [
     CommonModule,
     WaitingComponent,
+    SearchComponent,
     ReactiveFormsModule,
     CustomDecimalPipe,
     FormsModule,
@@ -42,13 +50,15 @@ export class CompteReadComponent implements OnInit, OnDestroy {
   parent = 'read';
   siret: string | null = '';
   totalOperation: number = 0;
-  typeOperations: string[] = ['Tous', 'DIV', 'NDF', 'DGFIP', 'AUTRE'];
+  typeOperations: string[] = ['Tous', 'DIV', 'NDF', 'TVA', 'AUTRE'];
   monthsYear: any;
 
   page = 0;
   size = 12;
   totalPages = 0;
   totalElements = 0;
+  searchTerm = '';
+  private searchSubject = new Subject<string>();
 
   router = inject(Router);
   constructor(
@@ -72,6 +82,64 @@ export class CompteReadComponent implements OnInit, OnDestroy {
       this.selectedMonth,
     );
     this.monthsYear = GetMonthsOfYear();
+
+    this.searchSubject
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        switchMap((value: string | null) => {
+          const search = value?.trim();
+
+          if (!search) {
+            this.searchTerm = '';
+            return this.operationService.getComptes(
+              this.siret!,
+              this.selectedExercice,
+              this.selectedType,
+              this.selectedMonth,
+              this.page,
+              this.size,
+            );
+          }
+
+          this.searchTerm = search;
+          return this.operationService.searchComptes(
+            this.siret!,
+            search,
+            this.page,
+            this.size,
+          );
+        }),
+        catchError((err) => {
+          this.onError(err);
+          return of({
+            content: [],
+            page: { totalPages: 0, totalElements: 0 },
+          });
+        }),
+      )
+      .subscribe((data) => {
+        this.operations = data.content;
+        this.totalPages = data.page.totalPages;
+        this.totalElements = data.page.totalElements;
+        this.totalOperation = this.operations.length;
+        this.isLoaded = true;
+      });
+  }
+
+  onSearch(query: string) {
+    this.searchSubject.next(query);
+  }
+  searchComptes() {
+    this.operationService
+      .searchComptes(this.siret!, this.searchTerm, this.page, this.size)
+      .subscribe((data) => {
+        this.operations = data.content;
+        this.totalPages = data.page.totalPages;
+        this.totalElements = data.page.totalElements;
+        this.totalOperation = this.operations.length;
+        this.isLoaded = true;
+      });
   }
 
   loadOperations(selectedExercice: string, type: string, month: string) {
@@ -87,7 +155,6 @@ export class CompteReadComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.operations = data.content;
-          this.operationsFiltred = data.content;
           this.totalPages = data.page.totalPages;
           this.totalElements = data.page.totalElements;
           this.isLoaded = true;
@@ -103,22 +170,30 @@ export class CompteReadComponent implements OnInit, OnDestroy {
   nextPage(): void {
     if (this.page < this.totalPages - 1) {
       this.page++;
-      this.loadOperations(
-        this.selectedExercice,
-        this.selectedType,
-        this.selectedMonth,
-      );
+      if (this.searchTerm) {
+        this.searchComptes();
+      } else {
+        this.loadOperations(
+          this.selectedExercice,
+          this.selectedType,
+          this.selectedMonth,
+        );
+      }
     }
   }
 
   previousPage(): void {
     if (this.page > 0) {
       this.page--;
-      this.loadOperations(
-        this.selectedExercice,
-        this.selectedType,
-        this.selectedMonth,
-      );
+      if (this.searchTerm) {
+        this.searchComptes();
+      } else {
+        this.loadOperations(
+          this.selectedExercice,
+          this.selectedType,
+          this.selectedMonth,
+        );
+      }
     }
   }
 
@@ -247,5 +322,6 @@ export class CompteReadComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.alertService.clear();
+    this.searchSubject.unsubscribe();
   }
 }

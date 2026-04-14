@@ -23,21 +23,27 @@ export class AlertService implements OnInit {
   loginMessage = 'Bienvenue, vous êtes connecté !';
   female: boolean = true;
   serverError = 'Le serveur est inaccessible !';
-  downloadFileError = "Le fichier inexistant ou endommagé";
-  messageSendSuccess = "La facture a été envoyée avec succès";
-  messageImport = "Le fichier a été importé avec succès"
+  downloadFileError = 'Le fichier inexistant ou endommagé';
+  messageSendSuccess = 'La facture a été envoyée avec succès';
+  messageImport = 'Le fichier a été importé avec succès';
+  session_expired =
+    'Votre session a expiré. Nous vous invitons à vous reconnecter pour continuer.';
   currentLang = 'fr';
 
   private readonly alertSubject = new Subject<ToastData>();
   toast$ = this.alertSubject.asObservable();
 
-  constructor(private readonly translateService: I18nService) { }
+  constructor(private readonly translateService: I18nService) {}
 
-  FUNCIONAL_ERROR = ['RESOURCE_NOT_FOUND', 'DB_ERROR', 'DUPLICATE_DATA']
+  FUNCIONAL_ERROR = [
+    'RESOURCE_NOT_FOUND',
+    'DB_ERROR',
+    'DUPLICATE_DATA',
+    'SESSION_EXPIRED',
+    'TOKEN_INVALID',
+  ];
 
-
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   updateCurrentLang(selectedLanguage: string): void {
     this.currentLang = selectedLanguage;
@@ -49,20 +55,18 @@ export class AlertService implements OnInit {
     message: string,
     title?: string,
     type: ToastData['type'] = 'success',
-    delay = 7000
+    delay = 7000,
   ) {
     switch (composant) {
-      case 'USER':
-        {
-          composant = "L'utilisateur ";
-          this.female = false;
-          break;
-        }
+      case 'USER': {
+        composant = "L'utilisateur ";
+        this.female = false;
+        break;
+      }
 
-      case 'MAIL':
-        {
-          break;
-        }
+      case 'MAIL': {
+        break;
+      }
       case 'CONSULTANT':
       case 'CLIENT': {
         composant = 'Le ' + composant;
@@ -130,12 +134,13 @@ export class AlertService implements OnInit {
         message = this.messageImport;
         break;
       }
-
     }
 
-    this.translateService.getTranslation('alert.deleteMessageF').subscribe(msg => {
-      //console.log('Message traduit:', msg);
-    });
+    this.translateService
+      .getTranslation('alert.deleteMessageF')
+      .subscribe((msg) => {
+        //console.log('Message traduit:', msg);
+      });
 
     this.alertSubject.next({ message, title, type, delay });
   }
@@ -144,27 +149,25 @@ export class AlertService implements OnInit {
     error: any,
     title: string = 'Echec',
     type: ToastData['type'] = 'danger',
-    delay = 7000
+    delay = 7000,
   ) {
-
     let message: string;
 
-    if (this.FUNCIONAL_ERROR.includes(error.error.code)) {
-      message = error.error.message;
+    if (error && error.error) {
+      if (this.FUNCIONAL_ERROR.includes(error.error.code)) {
+        message = error.error.message;
+      } else if (error.error.code === 'PDF_ERROR') {
+        message = this.downloadFileError;
+      } else if (error.message && error.message.includes('Http failure')) {
+        message = this.serverError;
+      } else {
+        message = error.error.message;
+      }
+      this.alertSubject.next({ message, title, type, delay });
     }
-    else if (error.error.code === 'PDF_ERROR') {
-      message = this.downloadFileError;
-    }
-    else if (error.message && error.message.includes('Http failure')) {
-      message = this.serverError;
-    } else {
-      message = error.error.message;
-    }
-    this.alertSubject.next({ message, title, type, delay });
   }
 
   clear() {
     //this.alertSubject.next({ message: '', type: 'success' });
   }
-
 }

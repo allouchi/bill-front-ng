@@ -21,14 +21,6 @@ export interface IClientService {
    * @param client client name
    * @returns Observable<Client[]>
    */
-  findClientsBySiret(siret: string): Observable<Client[]>;
-
-  /**
-   * Get all schemas if no project or all schemas for project name in otherwise
-   *
-   * @param client client name
-   * @returns Observable<Client[]>
-   */
   findClients(): Observable<Client[]>;
 
   /**

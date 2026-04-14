@@ -1,8 +1,8 @@
-import { Observable } from "rxjs";
-import Company from "../../models/Company";
-import { ICompanyService } from "./company.interface";
-import { HttpClient } from "@angular/common/http";
-import { env } from "../../../environments/env";
+import { map, Observable } from 'rxjs';
+import Company from '../../models/Company';
+import { ICompanyService } from './company.interface';
+import { HttpClient } from '@angular/common/http';
+import { env } from '../../../environments/env';
 import { Injectable } from '@angular/core';
 
 /**
@@ -38,7 +38,7 @@ export class CompanyService implements ICompanyService {
   findByUserName(userName: string): Observable<Company[]> {
     const userPath = 'user';
     return this.http.get<Company[]>(
-      `${this.COMPNAY_PATH}/${userPath}/${userName}`
+      `${this.COMPNAY_PATH}/${userPath}/${userName}`,
     );
   }
   deleteCompanyById(id: number): Observable<string> {

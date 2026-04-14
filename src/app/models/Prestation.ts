@@ -17,5 +17,5 @@ export default interface Prestation {
   dateDebut?: string;
   siret?: string;
   isPrestaNoteValid: boolean;
-  deletePresta?: boolean
+  deletePresta?: boolean;
 }

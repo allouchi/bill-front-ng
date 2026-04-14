@@ -11,7 +11,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { debounceTime, Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ClientService } from '../../../services/clients/client-service';
@@ -24,6 +24,7 @@ import { AuthService } from '../../../services/auth/auth-service';
 import Client from '../../../models/Client';
 import Adresse from '../../../models/Adresse';
 import EmailClient from '../../../models/EmailClient';
+import { CountryService } from '../../../services/shared/country-service';
 
 @Component({
   selector: 'bill-client-edit',
@@ -51,8 +52,9 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     private readonly sharedDataService: SharedDataService,
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly i18nService: I18nService,
-    private readonly authService: AuthService
-  ) { }
+    private readonly authService: AuthService,
+    private readonly countryService: CountryService,
+  ) {}
 
   // ========================
   // INIT
@@ -88,6 +90,13 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     });
 
     this.addEmail();
+
+    this.formClient
+      .get('codePostal')
+      ?.valueChanges.pipe(debounceTime(500))
+      .subscribe((value) => {
+        this.findCommune(value);
+      });
   }
 
   // ========================
@@ -109,7 +118,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     this.adresseId = this.client.adresseClient.id;
 
     this.sharedMessagesService.setMessage(
-      `Mise à jour de ${this.client.socialReason}`
+      `Mise à jour de ${this.client.socialReason}`,
     );
 
     this.emailsFormArray.clear();
@@ -119,7 +128,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
         this.fb.group({
           id: [mail.id],
           email: [mail.email, [Validators.required, Validators.email]],
-        })
+        }),
       );
     });
 
@@ -141,7 +150,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
       this.fb.group({
         id: [null],
         email: ['', [Validators.required, Validators.email]],
-      })
+      }),
     );
   }
 
@@ -178,13 +187,12 @@ export class ClientEditComponent implements OnInit, OnDestroy {
       pays: this.formClient.value.pays,
     };
 
-    const emailClient: EmailClient[] =
-      this.formClient.value.emails.map(
-        (mail: { id: number | null; email: string }) => ({
-          id: mail.id,
-          email: mail.email,
-        })
-      );
+    const emailClient: EmailClient[] = this.formClient.value.emails.map(
+      (mail: { id: number | null; email: string }) => ({
+        id: mail.id,
+        email: mail.email,
+      }),
+    );
 
     const client: Client = {
       id: this.clientId,
@@ -194,19 +202,17 @@ export class ClientEditComponent implements OnInit, OnDestroy {
       hasPrestation: true,
     };
 
-    this.clientService
-      .createOrUpdateClient(client, this.siret)
-      .subscribe({
-        next: () => {
-          this.alertService.show(
-            this.clientId ? 'UPDATE' : 'ADD',
-            'CLIENT',
-            'success'
-          );
-          this.router.navigate(['/clients/read']);
-        },
-        error: (err) => this.onError(err),
-      });
+    this.clientService.createOrUpdateClient(client, this.siret).subscribe({
+      next: () => {
+        this.alertService.show(
+          this.clientId ? 'UPDATE' : 'ADD',
+          'CLIENT',
+          'success',
+        );
+        this.router.navigate(['/clients/read']);
+      },
+      error: (err) => this.onError(err),
+    });
   }
 
   cancel(): void {
@@ -216,10 +222,8 @@ export class ClientEditComponent implements OnInit, OnDestroy {
   // ========================
   // VALIDATION HELPER
   // ========================
-  private markFormGroupTouched(
-    control: FormGroup | FormArray
-  ): void {
-    Object.values(control.controls).forEach(ctrl => {
+  private markFormGroupTouched(control: FormGroup | FormArray): void {
+    Object.values(control.controls).forEach((ctrl) => {
       if (ctrl instanceof FormGroup || ctrl instanceof FormArray) {
         this.markFormGroupTouched(ctrl);
       } else {
@@ -238,6 +242,25 @@ export class ClientEditComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.alertService.clear();
     this.subscriptions.unsubscribe();
+  }
+
+  findCommune(code: string) {
+    this.countryService.findByCodePotal(code).subscribe({
+      next: (commune) => {
+        if (commune[0]) {
+          this.formClient.patchValue({
+            localite: commune[0].nom,
+          });
+        } else {
+          this.formClient.patchValue({
+            localite: '',
+          });
+        }
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
   }
 }
 

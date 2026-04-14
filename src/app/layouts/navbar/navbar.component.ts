@@ -131,7 +131,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   reload() {
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/companies/read']);
     });
   }
 
@@ -170,7 +170,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
             this.updateUserService(this.user!);
           }
           if (result.company) {
-            this.switchCompanyService(result.company);
+            this.switchCompanyService(result.company);           
             this.sharedDataService.setSiret(result.company.siret);
             this.sharedDataService.setSelectCompany(result.company);
           }

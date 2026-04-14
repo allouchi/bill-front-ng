@@ -44,20 +44,9 @@ export class ClientReadComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
-    this.loadPrestations();
+    this.loadClients();
   }
-
-  loadPrestations() {
-    this.prestationService.getPrestationsBySiret(this.siret!).subscribe({
-      next: (prestations) => {
-        this.prestations = prestations;
-        this.loadClients();
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
+  
 
   private disableClientDelete() {
     if (this.prestations) {

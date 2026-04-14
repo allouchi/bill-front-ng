@@ -21,7 +21,8 @@ export interface IFactureService {
     prestation: Partial<Prestation>,
     siret: string,
     moisFactureId: number,
-    iTextGeneration: boolean
+    iTextGeneration: boolean,
+    taxType: string,
   ): Observable<Facture>;
 
   /**
@@ -41,7 +42,7 @@ export interface IFactureService {
   findFacturesBySiret(
     siret: string,
     page: number,
-    size: number
+    size: number,
   ): Observable<Page<Facture>>;
 
   /**
@@ -54,10 +55,13 @@ export interface IFactureService {
     siret: string,
     exercice: string,
     page: number,
-    size: number
+    size: number,
   ): Observable<Page<Facture>>;
 
-  findBySiretAndExercice(siret: string, exercice: string): Observable<Facture[]>;
+  findBySiretAndExercice(
+    siret: string,
+    exercice: string,
+  ): Observable<Facture[]>;
 
   /**
    * Delete one facture by it's id
@@ -76,5 +80,12 @@ export interface IFactureService {
 
   getWorkingDays(year: number, month: number): Observable<number>;
 
-  runBatch(): Observable<Facture[]>;
+  runBatch(siret: string): Observable<Facture[]>;
+
+  searchFactures(
+    siret: string,
+    pattern: string,
+    page: number,
+    size: number,
+  ): Observable<Page<Facture>>;
 }

@@ -18,6 +18,7 @@ import { SharedDataService } from '../../../services/shared/shared-data-service'
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { CountryService } from '../../../services/shared/country-service';
 import { AlertService } from '../../../services/alert/alertService';
+import { debounceTime } from 'rxjs';
 
 export interface Country {
   name: { common: string; official: string };
@@ -61,23 +62,26 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
     private readonly sharedDataService: SharedDataService,
     private readonly router: Router,
     private readonly sharedMessagesService: SharedMessagesService,
-    private readonly countryService: CountryService
-  ) { }
+    private readonly countryService: CountryService,
+  ) {}
   ngOnInit(): void {
     this.loadCountries();
 
     this.formCompany = this.fb.group({
       socialReason: ['', Validators.required],
       status: ['', Validators.required],
-      siret: ['', Validators.required],
+      siret: ['', [Validators.required, Validators.pattern(/^\d{14}$/)]],
       rcsName: ['', Validators.required],
       numeroTva: ['', Validators.required],
       codeApe: ['', Validators.required],
-      numeroIban: ['', Validators.required],
+      numeroIban: [
+        '',
+        [Validators.required, Validators.pattern(/^[A-Z0-9]{27,34}$/)],
+      ],
       numeroBic: ['', Validators.required],
       numero: ['', Validators.required],
       rue: ['', Validators.required],
-      codePostal: ['', Validators.required],
+      codePostal: ['', [Validators.required, Validators.pattern(/^\d{5}$/)]],
       localite: ['', Validators.required],
       pays: ['France', Validators.required],
       checked: [''],
@@ -88,20 +92,28 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
       this.company = this.sharedDataService.getSelectedCompany();
       this.isEdit = true;
       this.sharedMessagesService.setMessage(
-        `Mise à jour de ${this.company?.socialReason}`
+        `Mise à jour de ${this.company?.socialReason}`,
       );
     }
+
+    this.formCompany
+      .get('codePostal')
+      ?.valueChanges.pipe(debounceTime(500))
+      .subscribe((value) => {
+        this.findCommune(value);
+      });
   }
 
   loadCountries() {
-    this.countryService.getCountries().subscribe(data => {
-      this.countries = data.filter(r => (r.region === 'Europe') || r.region === 'Africa');
+    this.countryService.getCountries().subscribe((data) => {
+      this.countries = data.filter(
+        (r) => r.region === 'Europe' || r.region === 'Africa',
+      );
       this.buildDataCompany(this.company);
     });
   }
 
   buildDataCompany(company: Company | null) {
-
     if (this.countries) {
       this.countries = this.countries.sort((a, b) => {
         const nameA = a!.translations?.fra?.common || a!.name.common;
@@ -110,11 +122,12 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
       });
 
       const found = this.countries.find(
-        (item) => item?.translations?.fra?.common.toLocaleUpperCase() === company?.companyAdresse.pays.toUpperCase()
+        (item) =>
+          item?.translations?.fra?.common.toLocaleUpperCase() ===
+          company?.companyAdresse.pays.toUpperCase(),
       );
 
       this.selectedCountry = found?.translations?.fra?.common || '';
-
     }
 
     if (company) {
@@ -150,7 +163,7 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
     }
   }
 
-  addCompany() {
+  editCompany() {
     if (this.formCompany.valid) {
       let adresseCompany: Adresse = {
         id: this.adresseId,
@@ -161,9 +174,14 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
         pays: this.formCompany.get('pays')?.value,
       };
 
+      let isChecked = false;
+      if (this.isEdit) {
+        isChecked = this.company!.checked;
+      }
+
       let company: Company = {
         id: this.companyId,
-        checked: this.company!.checked,
+        checked: isChecked,
         socialReason: this.formCompany.get('socialReason')?.value,
         status: this.formCompany.get('status')?.value,
         siret: this.formCompany.get('siret')?.value,
@@ -198,10 +216,28 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
     }
   }
 
+  findCommune(code: string) {
+    this.countryService.findByCodePotal(code).subscribe({
+      next: (commune) => {
+        if (commune[0]) {
+          this.formCompany.patchValue({
+            localite: commune[0].nom,
+          });
+        } else {
+          this.formCompany.patchValue({
+            localite: '',
+          });
+        }
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
+  }
+
   cancel() {
     this.router.navigate(['/companies/read']);
   }
-
 
   private onError(error: any) {
     this.alertService.showFunctionlError(error);

@@ -3,20 +3,40 @@ import {
   HttpHandler,
   HttpInterceptor,
   HttpRequest,
+  HttpErrorResponse,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, switchMap, throwError } from 'rxjs';
+import {
+  catchError,
+  Observable,
+  switchMap,
+  throwError,
+  BehaviorSubject,
+  filter,
+  take,
+  EMPTY,
+} from 'rxjs';
 import { AuthService } from '../../services/auth/auth-service';
+import { Router } from '@angular/router';
+import { AlertService } from '../../services/alert/alertService';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private readonly authService: AuthService) {}
+  private isRefreshing = false;
+  private refreshTokenSubject: BehaviorSubject<string | null> =
+    new BehaviorSubject<string | null>(null);
+
+  constructor(
+    private readonly authService: AuthService,
+    private readonly router: Router,
+    private readonly alertService: AlertService,
+  ) {}
 
   intercept(
     req: HttpRequest<any>,
-    next: HttpHandler
+    next: HttpHandler,
   ): Observable<HttpEvent<any>> {
-    let token = this.authService.getAccessToken();
+    const token = this.authService.getAccessToken();
 
     let cloned = req;
 
@@ -25,21 +45,71 @@ export class AuthInterceptor implements HttpInterceptor {
         setHeaders: { Authorization: `Bearer ${token}` },
       });
     }
+
     return next.handle(cloned).pipe(
-      catchError((err) => {
-        if (err.status === 401) {
-          return this.authService.refreshAccessToken().pipe(
-            switchMap(() => {
-              const newToken = this.authService.getAccessToken();
-              const newReq = req.clone({
-                setHeaders: { Authorization: `Bearer ${newToken}` },
-              });
-              return next.handle(newReq);
-            })
-          );
+      catchError((error: HttpErrorResponse) => {
+        // ⚠️ éviter refresh sur login/refresh endpoint
+
+        if (req.url.includes('/login') || req.url.includes('/refresh-token')) {
+          return throwError(() => error);
         }
-        return throwError(() => err);
-      })
+
+        if (error.status === 401) {
+          return this.handle401Error(req, next);
+        }
+
+        return throwError(() => error);
+      }),
     );
+  }
+
+  reload() {
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate(['/login']);
+    });
+  }
+
+  private handle401Error(req: HttpRequest<any>, next: HttpHandler) {
+    if (!this.isRefreshing) {
+      this.isRefreshing = true;
+      this.refreshTokenSubject.next(null);
+
+      return this.authService.refreshAccessToken().pipe(
+        switchMap(() => {
+          this.isRefreshing = false;
+
+          const newToken = this.authService.getAccessToken();
+          this.refreshTokenSubject.next(newToken);
+
+          return next.handle(
+            req.clone({
+              setHeaders: { Authorization: `Bearer ${newToken}` },
+            }),
+          );
+        }),
+        catchError((err) => {
+          this.isRefreshing = false;
+
+          // ❌ refresh échoué → logout
+          this.authService.logout();
+          this.reload();
+          this.alertService.showFunctionlError(err);
+          return EMPTY;
+        }),
+      );
+    } else {
+      // ⏳ attendre que le refresh se termine
+      return this.refreshTokenSubject.pipe(
+        filter((token) => token != null),
+        take(1),
+        switchMap((token) =>
+          next.handle(
+            req.clone({
+              setHeaders: { Authorization: `Bearer ${token}` },
+            }),
+          ),
+        ),
+      );
+    }
   }
 }

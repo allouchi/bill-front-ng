@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import JoursOuvres from '../../../shared/utils/time-calcul';
+
 import Prestation from '../../../models/Prestation';
 import { Router } from '@angular/router';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
@@ -35,6 +35,11 @@ export class FactureAddComponent implements OnInit {
   observableEvent$ = new Subscription();
   parent = 'edit';
 
+  taxTypes = [
+    { id: 'IR', descr: 'IR' },
+    { id: 'IS', descr: 'IS' },
+  ];
+
   constructor(
     private readonly router: Router,
     private readonly fb: FormBuilder,
@@ -44,12 +49,13 @@ export class FactureAddComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.defaultMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');    
+    this.defaultMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
     this.formFacture = this.fb.group({
       monthFacture: [this.defaultMonth, Validators.required],
       numeroCommande: [{ value: '', disabled: true }],
       quantite: ['', [Validators.required, numericFrValidator()]],
       newTemplate: [{ value: true, disabled: true }],
+      taxType: ['IS'],
       clientPrestation: [{ value: '', disabled: true }],
     });
 
@@ -73,12 +79,12 @@ export class FactureAddComponent implements OnInit {
       siret: this.selectedPrestation!.siret,
     });
 
-     this.getWorkingDays( this.defaultMonth);
+    this.getWorkingDays(this.defaultMonth);
   }
 
-  getWorkingDays(month: string){
-  const year = new Date().getFullYear();
-     this.factureService.getWorkingDays(year, +month).subscribe({
+  getWorkingDays(month: string) {
+    const year = new Date().getFullYear();
+    this.factureService.getWorkingDays(year, +month).subscribe({
       next: (nbJours) => {
         const nbJoursOuvres = nbJours;
         this.selectedMonth = +month;
@@ -90,12 +96,11 @@ export class FactureAddComponent implements OnInit {
         this.onError(err);
       },
     });
-
   }
 
   setMonthValue(event: Event) {
     const selectedMonth = (event.target as HTMLSelectElement).value;
-    this.getWorkingDays(selectedMonth);   
+    this.getWorkingDays(selectedMonth);
   }
 
   /**
@@ -111,6 +116,7 @@ export class FactureAddComponent implements OnInit {
         this.siret!,
         this.selectedMonth,
         this.formFacture.get('newTemplate')?.value,
+        this.formFacture.get('taxType')?.value,
       )
       .subscribe({
         next: () => {

@@ -57,6 +57,7 @@ export default class PrestationExtendComponent implements OnInit {
       this.prestationService.updateDatePrestation(this.prestation!).subscribe({
         next: () => {
           this.alertService.show('UPDATE', 'PRESTATION', 'success');
+           this.sharedMessagesService.setMessage('');
           this.router.navigate(['/prestations/read']);
         },
         error: (err) => {
@@ -79,6 +80,7 @@ export default class PrestationExtendComponent implements OnInit {
   }
 
   cancel() {
+    this.sharedMessagesService.setMessage('');
     this.router.navigate(['/factures/read']);
   }
 }

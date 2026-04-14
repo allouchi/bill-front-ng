@@ -18,16 +18,16 @@ export class PrestationService implements IPrestationService {
     moisFacture: number | null
   ): Observable<Prestation> {
     const isNew: boolean = prestation.id === 0 || prestation.id === null;
-  
+
     if (isNew) {
       return this.http.post<Prestation>(
         `${this.PRESTATION_PATH}/${siret}`,
-        prestation
+        prestation,
       );
     } else {
       return this.http.put<Prestation>(
         `${this.PRESTATION_PATH}/${siret}/${iTextGeneration}/${moisFacture}`,
-        prestation
+        prestation,
       );
     }
   }
