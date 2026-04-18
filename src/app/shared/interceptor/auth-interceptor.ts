@@ -5,7 +5,7 @@ import {
   HttpRequest,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, provideAppInitializer } from '@angular/core';
 import {
   catchError,
   Observable,
@@ -19,6 +19,9 @@ import {
 import { AuthService } from '../../services/auth/auth-service';
 import { Router } from '@angular/router';
 import { AlertService } from '../../services/alert/alertService';
+import { IsAuthService } from '../../services/shared/islogin-service';
+import { LibelleCompanyService } from '../../services/shared/libelle-company-service';
+import { SharedMessagesService } from '../../services/shared/messages.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -30,6 +33,9 @@ export class AuthInterceptor implements HttpInterceptor {
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly alertService: AlertService,
+    private readonly isAuthService: IsAuthService,
+    private readonly libelleCompanyService: LibelleCompanyService,
+    private readonly sharedMessagesService: SharedMessagesService,
   ) {}
 
   intercept(
@@ -65,6 +71,10 @@ export class AuthInterceptor implements HttpInterceptor {
 
   reload() {
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.isAuthService.setIsAuth(false);
+      this.sharedMessagesService.setMessage('');
+      this.libelleCompanyService.setMessage('');
+      this.authService.logout();
       this.router.navigate(['/login']);
     });
   }
@@ -91,7 +101,6 @@ export class AuthInterceptor implements HttpInterceptor {
           this.isRefreshing = false;
 
           // ❌ refresh échoué → logout
-          this.authService.logout();
           this.reload();
           this.alertService.showFunctionlError(err);
           return EMPTY;

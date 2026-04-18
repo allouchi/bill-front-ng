@@ -9,7 +9,7 @@ import { CompanyService } from '../../../services/companies/company-service';
 import { PrestationService } from '../../../services/prestations/prestation.service';
 import { UserService } from '../../../services/user/user-service';
 import User from '../../../models/User';
-import { OperationService } from '../../../services/dashboard/operation-service';
+import { OperationService } from '../../../services/operations/operation-service';
 import { AlertService } from '../../../services/alert/alertService';
 
 @Component({

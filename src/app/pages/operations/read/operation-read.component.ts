@@ -6,7 +6,7 @@ import { SharedDataService } from '../../../services/shared/shared-data-service'
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth-service';
-import { OperationService } from '../../../services/dashboard/operation-service';
+import { OperationService } from '../../../services/operations/operation-service';
 import Operation from '../../../models/Operation';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';

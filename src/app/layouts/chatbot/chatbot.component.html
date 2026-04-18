@@ -1,0 +1,30 @@
+@if (isAuth) {
+<div class="chat-container" *ngIf="isOpen">
+  <div class="chat-header">
+    <span>Chatbot</span>
+    <button (click)="toggleChat()">✖</button>
+  </div>
+
+  <!-- 🔥 CONTENEUR SCROLL -->
+  <div class="chat-messages" #scrollContainer>
+    <div *ngFor="let msg of messages"
+         [ngClass]="msg.type === 'user' ? 'user-msg' : 'bot-msg'">
+      <pre class="message-text">{{ msg.content }}</pre>
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <input
+      [(ngModel)]="userInput"
+      (keyup.enter)="sendMessage()"
+      placeholder="Écris ton message..."
+    />
+    <button (click)="sendMessage()">➤</button>
+  </div>
+</div>
+
+<button class="chat-toggle" (click)="toggleChat()">
+  💬
+</button>
+
+}

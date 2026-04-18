@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-
+import { ChatbotComponent } from '../chatbot/chatbot.component';
 
 @Component({
   selector: 'bill-footer',
+  imports: [ChatbotComponent],
+  standalone: true,
   templateUrl: './footer.component.html',
 })
 export class FooterComponent implements OnInit {

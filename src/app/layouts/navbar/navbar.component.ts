@@ -84,6 +84,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (link.textContent) {
       if (link.textContent == 'ADMINS') {
         this.sharedMessagesService.setMessage('LISTE DES UTILISATEURS');
+      } else if (link.textContent == 'COMPTE') {
+        this.sharedMessagesService.setMessage(
+          'LISTE DES ' + link.textContent + 'S',
+        );
       } else {
         this.sharedMessagesService.setMessage('LISTE DES ' + link.textContent);
       }

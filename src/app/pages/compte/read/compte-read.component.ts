@@ -6,7 +6,7 @@ import { SharedDataService } from '../../../services/shared/shared-data-service'
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth-service';
-import { OperationService } from '../../../services/dashboard/operation-service';
+import { OperationService } from '../../../services/operations/operation-service';
 import { CommonModule } from '@angular/common';
 import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import TvaInfos from '../../../models/TvaInfos';

@@ -14,7 +14,7 @@ import Exercise from '../../../models/Exercise';
 import { CommonModule } from '@angular/common';
 import GetMonthsOfYear from '../../../shared/utils/month-year';
 import Operation from '../../../models/Operation';
-import { OperationService } from '../../../services/dashboard/operation-service';
+import { OperationService } from '../../../services/operations/operation-service';
 import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { AlertService } from '../../../services/alert/alertService';
