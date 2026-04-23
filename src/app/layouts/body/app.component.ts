@@ -7,7 +7,6 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { AlertComponent } from '../../shared/alert/alert.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth/auth-service';
-import { ChatbotComponent } from '../chatbot/chatbot.component';
 
 @Component({
   selector: 'bill-root',

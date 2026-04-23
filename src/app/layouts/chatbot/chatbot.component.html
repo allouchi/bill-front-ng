@@ -1,30 +1,38 @@
-@if (isAuth) {
-<div class="chat-container" *ngIf="isOpen">
-  <div class="chat-header">
-    <span>Chatbot</span>
-    <button (click)="toggleChat()">✖</button>
-  </div>
-
-  <!-- 🔥 CONTENEUR SCROLL -->
-  <div class="chat-messages" #scrollContainer>
-    <div *ngFor="let msg of messages"
-         [ngClass]="msg.type === 'user' ? 'user-msg' : 'bot-msg'">
-      <pre class="message-text">{{ msg.content }}</pre>
-    </div>
-  </div>
-
-  <div class="chat-input">
-    <input
-      [(ngModel)]="userInput"
-      (keyup.enter)="sendMessage()"
-      placeholder="Écris ton message..."
-    />
-    <button (click)="sendMessage()">➤</button>
-  </div>
-</div>
-
+<!-- Bouton flottant -->
 <button class="chat-toggle" (click)="toggleChat()">
   💬
 </button>
 
-}
+<!-- Fenêtre du chat -->
+<div class="chat-container" *ngIf="isOpen">
+
+  <!-- Messages -->
+  <div class="messages" #scrollContainer>
+    <div *ngFor="let msg of messages"
+         [ngClass]="{
+           'user-message': msg.role === 'user',
+           'bot-message': msg.role === 'assistant'
+         }">
+      {{ msg.content }}
+    </div>
+
+    <!-- Loader -->
+    <div *ngIf="isLoading" class="bot-message">
+      ⏳ Le bot réfléchit...
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="input-container">
+    <input
+      [(ngModel)]="userInput"
+      (keyup.enter)="sendMessage()"
+      placeholder="Pose ta question..."
+    />
+
+    <button (click)="sendMessage()">
+      ➤
+    </button>
+  </div>
+
+</div>

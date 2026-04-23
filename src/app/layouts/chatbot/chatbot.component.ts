@@ -1,98 +1,104 @@
-import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
-import { BotService } from '../../services/bot/bot-service';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  inject,
+} from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Subject, takeUntil } from 'rxjs';
+
+import { BotService } from '../../services/bot/bot-service';
 import { AlertService } from '../../services/alert/alertService';
-import { Subscription } from 'rxjs';
 import { IsAuthService } from '../../services/shared/islogin-service';
+import { LlmMessage, UiMessage } from '../../models/Chat';
+import { AuthService } from '../../services/auth/auth-service';
 
 @Component({
   selector: 'bill-chatbot',
-  standalone: true, // 🔥 IMPORTANT
+  standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './chatbot.component.html',
   styleUrls: ['./chatbot.component.css'],
 })
-export class ChatbotComponent implements OnInit {
-  userInput: string = '';
-  messages: { content: string; type: string }[] = [];
-  isAuth= false;
-  authenticated$ = new Subscription();
+export class ChatbotComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+
+  userInput = '';
+  messages: LlmMessage[] = [];
+
+  isAuth = false;
+  isOpen = false;
+  isLoading = false;
+
   botService = inject(BotService);
   alertService = inject(AlertService);
   isAuthService = inject(IsAuthService);
-
-  isOpen: boolean = false;
+  authService = inject(AuthService);
 
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
   ngOnInit(): void {
-    this.authenticated$ = this.isAuthService
+    this.isAuthService
       .getAuthObservable()
-      .subscribe((isAuth) => {
-        this.isAuth = isAuth;
-      });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isAuth) => (this.isAuth = isAuth));
   }
 
-  sendMessage() {
-    const input = this.userInput.trim();
-    if (!input) return;
+  // ✅ SEND MESSAGE SIMPLE (sans streaming)
+  sendMessage(): void {
+    if (!this.userInput.trim()) return;
 
-    // 👤 message user
-    this.messages.push({ content: input, type: 'user' });
+    const userMsg: LlmMessage = {
+      role: 'user',
+      content: this.userInput,
+    };
 
-    // 🤖 loader UI uniquement (NE PAS envoyer au backend)
-    this.messages.push({ content: '...', type: 'bot' });
+    this.messages.push(userMsg);
 
-    const payload = this.messages
-      .filter((m) => m.content !== '...') // 🔥 important
-      .map((m) => ({
-        role: m.type === 'user' ? 'user' : 'assistant',
-        text: m.content,
-      }));
+    const currentInput = this.userInput;
+    this.userInput = '';
+    this.isLoading = true;
 
-    this.botService.sendMessage(payload).subscribe({
-      next: (response) => {
-        // remove loader
-        this.messages.pop();
+    this.botService.sendMessage(currentInput).subscribe({
+      next: (res) => {
+        const botMsg: LlmMessage = {
+          role: 'assistant',
+          content: res,
+        };
 
-        // add bot response
-        this.messages.push({
-          content: response.content,
-          type: 'bot',
-        });
-
+        this.messages.push(botMsg);
+        this.isLoading = false;
         this.scrollToBottom();
       },
-      error: (error) => {
-        this.messages.pop();
-
-        this.messages.push({
-          content: 'Erreur serveur 😢',
-          type: 'bot',
-        });
-        this.onError(error);
+      error: (err) => {
+        console.error(err);
+        //this.alertService.error('Erreur lors de la réponse du bot');
+        this.isLoading = false;
       },
     });
 
-    this.userInput = '';
     this.scrollToBottom();
   }
 
-  toggleChat() {
+  toggleChat(): void {
     this.isOpen = !this.isOpen;
   }
 
-  private onError(error: any): void {
-    this.alertService.showFunctionlError(error);
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  private scrollToBottom() {
+  private scrollToBottom(): void {
     setTimeout(() => {
       if (!this.scrollContainer) return;
 
       this.scrollContainer.nativeElement.scrollTop =
         this.scrollContainer.nativeElement.scrollHeight;
-    }, 100);
+    });
   }
 }

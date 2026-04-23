@@ -25,6 +25,7 @@
     "apexcharts": "^4.7.0",
     "bootstrap": "^5.3.5",
     "bootstrap-icons": "^1.13.1",
+    "event-source-polyfill": "^1.0.31",
     "g": "^2.0.1",
     "html2canvas": "^1.4.1",
     "json-server": "^0.17.4",
