@@ -23,7 +23,6 @@ export class AlertService implements OnInit {
   loginMessage = 'Bienvenue, vous êtes connecté !';
   female: boolean = true;
   serverError = 'Le serveur est inaccessible !';
-  downloadFileError = 'Le fichier inexistant ou endommagé';
   messageSendSuccess = 'La facture a été envoyée avec succès';
   messageImport = 'Le fichier a été importé avec succès';
   session_expired =
@@ -152,16 +151,15 @@ export class AlertService implements OnInit {
     delay = 7000,
   ) {
     let message: string;
+    let err;
 
     if (error && error.error) {
-      if (this.FUNCIONAL_ERROR.includes(error.error.code)) {
-        message = error.error.message;
-      } else if (error.error.code === 'PDF_ERROR') {
-        message = this.downloadFileError;
-      } else if (error.message && error.message.includes('Http failure')) {
-        message = this.serverError;
+      if (typeof error.error === 'string') {
+        err = JSON.parse(error.error);
+        message = err.message;
       } else {
-        message = error.error.message;
+        err = error.error;
+        message = err.message;
       }
       this.alertSubject.next({ message, title, type, delay });
     }

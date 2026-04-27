@@ -6,8 +6,7 @@ import { HttpClient } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class BotService {
-  private readonly BOT_PATH = `${env.apiURL}/chat`;
-  private authService = inject(AuthService);
+  private readonly BOT_PATH = `${env.apiURL}/chat`; 
   private http = inject(HttpClient);
 
   sendMessage(message: string) {

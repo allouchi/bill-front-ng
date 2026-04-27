@@ -6,6 +6,15 @@
 <!-- Fenêtre du chat -->
 <div class="chat-container" *ngIf="isOpen">
 
+  <!-- HEADER avec croix -->
+  <div class="chat-header">
+    <span>Chat</span>
+
+    <button class="close-btn" (click)="toggleChat()">
+      ✖
+    </button>
+  </div>
+
   <!-- Messages -->
   <div class="messages" #scrollContainer>
     <div *ngFor="let msg of messages"
@@ -27,10 +36,13 @@
     <input
       [(ngModel)]="userInput"
       (keyup.enter)="sendMessage()"
+      [disabled]="isLoading"
       placeholder="Pose ta question..."
     />
 
-    <button (click)="sendMessage()">
+    <button 
+     [disabled]="isLoading"
+    (click)="sendMessage()">
       ➤
     </button>
   </div>

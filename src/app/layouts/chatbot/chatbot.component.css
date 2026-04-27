@@ -78,3 +78,35 @@ button {
   padding: 0 15px;
   cursor: pointer;
 }
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+  font-weight: bold;
+}
+
+/* CROIX */
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #333;
+
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+}
+
+.close-btn:hover {
+  background: #f2f2f2;
+  color: red;
+}

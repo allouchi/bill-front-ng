@@ -30,7 +30,6 @@ export class ChatbotComponent implements OnInit, OnDestroy {
   userInput = '';
   messages: LlmMessage[] = [];
 
-  isAuth = false;
   isOpen = false;
   isLoading = false;
 
@@ -41,12 +40,7 @@ export class ChatbotComponent implements OnInit, OnDestroy {
 
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
-  ngOnInit(): void {
-    this.isAuthService
-      .getAuthObservable()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((isAuth) => (this.isAuth = isAuth));
-  }
+  ngOnInit(): void {}
 
   // ✅ SEND MESSAGE SIMPLE (sans streaming)
   sendMessage(): void {
@@ -74,9 +68,8 @@ export class ChatbotComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.scrollToBottom();
       },
-      error: (err) => {
-        console.error(err);
-        //this.alertService.error('Erreur lors de la réponse du bot');
+      error: (error) => {
+        this.alertService.showFunctionlError(error);
         this.isLoading = false;
       },
     });
@@ -96,7 +89,6 @@ export class ChatbotComponent implements OnInit, OnDestroy {
   private scrollToBottom(): void {
     setTimeout(() => {
       if (!this.scrollContainer) return;
-
       this.scrollContainer.nativeElement.scrollTop =
         this.scrollContainer.nativeElement.scrollHeight;
     });
