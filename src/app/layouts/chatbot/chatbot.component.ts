@@ -1,21 +1,15 @@
 import {
   Component,
   ElementRef,
-  OnInit,
-  OnDestroy,
   ViewChild,
   inject,
 } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Subject, takeUntil } from 'rxjs';
 
 import { BotService } from '../../services/bot/bot-service';
 import { AlertService } from '../../services/alert/alertService';
-import { IsAuthService } from '../../services/shared/islogin-service';
-import { LlmMessage, UiMessage } from '../../models/Chat';
-import { AuthService } from '../../services/auth/auth-service';
 
 @Component({
   selector: 'bill-chatbot',
@@ -24,73 +18,86 @@ import { AuthService } from '../../services/auth/auth-service';
   templateUrl: './chatbot.component.html',
   styleUrls: ['./chatbot.component.css'],
 })
-export class ChatbotComponent implements OnInit, OnDestroy {
-  private destroy$ = new Subject<void>();
-
-  userInput = '';
-  messages: LlmMessage[] = [];
-
-  isOpen = false;
-  isLoading = false;
-
-  botService = inject(BotService);
-  alertService = inject(AlertService);
-  isAuthService = inject(IsAuthService);
-  authService = inject(AuthService);
+export class ChatbotComponent {
 
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
-  ngOnInit(): void {}
+  isOpen = false;
+  isLoading = false;
+  userInput = '';
+  messages: { role: 'user' | 'bot', text: string }[] = [];
 
-  // ✅ SEND MESSAGE SIMPLE (sans streaming)
-  sendMessage(): void {
+  private botService = inject(BotService);
+  private alertService = inject(AlertService);
+
+  toggleChat() {
+    this.isOpen = !this.isOpen;
+    setTimeout(() => this.scrollToBottomSmooth(), 100);
+  }
+
+  sendMessage() {
     if (!this.userInput.trim()) return;
 
-    const userMsg: LlmMessage = {
-      role: 'user',
-      content: this.userInput,
-    };
+    const input = this.userInput;
 
-    this.messages.push(userMsg);
-
-    const currentInput = this.userInput;
+    // message user
+    this.messages.push({ role: 'user', text: input });
     this.userInput = '';
+
+    this.autoScroll();
+
     this.isLoading = true;
 
-    this.botService.sendMessage(currentInput).subscribe({
-      next: (res) => {
-        const botMsg: LlmMessage = {
-          role: 'assistant',
-          content: res,
-        };
+    this.botService.sendMessage(input).subscribe({
+      next: (res: string) => {
+        // 🤖 réponse bot
+        this.messages.push({ role: 'bot', text: res });
 
-        this.messages.push(botMsg);
         this.isLoading = false;
-        this.scrollToBottom();
+
+        this.autoScroll(); // 🔥 scroll intelligent
       },
-      error: (error) => {
-        this.alertService.showFunctionlError(error);
+
+      error: (err) => {
+        this.alertService.showFunctionlError(err);
+
         this.isLoading = false;
-      },
+
+        this.autoScroll(); // 🔥 utile si message erreur affiché plus tard
+      }
     });
-
-    this.scrollToBottom();
   }
 
-  toggleChat(): void {
-    this.isOpen = !this.isOpen;
+  /* =========================
+     SCROLL INTELLIGENT
+  ========================== */
+
+  autoScroll() {
+    if (this.isUserNearBottom()) {
+      this.scrollToBottomSmooth();
+    }
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  private scrollToBottom(): void {
+  scrollToBottomSmooth(): void {
     setTimeout(() => {
       if (!this.scrollContainer) return;
-      this.scrollContainer.nativeElement.scrollTop =
-        this.scrollContainer.nativeElement.scrollHeight;
-    });
+
+      this.scrollContainer.nativeElement.scrollTo({
+        top: this.scrollContainer.nativeElement.scrollHeight,
+        behavior: 'smooth'
+      });
+    }, 50);
+  }
+
+  isUserNearBottom(): boolean {
+    const threshold = 100;
+
+    const el = this.scrollContainer?.nativeElement;
+    if (!el) return true;
+
+    const position = el.scrollTop + el.clientHeight;
+    const height = el.scrollHeight;
+
+    return position > height - threshold;
   }
 }

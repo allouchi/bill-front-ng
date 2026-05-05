@@ -36,12 +36,19 @@ export class AuthInterceptor implements HttpInterceptor {
     private readonly isAuthService: IsAuthService,
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly sharedMessagesService: SharedMessagesService,
-  ) {}
+  ) { }
 
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler,
   ): Observable<HttpEvent<any>> {
+
+
+    // 🔥 BYPASS BOT (aucune auth)
+    if (req.url.includes('/api/bot')) {
+      return next.handle(req);
+    }
+
     const token = this.authService.getAccessToken();
 
     let cloned = req;
@@ -55,6 +62,8 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(cloned).pipe(
       catchError((error: HttpErrorResponse) => {
         // ⚠️ éviter refresh sur login/refresh endpoint
+
+
 
         if (req.url.includes('/login') || req.url.includes('/refresh-token')) {
           return throwError(() => error);

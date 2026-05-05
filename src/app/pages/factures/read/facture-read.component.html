@@ -2,10 +2,13 @@
 <bill-waiting [sendMail]="sendMail" [edit]="parent"></bill-waiting>
 }@else {
 
-<div class="mt-4 mx-5">
-  <div class="d-flex justify-content-between align-items-end mb-3">
-    <!-- Colonne de gauche : Exercice -->
-    <div style="width: 200px">
+<div class="container-fluid mt-3 px-2 px-md-4">
+
+  <!-- HEADER -->
+  <div class="row g-3 align-items-end mb-3">
+
+    <!-- Exercice -->
+    <div class="col-12 col-md-3 col-lg-2">
       <label for="yearSelect" class="form-label fw-bold">Exercice</label>
       <select (change)="setYearValue($event)" class="form-select" id="yearSelect" [(ngModel)]="selectedExercice">
         @for (year of exercises; track year.id) {
@@ -13,107 +16,100 @@
         }
       </select>
     </div>
-    <!-- Colonne centrale : Tableau centré -->
-    <div class="flex-grow-1 d-flex justify-content-center">
-      <table class="table table-bordered w-auto table-dark">
-        <thead>
-          <tr>           
-             <th scope="col">CA TTC</th>
-            <th scope="col">CA NET</th>
-            <th scope="col">TOTAL TVA</th>
-            <!-- <th scope="col">TOTAL NET</th> -->
-            <th scope="col">TOTAL REGLE</th>
-            @if(tvaInfos && tvaInfos.totalTvaRestant>0 ){
-            <th scope="col">RESTE A PAYER</th>
-            }@else if(tvaInfos && tvaInfos.totalTvaRestant<0){ <th scope="col">TROP-PERÇU</th>
+
+    <!-- Tableau résumé -->
+    <div class="col-12 col-md-6">
+      <div class="table-responsive">
+        <table class="table table-bordered table-dark text-nowrap text-center">
+          <thead>
+            <tr>
+              <th>CA TTC</th>
+              <th>CA NET</th>
+              <th>TOTAL TVA</th>
+              <th>TOTAL REGLE</th>
+              @if(tvaInfos && tvaInfos.totalTvaRestant>0 ){
+              <th>RESTE A PAYER</th>
+              }@else if(tvaInfos && tvaInfos.totalTvaRestant<0){
+              <th>TROP-PERÇU</th>
               } @else{
-              <th scope="col">Match (0:0)</th>
+              <th>Match (0:0)</th>
               }
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            @if(tvaInfos){   
-               <td class="text-center">
-              {{ tvaInfos.totalTTC | customDecimalPipe }} €
-            </td>
-            <td style="text-align: center">
-              {{ tvaInfos.totalCAHorsTaxe | customDecimalPipe }} €
-            </td>        
-            <td class="text-center">
-              {{ tvaInfos.montantTvaFacture | customDecimalPipe }} €
-            </td>
-            <!--
-            <td class="text-center">
-              {{ tvaInfos.totalTvaNet | customDecimalPipe }}
-            </td>
-             -->
-            <td class="text-center">
-              {{ tvaInfos.totalTvaPaye | customDecimalPipe }} €
-            </td>
-            @if(tvaInfos.totalTvaRestant >= 0 ){
-            <td class="text-center">
-              <i class="bi bi-check-lg text-success me-1"></i>
-              {{ tvaInfos.totalTvaRestant | customDecimalPipe }} €
-            </td>
-            }@else {
-            <td class="text-center">
-              <i class="bi bi-x-octagon text-danger me-1"></i>
-              {{ -tvaInfos.totalTvaRestant | customDecimalPipe }} €
-            </td>
-            } }
-          </tr>
-        </tbody>
-      </table>
-    </div>   
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              @if(tvaInfos){   
+              <td>{{ tvaInfos.totalTTC | customDecimalPipe }} €</td>
+              <td>{{ tvaInfos.totalCAHorsTaxe | customDecimalPipe }} €</td>
+              <td>{{ tvaInfos.montantTvaFacture | customDecimalPipe }} €</td>
+              <td>{{ tvaInfos.totalTvaPaye | customDecimalPipe }} €</td>
+              @if(tvaInfos.totalTvaRestant >= 0 ){
+              <td class="text-success">
+                <i class="bi bi-check-lg me-1"></i>
+                {{ tvaInfos.totalTvaRestant | customDecimalPipe }} €
+              </td>
+              }@else {
+              <td class="text-danger">
+                <i class="bi bi-x-octagon me-1"></i>
+                {{ -tvaInfos.totalTvaRestant | customDecimalPipe }} €
+              </td>
+              } }
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
- <div class="d-flex align-items-center gap-1">
-     <!-- Search -->
+    <!-- Actions -->
+    <div class="col-12 col-md-3 d-flex flex-column flex-md-row gap-2">
       <bill-search
-          (search)="onSearch($event)"
-          placeholder="🔍 Chercher facture..."
-          >
+        class="w-100"
+        (search)="onSearch($event)"
+        placeholder="🔍 Chercher facture...">
       </bill-search>
-  <!-- Boutons -->
-  @if(showPenalite){
-  <button class="btn btn-outline-primary" (click)="runBatch()" title="Calcul pénalités">
-    Calcul Pénalités
-  </button>
-  }
 
-  @if(hidePenalite){
-  <button class="btn btn-outline-primary" (click)="hide()" title="Cacher pénalités">
-    Cacher Factures
-  </button>
-  }
+      @if(showPenalite){
+      <button class="btn btn-outline-primary w-100" (click)="runBatch()">
+        Calcul Pénalités
+      </button>
+      }
 
-</div>
+      @if(hidePenalite){
+      <button class="btn btn-outline-primary w-100" (click)="hide()">
+        Cacher Factures
+      </button>
+      }
+    </div>
+
   </div>
+
+  <!-- TABLE PRINCIPALE -->
   @if(showPenalite){
   <div class="table-responsive">
-    <table class="table table-success table-striped">
+    <table class="table table-success table-striped text-nowrap">
       <thead class="table-dark">
         <tr>
-          <th scope="col">Numéro Facture</th>
-          <th scope="col">Mois Facture</th>
-          <th scope="col">Tarif HT (€)</th>
-          <th scope="col">Quantité</th>
-          <th scope="col">Prix Total TTC (€)</th>
-          <th scope="col">Prix Total HT (€)</th>
-          <th scope="col">Date Facturation</th>
-          <th scope="col">Date Encaissement</th>
-          <th scope="col">Total TVA (€)</th>
-          <th scope="col">Débit TVA (€)</th>
-          <th scope="col">Actions</th>
+          <th>Numéro</th>
+          <th>Mois</th>
+          <th>Tarif HT</th>
+          <th>Qté</th>
+          <th>TTC</th>
+          <th>HT</th>
+          <th>Facturation</th>
+          <th>Encaissement</th>
+          <th>TVA</th>
+          <th>Débit TVA</th>
+          <th>Actions</th>
         </tr>
       </thead>
+
       <tbody>
         @for (facture of factures; track facture.id) {
         <tr [ngClass]="{
-            'table-success': facture.factureStatus == 'OK',
-            'table-danger': facture.factureStatus == 'KO'
-          }">
-          <td style="text-align: center">{{ facture.numeroFacture }}</td>
+          'table-success': facture.factureStatus == 'OK',
+          'table-danger': facture.factureStatus == 'KO'
+        }">
+          <td class="text-center">{{ facture.numeroFacture }}</td>
           <td>{{ facture.moisFacture }}</td>
           <td>{{ facture.tarifHT }}</td>
           <td>{{ facture.quantite | customDecimalPipe }}</td>
@@ -123,114 +119,66 @@
           <td>{{ facture.dateEncaissement }}</td>
           <td>{{ facture.montantTVA | customDecimalPipe }}</td>
           <td>{{ facture.montantTvaPaye | customDecimalPipe }}</td>
-          <td>
-            <button class="btn btn-outline-primary btn-sm me-2" (click)="encaissementFacture($event, facture)"
-              title="Marquer Encaissement Facture" [disabled]="!isAdmin">
+          <td class="d-flex flex-wrap gap-1">
+
+            <button class="btn btn-outline-primary btn-sm" (click)="encaissementFacture($event, facture)" [disabled]="!isAdmin">
               <i class="bi bi-pencil"></i>
             </button>
 
-            <button class="btn btn-outline-primary btn-sm me-2" (click)="cancelModif($event, facture)"
-              title="Annuler statut" [disabled]="!isAdmin || facture.factureStatus == 'KO'">
+            <button class="btn btn-outline-primary btn-sm" (click)="cancelModif($event, facture)" [disabled]="!isAdmin || facture.factureStatus == 'KO'">
               <i class="bi bi-x-circle"></i>
             </button>
 
-            <button class="btn btn-outline-primary btn-sm me-2" (click)="detailFacture($event, facture)"
-              title="Statut Facture" [disabled]="!isAdmin">
+            <button class="btn btn-outline-primary btn-sm" (click)="detailFacture($event, facture)" [disabled]="!isAdmin">
               <i class="bi bi-info-circle"></i>
             </button>
-            <button class="btn btn-outline-danger btn-sm me-2" (click)="deleteFacture($event, facture)"
-              title="Supprimer Facture" [disabled]="!isAdmin">
+
+            <button class="btn btn-outline-danger btn-sm" (click)="deleteFacture($event, facture)" [disabled]="!isAdmin">
               <i class="bi bi-trash"></i>
             </button>
 
-            <button class="btn btn-primary btn-sm me-2" (click)="downloadFacture(facture)" title="Télécharger Facture"
-              [disabled]="!isAdmin">
+            <button class="btn btn-primary btn-sm" (click)="downloadFacture(facture)" [disabled]="!isAdmin">
               <i class="bi bi-download"></i>
             </button>
 
-            <button class="btn btn-primary btn-sm me-2" (click)="sendFacture($event,facture)" title="Envoyer Facture"
-              [disabled]="!isAdmin || facture.sended">
+            <button class="btn btn-primary btn-sm" (click)="sendFacture($event,facture)" [disabled]="!isAdmin || facture.sended">
               <i class="bi bi-send"></i>
             </button>
-          </td>
-        </tr>
-        } @empty {
-        <tr>
-          <td colspan="11" class="text-center text-muted py-3">
-            Aucune Facture
+
           </td>
         </tr>
         }
       </tbody>
-
-      <!-- LIGNE TOTAUX -->
-      @if(nbLignesFacture > 0){
-      <tfoot class="fw-bold table-dark">
-        <tr>
-          <td class="text-left">Total</td>
-          <td class="text-center">{{nbLignesFacture}} mois</td>
-          <td></td>
-          <td></td>
-          <td class="text-center">{{ totalCATTC | customDecimalPipe }} €</td>
-          <td class="text-center">{{ totalCANet | customDecimalPipe }} €</td>
-          <td></td>
-           <td></td>
-          <td class="text-center">{{ totalTvaFacture | customDecimalPipe }} €</td>
-          <td class="text-center">{{ totalDebitTva | customDecimalPipe }} €</td>
-          <td colspan="6"></td>
-        </tr>
-      </tfoot>
-      }
     </table>
+
+    <!-- PAGINATION -->
     @if(totalPages > 1){
-    <!-- ✅ Pagination bien placée et centrée -->
-    <div class="pagination d-flex justify-content-center align-items-center gap-3 mt-3">
+    <div class="d-flex justify-content-center align-items-center gap-3 mt-3 flex-wrap">
       <button class="btn btn-outline-primary" (click)="previousPage()" [disabled]="page === 0">
-        ← Précédent
+        ←
       </button>
       <span>Page {{ page + 1 }} / {{ totalPages }}</span>
       <button class="btn btn-outline-primary" (click)="nextPage()" [disabled]="page >= totalPages - 1">
-        Suivant →
+        →
       </button>
     </div>
     }
-  </div>
 
-  }
-</div>
-
-<div class="mt-4 mx-5">
-  @if(hidePenalite && facturesRetard && facturesRetard.length > 0){
-  <h4 class="border-bottom pb-2 mb-3">
-    Liste des factures avec pénalité
-  </h4>
-  <table class="table table-success table-striped">
-    <thead class="table-dark">
-      <tr>
-        <th scope="col">Numéro Facture</th>
-        <th scope="col">Date Echéance</th>
-        <th scope="col">Jours de retard</th>
-        <th scope="col">Pénalistés (€)</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (facture of facturesRetard; track facture.id) {
-      <tr>
-        <td style="text-align: center">{{ facture.numeroFacture }}</td>
-        <td>{{ facture.dateEcheance }}</td>
-        <td>{{ facture.nbJourRetard }}</td>
-        <td>{{ facture.fraisRetard | customDecimalPipe}}</td>
-      </tr>
-      }
-    </tbody>
-  </table>
-  }@else if(hidePenalite){
-  <div class="text-center text-muted py-3">
-    <h4>
-      <hr />
-      Aucune Facture avec pénalité
-    </h4>
   </div>
   }
+
 </div>
+
+<!-- CSS CONSEILLÉ -->
+<style>
+@media (max-width: 768px) {
+  table {
+    font-size: 12px;
+  }
+  th, td {
+    padding: 6px !important;
+  }
+}
+</style>
+
 }

@@ -3,46 +3,44 @@
   💬
 </button>
 
-<!-- Fenêtre du chat -->
+<!-- Chat -->
 <div class="chat-container" *ngIf="isOpen">
 
-  <!-- HEADER avec croix -->
+  <!-- HEADER -->
   <div class="chat-header">
-    <span>Chat</span>
+    <div class="header-left">
+      <div class="avatar">🤖</div>
+      <span>Assistant</span>
+    </div>
 
-    <button class="close-btn" (click)="toggleChat()">
-      ✖
-    </button>
+    <button class="close-btn" (click)="toggleChat()">✖</button>
   </div>
 
   <!-- Messages -->
   <div class="messages" #scrollContainer>
-    <div *ngFor="let msg of messages"
-         [ngClass]="{
-           'user-message': msg.role === 'user',
-           'bot-message': msg.role === 'assistant'
-         }">
-      {{ msg.content }}
+
+    <div *ngFor="let msg of messages" class="message-wrapper" [ngClass]="msg.role">
+
+      <div class="message-bubble">
+        {{ msg.text }}
+      </div>
     </div>
 
-    <!-- Loader -->
-    <div *ngIf="isLoading" class="bot-message">
-      ⏳ Le bot réfléchit...
+    <!-- Typing -->
+    <div *ngIf="isLoading" class="message-wrapper bot">
+      <div class="message-bubble typing">
+        <span></span><span></span><span></span>
+      </div>
     </div>
+
   </div>
 
   <!-- Input -->
   <div class="input-container">
-    <input
-      [(ngModel)]="userInput"
-      (keyup.enter)="sendMessage()"
-      [disabled]="isLoading"
-      placeholder="Pose ta question..."
-    />
+    <input [(ngModel)]="userInput" (keyup.enter)="sendMessage()" [disabled]="isLoading"
+      placeholder="Écris ton message..." />
 
-    <button 
-     [disabled]="isLoading"
-    (click)="sendMessage()">
+    <button (click)="sendMessage()" [disabled]="isLoading">
       ➤
     </button>
   </div>
