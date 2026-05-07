@@ -1,4 +1,31 @@
 /* ===== Bouton flottant ===== */
+.chat-textarea {
+  width: 100%;
+  resize: none;
+  /* empêche redimensionnement manuel */
+  overflow: hidden;
+  /* évite scroll */
+  min-height: 40px;
+  max-height: 120px;
+  /* limite la hauteur */
+  line-height: 1.4;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+
+  white-space: pre-wrap;
+  /* gère les retours ligne */
+  word-break: break-word;
+  /* coupe les mots longs */
+}
+
+.chat-textarea {
+  background: white;
+  color: black;
+}
+
+
 .chat-toggle {
   position: fixed;
   bottom: 20px;
@@ -231,4 +258,6 @@ input:focus {
     opacity: 1;
     transform: translateY(0);
   }
+
+
 }

@@ -85,7 +85,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly tvaService: TvaService,
     private readonly sharedMessagesService: SharedMessagesService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -115,17 +115,17 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
           const request$ = search
             ? this.factureService.searchFactures(
-                this.siret!,
-                search,
-                this.page,
-                this.size,
-              )
+              this.siret!,
+              search,
+              this.page,
+              this.size,
+            )
             : this.factureService.findFacturesByExercice(
-                this.siret!,
-                this.selectedExercice,
-                this.page,
-                this.size,
-              );
+              this.siret!,
+              this.selectedExercice,
+              this.page,
+              this.size,
+            );
 
           return request$;
         }),
@@ -429,15 +429,16 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   private envoyerFacture(id: number, mails: EmailClient[]) {
     this.isLoaded = false;
     this.sendMail = true;
-    this.factures.forEach((facture) => {
-      if (facture.id == id) {
-        facture.sended = true;
-      }
-    });
+
 
     this.factureService.envoyerFacture(id, mails).subscribe({
       next: () => {
         this.isLoaded = true;
+        this.factures.forEach((facture) => {
+          if (facture.id == id) {
+            facture.sended = true;
+          }
+        });
         this.alertService.show('SEND', 'MAIL', 'success');
       },
       error: (err) => {

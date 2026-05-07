@@ -37,12 +37,12 @@
 
   <!-- Input -->
   <div class="input-container">
-    <input [(ngModel)]="userInput" (keyup.enter)="sendMessage()" [disabled]="isLoading"
-      placeholder="Écris ton message..." />
+    <textarea [(ngModel)]="userInput" (keydown)="onEnter($event)" [disabled]="isLoading"
+      placeholder="Écris ton message..." rows="1" class="chat-textarea">
+</textarea>
 
     <button (click)="sendMessage()" [disabled]="isLoading">
       ➤
     </button>
   </div>
-
 </div>

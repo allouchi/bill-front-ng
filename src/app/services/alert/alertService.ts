@@ -32,7 +32,7 @@ export class AlertService implements OnInit {
   private readonly alertSubject = new Subject<ToastData>();
   toast$ = this.alertSubject.asObservable();
 
-  constructor(private readonly translateService: I18nService) {}
+  constructor(private readonly translateService: I18nService) { }
 
   FUNCIONAL_ERROR = [
     'RESOURCE_NOT_FOUND',
@@ -42,7 +42,7 @@ export class AlertService implements OnInit {
     'TOKEN_INVALID',
   ];
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   updateCurrentLang(selectedLanguage: string): void {
     this.currentLang = selectedLanguage;
