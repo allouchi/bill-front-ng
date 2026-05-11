@@ -54,7 +54,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     private readonly i18nService: I18nService,
     private readonly authService: AuthService,
     private readonly countryService: CountryService,
-  ) {}
+  ) { }
 
   // ========================
   // INIT
@@ -86,7 +86,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
       rue: ['', Validators.required],
       codePostal: ['', Validators.required],
       localite: ['', Validators.required],
-      pays: ['', Validators.required],
+      pays: ['France', Validators.required],
     });
 
     this.addEmail();

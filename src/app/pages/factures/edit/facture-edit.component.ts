@@ -35,7 +35,7 @@ export default class FactureEditComponent implements OnInit {
   ) { }
   ngOnInit(): void {
     this.facture = this.sharedDataService.getSelectedFacture();
-    this.numeroFacture = this.facture!.numeroFacture;
+    this.numeroFacture = this.facture!.numeroFacture!;
     const today = new Date().toISOString().substring(0, 10);
     this.formFacture = this.fb.group({
       dateEncaissement: [today, Validators.required],

@@ -25,11 +25,9 @@ export class FactureService implements IFactureService {
   private readonly EDITION_PATH: string = `${this.apiURL}` + '/editions';
   private readonly BATCH_PATH: string = `${this.apiURL}` + '/batchs';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
-  updateFacture(facture: Facture): Observable<Facture> {
-    return this.http.put<Facture>(this.FACTURES_PATH, facture);
-  }
+
 
   findFacturesBySiret(
     siret: string,
@@ -74,24 +72,16 @@ export class FactureService implements IFactureService {
   }
 
   createFacture(
-    prestation: Prestation,
-    siret: string,
-    moisFacture: number | null,
-    iTextGeneration: boolean,
-    taxType: string,
+    facture: Facture,
   ): Observable<Facture> {
-    const isNew: boolean = prestation.id === 0 || prestation.id === null;
-    if (isNew) {
-      return this.http.post<Facture>(
-        `${this.FACTURES_PATH}/${siret}`,
-        prestation,
-      );
-    } else {
-      return this.http.put<Facture>(
-        `${this.FACTURES_PATH}/${siret}/${moisFacture}/${iTextGeneration}/${taxType}`,
-        prestation,
-      );
-    }
+    return this.http.post<Facture>(
+      `${this.FACTURES_PATH}/create`,
+      facture,
+    );
+  }
+
+  updateFacture(facture: Facture): Observable<Facture> {
+    return this.http.put<Facture>(`${this.FACTURES_PATH}/update`, facture);
   }
 
   downloadPdfFacture(factureId: number): Observable<DataPDF> {

@@ -37,8 +37,8 @@ export class DetailFactureComponent implements OnInit {
       nbJourRetard: [{ value: this.facture?.nbJourRetard, disabled: true }],
     });
 
-    this.numeroFacture = this.facture!.numeroFacture;
-    this.dateFacturation = this.facture!.dateFacturation;
+    this.numeroFacture = this.facture!.numeroFacture!;
+    this.dateFacturation = this.facture!.dateFacturation!;
     if (this.facture!.dateEncaissement) {
       this.status = true;
     }

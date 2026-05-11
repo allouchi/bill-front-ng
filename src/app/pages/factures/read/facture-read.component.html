@@ -3,10 +3,8 @@
 }@else {
 
 <div class="container-fluid mt-3 px-2 px-md-4">
-
   <!-- HEADER -->
   <div class="row g-3 align-items-end mb-3">
-
     <!-- Exercice -->
     <div class="col-12 col-md-3 col-lg-2">
       <label for="yearSelect" class="form-label fw-bold">Exercice</label>
@@ -29,16 +27,15 @@
               <th>TOTAL REGLE</th>
               @if(tvaInfos && tvaInfos.totalTvaRestant>0 ){
               <th>RESTE A PAYER</th>
-              }@else if(tvaInfos && tvaInfos.totalTvaRestant<0){
-              <th>TROP-PERÇU</th>
-              } @else{
-              <th>Match (0:0)</th>
-              }
+              }@else if(tvaInfos && tvaInfos.totalTvaRestant<0){ <th>TROP-PERÇU</th>
+                } @else{
+                <th>Match (0:0)</th>
+                }
             </tr>
           </thead>
           <tbody>
             <tr>
-              @if(tvaInfos){   
+              @if(tvaInfos){
               <td>{{ tvaInfos.totalTTC | customDecimalPipe }} €</td>
               <td>{{ tvaInfos.totalCAHorsTaxe | customDecimalPipe }} €</td>
               <td>{{ tvaInfos.montantTvaFacture | customDecimalPipe }} €</td>
@@ -62,10 +59,7 @@
 
     <!-- Actions -->
     <div class="col-12 col-md-3 d-flex flex-column flex-md-row gap-2">
-      <bill-search
-        class="w-100"
-        (search)="onSearch($event)"
-        placeholder="🔍 Chercher facture...">
+      <bill-search class="w-100" (search)="onSearch($event)" placeholder="🔍 Chercher facture...">
       </bill-search>
 
       @if(showPenalite){
@@ -76,15 +70,14 @@
 
       @if(hidePenalite){
       <button class="btn btn-outline-primary w-100" (click)="hide()">
-        Cacher Factures
+        Cacher Pénalités
       </button>
       }
     </div>
-
   </div>
 
   <!-- TABLE PRINCIPALE -->
-  @if(showPenalite){
+  <!-- @if(showPenalite){ -->
   <div class="table-responsive">
     <table class="table table-success table-striped text-nowrap">
       <thead class="table-dark">
@@ -102,8 +95,8 @@
           <th>Actions</th>
         </tr>
       </thead>
-
       <tbody>
+
         @for (facture of factures; track facture.id) {
         <tr [ngClass]="{
           'table-success': facture.factureStatus == 'OK',
@@ -113,27 +106,31 @@
           <td>{{ facture.moisFacture }}</td>
           <td>{{ facture.tarifHT }}</td>
           <td>{{ facture.quantite | customDecimalPipe }}</td>
-          <td>{{ facture.prixTotalTTC | customDecimalPipe }}</td>
-          <td>{{ facture.prixTotalHT | customDecimalPipe }}</td>
+          <td>{{ facture.prixTotalTTC! | customDecimalPipe }}</td>
+          <td>{{ facture.prixTotalHT! | customDecimalPipe }}</td>
           <td>{{ facture.dateFacturation }}</td>
           <td>{{ facture.dateEncaissement }}</td>
-          <td>{{ facture.montantTVA | customDecimalPipe }}</td>
-          <td>{{ facture.montantTvaPaye | customDecimalPipe }}</td>
+          <td>{{ facture.montantTVA! | customDecimalPipe }}</td>
+          <td>{{ facture.montantTvaPaye! | customDecimalPipe }}</td>
           <td class="d-flex flex-wrap gap-1">
 
-            <button class="btn btn-outline-primary btn-sm" (click)="encaissementFacture($event, facture)" [disabled]="!isAdmin">
+            <button class="btn btn-outline-primary btn-sm" (click)="encaissementFacture($event, facture)"
+              [disabled]="!isAdmin">
               <i class="bi bi-pencil"></i>
             </button>
 
-            <button class="btn btn-outline-primary btn-sm" (click)="cancelModif($event, facture)" [disabled]="!isAdmin || facture.factureStatus == 'KO'">
+            <button class="btn btn-outline-primary btn-sm" (click)="cancelModif($event, facture)"
+              [disabled]="!isAdmin || facture.factureStatus == 'KO'">
               <i class="bi bi-x-circle"></i>
             </button>
 
-            <button class="btn btn-outline-primary btn-sm" (click)="detailFacture($event, facture)" [disabled]="!isAdmin">
+            <button class="btn btn-outline-primary btn-sm" (click)="detailFacture($event, facture)"
+              [disabled]="!isAdmin">
               <i class="bi bi-info-circle"></i>
             </button>
 
-            <button class="btn btn-outline-danger btn-sm" (click)="deleteFacture($event, facture)" [disabled]="!isAdmin">
+            <button class="btn btn-outline-danger btn-sm" (click)="deleteFacture($event, facture)"
+              [disabled]="!isAdmin">
               <i class="bi bi-trash"></i>
             </button>
 
@@ -141,10 +138,10 @@
               <i class="bi bi-download"></i>
             </button>
 
-            <button class="btn btn-primary btn-sm" (click)="sendFacture($event,facture)" [disabled]="!isAdmin || facture.sended">
+            <button class="btn btn-primary btn-sm" (click)="sendFacture($event,facture)"
+              [disabled]="!isAdmin || facture.sended">
               <i class="bi bi-send"></i>
             </button>
-
           </td>
         </tr>
         }
@@ -163,22 +160,22 @@
       </button>
     </div>
     }
-
   </div>
-  }
-
+  <!--  } -->
 </div>
 
 <!-- CSS CONSEILLÉ -->
 <style>
-@media (max-width: 768px) {
-  table {
-    font-size: 12px;
+  @media (max-width: 768px) {
+    table {
+      font-size: 12px;
+    }
+
+    th,
+    td {
+      padding: 6px !important;
+    }
   }
-  th, td {
-    padding: 6px !important;
-  }
-}
 </style>
 
 }

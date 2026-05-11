@@ -17,6 +17,7 @@ import { WaitingComponent } from '../../../shared/waiting/waiting.component';
 import { FactureService } from '../../../services/factures/facture.service';
 import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
 import { AlertService } from '../../../services/alert/alertService';
+import Facture from '../../../models/Facture';
 
 @Component({
   selector: 'bill-facture-add',
@@ -28,6 +29,7 @@ export class FactureAddComponent implements OnInit {
   formFacture!: FormGroup;
   selectedPrestation: Prestation | null = null;
   selectedMonth: number = 0;
+  selectedMonthString = "";
   monthsYear: any;
   siret: string | null = '';
   isUpload: boolean = true;
@@ -46,7 +48,7 @@ export class FactureAddComponent implements OnInit {
     private readonly factureService: FactureService,
     private readonly sharedDataService: SharedDataService,
     private readonly alertService: AlertService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.defaultMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
@@ -54,10 +56,14 @@ export class FactureAddComponent implements OnInit {
       monthFacture: [this.defaultMonth, Validators.required],
       numeroCommande: [{ value: '', disabled: true }],
       quantite: ['', [Validators.required, numericFrValidator()]],
-      newTemplate: [{ value: true, disabled: true }],
       taxType: ['IS'],
       clientPrestation: [{ value: '', disabled: true }],
     });
+
+    this.init();
+  }
+
+  init(): void {
 
     this.selectedPrestation = this.sharedDataService.getSelectedPrestation();
     this.monthsYear = GetMonthsOfYear();
@@ -80,6 +86,7 @@ export class FactureAddComponent implements OnInit {
     });
 
     this.getWorkingDays(this.defaultMonth);
+
   }
 
   getWorkingDays(month: string) {
@@ -107,17 +114,11 @@ export class FactureAddComponent implements OnInit {
    *
    * @param prestation
    */
-  private editFacture(prestation: Prestation) {
-    prestation.id = this.selectedPrestation!.id;
+  private editFacture(facture: Facture) {
     this.isUpload = false;
     this.factureService
       .createFacture(
-        prestation,
-        this.siret!,
-        this.selectedMonth,
-        this.formFacture.get('newTemplate')?.value,
-        this.formFacture.get('taxType')?.value,
-      )
+        facture)
       .subscribe({
         next: () => {
           this.sharedDataService.setIsEditionFacture('true');
@@ -132,7 +133,13 @@ export class FactureAddComponent implements OnInit {
       });
   }
 
+  isTwoDigits = (value: number): boolean => {
+    return value >= 10;
+  };
+
+
   addFacture() {
+
     if (this.formFacture.valid) {
       let quantiteValue = this.formFacture.get('quantite')?.value;
       if (quantiteValue) {
@@ -142,23 +149,21 @@ export class FactureAddComponent implements OnInit {
         }
       }
 
-      let prestation: Prestation = {
+      if (!this.isTwoDigits(this.selectedMonth)) {
+        this.selectedMonthString = '0' + this.selectedMonth
+      }
+
+      let facture: Facture = {
         id: null,
+        siret: this.siret!,
         quantite: quantiteValue,
-        numeroCommande: this.formFacture.get('numeroCommande')?.value,
-        clientPrestation: this.formFacture.get('clientPrestation')?.value,
-        designation: 'La Prestation est réalisée pour le compte de ',
-        tarifHT: this.selectedPrestation!.tarifHT,
-        delaiPaiement: this.selectedPrestation!.delaiPaiement,
-        consultant: this.selectedPrestation!.consultant,
-        client: this.selectedPrestation!.client,
-        dateFin: this.selectedPrestation!.dateFin,
-        dateDebut: this.selectedPrestation!.dateDebut,
-        siret: this.selectedPrestation!.siret,
-        isPrestaNoteValid: false,
+        moisFacture: this.selectedMonthString,
+        taxType: this.formFacture.get('taxType')?.value,
+        prestationId: this.selectedPrestation!.id!
       };
 
-      this.editFacture(prestation);
+
+      this.editFacture(facture);
     } else {
       for (const [, control] of Object.entries(this.formFacture.controls)) {
         if (control.invalid) {

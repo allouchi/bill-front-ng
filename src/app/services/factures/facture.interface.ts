@@ -18,11 +18,7 @@ export interface IFactureService {
    * @returns Observable<Facture>
    */
   createFacture(
-    prestation: Partial<Prestation>,
-    siret: string,
-    moisFactureId: number,
-    iTextGeneration: boolean,
-    taxType: string,
+    facture: Partial<Facture>
   ): Observable<Facture>;
 
   /**

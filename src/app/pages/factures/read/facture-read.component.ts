@@ -49,7 +49,6 @@ import { SearchComponent } from '../../../shared/search/search.component';
 })
 export default class FactureReadComponent implements OnInit, OnDestroy {
   factures: Facture[] = [];
-  facturesRetard: Facture[] = [];
   exercises: Exercise[] = [];
   tvaInfos!: TvaInfos;
   siret: string | null = '';
@@ -430,7 +429,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     this.isLoaded = false;
     this.sendMail = true;
 
-
     this.factureService.envoyerFacture(id, mails).subscribe({
       next: () => {
         this.isLoaded = true;
@@ -485,7 +483,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   runBatch() {
     this.factureService.runBatch(this.siret!).subscribe({
       next: (factures) => {
-        this.facturesRetard = factures;
+        this.factures = factures;
         this.showPenalite = false;
         this.hidePenalite = true;
       },
@@ -498,6 +496,8 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   hide() {
     this.showPenalite = true;
     this.hidePenalite = false;
+    console.log(this.selectedExercice)
+    this.loadFacturesByExercise(this.selectedExercice);
   }
 
   private onError(error: any) {

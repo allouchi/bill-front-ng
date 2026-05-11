@@ -13,9 +13,7 @@ export class PrestationService implements IPrestationService {
   constructor(private readonly http: HttpClient) { }
   createOrUpdatePrestation(
     prestation: Prestation,
-    siret: string,
-    iTextGeneration: boolean,
-    moisFacture: number | null
+    siret: string
   ): Observable<Prestation> {
     const isNew: boolean = prestation.id === 0 || prestation.id === null;
 
@@ -26,7 +24,7 @@ export class PrestationService implements IPrestationService {
       );
     } else {
       return this.http.put<Prestation>(
-        `${this.PRESTATION_PATH}/${siret}/${iTextGeneration}/${moisFacture}`,
+        `${this.PRESTATION_PATH}/${siret}`,
         prestation,
       );
     }
