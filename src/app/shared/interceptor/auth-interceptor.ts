@@ -5,7 +5,7 @@ import {
   HttpRequest,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { Injectable, provideAppInitializer } from '@angular/core';
+import { Injectable, Injector } from '@angular/core'; // 👈 Ajout de Injector
 import {
   catchError,
   Observable,
@@ -29,20 +29,38 @@ export class AuthInterceptor implements HttpInterceptor {
   private refreshTokenSubject: BehaviorSubject<string | null> =
     new BehaviorSubject<string | null>(null);
 
-  constructor(
-    private readonly authService: AuthService,
-    private readonly router: Router,
-    private readonly alertService: AlertService,
-    private readonly isAuthService: IsAuthService,
-    private readonly libelleCompanyService: LibelleCompanyService,
-    private readonly sharedMessagesService: SharedMessagesService,
-  ) { }
+  // 1. On injecte uniquement l'Injector d'Angular ici pour casser la dépendance circulaire
+  constructor(private readonly injector: Injector) {}
+
+  // Getters privés pour récupérer tes services "à la demande" sans bloquer l'initialisation d'Angular
+  private get authService(): AuthService {
+    return this.injector.get(AuthService);
+  }
+
+  private get router(): Router {
+    return this.injector.get(Router);
+  }
+
+  private get alertService(): AlertService {
+    return this.injector.get(AlertService);
+  }
+
+  private get isAuthService(): IsAuthService {
+    return this.injector.get(IsAuthService);
+  }
+
+  private get libelleCompanyService(): LibelleCompanyService {
+    return this.injector.get(LibelleCompanyService);
+  }
+
+  private get sharedMessagesService(): SharedMessagesService {
+    return this.injector.get(SharedMessagesService);
+  }
 
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler,
   ): Observable<HttpEvent<any>> {
-
 
     // 🔥 BYPASS BOT (aucune auth)
     if (req.url.includes('/api/bot')) {
@@ -62,9 +80,6 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(cloned).pipe(
       catchError((error: HttpErrorResponse) => {
         // ⚠️ éviter refresh sur login/refresh endpoint
-
-
-
         if (req.url.includes('/login') || req.url.includes('/refresh-token')) {
           return throwError(() => error);
         }

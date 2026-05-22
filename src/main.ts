@@ -7,6 +7,6 @@ bootstrapApplication(AppComponent, appConfig).then((appRef) => {
   const injector = appRef.injector;
   const translate = injector.get(TranslateService);
 
-  translate.setFallbackLang('fr');
+  translate.setDefaultLang('fr');
   translate.use('fr'); // important !
 });

@@ -10,7 +10,7 @@ export class I18nService implements OnInit {
 
     ngOnInit(): void {
         // Définir la langue par défaut
-        this.translateService.setFallbackLang(this.defaultLang);
+        this.translateService.setDefaultLang(this.defaultLang);
         // Utiliser la langue du navigateur si disponible, sinon la langue par défaut
         const browserLang = this.translateService.getBrowserLang();
         this.translateService.use(browserLang ?? this.defaultLang);

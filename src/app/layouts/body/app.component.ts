@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
     private readonly authService: AuthService,
   ) {
     translate.addLangs(['fr', 'en']);
-    translate.setFallbackLang('fr');
+    translate.setDefaultLang('fr');
     translate.use('fr'); // active la langue
   }
   ngOnInit(): void {
