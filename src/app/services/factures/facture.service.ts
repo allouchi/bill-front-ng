@@ -5,7 +5,6 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { env } from "../../../environments/env";
 import { Injectable } from "@angular/core";
 import Exercise from '../../models/Exercise';
-import Prestation from "../../models/Prestation";
 import DataPDF from '../../models/DataPDF';
 import { Page } from "../../models/Page";
 import EmailClient from "../../models/EmailClient";
@@ -26,8 +25,6 @@ export class FactureService implements IFactureService {
   private readonly BATCH_PATH: string = `${this.apiURL}` + '/batchs';
 
   constructor(private readonly http: HttpClient) { }
-
-
 
   findFacturesBySiret(
     siret: string,
