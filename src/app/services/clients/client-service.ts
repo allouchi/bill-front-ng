@@ -16,11 +16,11 @@ import { Injectable } from "@angular/core";
 @Injectable({ providedIn: 'root' })
 export class ClientService implements IClientService {
 
-  private readonly apiURL = env.apiURL;
-  private readonly CLIENT_PATH: string = `${this.apiURL}` + "/clients";
+  private readonly apiURL = env.gateURL +'/client';
+  private readonly CLIENT_PATH: string = `${this.apiURL}` + '/api/clients';
+
 
   constructor(private readonly http: HttpClient) { }
-
 
   createOrUpdateClient(client: Client, siret: string): Observable<Client> {
     const isNew: boolean = !client.id || client.id === 0;   

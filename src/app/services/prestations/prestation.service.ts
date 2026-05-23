@@ -7,8 +7,10 @@ import { env } from '../../../environments/env';
 
 @Injectable({ providedIn: 'root' })
 export class PrestationService implements IPrestationService {
-  private readonly apiURL = env.apiURL;
-  private readonly PRESTATION_PATH: string = `${this.apiURL}` + '/prestations';
+  
+  private readonly apiURL = env.gateURL +'/prestation';
+  private readonly PRESTATION_PATH: string = `${this.apiURL}` + '/api/prestations';
+
 
   constructor(private readonly http: HttpClient) { }
   createOrUpdatePrestation(

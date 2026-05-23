@@ -5,7 +5,6 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { env } from "../../../environments/env";
 import { Injectable } from "@angular/core";
 import Exercise from '../../models/Exercise';
-import Prestation from "../../models/Prestation";
 import DataPDF from '../../models/DataPDF';
 import { Page } from "../../models/Page";
 import EmailClient from "../../models/EmailClient";
@@ -18,8 +17,10 @@ import EmailClient from "../../models/EmailClient";
  */
 @Injectable({ providedIn: 'root' })
 export class FactureService implements IFactureService {
-  private readonly apiURL = env.apiURL;
-  private readonly FACTURES_PATH: string = `${this.apiURL}` + '/factures';
+
+  private readonly apiURL = env.gateURL + '/facture';
+  private readonly FACTURES_PATH: string = `${this.apiURL}` + '/api/factures';
+
   private readonly EXERCISE_PATH: string =
     `${this.apiURL}` + '/tvas/exerciceRef';
   private readonly EDITION_PATH: string = `${this.apiURL}` + '/editions';

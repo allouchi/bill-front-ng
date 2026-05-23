@@ -67,9 +67,12 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.authService.login(authRequest).subscribe({
       next: (response) => {
+       
         this.onResponseSuccess(response);
       },
-      error: (err) => this.onResponseError(err),
+      error: (err) => {this.onResponseError(err)
+          console.log("err :", err)
+      },
     });
   }
 
@@ -103,13 +106,11 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.companyService.findCompanies().subscribe({
       next: (companies) => {
         this.companies = companies;
-
         // Réorganiser : les éléments "checked" d'abord
         this.companies.sort((a, b) => {
           if (a.checked === b.checked) return 0;
           return a.checked ? -1 : 1;
         });
-
         this.sharedDataService.setCompanies(this.companies);
       },
       error: (err) => {

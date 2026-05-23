@@ -24,8 +24,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./company-read.component.scss'],
 })
 export default class CompanyReadComponent implements OnInit, OnDestroy {
-  companies: Company[] = [];
-  filtredCompanies: Company[] = [];
+  companies: Company[] = []; 
   isLoaded = false;
   observableEvent$ = new Subscription();
   siret: string | null = '';
@@ -50,13 +49,10 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   }
 
   loadCompanies() {
-
        this.companyService.findCompanies().subscribe({
          next: (companies) => {
-           this.companies = companies;
-           this.sharedDataService.setCompanies(this.companies);
-
-           this.filtredCompanies = companies;
+           this.companies = companies;         
+           this.sharedDataService.setCompanies(this.companies);          
            const company = this.companies.find(
              (company) => company.checked === true,
            );
@@ -80,9 +76,8 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   deleteCompanySerice(id: number) {
     this.companyService.deleteCompanyById(id).subscribe({
       next: () => {
-        this.alertService.show('DELETE', 'SOCIETE', 'success');
-        this.filtredCompanies = this.companies.filter((item) => item.id !== id);
-        this.companies = this.filtredCompanies;
+        this.alertService.show('DELETE', 'SOCIETE', 'success');    
+        this.loadCompanies();
       },
       error: (err) => {
         this.onError(err);

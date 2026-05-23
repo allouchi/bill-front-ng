@@ -13,8 +13,8 @@ import { RefreshRequest } from '../../models/RefreshRequest';
   providedIn: 'root',
 })
 export class AuthService {
-  loginUrl = env.apiURL + '/users/login';
-  refreshUrl = env.apiURL + '/users/refresh-token';
+  loginUrl = env.authURL + '/auth/login';
+  refreshUrl = env.authURL + '/auth/refresh-token';
   userRoles: Role[] = [];
   user!: User | null;
   libelleHeader: string = '';

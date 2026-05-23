@@ -7,7 +7,8 @@ import Adresse from '../../models/Adresse';
   standalone: true
 })
 export class AdresseClientPipe implements PipeTransform {
-  transform(adresse: Adresse): string {   
+  transform(adresse: Adresse): string {  
+    console.log(adresse) 
     if(adresse)  {
       return adresse.numero + ", " + adresse.rue  + " " + adresse.codePostal  + " " + adresse.localite;
   }    
