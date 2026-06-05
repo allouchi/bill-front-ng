@@ -50,7 +50,7 @@ export class CompteReadComponent implements OnInit, OnDestroy {
   parent = 'read';
   siret: string | null = '';
   totalOperation: number = 0;
-  typeOperations: string[] = ['Tous', 'DIV', 'NDF', 'TVA', 'AUTRE'];
+  typeOperations: string[] = ['Tous', 'DIV', 'NDF', 'TVA', 'DGFIP', 'FACTURE', 'AUTRE'];
   monthsYear: any;
 
   page = 0;
@@ -67,7 +67,7 @@ export class CompteReadComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly alertService: AlertService,
     private readonly tvaService: TvaService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();

@@ -28,21 +28,18 @@
         }
       </select>
     </div>
- <div class="d-flex align-items-center gap-0">
-     <!-- Search -->
-      <bill-search
-          (search)="onSearch($event)"
-          placeholder="🔍 Chercher opération..."
-          >
+    <div class="d-flex align-items-center gap-0">
+      <!-- Search -->
+      <bill-search (search)="onSearch($event)" placeholder="🔍 Chercher opération...">
       </bill-search>
 
-    <div>
-      <label class="form-label invisible" for="add">Importer</label>
-      <button id="add" class="btn btn-pink" (click)="importOperations()" title="Ajouter une opération">
-        <i class="bi bi-plus-circle me-1"></i>
-        Importer
-      </button>
-    </div>
+      <div>
+        <label class="form-label invisible" for="add">Importer</label>
+        <button id="add" class="btn btn-pink" (click)="importOperations()" title="Ajouter une opération">
+          <i class="bi bi-plus-circle me-1"></i>
+          Importer
+        </button>
+      </div>
     </div>
   </div>
   <div class="table-responsive">
@@ -50,7 +47,7 @@
       <thead class="table-dark">
         <tr>
           <th scope="col">Date Opération</th>
-          <th scope="col">Déscription</th>
+          <th scope="col">Description</th>
           <th scope="col">Type</th>
           <th scope="col">Montant</th>
           <th scope="col">Exercice</th>
