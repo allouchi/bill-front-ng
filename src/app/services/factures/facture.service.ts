@@ -22,7 +22,7 @@ export class FactureService implements IFactureService {
   private readonly FACTURES_PATH: string = `${this.apiURL}` + '/api/factures';
 
   private readonly EXERCISE_PATH: string =
-    `${this.apiURL}` + '/tvas/exerciceRef';
+    `${this.apiURL}` + '/api/tvas/exerciceRef';
   private readonly EDITION_PATH: string = `${this.apiURL}` + '/editions';
   private readonly BATCH_PATH: string = `${this.apiURL}` + '/batchs';
 

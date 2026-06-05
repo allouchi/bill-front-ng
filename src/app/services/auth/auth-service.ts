@@ -13,8 +13,8 @@ import { RefreshRequest } from '../../models/RefreshRequest';
   providedIn: 'root',
 })
 export class AuthService {
-  loginUrl = env.authURL + '/auth/login';
-  refreshUrl = env.authURL + '/auth/refresh-token';
+  loginUrl = env.gateURL + '/authent/login';
+  refreshUrl = env.authURL + '/authent/refresh-token';
   userRoles: Role[] = [];
   user!: User | null;
   libelleHeader: string = '';
@@ -23,13 +23,11 @@ export class AuthService {
     private readonly http: HttpClient,
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly sharedDataService: SharedDataService
-  ) {}
+  ) { }
 
   login(credentials: { username: string; password: string }) {
     return this.http
-      .post<AuthResponse>(this.loginUrl, credentials, {
-        withCredentials: true,
-      })
+      .post<AuthResponse>(this.loginUrl, credentials)
       .pipe(
         tap((tokens) => {
           this.saveAccessToken(tokens.accessToken);
@@ -84,7 +82,7 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.getAccessToken();
-  }  
+  }
 
   logout() {
     localStorage.removeItem('accessToken');
@@ -117,7 +115,7 @@ export class AuthService {
     this.libelleHeader = libelleHeader;
     this.libelleCompanyService.setMessage(libelleHeader);
     this.sharedDataService.setSelectCompany(authResponse.company);
-    this.sharedDataService.setSelectedUser(authResponse.user);    
+    this.sharedDataService.setSelectedUser(authResponse.user);
   }
 
   getUser(): User | null {

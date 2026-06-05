@@ -139,7 +139,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         this.factures = data.content;
         this.totalPages = data.page.totalPages;
-        console.log(this.totalPages);
         this.totalElements = data.page.totalElements;
         this.nbLignesFacture = data.content.length;
         this.isLoaded = true;
@@ -220,8 +219,11 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.factures = data.content;
-          this.totalPages = data.page.totalPages;
-          this.totalElements = data.page.totalElements;
+          if (data.page) {
+            this.totalPages = data.page.totalPages;
+            this.totalElements = data.page.totalElements;
+          }
+
           this.nbLignesFacture = this.factures.length;
           this.isLoaded = true;
           this.loadTvaInfo(this.selectedExercice);
@@ -496,7 +498,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   hide() {
     this.showPenalite = true;
     this.hidePenalite = false;
-    console.log(this.selectedExercice)
     this.loadFacturesByExercise(this.selectedExercice);
   }
 

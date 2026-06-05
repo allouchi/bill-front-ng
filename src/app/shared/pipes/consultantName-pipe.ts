@@ -7,7 +7,7 @@ import Consultant from '../../models/Consultant';
 })
 export class ConsultantNamePipe implements PipeTransform {
   transform(consultant: Consultant): string {
-    console.log("consultant :", consultant)
+
     if (consultant) {
       if (consultant.firstName && consultant.lastName) {
         return consultant.firstName.substring(0, 1) + consultant.lastName.substring(0, 1);

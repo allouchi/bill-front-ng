@@ -67,11 +67,10 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.authService.login(authRequest).subscribe({
       next: (response) => {
-       
         this.onResponseSuccess(response);
       },
-      error: (err) => {this.onResponseError(err)
-          console.log("err :", err)
+      error: (err) => {
+        this.onResponseError(err)
       },
     });
   }
@@ -94,7 +93,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.formLogin.patchValue({
       password: '',
     });
-  }  
+  }
 
   updateCurrentLang(user: User): void {
     this.currentLang = user.language;

@@ -81,6 +81,14 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
       next: (prestations) => {
         setTimeout(() => {
           this.prestations = prestations;
+          this.prestations.forEach((p) => {
+            p.isPrestaNoteValid = Util.isPrestaNotValid(p.dateFin!);
+            if (p.facture && p.facture.length > 0) {
+              p.deletePresta = false;
+            } else {
+              p.deletePresta = true;
+            }
+          });
           this.isLoaded = true;
         }, 100);
       },

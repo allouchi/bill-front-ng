@@ -13,10 +13,10 @@ import { Injectable } from '@angular/core';
  */
 @Injectable({ providedIn: 'root' })
 export class CompanyService implements ICompanyService {
-  private readonly apiURL = env.gateURL +'/company';
+  private readonly apiURL = env.gateURL + '/company';
   private readonly COMPNAY_PATH: string = `${this.apiURL}` + '/api/companies';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   createOrUpdateCompany(company: Company): Observable<Company> {
     const isNew: boolean = !company.id || company.id === null;
@@ -27,7 +27,7 @@ export class CompanyService implements ICompanyService {
     }
   }
 
-  findCompanies(): Observable<Company[]> {  
+  findCompanies(): Observable<Company[]> {
     return this.http.get<Company[]>(`${this.COMPNAY_PATH}`);
   }
 

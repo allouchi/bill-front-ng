@@ -17,13 +17,16 @@ import { Page } from '../../models/Page';
 
 @Injectable({ providedIn: 'root' })
 export class TvaService implements ITvaService {
-  private readonly apiURL = env.apiURL;
-  private readonly TVA_PATH: string = `${this.apiURL}` + '/tvas';
-  private readonly TVA_INFO_PATH: string = `${this.apiURL}` + '/tvas/tvasInfo';
-  private readonly EXERCISE_PATH: string =
-    `${this.apiURL}` + '/tvas/exerciceRef';
 
-  constructor(private readonly http: HttpClient) {}
+  private readonly apiURL = env.gateURL + '/facture';
+  private readonly TVA_PATH: string = `${this.apiURL}` + '/api/tvas';
+
+
+  private readonly TVA_INFO_PATH: string = `${env.gateURL}` + '/facture/api/tvas/tvasInfo';
+  private readonly EXERCISE_PATH: string =
+    `${env.gateURL}` + '/facture/api/tvas/exerciceRef';
+
+  constructor(private readonly http: HttpClient) { }
 
   createOrUpdateTva(tva: Tva): Observable<Tva> {
     const isNew: boolean = !tva.id || tva.id === null;
@@ -42,6 +45,7 @@ export class TvaService implements ITvaService {
     size: number,
   ): Observable<Page<Tva>> {
     let params = new HttpParams().set('page', page).set('size', size);
+
     return this.http.get<Page<Tva>>(`${this.TVA_PATH}/${siret}/${exercise}`, {
       params,
     });
