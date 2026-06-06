@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { env } from '../../../environments/env';
 import { AuthResponse } from '../../models/AuthResponse';
 import User from '../../models/User';
 import { LibelleCompanyService } from '../shared/libelle-company-service';
@@ -8,13 +7,14 @@ import { SharedDataService } from '../shared/shared-data-service';
 import Role from '../../models/Role';
 import { Observable, tap, throwError } from 'rxjs';
 import { RefreshRequest } from '../../models/RefreshRequest';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  loginUrl = env.gateURL + '/authent/login';
-  refreshUrl = env.authURL + '/authent/refresh-token';
+  loginUrl = environment.authURL + '/login';
+  refreshUrl = environment.authURL + '/refresh-token';
   userRoles: Role[] = [];
   user!: User | null;
   libelleHeader: string = '';

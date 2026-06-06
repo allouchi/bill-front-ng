@@ -2,7 +2,7 @@ import { map, Observable } from 'rxjs';
 import Company from '../../models/Company';
 import { ICompanyService } from './company.interface';
 import { HttpClient } from '@angular/common/http';
-import { env } from '../../../environments/env';
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 
 /**
@@ -13,8 +13,7 @@ import { Injectable } from '@angular/core';
  */
 @Injectable({ providedIn: 'root' })
 export class CompanyService implements ICompanyService {
-  private readonly apiURL = env.gateURL + '/company';
-  private readonly COMPNAY_PATH: string = `${this.apiURL}` + '/api/companies';
+  private readonly COMPNAY_PATH: string = environment.companyURL;
 
   constructor(private readonly http: HttpClient) { }
 

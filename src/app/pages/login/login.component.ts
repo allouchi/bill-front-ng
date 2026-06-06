@@ -100,7 +100,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.i18nService.switchLang(this.currentLang);
   }
 
-
   loadCompanies() {
     this.companyService.findCompanies().subscribe({
       next: (companies) => {

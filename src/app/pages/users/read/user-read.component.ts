@@ -64,11 +64,9 @@ export class UserReadComponent implements OnInit, OnDestroy {
   private loadUsers() {
     this.userService.findUsers().subscribe({
       next: (users) => {
-        setTimeout(() => {
-          this.users = users;
-          this.filtredUsers = this.users;
-          this.isLoaded = true;
-        }, 500);
+        this.users = users;
+        this.filtredUsers = this.users;
+        this.isLoaded = true;
       },
       error: (err) => {
         this.onError(err);

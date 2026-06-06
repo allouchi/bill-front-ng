@@ -4,7 +4,7 @@ import { ITvaService } from "./tva.interface";
 import { HttpClient, HttpParams } from '@angular/common/http';
 import Exercise from '../../models/Exercise';
 import TvaInfos from '../../models/TvaInfos';
-import { env } from '../../../environments/env';
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { Page } from '../../models/Page';
 
@@ -18,13 +18,9 @@ import { Page } from '../../models/Page';
 @Injectable({ providedIn: 'root' })
 export class TvaService implements ITvaService {
 
-  private readonly apiURL = env.gateURL + '/facture';
-  private readonly TVA_PATH: string = `${this.apiURL}` + '/api/tvas';
-
-
-  private readonly TVA_INFO_PATH: string = `${env.gateURL}` + '/facture/api/tvas/tvasInfo';
-  private readonly EXERCISE_PATH: string =
-    `${env.gateURL}` + '/facture/api/tvas/exerciceRef';
+  private readonly TVA_PATH: string = environment.tvaURL;
+  private readonly exerciseURL = environment.exerciseURL;
+  private readonly EXERCISE_PATH: string = `${this.exerciseURL}` + '/exerciseRef';
 
   constructor(private readonly http: HttpClient) { }
 
@@ -45,15 +41,15 @@ export class TvaService implements ITvaService {
     size: number,
   ): Observable<Page<Tva>> {
     let params = new HttpParams().set('page', page).set('size', size);
-
     return this.http.get<Page<Tva>>(`${this.TVA_PATH}/${siret}/${exercise}`, {
       params,
     });
   }
 
   findTvaInfoByExercise(siret: string, exercise: string): Observable<TvaInfos> {
+    // Correction ici : nettoyage des guillemets simples et des symboles "+" inutiles
     return this.http.get<TvaInfos>(
-      `${this.TVA_INFO_PATH}/${siret}/${exercise}`,
+      `${this.TVA_PATH}/tvasInfo/${siret}/${exercise}`
     );
   }
 

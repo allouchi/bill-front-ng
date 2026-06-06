@@ -1,0 +1,17 @@
+export const environment = {
+    production: true,
+    development: false,
+    apiURL: 'http://localhost:8181/api',
+    botURL: 'http://localhost:8686/api',
+    authURL: 'http://localhost:8181/api/users',
+    userURL: 'http://localhost:8181/api/users',
+    tvaURL: 'http://localhost:8181/api/tvas',
+    exerciseURL: 'http://localhost:8181/api/exercises',
+    companyURL: 'http://localhost:8181/api/companies',
+    consultantURL: 'http://localhost:8181/api/consultants',
+    clientURL: 'http://localhost:8181/api/clients',
+    factureURL: 'http://localhost:8181/api/factures',
+    prestationURL: 'http://localhost:8181/api/prestations',
+    operationURL: 'http://localhost:8181/api/operations',
+    compteURL: 'http://localhost:8181/api/comptes'
+};

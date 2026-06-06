@@ -3,13 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IPrestationService } from './prestation.interface';
 import Prestation from '../../models/Prestation';
-import { env } from '../../../environments/env';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PrestationService implements IPrestationService {
-  
-  private readonly apiURL = env.gateURL +'/prestation';
-  private readonly PRESTATION_PATH: string = `${this.apiURL}` + '/api/prestations';
+
+  private readonly apiURL = environment.prestationURL;
+  private readonly PRESTATION_PATH: string = `${this.apiURL}`;
 
 
   constructor(private readonly http: HttpClient) { }

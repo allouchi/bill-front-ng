@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import Consultant from "../../models/Consultant";
 import { Observable } from "rxjs";
 import { IConsultantService } from "./consultant.interface";
-import { env } from "../../../environments/env";
+import { environment } from '../../../environments/environment';
 import { Injectable } from "@angular/core";
 
 /**
@@ -15,8 +15,8 @@ import { Injectable } from "@angular/core";
 @Injectable({ providedIn: 'root' })
 export class ConsultantService implements IConsultantService {
 
-  private readonly apiURL = env.gateURL + '/consultant';
-  private readonly CONSULTANT_PATH: string = `${this.apiURL}` + '/api/consultants';
+  private readonly apiURL = environment.consultantURL;
+  private readonly CONSULTANT_PATH: string = `${this.apiURL}`;
 
   constructor(private readonly http: HttpClient) { }
 
