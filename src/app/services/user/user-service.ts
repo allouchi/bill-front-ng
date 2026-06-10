@@ -10,8 +10,8 @@ import Role from "../../models/Role";
 @Injectable({ providedIn: 'root' })
 export class UserService implements IUserService, IRolesService {
 
-  private readonly USER_PATH: string = environment.userURL + '/users';
-  private readonly ROLES_PATH: string = environment.userURL + '/roles';
+  private readonly USER_PATH: string = environment.userURL;
+  private readonly ROLES_PATH: string = environment.roleURL;
 
   constructor(private readonly http: HttpClient) { }
 

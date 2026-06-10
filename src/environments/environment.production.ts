@@ -5,6 +5,7 @@ export const environment = {
     botURL: 'http://localhost:8686/api',
     authURL: 'http://localhost:8181/api/users',
     userURL: 'http://localhost:8181/api/users',
+    roleURL: 'http://localhost:8181/api/roles',
     tvaURL: 'http://localhost:8181/api/tvas',
     exerciseURL: 'http://localhost:8181/api/exercises',
     companyURL: 'http://localhost:8181/api/companies',
@@ -13,5 +14,6 @@ export const environment = {
     factureURL: 'http://localhost:8181/api/factures',
     prestationURL: 'http://localhost:8181/api/prestations',
     operationURL: 'http://localhost:8181/api/operations',
-    compteURL: 'http://localhost:8181/api/comptes'
+    compteURL: 'http://localhost:8181/api/comptes',
+    editionURL: 'http://localhost:8181/api/editions',
 };

@@ -8,8 +8,7 @@ import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class PrestationService implements IPrestationService {
 
-  private readonly apiURL = environment.prestationURL;
-  private readonly PRESTATION_PATH: string = `${this.apiURL}`;
+  private readonly PRESTATION_PATH: string = environment.prestationURL;
 
 
   constructor(private readonly http: HttpClient) { }
@@ -40,6 +39,7 @@ export class PrestationService implements IPrestationService {
     return this.http.delete<string>(`${this.PRESTATION_PATH}/${id}`);
   }
   getPrestationsBySiret(siret: string): Observable<Prestation[]> {
+    console.log("url : ", `${this.PRESTATION_PATH}/${siret}`)
     return this.http.get<Prestation[]>(`${this.PRESTATION_PATH}/${siret}`);
   }
 }

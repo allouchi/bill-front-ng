@@ -19,8 +19,7 @@ import { Page } from '../../models/Page';
 export class TvaService implements ITvaService {
 
   private readonly TVA_PATH: string = environment.tvaURL;
-  private readonly exerciseURL = environment.exerciseURL;
-  private readonly EXERCISE_PATH: string = `${this.exerciseURL}` + '/exerciseRef';
+  private readonly EXERCISE_PATH: string = environment.exerciseURL + '/exerciseRef';
 
   constructor(private readonly http: HttpClient) { }
 

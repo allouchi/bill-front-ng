@@ -22,7 +22,7 @@ export class FactureService implements IFactureService {
   private readonly exerciseURL = environment.exerciseURL;
   private readonly FACTURES_PATH: string = `${this.apiURL}`;
   private readonly EXERCISE_PATH: string = `${this.exerciseURL}` + '/exerciseRef';
-  private readonly EDITION_PATH: string = `${this.apiURL}` + '/editions';
+  private readonly EDITION_PATH: string = environment.editionURL;
   private readonly BATCH_PATH: string = `${this.apiURL}` + '/batchs';
 
   constructor(private readonly http: HttpClient) { }
