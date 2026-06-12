@@ -24,7 +24,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./company-read.component.scss'],
 })
 export default class CompanyReadComponent implements OnInit, OnDestroy {
-  companies: Company[] = []; 
+  companies: Company[] = [];
   isLoaded = false;
   observableEvent$ = new Subscription();
   siret: string | null = '';
@@ -49,34 +49,34 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   }
 
   loadCompanies() {
-       this.companyService.findCompanies().subscribe({
-         next: (companies) => {
-           this.companies = companies;         
-           this.sharedDataService.setCompanies(this.companies);          
-           const company = this.companies.find(
-             (company) => company.checked === true,
-           );
-           this.libelleCompanyService.setMessage(
-             this.authService.getLibelleHeader(),
-           );
-           this.sharedDataService.setSelectCompany(company!);
-           this.isLoaded = true;
-           // Réorganiser : les éléments "checked" d'abord
-           this.companies.sort((a, b) => {
-             if (a.checked === b.checked) return 0;
-             return a.checked ? -1 : 1;
-           });
-         },
-         error: (err) => {
-           this.onError(err);
-         },
-       });     
+    this.companyService.findCompanies().subscribe({
+      next: (companies) => {
+        this.companies = companies;
+        this.sharedDataService.setCompanies(this.companies);
+        const company = this.companies.find(
+          (company) => company.checked === true,
+        );
+        this.libelleCompanyService.setMessage(
+          this.authService.getLibelleHeader(),
+        );
+        this.sharedDataService.setSelectCompany(company!);
+        this.isLoaded = true;
+        // Réorganiser : les éléments "checked" d'abord
+        this.companies.sort((a, b) => {
+          if (a.checked === b.checked) return 0;
+          return a.checked ? -1 : 1;
+        });
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
   }
 
   deleteCompanySerice(id: number) {
     this.companyService.deleteCompanyById(id).subscribe({
       next: () => {
-        this.alertService.show('DELETE', 'SOCIETE', 'success');    
+        this.alertService.show('DELETE', 'SOCIETE', 'success');
         this.loadCompanies();
       },
       error: (err) => {

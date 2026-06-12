@@ -39,7 +39,6 @@ export class PrestationService implements IPrestationService {
     return this.http.delete<string>(`${this.PRESTATION_PATH}/${id}`);
   }
   getPrestationsBySiret(siret: string): Observable<Prestation[]> {
-    console.log("url : ", `${this.PRESTATION_PATH}/${siret}`)
     return this.http.get<Prestation[]>(`${this.PRESTATION_PATH}/${siret}`);
   }
 }

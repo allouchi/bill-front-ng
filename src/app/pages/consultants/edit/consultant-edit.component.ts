@@ -81,7 +81,8 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
         email: this.formConsultant.get('email')?.value,
         lastName: this.formConsultant.get('lastName')?.value,
         fonction: this.formConsultant.get('fonction')?.value,
-        hasPrestation: true
+        hasPrestation: true,
+        remoteError: ''
       };
 
       this.consultantService.createOrUpdateConsultant(consultant).subscribe({

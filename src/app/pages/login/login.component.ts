@@ -88,6 +88,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   private onResponseError(error: any) {
+    this.alertService.showFunctionlError(error);
     this.isAuthService.setIsAuth(false);
     this.authService.logout();
     this.formLogin.patchValue({

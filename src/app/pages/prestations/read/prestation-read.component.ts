@@ -55,6 +55,8 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
   observableEvent$ = new Subscription();
   isAdmin = false;
   parent = 'read';
+  remoteClientError = false;
+  remoteConsultantError = false;
 
   private readonly router = inject(Router);
   constructor(
@@ -79,10 +81,16 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
   loadPrestations() {
     this.prestationService.getPrestationsBySiret(this.siret!).subscribe({
       next: (prestations) => {
-
         this.prestations = prestations;
         if (this.prestations) {
+
           this.prestations.forEach((p) => {
+            if (p.client?.remoteError) {
+              this.remoteClientError = true;
+            }
+            if (p.consultant?.remoteError) {
+              this.remoteConsultantError = true;
+            }
             p.isPrestaNoteValid = Util.isPrestaNotValid(p.dateFin!);
             if (p.facture && p.facture.length > 0) {
               p.deletePresta = false;
@@ -90,6 +98,8 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
               p.deletePresta = true;
             }
           });
+
+          console.log(this.remoteConsultantError, this.remoteClientError)
         }
 
         this.isLoaded = true;

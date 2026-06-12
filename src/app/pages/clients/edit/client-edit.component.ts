@@ -200,6 +200,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
       emails: emailClient,
       adresseClient,
       hasPrestation: true,
+      remoteError: ''
     };
 
     this.clientService.createOrUpdateClient(client, this.siret).subscribe({

@@ -155,11 +155,19 @@ export class AlertService implements OnInit {
 
     if (error && error.error) {
       if (typeof error.error === 'string') {
+
         err = JSON.parse(error.error);
         message = err.message;
       } else {
-        err = error.error;
-        message = err.message;
+        if (error.error.error = 'Service Unavailable') {
+          err = error.error.error;
+          message = 'Service indisponible';
+
+        } else {
+          err = error.error;
+          message = err.message;
+        }
+
       }
       this.alertSubject.next({ message, title, type, delay });
     }
