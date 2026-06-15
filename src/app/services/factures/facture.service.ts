@@ -2,7 +2,7 @@ import { Observable } from "rxjs";
 import Facture from "../../models/Facture";
 import { IFactureService } from "./facture.interface";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { env } from "../../../environments/env";
+import { environment } from '../../../environments/environment';
 import { Injectable } from "@angular/core";
 import Exercise from '../../models/Exercise';
 import DataPDF from '../../models/DataPDF';
@@ -17,11 +17,12 @@ import EmailClient from "../../models/EmailClient";
  */
 @Injectable({ providedIn: 'root' })
 export class FactureService implements IFactureService {
-  private readonly apiURL = env.apiURL;
-  private readonly FACTURES_PATH: string = `${this.apiURL}` + '/factures';
-  private readonly EXERCISE_PATH: string =
-    `${this.apiURL}` + '/tvas/exerciceRef';
-  private readonly EDITION_PATH: string = `${this.apiURL}` + '/editions';
+
+  private readonly apiURL = environment.factureURL;
+  private readonly exerciseURL = environment.exerciseURL;
+  private readonly FACTURES_PATH: string = `${this.apiURL}`;
+  private readonly EXERCISE_PATH: string = `${this.exerciseURL}` + '/exerciseRef';
+  private readonly EDITION_PATH: string = environment.editionURL;
   private readonly BATCH_PATH: string = `${this.apiURL}` + '/batchs';
 
   constructor(private readonly http: HttpClient) { }

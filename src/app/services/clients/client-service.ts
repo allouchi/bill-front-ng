@@ -1,7 +1,7 @@
 import { Observable } from "rxjs";
 import Client from "../../models/Client";
 import { IClientService } from "./client.interface";
-import { env } from "../../../environments/env";
+import { environment } from '../../../environments/environment';
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 
@@ -16,14 +16,14 @@ import { Injectable } from "@angular/core";
 @Injectable({ providedIn: 'root' })
 export class ClientService implements IClientService {
 
-  private readonly apiURL = env.apiURL;
-  private readonly CLIENT_PATH: string = `${this.apiURL}` + "/clients";
+  private readonly apiURL = environment.clientURL;
+  private readonly CLIENT_PATH: string = `${this.apiURL}`;
+
 
   constructor(private readonly http: HttpClient) { }
 
-
   createOrUpdateClient(client: Client, siret: string): Observable<Client> {
-    const isNew: boolean = !client.id || client.id === 0;   
+    const isNew: boolean = !client.id || client.id === 0;
     if (isNew) {
       return this.http.post<Client>(`${this.CLIENT_PATH}/add`, client);
     } else {

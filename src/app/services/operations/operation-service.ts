@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
-import { env } from '../../../environments/env';
+import { environment } from '../../../environments/environment';
 import { Injectable } from '@angular/core';
 import Operation from '../../models/Operation';
 import { Page } from '../../models/Page';
@@ -15,11 +15,12 @@ import Compte from '../../models/Compte';
 
 @Injectable({ providedIn: 'root' })
 export class OperationService {
-  private readonly apiURL = env.apiURL;
-  private readonly OPERATION_PATH: string = `${this.apiURL}` + '/operations';
-  private readonly COMPTE_PATH: string = `${this.apiURL}` + '/compte';
 
-  constructor(private readonly http: HttpClient) {}
+  private readonly OPERATION_PATH: string = `${environment.operationURL}`;
+  private readonly COMPTE_PATH: string = `${environment.compteURL}`;
+
+
+  constructor(private readonly http: HttpClient) { }
 
   createOrUpdateOperation(operation: Operation): Observable<Operation> {
     const isNew: boolean = !operation.id || operation.id === 0;

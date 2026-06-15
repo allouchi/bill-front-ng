@@ -69,7 +69,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly alertService: AlertService,
     private readonly operationService: OperationService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -144,10 +144,12 @@ export class OperationReadComponent implements OnInit, OnDestroy {
       .getOperations(this.siret!, selectedExercice, type, this.page, this.size)
       .subscribe({
         next: (data) => {
+          if (data.page) {
+            this.totalPages = data.page.totalPages;
+            this.totalElements = data.page.totalElements;
+          }
           this.operations = data.content;
           this.operationsFiltred = data.content;
-          this.totalPages = data.page.totalPages;
-          this.totalElements = data.page.totalElements;
           this.isLoaded = true;
           this.calculTotal(data.content);
           this.loadTvaInfo(selectedExercice);

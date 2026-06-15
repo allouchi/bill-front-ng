@@ -155,8 +155,10 @@ export class CompteReadComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.operations = data.content;
-          this.totalPages = data.page.totalPages;
-          this.totalElements = data.page.totalElements;
+          if (data.page) {
+            this.totalPages = data.page.totalPages;
+            this.totalElements = data.page.totalElements;
+          }
           this.isLoaded = true;
           this.totalOperation = this.operations.length;
         },

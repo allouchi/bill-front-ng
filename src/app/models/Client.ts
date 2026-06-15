@@ -7,5 +7,6 @@ export default interface Client {
   socialReason: string;
   adresseClient: Adresse;
   hasPrestation: boolean;
+  remoteError: string;
   emails: EmailClient[]
 }

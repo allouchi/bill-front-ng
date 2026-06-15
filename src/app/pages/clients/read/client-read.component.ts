@@ -23,8 +23,7 @@ import Prestation from '../../../models/Prestation';
 })
 export class ClientReadComponent implements OnInit, OnDestroy {
   clients: Client[] = [];
-  filtredClients: Client[] = [];
-  prestations!: Prestation[];
+   prestations!: Prestation[];
   isLoaded = false;
   isAdmin = false;
   parent = 'read';
@@ -55,7 +54,7 @@ export class ClientReadComponent implements OnInit, OnDestroy {
         .map(prestation => prestation.client!.id)
       );
 
-      this.filtredClients = this.clients.map(client => ({
+      this.clients = this.clients.map(client => ({
         ...client,
         hasPrestation: clientIdsAvecPrestation.has(client.id)
       }));
@@ -67,11 +66,10 @@ export class ClientReadComponent implements OnInit, OnDestroy {
     this.clientService.findClients().subscribe({
       next: (clients) => {
         setTimeout(() => {
-          this.clients = clients;
-          this.filtredClients = this.clients;
+          this.clients = clients;               
           this.isLoaded = true;
           this.disableClientDelete();
-        }, 500);
+        }, 100);
       },
       error: (err) => {
         this.onError(err);
@@ -82,11 +80,8 @@ export class ClientReadComponent implements OnInit, OnDestroy {
   deleteClientService(id: number) {
     this.clientService.deleteClientById(id).subscribe({
       next: () => {
-        this.filtredClients = this.clients.filter(
-          (item) => item.id !== id
-        );
-        this.clients = this.filtredClients;
-        this.disableClientDelete();
+      this.loadClients()
+        //this.disableClientDelete();
         this.alertService.show('DELETE', 'CLIENT', 'success');
       },
       error: (err) => {

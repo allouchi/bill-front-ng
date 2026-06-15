@@ -7,10 +7,10 @@ import Adresse from '../../models/Adresse';
   standalone: true
 })
 export class AdresseClientPipe implements PipeTransform {
-  transform(adresse: Adresse): string {   
-    if(adresse)  {
-      return adresse.numero + ", " + adresse.rue  + " " + adresse.codePostal  + " " + adresse.localite;
-  }    
-  return '';
+  transform(adresse: Adresse): string {
+    if (adresse) {
+      return adresse.numero + ", " + adresse.rue + " " + adresse.codePostal + " " + adresse.localite;
+    }
+    return '';
   }
 }

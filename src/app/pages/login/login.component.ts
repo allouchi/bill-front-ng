@@ -69,7 +69,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.onResponseSuccess(response);
       },
-      error: (err) => this.onResponseError(err),
+      error: (err) => {
+        this.onResponseError(err)
+      },
     });
   }
 
@@ -86,30 +88,28 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   private onResponseError(error: any) {
+    this.alertService.showFunctionlError(error);
     this.isAuthService.setIsAuth(false);
     this.authService.logout();
     this.formLogin.patchValue({
       password: '',
     });
-  }  
+  }
 
   updateCurrentLang(user: User): void {
     this.currentLang = user.language;
     this.i18nService.switchLang(this.currentLang);
   }
 
-
   loadCompanies() {
     this.companyService.findCompanies().subscribe({
       next: (companies) => {
         this.companies = companies;
-
         // Réorganiser : les éléments "checked" d'abord
         this.companies.sort((a, b) => {
           if (a.checked === b.checked) return 0;
           return a.checked ? -1 : 1;
         });
-
         this.sharedDataService.setCompanies(this.companies);
       },
       error: (err) => {

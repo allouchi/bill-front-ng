@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import Consultant from "../../models/Consultant";
 import { Observable } from "rxjs";
 import { IConsultantService } from "./consultant.interface";
-import { env } from "../../../environments/env";
+import { environment } from '../../../environments/environment';
 import { Injectable } from "@angular/core";
 
 /**
@@ -14,10 +14,11 @@ import { Injectable } from "@angular/core";
 
 @Injectable({ providedIn: 'root' })
 export class ConsultantService implements IConsultantService {
-  private readonly apiURL = env.apiURL;
-  private readonly CONSULTANT_PATH: string = `${this.apiURL}` + '/consultants';
 
-  constructor(private readonly http: HttpClient) {}
+  private readonly apiURL = environment.consultantURL;
+  private readonly CONSULTANT_PATH: string = `${this.apiURL}`;
+
+  constructor(private readonly http: HttpClient) { }
 
   createOrUpdateConsultant(consultant: Consultant): Observable<Consultant> {
     const isNew: boolean = !consultant.id || consultant.id === 0;

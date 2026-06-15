@@ -78,7 +78,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly modalService: NgbModal,
     private readonly authService: AuthService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.siret = this.sharedDataService.getSiret();
@@ -99,17 +99,17 @@ export class TvaReadComponent implements OnInit, OnDestroy {
           this.searchTerm = search;
           const request$ = search
             ? this.tvaService.searchTvas(
-                this.siret!,
-                search,
-                this.page,
-                this.size,
-              )
+              this.siret!,
+              search,
+              this.page,
+              this.size,
+            )
             : this.tvaService.findTvaByExercise(
-                this.siret!,
-                this.selectedExercice,
-                this.page,
-                this.size,
-              );
+              this.siret!,
+              this.selectedExercice,
+              this.page,
+              this.size,
+            );
           return request$;
         }),
         catchError((err) => {
@@ -213,9 +213,11 @@ export class TvaReadComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.tvas = data.content;
+          if (data.page) {
+            this.totalPages = data.page.totalPages;
+            this.totalElements = data.page.totalElements;
+          }
           this.nbLignesTva = this.tvas.length;
-          this.totalPages = data.page.totalPages;
-          this.totalElements = data.page.totalElements;
           this.isLoaded = true;
           this.addLabelMonthTva();
           this.calculateTotals();

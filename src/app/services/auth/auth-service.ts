@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { env } from '../../../environments/env';
 import { AuthResponse } from '../../models/AuthResponse';
 import User from '../../models/User';
 import { LibelleCompanyService } from '../shared/libelle-company-service';
@@ -8,13 +7,14 @@ import { SharedDataService } from '../shared/shared-data-service';
 import Role from '../../models/Role';
 import { Observable, tap, throwError } from 'rxjs';
 import { RefreshRequest } from '../../models/RefreshRequest';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  loginUrl = env.apiURL + '/users/login';
-  refreshUrl = env.apiURL + '/users/refresh-token';
+  loginUrl = environment.authURL + '/login';
+  refreshUrl = environment.authURL + '/refresh-token';
   userRoles: Role[] = [];
   user!: User | null;
   libelleHeader: string = '';
@@ -23,13 +23,11 @@ export class AuthService {
     private readonly http: HttpClient,
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly sharedDataService: SharedDataService
-  ) {}
+  ) { }
 
   login(credentials: { username: string; password: string }) {
     return this.http
-      .post<AuthResponse>(this.loginUrl, credentials, {
-        withCredentials: true,
-      })
+      .post<AuthResponse>(this.loginUrl, credentials)
       .pipe(
         tap((tokens) => {
           this.saveAccessToken(tokens.accessToken);
@@ -84,7 +82,7 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.getAccessToken();
-  }  
+  }
 
   logout() {
     localStorage.removeItem('accessToken');
@@ -117,7 +115,7 @@ export class AuthService {
     this.libelleHeader = libelleHeader;
     this.libelleCompanyService.setMessage(libelleHeader);
     this.sharedDataService.setSelectCompany(authResponse.company);
-    this.sharedDataService.setSelectedUser(authResponse.user);    
+    this.sharedDataService.setSelectedUser(authResponse.user);
   }
 
   getUser(): User | null {
