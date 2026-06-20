@@ -30,7 +30,7 @@ export class AuthInterceptor implements HttpInterceptor {
     new BehaviorSubject<string | null>(null);
 
   // 1. On injecte uniquement l'Injector d'Angular ici pour casser la dépendance circulaire
-  constructor(private readonly injector: Injector) {}
+  constructor(private readonly injector: Injector) { }
 
   // Getters privés pour récupérer tes services "à la demande" sans bloquer l'initialisation d'Angular
   private get authService(): AuthService {
@@ -87,7 +87,6 @@ export class AuthInterceptor implements HttpInterceptor {
         if (error.status === 401) {
           return this.handle401Error(req, next);
         }
-
         return throwError(() => error);
       }),
     );
@@ -123,7 +122,6 @@ export class AuthInterceptor implements HttpInterceptor {
         }),
         catchError((err) => {
           this.isRefreshing = false;
-
           // ❌ refresh échoué → logout
           this.reload();
           this.alertService.showFunctionlError(err);

@@ -98,8 +98,6 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
               p.deletePresta = true;
             }
           });
-
-          console.log(this.remoteConsultantError, this.remoteClientError)
         }
 
         this.isLoaded = true;

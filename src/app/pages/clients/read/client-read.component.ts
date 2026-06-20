@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import Client from '../../../models/Client';
 import { ClientService } from '../../../services/clients/client-service';
 import { Router } from '@angular/router';
@@ -11,7 +11,6 @@ import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-del
 import { AuthService } from '../../../services/auth/auth-service';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { AlertService } from '../../../services/alert/alertService';
-import { PrestationService } from '../../../services/prestations/prestation.service';
 import Prestation from '../../../models/Prestation';
 
 @Component({
@@ -23,29 +22,26 @@ import Prestation from '../../../models/Prestation';
 })
 export class ClientReadComponent implements OnInit, OnDestroy {
   clients: Client[] = [];
-   prestations!: Prestation[];
+  prestations!: Prestation[];
   isLoaded = false;
   isAdmin = false;
   parent = 'read';
   siret: string | null = '';
 
-  constructor(
-    private readonly modalService: NgbModal,
-    private readonly clientService: ClientService,
-    private readonly alertService: AlertService,
-    private readonly router: Router,
-    private readonly sharedDataService: SharedDataService,
-    private readonly sharedMessagesService: SharedMessagesService,
-    private readonly authService: AuthService,
-    private readonly prestationService: PrestationService,
-  ) { }
+  private readonly modalService = inject(NgbModal);
+  private readonly clientService = inject(ClientService);
+  private readonly alertService = inject(AlertService);
+  private readonly router = inject(Router);
+  private readonly sharedDataService = inject(SharedDataService);
+  private readonly sharedMessagesService = inject(SharedMessagesService);
+  private readonly authService = inject(AuthService);
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
     this.loadClients();
   }
-  
+
 
   private disableClientDelete() {
     if (this.prestations) {
@@ -66,7 +62,7 @@ export class ClientReadComponent implements OnInit, OnDestroy {
     this.clientService.findClients().subscribe({
       next: (clients) => {
         setTimeout(() => {
-          this.clients = clients;               
+          this.clients = clients;
           this.isLoaded = true;
           this.disableClientDelete();
         }, 100);
@@ -80,7 +76,7 @@ export class ClientReadComponent implements OnInit, OnDestroy {
   deleteClientService(id: number) {
     this.clientService.deleteClientById(id).subscribe({
       next: () => {
-      this.loadClients()
+        this.loadClients()
         //this.disableClientDelete();
         this.alertService.show('DELETE', 'CLIENT', 'success');
       },

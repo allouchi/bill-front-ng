@@ -80,7 +80,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isAuthService.setIsAuth(true);
     this.authService.setUserLang(authResponse.user.language);
     this.authService.setUser(authResponse);
-    this.authService.setUser(authResponse);
     this.sharedDataService.setSiret(authResponse.user.siret);
     this.alertService.show('AUTHENT', '', 'success');
     this.loadCompanies();
