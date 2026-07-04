@@ -23,7 +23,28 @@ export class AuthService {
     private readonly http: HttpClient,
     private readonly libelleCompanyService: LibelleCompanyService,
     private readonly sharedDataService: SharedDataService
-  ) { }
+  ) {
+    this.restoreSession();
+  }
+
+  /**
+   * Rehydrate the in-memory user from the persisted session on a full page reload, so
+   * refreshing (F5) or deep-linking does not log the user out. Only restores when a valid
+   * access token is still present.
+   */
+  private restoreSession(): void {
+    try {
+      if (!this.getAccessToken()) {
+        return;
+      }
+      const raw = localStorage.getItem('authSession');
+      if (raw) {
+        this.applySession(JSON.parse(raw) as AuthResponse);
+      }
+    } catch {
+      localStorage.removeItem('authSession');
+    }
+  }
 
   login(credentials: { username: string; password: string }) {
     return this.http
@@ -85,14 +106,20 @@ export class AuthService {
   }
 
   logout() {
+    this.user = null;
+    this.userRoles = [];
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('authSession');
   }
 
   removeAll() {
+    this.user = null;
+    this.userRoles = [];
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userLang');
+    localStorage.removeItem('authSession');
   }
 
   getRoles(): Role[] {
@@ -100,8 +127,26 @@ export class AuthService {
   }
 
   setUser(authResponse: AuthResponse) {
+    // Persist a lightweight session so a page reload can restore it (see restoreSession).
+    try {
+      localStorage.setItem(
+        'authSession',
+        JSON.stringify({
+          user: authResponse.user,
+          company: authResponse.company,
+          socialReason: authResponse.socialReason,
+        }),
+      );
+    } catch {
+      /* storage full / unavailable — session just won't survive reload */
+    }
+    this.applySession(authResponse);
+  }
+
+  /** Apply an AuthResponse to the in-memory state + dependent services (login and reload). */
+  private applySession(authResponse: AuthResponse) {
     this.user = authResponse.user;
-    this.userRoles = authResponse.user.roles!;
+    this.userRoles = authResponse.user?.roles ?? [];
     let libelleHeader = '';
     if (authResponse.user) {
       libelleHeader =

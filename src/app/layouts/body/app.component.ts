@@ -36,6 +36,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.themeService.init();
-    this.authService.removeAll();
+    // Do NOT clear auth on bootstrap — the session is restored from storage in AuthService,
+    // so a page reload / deep-link keeps the user logged in instead of bouncing to /login.
   }
 }
