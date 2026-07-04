@@ -27,14 +27,14 @@
         <tbody>
           @for (client of clients; track client.id) {
           <tr>
-            <td class="text-start fw-bold">{{ client.socialReason }}</td>
-            <td class="text-start">
+            <td class="text-start fw-bold" data-label="Raison sociale">{{ client.socialReason }}</td>
+            <td class="text-start" data-label="Adresse Email">
               @for (mail of client.emails; track mail.id) {
               <span class="chip chip-info me-1 mb-1"><i class="bi bi-envelope"></i>{{ mail.email }}</span>
               }
             </td>
-            <td class="text-start">{{ client.adresseClient | adresseClientPipe }}</td>
-            <td class="text-end">
+            <td class="text-start" data-label="Adresse client">{{ client.adresseClient | adresseClientPipe }}</td>
+            <td class="text-end cell-actions" data-label="Actions">
               <button class="btn btn-outline-primary btn-sm me-2" (click)="editClient($event, client)"
                 title="Modifier Client" [disabled]="!isAdmin">
                 <i class="bi bi-pencil"></i>

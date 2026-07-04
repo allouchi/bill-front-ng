@@ -36,17 +36,17 @@
           <tbody>
             <tr>
               @if(tvaInfos){
-              <td>{{ tvaInfos.totalTTC | customDecimalPipe }} €</td>
-              <td>{{ tvaInfos.totalCAHorsTaxe | customDecimalPipe }} €</td>
-              <td>{{ tvaInfos.montantTvaFacture | customDecimalPipe }} €</td>
-              <td>{{ tvaInfos.totalTvaPaye | customDecimalPipe }} €</td>
+              <td data-label="CA TTC">{{ tvaInfos.totalTTC | customDecimalPipe }} €</td>
+              <td data-label="CA NET">{{ tvaInfos.totalCAHorsTaxe | customDecimalPipe }} €</td>
+              <td data-label="TOTAL TVA">{{ tvaInfos.montantTvaFacture | customDecimalPipe }} €</td>
+              <td data-label="TOTAL REGLE">{{ tvaInfos.totalTvaPaye | customDecimalPipe }} €</td>
               @if(tvaInfos.totalTvaRestant >= 0 ){
-              <td class="text-success">
+              <td class="text-success" data-label="Solde TVA">
                 <i class="bi bi-check-lg me-1"></i>
                 {{ tvaInfos.totalTvaRestant | customDecimalPipe }} €
               </td>
               }@else {
-              <td class="text-danger">
+              <td class="text-danger" data-label="Solde TVA">
                 <i class="bi bi-x-octagon me-1"></i>
                 {{ -tvaInfos.totalTvaRestant | customDecimalPipe }} €
               </td>
@@ -78,7 +78,8 @@
 
   <!-- TABLE PRINCIPALE -->
   <!-- @if(showPenalite){ -->
-  <div class="table-responsive">
+  <div class="table-shell">
+    <div class="table-scroll">
     <table class="table table-success table-striped text-nowrap">
       <thead class="table-dark">
         <tr>
@@ -102,17 +103,17 @@
           'table-success': facture.factureStatus == 'OK',
           'table-danger': facture.factureStatus == 'KO'
         }">
-          <td class="text-center">{{ facture.numeroFacture }}</td>
-          <td>{{ facture.moisFacture }}</td>
-          <td>{{ facture.tarifHT }}</td>
-          <td>{{ facture.quantite | customDecimalPipe }}</td>
-          <td>{{ facture.prixTotalTTC! | customDecimalPipe }}</td>
-          <td>{{ facture.prixTotalHT! | customDecimalPipe }}</td>
-          <td>{{ facture.dateFacturation }}</td>
-          <td>{{ facture.dateEncaissement }}</td>
-          <td>{{ facture.montantTVA! | customDecimalPipe }}</td>
-          <td>{{ facture.montantTvaPaye! | customDecimalPipe }}</td>
-          <td class="d-flex flex-wrap gap-1">
+          <td class="text-center" data-label="Numéro">{{ facture.numeroFacture }}</td>
+          <td data-label="Mois">{{ facture.moisFacture }}</td>
+          <td data-label="Tarif HT">{{ facture.tarifHT }}</td>
+          <td data-label="Qté">{{ facture.quantite | customDecimalPipe }}</td>
+          <td data-label="TTC">{{ facture.prixTotalTTC! | customDecimalPipe }}</td>
+          <td data-label="HT">{{ facture.prixTotalHT! | customDecimalPipe }}</td>
+          <td data-label="Facturation">{{ facture.dateFacturation }}</td>
+          <td data-label="Encaissement">{{ facture.dateEncaissement }}</td>
+          <td data-label="TVA">{{ facture.montantTVA! | customDecimalPipe }}</td>
+          <td data-label="Débit TVA">{{ facture.montantTvaPaye! | customDecimalPipe }}</td>
+          <td class="cell-actions d-flex flex-wrap gap-1" data-label="Actions">
 
             <button class="btn btn-outline-primary btn-sm" (click)="encaissementFacture($event, facture)"
               [disabled]="!isAdmin">
@@ -147,10 +148,11 @@
         }
       </tbody>
     </table>
+    </div>
 
     <!-- PAGINATION -->
     @if(totalPages && totalPages > 1){
-    <div class="d-flex justify-content-center align-items-center gap-3 mt-3 flex-wrap">
+    <div class="d-flex justify-content-center align-items-center gap-3 mt-3 flex-wrap scroll-x-mobile">
       <button class="btn btn-outline-primary" (click)="previousPage()" [disabled]="page === 0">
         ←
       </button>

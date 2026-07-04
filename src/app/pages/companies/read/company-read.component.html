@@ -1,16 +1,17 @@
 @if(isLoaded){
-<div class="mt-4 mx-5">
-  <div class="d-flex justify-content-between align-items-end">
-    <div class="mb-3 me-2" style="width: 200px">
-      <label for="companySelect" class="form-label fw-bold">Société</label>
+<div class="app-page">
+  <div class="page-head">
+    <div>
+      <label for="companySelect" class="form-label fw-bold mb-0">Société</label>
     </div>
-    <div class="mb-3">
+    <div class="toolbar">
       <button class="btn btn-pink" title="Nouveau" (click)="addCampany()">
         Ajouter
       </button>
     </div>
   </div>
-  <div class="table-responsive">
+  <div class="table-shell">
+    <div class="table-scroll">
     <table class="table table-success table-striped">
       <thead class="table-dark">
         <tr>
@@ -28,13 +29,13 @@
             'table-success': company.checked== true,
             'table-danger': company.checked== false
           }">
-          <td style="text-align: center">{{ company.socialReason }}</td>
-          <td>{{ company.siret }}</td>
-          <td>{{ company.rcsName }}</td>
-          <td>{{ company.numeroTva }}</td>
-          <td>{{ company.codeApe }}</td>
+          <td style="text-align: center" data-label="Raison sociale">{{ company.socialReason }}</td>
+          <td data-label="Siret">{{ company.siret }}</td>
+          <td data-label="RCS">{{ company.rcsName }}</td>
+          <td data-label="Nom TVA">{{ company.numeroTva }}</td>
+          <td data-label="Code APE">{{ company.codeApe }}</td>
 
-          <td>
+          <td class="cell-actions" data-label="Actions">
             <label for="companyCheck">
               <input class="form-check-input custom-checkbox me-4" type="checkbox" [checked]="company.checked"
                 id="companyCheck" disabled />
@@ -53,6 +54,7 @@
         }
       </tbody>
     </table>
+    </div>
   </div>
 </div>
 } @else {

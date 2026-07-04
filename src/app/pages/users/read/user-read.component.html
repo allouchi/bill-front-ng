@@ -1,11 +1,18 @@
 @if(isLoaded){
 
-<div class="mt-4 mx-5">
-  <div class="text-end mb-2 me-3">
-    <button class="btn btn-pink" (click)="addUser()" title="Nouveau">
-      Ajouter
-    </button>
+<div class="app-page">
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">Utilisateurs</h1>
+    </div>
+    <div class="toolbar">
+      <button class="btn btn-pink" (click)="addUser()" title="Nouveau">
+        Ajouter
+      </button>
+    </div>
   </div>
+  <div class="table-shell">
+    <div class="table-scroll">
   <table class="table table-success table-striped">
     <thead class="table-dark">
       <tr>
@@ -20,19 +27,19 @@
     <tbody>
       @for (user of filtredUsers; track user.id) {
       <tr>
-        <td style="text-align: center">
+        <td style="text-align: center" data-label="Identité">
           {{ user | userPipe }}
         </td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.siret! | raisonSociale : companies }}</td>
-        <td *ngIf="user.roles">
+        <td data-label="Email">{{ user.email }}</td>
+        <td data-label="Société">{{ user.siret! | raisonSociale : companies }}</td>
+        <td *ngIf="user.roles" data-label="Role">
           <span *ngFor="let role of user.roles; let last = last">
             {{ role.description }}<span *ngIf="!last">, </span>
           </span>
         </td>
-        <td>{{ user.activated ? "oui" : "non" }}</td>
+        <td data-label="Actif">{{ user.activated ? "oui" : "non" }}</td>
 
-        <td>
+        <td class="cell-actions" data-label="Actions">
           <button
             class="btn btn-outline-primary btn-sm me-2"
             (click)="editUser($event, user)"
@@ -55,6 +62,8 @@
       }
     </tbody>
   </table>
+    </div>
+  </div>
 </div>
 }@else {
 <bill-waiting [edit]="parent"></bill-waiting>
