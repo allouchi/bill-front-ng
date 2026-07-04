@@ -1,0 +1,18 @@
+:host {
+  display: block;
+}
+
+.app-shell {
+  background: var(--bg);
+}
+
+.app-main {
+  position: relative;
+}
+
+/* The animated wrapper: keep entering/leaving views stacked so the
+   cross-fade does not cause layout jumps. */
+.route-host {
+  display: block;
+  min-height: calc(100vh - var(--nav-h) - 120px);
+}

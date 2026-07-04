@@ -1,56 +1,81 @@
-<style>
-  .bd-placeholder-img {
-    font-size: 1.125rem;
-    text-anchor: middle;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
-  }
+<div class="login-wrap">
+  <!-- Animated aurora background -->
+  <div class="aurora" aria-hidden="true">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+    <div class="grid-overlay"></div>
+  </div>
 
-  @media (min-width: 768px) {
-    .bd-placeholder-img-lg {
-      font-size: 3.5rem;
-    }
-  }
-</style>
-
-<main class="form-signin">
-  <form [formGroup]="formLogin" #form="ngForm" (ngSubmit)="authenticate()">
-    <img class="mb-4" src="../assets/sbatec.jpg" width="300" height="200" alt="logo" />
-    <h1 class="h3 mb-3 fw-normal">Veuillez vous connecter</h1>
-
-    <div class="form-floating mb-3">
-      <input type="email" class="form-control" id="email" formControlName="username" [class.is-invalid]="
-            formLogin.get('username')?.invalid &&
-            formLogin.get('username')?.touched" />
-
-      <label for="email">E-Mail : *</label>
-      <div *ngIf="
-          formLogin.get('username')?.invalid &&
-            formLogin.get('username')?.touched
-        " class="text-danger">
-        L'adresse Email est requise.
+  <div class="login-grid">
+    <!-- Brand / marketing panel -->
+    <aside class="login-hero">
+      <div class="hero-badge">
+        <img src="assets/logo.svg" width="40" height="40" alt="" />
+        <span>Facturation</span>
       </div>
-    </div>
+      <h1 class="hero-title">Pilotez votre facturation<br />avec élégance.</h1>
+      <p class="hero-sub">
+        Factures, clients, prestations et TVA — réunis dans une expérience
+        rapide, claire et sécurisée.
+      </p>
+      <ul class="hero-points">
+        <li><i class="bi bi-lightning-charge-fill"></i> Édition et envoi de factures en un clic</li>
+        <li><i class="bi bi-shield-check"></i> Accès sécurisé et données protégées</li>
+        <li><i class="bi bi-graph-up-arrow"></i> Tableau de bord et suivi en temps réel</li>
+      </ul>
+    </aside>
 
-    <div class="form-floating mb-3">
-      <input type="password" class="form-control" id="password" formControlName="password" [class.is-invalid]="
-            formLogin.get('password')?.invalid &&
-            formLogin.get('password')?.touched" />
-      <label for="password">Mot de passe : *</label>
-      <div *ngIf="
-          formLogin.get('password')?.invalid &&
-            formLogin.get('password')?.touched 
-        " class="text-danger">
-        Le mot de passe est requis.
+    <!-- Login card -->
+    <main class="login-card">
+      <div class="card-head">
+        <h2>Bon retour 👋</h2>
+        <p>Veuillez vous connecter à votre espace.</p>
       </div>
-    </div>
 
-    <div class="checkbox mb-3">
-      <label> <input type="checkbox" id="rememberMe" formControlName='rememberMe' /> Remember me </label>
-    </div>
-    <button class="w-100 btn btn-lg btn-primary" type="button" (click)="authenticate()">
-      Valider
-    </button>
-  </form>
-</main>
+      <form [formGroup]="formLogin" #form="ngForm" (ngSubmit)="authenticate()" novalidate>
+        <div class="field">
+          <div class="form-floating">
+            <input type="email" class="form-control" id="email" placeholder="email" formControlName="username"
+              autocomplete="username"
+              [class.is-invalid]="formLogin.get('username')?.invalid && formLogin.get('username')?.touched" />
+            <label for="email"><i class="bi bi-envelope me-1"></i> E-Mail *</label>
+          </div>
+          @if (formLogin.get('username')?.invalid && formLogin.get('username')?.touched) {
+          <div class="field-error"><i class="bi bi-exclamation-circle"></i> L'adresse Email est requise.</div>
+          }
+        </div>
+
+        <div class="field">
+          <div class="form-floating">
+            <input type="password" class="form-control" id="password" placeholder="password" formControlName="password"
+              autocomplete="current-password"
+              [class.is-invalid]="formLogin.get('password')?.invalid && formLogin.get('password')?.touched" />
+            <label for="password"><i class="bi bi-lock me-1"></i> Mot de passe *</label>
+          </div>
+          @if (formLogin.get('password')?.invalid && formLogin.get('password')?.touched) {
+          <div class="field-error"><i class="bi bi-exclamation-circle"></i> Le mot de passe est requis.</div>
+          }
+        </div>
+
+        <div class="field-row">
+          <label class="remember">
+            <input type="checkbox" id="rememberMe" formControlName="rememberMe" class="form-check-input" />
+            <span>Se souvenir de moi</span>
+          </label>
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100 submit-btn" type="submit" [disabled]="isSubmit">
+          @if (isSubmit) {
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          Connexion…
+          } @else {
+          <i class="bi bi-box-arrow-in-right me-2"></i> Se connecter
+          }
+        </button>
+      </form>
+
+      <p class="login-foot">© {{ currentYear }} SBATEC Consulting</p>
+    </main>
+  </div>
+</div>

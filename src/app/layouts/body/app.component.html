@@ -1,13 +1,12 @@
-<body class="d-flex flex-column min-vh-100">
+<div class="app-shell d-flex flex-column min-vh-100">
   <bill-navbar></bill-navbar>
-  <main class="flex-fill">
-    <router-outlet></router-outlet>
+
+  <main class="flex-fill app-main">
+    <div class="route-host" [@routeFade]="prepareRoute(outlet)">
+      <router-outlet #outlet="outlet"></router-outlet>
+    </div>
     <alert-message></alert-message>
   </main>
 
-  <div class="card" style="background-color: #e3f2fd;">
-    <div class="card-header text-center">
-      <bill-footer></bill-footer>
-    </div>
-  </div>  
-</body>
+  <bill-footer></bill-footer>
+</div>

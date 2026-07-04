@@ -1,6 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
+import { ThemeService } from '../../services/shared/theme.service';
 import { SharedMessagesService } from '../../services/shared/messages.service';
 import { Subscription } from 'rxjs';
 import { LibelleCompanyService } from '../../services/shared/libelle-company-service';
@@ -24,6 +25,7 @@ import { CompanyService } from '../../services/companies/company-service';
   imports: [
     CommonModule,
     RouterLink,
+    RouterLinkActive,
     HeaderComponent,
     FormsModule,
     TranslateModule,
@@ -40,6 +42,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
   companies: Company[] | null = [];
   company: Company | null = null;
   selectedLang: string = 'fr';
+  mobileOpen = false;
+
+  readonly themeService = inject(ThemeService);
+
+  /** Primary navigation entries (icon + i18n key + label + route). */
+  readonly navItems = [
+    { route: '/companies/read', icon: 'bi-building', key: 'menu.companys', label: 'SOCIETES' },
+    { route: '/prestations/read', icon: 'bi-briefcase', key: 'menu.prestations', label: 'PRESTATIONS' },
+    { route: '/factures/read', icon: 'bi-receipt', key: 'menu.factures', label: 'FACTURES' },
+    { route: '/clients/read', icon: 'bi-people', key: 'menu.clients', label: 'CLIENTS' },
+    { route: '/consultants/read', icon: 'bi-person-badge', key: 'menu.consultants', label: 'CONSULTANTS' },
+    { route: '/operations/read', icon: 'bi-arrow-left-right', key: 'menu.operations', label: 'OPERATIONS' },
+    { route: '/compte/read', icon: 'bi-wallet2', key: 'menu.compte', label: 'COMPTE' },
+    { route: '/tvas/read', icon: 'bi-percent', key: 'menu.tva', label: 'TVAS' },
+    { route: '/users/read', icon: 'bi-shield-lock', key: 'menu.admins', label: 'ADMINS' },
+  ];
 
   constructor(
     private readonly sharedMessagesService: SharedMessagesService,
@@ -92,6 +110,36 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.sharedMessagesService.setMessage('LISTE DES ' + link.textContent);
       }
     }
+  }
+
+  /** Navigation click from the redesigned menu (uses the item label, not DOM text). */
+  onNavClick(label: string) {
+    this.mobileOpen = false;
+    if (!this.isAuth) {
+      this.sharedMessagesService.setMessage('');
+      return;
+    }
+    if (label === 'ADMINS') {
+      this.sharedMessagesService.setMessage('LISTE DES UTILISATEURS');
+    } else if (label === 'COMPTE') {
+      this.sharedMessagesService.setMessage('LISTE DES ' + label + 'S');
+    } else {
+      this.sharedMessagesService.setMessage('LISTE DES ' + label);
+    }
+  }
+
+  toggleTheme() {
+    this.themeService.toggle();
+  }
+
+  setLang(lang: string) {
+    this.selectedLang = lang;
+    this.translateService.switchLang(lang);
+    this.authService.setUserLang(lang);
+  }
+
+  toggleMobile() {
+    this.mobileOpen = !this.mobileOpen;
   }
 
   logout() {

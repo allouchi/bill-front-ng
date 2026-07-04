@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   formLogin!: FormGroup;
   isSubmit: boolean = false;
   currentLang = 'fr';
+  currentYear = new Date().getFullYear();
   companies: Company[] = [];
 
   constructor(
@@ -87,6 +88,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   private onResponseError(error: any) {
+    this.isSubmit = false;
     this.alertService.showFunctionlError(error);
     this.isAuthService.setIsAuth(false);
     this.authService.logout();

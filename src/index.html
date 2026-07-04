@@ -1,11 +1,31 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="utf-8">
-  <title>Billing</title>
+  <title>Facturation</title>
   <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">   
-  <link rel="icon" type="image/x-icon" href="../assets/sbatec.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="description" content="Facturation — plateforme de gestion des factures, clients et prestations.">
+
+  <!-- SVG favicon: a receipt + bolt glyph -->
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+
+  <!-- Premium typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Restore theme before first paint to avoid flash -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('bill-theme');
+        if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+    })();
+  </script>
 </head>
 <body>
   <bill-root></bill-root>

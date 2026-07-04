@@ -6,8 +6,9 @@
     "clients": "CUSTOMERS",
     "consultants": "CONSULTANTS",
     "operations": "OPERATIONS",
-    "compte": "COMPTE",
-    "tva": "TVAS"
+    "compte": "ACCOUNT",
+    "tva": "TVAS",
+    "admins": "ADMINS"
   },
   "message": {
     "deleteMessageF": " has been successfully deleted !",

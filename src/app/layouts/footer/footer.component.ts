@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
   imports: [ChatbotComponent],
   standalone: true,
   templateUrl: './footer.component.html',
+  styleUrl: './footer.component.css',
 })
 export class FooterComponent implements OnInit, OnDestroy {
   version?: string;

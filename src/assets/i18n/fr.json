@@ -7,7 +7,8 @@
     "consultants": "CONSULTANTS",
     "operations": "OPERATIONS",
     "compte": "COMPTE",
-    "tva": "TVAS"
+    "tva": "TVAS",
+    "admins": "ADMINS"
   },
   "message": {
     "deleteMessageF": " été supprimée avec succès !",

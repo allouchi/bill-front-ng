@@ -1,5 +1,6 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { BILLING_ROUTE } from './app.routes';
 import { provideHttpClient, HTTP_INTERCEPTORS, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
 import { AuthInterceptor } from './shared/interceptor/auth-interceptor';
@@ -16,7 +17,11 @@ export function HttpLoaderFactory(http: HttpClient): TranslateLoader {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(BILLING_ROUTE),
+    provideRouter(
+      BILLING_ROUTE,
+      withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' }),
+    ),
+    provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
     {
       provide: HTTP_INTERCEPTORS,

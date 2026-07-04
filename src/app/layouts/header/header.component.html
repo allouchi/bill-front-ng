@@ -1,8 +1,12 @@
-@if(selectedItem){
-<div class="card" style="background-color: #e3f2fd">
-  <div class="card-header">
-    <i class="bi bi-list me-2"></i>
-    <span class="text-primary fw-bold ms-3">{{ selectedItem }}</span>
+@if (selectedItem) {
+<div class="page-banner">
+  <div class="page-banner-inner">
+    <span class="page-banner-icon"><i class="bi bi-grid-1x2-fill"></i></span>
+    <nav class="crumbs" aria-label="breadcrumb">
+      <span class="crumb-home"><i class="bi bi-house-door"></i></span>
+      <i class="bi bi-chevron-right sep"></i>
+      <span class="crumb-current">{{ selectedItem }}</span>
+    </nav>
   </div>
 </div>
 }

@@ -15,8 +15,8 @@ RUN npm ci
 # Copie du reste du code source
 COPY ./ ./
 
-# Génération du build de production
-RUN npm run build --loglevel=error
+# Génération du build de production (environment.production.ts -> fact.iacsas.org)
+RUN npm run build:prod
 
 # ==========================================
 # Étape 2 : Serveur de production Nginx

@@ -12,6 +12,7 @@ import { AuthService } from '../../../services/auth/auth-service';
 import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { AlertService } from '../../../services/alert/alertService';
 import Prestation from '../../../models/Prestation';
+import { listStagger } from '../../../shared/animations/app.animations';
 
 @Component({
   selector: 'bill-client-read',
@@ -19,6 +20,7 @@ import Prestation from '../../../models/Prestation';
   imports: [AdresseClientPipe, WaitingComponent],
   templateUrl: './client-read.component.html',
   styleUrl: './client-read.component.css',
+  animations: [listStagger],
 })
 export class ClientReadComponent implements OnInit, OnDestroy {
   clients: Client[] = [];
