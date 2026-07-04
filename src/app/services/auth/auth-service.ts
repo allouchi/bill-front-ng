@@ -8,6 +8,7 @@ import Role from '../../models/Role';
 import { Observable, tap, throwError } from 'rxjs';
 import { RefreshRequest } from '../../models/RefreshRequest';
 import { environment } from '../../../environments/environment';
+import { IsAuthService } from '../shared/islogin-service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +23,8 @@ export class AuthService {
   constructor(
     private readonly http: HttpClient,
     private readonly libelleCompanyService: LibelleCompanyService,
-    private readonly sharedDataService: SharedDataService
+    private readonly sharedDataService: SharedDataService,
+    private readonly isAuthService: IsAuthService
   ) {
     this.restoreSession();
   }
@@ -40,6 +42,8 @@ export class AuthService {
       const raw = localStorage.getItem('authSession');
       if (raw) {
         this.applySession(JSON.parse(raw) as AuthResponse);
+        // Re-flag the authenticated state so the shell (nav menu) shows after a reload.
+        this.isAuthService.setIsAuth(true);
       }
     } catch {
       localStorage.removeItem('authSession');
@@ -108,6 +112,7 @@ export class AuthService {
   logout() {
     this.user = null;
     this.userRoles = [];
+    this.isAuthService.setIsAuth(false);
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('authSession');
@@ -116,6 +121,7 @@ export class AuthService {
   removeAll() {
     this.user = null;
     this.userRoles = [];
+    this.isAuthService.setIsAuth(false);
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userLang');
