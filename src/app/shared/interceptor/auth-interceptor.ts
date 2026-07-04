@@ -62,11 +62,6 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler,
   ): Observable<HttpEvent<any>> {
 
-    // 🔥 BYPASS BOT (aucune auth)
-    if (req.url.includes('/api/bot')) {
-      return next.handle(req);
-    }
-
     const token = this.authService.getAccessToken();
 
     let cloned = req;

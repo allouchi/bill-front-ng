@@ -5,12 +5,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
     "api": "node server.js",
+    "build:dev": "ng build bill-front-ng --configuration development",
+    "build:prod": "ng build bill-front-ng --configuration production",
+    "watch": "ng build bill-front-ng --watch --configuration development",
     "electron": "electron .",
-    "electron:build": "electron-builder"
+    "electron:dev": "npm run build:dev && electron .",
+    "electron:build": "npm run build:prod && electron-builder"
   },
   "dependencies": {
     "@angular/animations": "^19.0.0",

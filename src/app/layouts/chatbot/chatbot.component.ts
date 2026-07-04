@@ -1,7 +1,6 @@
 import {
   Component,
   ElementRef,
-  Inject,
   ViewChild,
   inject,
 } from '@angular/core';
@@ -9,10 +8,8 @@ import {
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-import { BotService } from '../../services/bot/bot-service';
 import { AlertService } from '../../services/alert/alertService';
-import { ClientService } from '../../services/clients/client-service';
-import { Router } from '@angular/router';
+import { BotService } from '../../services/bot/bot-service';
 
 @Component({
   selector: 'bill-chatbot',
@@ -23,18 +20,16 @@ import { Router } from '@angular/router';
 })
 export class ChatbotComponent {
 
-  @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
+  @ViewChild('scrollContainer') private scrollContainer?: ElementRef;
 
   isOpen = false;
   isLoading = false;
   userInput = '';
+
   messages: { role: 'user' | 'bot', text: string }[] = [];
 
-  private botService = inject(BotService);
   private alertService = inject(AlertService);
-  private clientService = inject(ClientService);
-
-  constructor(private router: Router) { }
+  private botService = inject(BotService);
 
   toggleChat() {
     this.isOpen = !this.isOpen;
@@ -48,43 +43,77 @@ export class ChatbotComponent {
     }
   }
 
-  reload() {
-    this.router.navigate(['/clients/read']);
+  private cleanSSE(chunk: string): string {
+    return chunk
+      .split('\n')
+      .filter(line => line.startsWith('data:'))
+      .map(line => line.replace('data: ', '').trim())
+      .join('');
   }
 
-  sendMessage() {
+  async sendMessage() {
 
-    if (!this.userInput.trim()) return;
+    if (!this.userInput.trim() || this.isLoading) return;
 
-    const input = this.userInput;
+    const input = this.userInput.trim();
 
-    // message user
     this.messages.push({ role: 'user', text: input });
     this.userInput = '';
 
-    this.autoScroll();
-
     this.isLoading = true;
 
-    this.botService.sendMessage(input).subscribe({
-      next: (res: string) => {
-        // 🤖 réponse bot
-        this.messages.push({ role: 'bot', text: res });
-        this.isLoading = false;
-        this.autoScroll(); // 🔥 scroll intelligent
-        this.clientService.findClients().subscribe({
-          next: () => {
-            this.reload();
-          }
-        })
-      },
+    // bot placeholder
+    this.messages.push({ role: 'bot', text: '' });
 
-      error: (err) => {
-        this.alertService.showFunctionlError(err);
-        this.autoScroll(); // 🔥 utile si message erreur affiché plus tard
-        this.isLoading = false;
+    let botMessage = '';
+
+    try {
+
+      const response = await this.botService.sendMessageStream(input);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`);
       }
-    });
+
+      if (!response.body) {
+        throw new Error('Streaming non supporté par le navigateur');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+
+      while (true) {
+
+        const { value, done } = await reader.read();
+
+        if (done) break;
+        if (!value) continue;
+
+        const chunk = decoder.decode(value, { stream: true });
+
+        // 🔥 FIX IMPORTANT : SSE peut envoyer des lignes vides / "data:"
+        const cleanedChunk = this.cleanSSE(chunk);
+
+        if (cleanedChunk) {
+          botMessage += cleanedChunk;
+
+          this.messages[this.messages.length - 1].text = botMessage;
+          this.autoScroll();
+        }
+      }
+
+    } catch (err) {
+
+      console.error(err);
+
+      this.alertService.showFunctionlError(err);
+
+      this.messages[this.messages.length - 1].text =
+        "Erreur lors de la génération de la réponse.";
+
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   /* =========================
@@ -99,24 +128,21 @@ export class ChatbotComponent {
 
   scrollToBottomSmooth(): void {
     setTimeout(() => {
-      if (!this.scrollContainer) return;
+      const el = this.scrollContainer?.nativeElement;
+      if (!el) return;
 
-      this.scrollContainer.nativeElement.scrollTo({
-        top: this.scrollContainer.nativeElement.scrollHeight,
+      el.scrollTo({
+        top: el.scrollHeight,
         behavior: 'smooth'
       });
-    }, 50);
+    }, 0);
   }
 
   isUserNearBottom(): boolean {
-    const threshold = 100;
-
     const el = this.scrollContainer?.nativeElement;
     if (!el) return true;
 
-    const position = el.scrollTop + el.clientHeight;
-    const height = el.scrollHeight;
-
-    return position > height - threshold;
+    const threshold = 100;
+    return el.scrollTop + el.clientHeight > el.scrollHeight - threshold;
   }
 }

@@ -2,7 +2,7 @@ export const environment = {
     production: false,
     development: true,
     apiURL: 'http://localhost:8181/api',
-    botURL: 'http://localhost:8686/api',
+    botURL: 'http://localhost:8181/chatbot/api',
     authURL: 'http://localhost:8181/authent/api',
     userURL: 'http://localhost:8181/authent/api/users',
     roleURL: 'http://localhost:8181/authent/api/roles',
