@@ -1,12 +1,13 @@
-<div class="container mt-5">
+<div class="app-page">
+  <div class="page-head">
+    <h1 class="page-title">Mise à jour de la facture numéro : {{numeroFacture}}</h1>
+  </div>
+
   <div class="card">
-    <div class="card-header bg-primary text-white">
-      <h4>Mise à jour de la facture numéro : {{numeroFacture}}</h4>
-    </div>
     <div class="card-body">
-      <form [formGroup]="formFacture" #form="ngForm" (ngSubmit)="encaisserFacture()" class="p-4 border rounded">
-        <div class="row">
-          <div class="mb-3">
+      <form [formGroup]="formFacture" #form="ngForm" (ngSubmit)="encaisserFacture()">
+        <div class="form-grid">
+          <div>
             <label class="form-label fw-bold" for="dateEncaissement fw-bold"> Date d'Encaissment</label>
             <input type="date" id="dateEncaissement" class="form-control" formControlName="dateEncaissement"
               [class.is-invalid]="
@@ -22,12 +23,12 @@
             </div>
           </div>
         </div>
-        <div class="d-flex justify-content-center gap-3">
-          <button class="btn btn-secondary me-2" (click)="cancel()">Annuler</button>
+
+        <div class="form-actions sticky-actions d-flex justify-content-center gap-3 mt-4">
+          <button class="btn btn-secondary" (click)="cancel()">Annuler</button>
           <button class="btn btn-primary" type="submit">Valider</button>
         </div>
       </form>
-
     </div>
   </div>
 </div>

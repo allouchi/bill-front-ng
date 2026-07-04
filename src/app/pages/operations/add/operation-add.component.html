@@ -1,102 +1,97 @@
-<div class="container mt-5">
+<div class="app-page">
+  <div class="page-head">
+    <h1 class="page-title">Ajout d'une opération</h1>
+  </div>
+
   <div class="card">
-    <div class="card-header bg-primary text-white">
-      <h4>Ajout d'une opération</h4>
-    </div>
     <div class="card-body">
-      <form [formGroup]="formOperation" #form="ngForm" (ngSubmit)="addOperation()" class="p-4 border rounded">
-        <div class="row">
-          <!-- Colonne gauche -->
-          <div class="col-md-6">
-              <div class="mb-3">
-                <label class="form-label fw-bold" for="typeOperation">Type opération *</label>
-                <select formControlName="typeOperation" [class.is-invalid]="
-                                formOperation.get('typeOperation')?.invalid && formOperation.get('typeOperation')?.touched
-                              " class="form-select" id="typeOperation">
-                  @for (type of typeOperationValue; track type) {
-                  <option value="{{ type}}">
-                    {{type }}
-                  </option>
-                  }
-                </select>
-                <div *ngIf="
-                          formOperation.get('typeOperation')?.invalid &&
-                          formOperation.get('typeOperation')?.touched
-                        " class="text-danger">
-                  Ce champ est requis.
-                </div>
-              </div>
+      <form [formGroup]="formOperation" #form="ngForm" (ngSubmit)="addOperation()">
+        <div class="form-grid cols-2">
 
-            <div class="mb-3">
-              <label class="form-label fw-bold" for="montantOperation">Montant opération *</label>
-              <input type="text" id="montantOperation" class="form-control" formControlName="montantOperation"
-               placeholder="Entrez un montant"
-                [class.is-invalid]="
-                    formOperation.get('montantOperation')?.invalid &&
-                    formOperation.get('montantOperation')?.touched
-                  " />
-
-              <div *ngIf="
-                    formOperation.get('montantOperation')?.errors?.['notNumeric'] &&
-                    formOperation.get('montantOperation')?.touched
-                  " class="text-danger">
-                Ce champ est requis.
-              </div>
-
-               <div *ngIf="
-                    formOperation.get('montantOperation')?.errors?.['pattern'] &&
-                    formOperation.get('montantOperation')?.touched
-                  " class="text-danger">
-                Ce champ doit être numérique.
-              </div>
+          <div>
+            <label class="form-label fw-bold" for="typeOperation">Type opération *</label>
+            <select formControlName="typeOperation" [class.is-invalid]="
+                            formOperation.get('typeOperation')?.invalid && formOperation.get('typeOperation')?.touched
+                          " class="form-select" id="typeOperation">
+              @for (type of typeOperationValue; track type) {
+              <option value="{{ type}}">
+                {{type }}
+              </option>
+              }
+            </select>
+            <div *ngIf="
+                      formOperation.get('typeOperation')?.invalid &&
+                      formOperation.get('typeOperation')?.touched
+                    " class="text-danger">
+              Ce champ est requis.
             </div>
           </div>
 
-          <!-- Colonne droite -->
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label for="exerciceSelect" class="form-label fw-bold">Exercice *</label>
-              <select formControlName="exercise" [class.is-invalid]="
-            formOperation.get('exercise')?.invalid && formOperation.get('exercise')?.touched
-          " (change)="setExerciceValue($event)" class="form-select" id="exerciceSelect">
-                @for (exercise of exercises; track exercise.id) {
-                <option value="{{ exercise.exercise }}" [value]="exercise.exercise">
-                  {{ exercise.exercise }}
-                </option>
-                }
-              </select>
+          <div>
+            <label for="exerciceSelect" class="form-label fw-bold">Exercice *</label>
+            <select formControlName="exercise" [class.is-invalid]="
+          formOperation.get('exercise')?.invalid && formOperation.get('exercise')?.touched
+        " (change)="setExerciceValue($event)" class="form-select" id="exerciceSelect">
+              @for (exercise of exercises; track exercise.id) {
+              <option value="{{ exercise.exercise }}" [value]="exercise.exercise">
+                {{ exercise.exercise }}
+              </option>
+              }
+            </select>
 
-              <div *ngIf="
-            formOperation.get('exercise')?.invalid && formOperation.get('exercise')?.touched
-          " class="text-danger">
-                Ce champ est requis.
-              </div>
+            <div *ngIf="
+          formOperation.get('exercise')?.invalid && formOperation.get('exercise')?.touched
+        " class="text-danger">
+              Ce champ est requis.
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label fw-bold" for="montantOperation">Montant opération *</label>
+            <input type="text" id="montantOperation" class="form-control" formControlName="montantOperation"
+             placeholder="Entrez un montant"
+              [class.is-invalid]="
+                  formOperation.get('montantOperation')?.invalid &&
+                  formOperation.get('montantOperation')?.touched
+                " />
+
+            <div *ngIf="
+                  formOperation.get('montantOperation')?.errors?.['notNumeric'] &&
+                  formOperation.get('montantOperation')?.touched
+                " class="text-danger">
+              Ce champ est requis.
             </div>
 
-            <div class="mb-3">
-              <label class="form-label fw-bold" for="dateOperation">Date opération *</label>
-              <input type="date" id="dateOperation" class="form-control" formControlName="dateOperation"
-                [class.is-invalid]="
-            formOperation.get('dateOperation')?.invalid &&
-            formOperation.get('dateOperation')?.touched
-          " />
+             <div *ngIf="
+                  formOperation.get('montantOperation')?.errors?.['pattern'] &&
+                  formOperation.get('montantOperation')?.touched
+                " class="text-danger">
+              Ce champ doit être numérique.
+            </div>
+          </div>
 
-              <div *ngIf="
-            formOperation.get('dateOperation')?.invalid &&
-            formOperation.get('dateOperation')?.touched
-          " class="text-danger">
-                Ce champ est requis.
-              </div>
+          <div>
+            <label class="form-label fw-bold" for="dateOperation">Date opération *</label>
+            <input type="date" id="dateOperation" class="form-control" formControlName="dateOperation"
+              [class.is-invalid]="
+          formOperation.get('dateOperation')?.invalid &&
+          formOperation.get('dateOperation')?.touched
+        " />
+
+            <div *ngIf="
+          formOperation.get('dateOperation')?.invalid &&
+          formOperation.get('dateOperation')?.touched
+        " class="text-danger">
+              Ce champ est requis.
             </div>
           </div>
         </div>
 
-        <div class="d-flex justify-content-center gap-3">
-          <button class="btn btn-secondary me-2" (click)="cancel()">Annuler</button>
+        <div class="form-actions sticky-actions d-flex justify-content-center gap-3 mt-4">
+          <button class="btn btn-secondary" (click)="cancel()">Annuler</button>
           <button class="btn btn-primary" type="submit">Valider</button>
         </div>
       </form>
-
     </div>
   </div>
 </div>

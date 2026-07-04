@@ -1,117 +1,113 @@
-<div class="container mt-5">
+<div class="app-page">
+  <div class="page-head">
+    @if(isEdit){
+    <h1 class="page-title">Mise à jour d'un paiement de TVA</h1>
+    }@else{
+    <h1 class="page-title">Ajout d'un paiement de TVA</h1>
+    }
+  </div>
+
   <div class="card">
-    <div class="card-header bg-primary text-white">
-      @if(isEdit){
-      <h4>Mise à jour d'un paiement de TVA</h4>
-      }@else{
-      <h4>Ajout d'un paiement de TVA</h4>
-      }
-    </div>
     <div class="card-body">
-      <form [formGroup]="formTva" #form="ngForm" (ngSubmit)="addTva()" class="p-4 border rounded">
-        <div class="row">
-          <!-- Colonne gauche -->
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label for="companySelect" class="form-label fw-bold">Société *</label>
-              <select [(ngModel)]="selectedCompany.socialReason" formControlName="company"
-                (change)="setCompanyValue($event)" class="form-select" id="companySelect">
-                @for (company of companies; track company.id) {
-                <option value="{{ company.id }}" [value]="company.socialReason">
-                  {{ company!.socialReason }}
-                </option>
-                }
-              </select>
+      <form [formGroup]="formTva" #form="ngForm" (ngSubmit)="addTva()">
+        <div class="form-grid cols-2">
 
-              <div *ngIf="
-                  formTva.get('company')?.invalid &&
-                  formTva.get('company')?.touched
-                " class="text-danger">
-                Ce champ est requis.
-              </div>
-            </div>
+          <div>
+            <label for="companySelect" class="form-label fw-bold">Société *</label>
+            <select [(ngModel)]="selectedCompany.socialReason" formControlName="company"
+              (change)="setCompanyValue($event)" class="form-select" id="companySelect">
+              @for (company of companies; track company.id) {
+              <option value="{{ company.id }}" [value]="company.socialReason">
+                {{ company!.socialReason }}
+              </option>
+              }
+            </select>
 
-            <div class="mb-3">
-              <label for="numeroFacture" class="form-label fw-bold">Numéro Facture *</label>
-              <select (change)="setFactureNumero($event)" class="form-select" id="numeroFacture"
-                formControlName="numeroFacture" [class.is-invalid]="
-                  formTva.get('numeroFacture')?.invalid &&
-                  formTva.get('numeroFacture')?.touched
-                ">
-                @for (facture of factures; track facture.id) {
-                <option value="{{ facture.numeroFacture }}" [value]="facture.numeroFacture">
-                  {{ facture.numeroFacture }}
-                </option>
-                }
-              </select>
-
-              <div *ngIf="
-                  formTva.get('numFacture')?.invalid &&
-                  formTva.get('numFacture')?.touched
-                " class="text-danger">
-                Ce champ est requis.
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label fw-bold" for="montantInput">Montant Paiement *</label>
-              <input type="text" id="montantInput" class="form-control" formControlName="montantPayment"
-                [class.is-invalid]="
-                  formTva.get('montantPayment')?.invalid &&
-                  formTva.get('montantPayment')?.touched
-                " />
-
-              <div *ngIf="
-                                                          formTva.get('montantPayment')?.errors?.['notNumeric'] &&
-                                                          formTva.get('montantPayment')?.touched
-                                  " class="text-danger">
-                Ce champ doit être numérique.
-              </div>
+            <div *ngIf="
+                formTva.get('company')?.invalid &&
+                formTva.get('company')?.touched
+              " class="text-danger">
+              Ce champ est requis.
             </div>
           </div>
 
-          <!-- Colonne droite -->
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label for="exerciceSelect" class="form-label fw-bold">Exercice *</label>
-              <select formControlName="exercise" [class.is-invalid]="
-                  formTva.get('exercise')?.invalid &&
-                  formTva.get('exercise')?.touched
-                " (change)="setExerciceValue($event)" class="form-select" id="exerciceSelect">
-                @for (exercice of exercices; track exercice.id) {
-                <option value="{{ exercice.exercise }}" [value]="exercice.exercise">
-                  {{ exercice.exercise }}
-                </option>
-                }
-              </select>
+          <div>
+            <label for="exerciceSelect" class="form-label fw-bold">Exercice *</label>
+            <select formControlName="exercise" [class.is-invalid]="
+                formTva.get('exercise')?.invalid &&
+                formTva.get('exercise')?.touched
+              " (change)="setExerciceValue($event)" class="form-select" id="exerciceSelect">
+              @for (exercice of exercices; track exercice.id) {
+              <option value="{{ exercice.exercise }}" [value]="exercice.exercise">
+                {{ exercice.exercise }}
+              </option>
+              }
+            </select>
 
-              <div *ngIf="
-                  formTva.get('exercise')?.invalid &&
-                  formTva.get('exercise')?.touched
-                " class="text-danger">
-                Ce champ est requis.
-              </div>
+            <div *ngIf="
+                formTva.get('exercise')?.invalid &&
+                formTva.get('exercise')?.touched
+              " class="text-danger">
+              Ce champ est requis.
             </div>
+          </div>
 
-            <div class="mb-3">
-              <label class="form-label fw-bold" for="datePayment">Date de Paiement Tva *</label>
-              <input type="date" id="datePayment" class="form-control" formControlName="datePayment" [class.is-invalid]="
-                  formTva.get('datePayment')?.invalid &&
-                  formTva.get('datePayment')?.touched
-                " />
+          <div>
+            <label for="numeroFacture" class="form-label fw-bold">Numéro Facture *</label>
+            <select (change)="setFactureNumero($event)" class="form-select" id="numeroFacture"
+              formControlName="numeroFacture" [class.is-invalid]="
+                formTva.get('numeroFacture')?.invalid &&
+                formTva.get('numeroFacture')?.touched
+              ">
+              @for (facture of factures; track facture.id) {
+              <option value="{{ facture.numeroFacture }}" [value]="facture.numeroFacture">
+                {{ facture.numeroFacture }}
+              </option>
+              }
+            </select>
 
-              <div *ngIf="
-                  formTva.get('datePayment')?.invalid &&
-                  formTva.get('datePayment')?.touched
-                " class="text-danger">
-                Ce champ est requis.
-              </div>
+            <div *ngIf="
+                formTva.get('numFacture')?.invalid &&
+                formTva.get('numFacture')?.touched
+              " class="text-danger">
+              Ce champ est requis.
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label fw-bold" for="montantInput">Montant Paiement *</label>
+            <input type="text" id="montantInput" class="form-control" formControlName="montantPayment"
+              [class.is-invalid]="
+                formTva.get('montantPayment')?.invalid &&
+                formTva.get('montantPayment')?.touched
+              " />
+
+            <div *ngIf="
+                                                        formTva.get('montantPayment')?.errors?.['notNumeric'] &&
+                                                        formTva.get('montantPayment')?.touched
+                                " class="text-danger">
+              Ce champ doit être numérique.
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label fw-bold" for="datePayment">Date de Paiement Tva *</label>
+            <input type="date" id="datePayment" class="form-control" formControlName="datePayment" [class.is-invalid]="
+                formTva.get('datePayment')?.invalid &&
+                formTva.get('datePayment')?.touched
+              " />
+
+            <div *ngIf="
+                formTva.get('datePayment')?.invalid &&
+                formTva.get('datePayment')?.touched
+              " class="text-danger">
+              Ce champ est requis.
             </div>
           </div>
         </div>
 
-        <div class="d-flex justify-content-center gap-3">
-          <button class="btn btn-secondary me-2" (click)="cancel()">
+        <div class="form-actions sticky-actions d-flex justify-content-center gap-3 mt-4">
+          <button class="btn btn-secondary" (click)="cancel()">
             Annuler
           </button>
           <button class="btn btn-primary" type="submit">Valider</button>

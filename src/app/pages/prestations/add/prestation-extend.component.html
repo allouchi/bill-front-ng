@@ -1,47 +1,42 @@
-
-<div class="container mt-5">
-  <div class="card">
-    <div class="card-header bg-primary text-white">
-      <h4>Prolonger une prestation</h4>
-    </div>
-    <div class="card-body">
-<form [formGroup]="formPrestation" #form="ngForm"
-  (ngSubmit)="prolongerPrestation()"
-  class="p-4 border rounded"
->
-
-  <div class="row"> 
-      <div class="mb-3">
-        <label class="form-label fw-bold" for="dateFin">Date Fin :</label>
-        <input
-          type="date"
-          id="dateFin"
-          class="form-control"
-          formControlName="dateFin"
-          [class.is-invalid]="
-            formPrestation.get('dateFin')?.invalid &&
-            formPrestation.get('dateFin')?.touched
-          "
-        />
-
-        <div
-          *ngIf="
-            formPrestation.get('dateFin')?.invalid &&
-            formPrestation.get('dateFin')?.touched
-          "
-          class="text-danger"
-        >
-          Ce champ est requis.
-        </div>
-      </div>
-    </div>
-  
-
-  <div class="d-flex justify-content-center gap-3">
-    <button class="btn btn-secondary me-2" (click)="cancel()">Annuler</button>
-    <button class="btn btn-primary" type="submit">Valider</button>
+<div class="app-page">
+  <div class="page-head">
+    <h1 class="page-title">Prolonger une prestation</h1>
   </div>
-</form>
-</div>
-</div>
+
+  <div class="card">
+    <div class="card-body">
+      <form [formGroup]="formPrestation" #form="ngForm" (ngSubmit)="prolongerPrestation()">
+        <div class="form-grid">
+          <div>
+            <label class="form-label fw-bold" for="dateFin">Date Fin :</label>
+            <input
+              type="date"
+              id="dateFin"
+              class="form-control"
+              formControlName="dateFin"
+              [class.is-invalid]="
+                formPrestation.get('dateFin')?.invalid &&
+                formPrestation.get('dateFin')?.touched
+              "
+            />
+
+            <div
+              *ngIf="
+                formPrestation.get('dateFin')?.invalid &&
+                formPrestation.get('dateFin')?.touched
+              "
+              class="text-danger"
+            >
+              Ce champ est requis.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions sticky-actions d-flex justify-content-center gap-3 mt-4">
+          <button class="btn btn-secondary" (click)="cancel()">Annuler</button>
+          <button class="btn btn-primary" type="submit">Valider</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
