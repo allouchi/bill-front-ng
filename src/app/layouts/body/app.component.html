@@ -2,8 +2,8 @@
   <bill-navbar></bill-navbar>
 
   <main class="flex-fill app-main">
-    <div class="route-host" [@routeFade]="prepareRoute(outlet)">
-      <router-outlet #outlet="outlet"></router-outlet>
+    <div class="route-host">
+      <router-outlet></router-outlet>
     </div>
     <alert-message></alert-message>
   </main>

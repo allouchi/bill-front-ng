@@ -6,7 +6,6 @@ import { AlertComponent } from '../../shared/alert/alert.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth/auth-service';
 import { ThemeService } from '../../services/shared/theme.service';
-import { routeFade } from '../../shared/animations/app.animations';
 
 @Component({
   selector: 'bill-root',
@@ -20,7 +19,6 @@ import { routeFade } from '../../shared/animations/app.animations';
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
-  animations: [routeFade],
 })
 export class AppComponent implements OnInit {
   title = 'bill-front-ng';
@@ -39,13 +37,5 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.themeService.init();
     this.authService.removeAll();
-  }
-
-  prepareRoute(outlet: RouterOutlet): string {
-    return (
-      outlet?.activatedRouteData?.['animation'] ??
-      outlet?.activatedRoute?.snapshot?.url?.map((s) => s.path).join('/') ??
-      ''
-    );
   }
 }
