@@ -29,6 +29,7 @@ interface KpiCard {
   key: string;
   label: string;
   value: number;
+  display: number;
   icon: string;
   tint: string;
   route: string;
@@ -51,10 +52,10 @@ export class DashboardComponent implements OnInit {
   userName = '';
 
   kpis: KpiCard[] = [
-    { key: 'factures', label: 'Factures', value: 0, icon: 'bi-receipt', tint: 'violet', route: '/factures/read', hint: 'Total émises' },
-    { key: 'clients', label: 'Clients', value: 0, icon: 'bi-people', tint: 'emerald', route: '/clients/read', hint: 'Portefeuille' },
-    { key: 'consultants', label: 'Consultants', value: 0, icon: 'bi-person-badge', tint: 'amber', route: '/consultants/read', hint: 'Intervenants' },
-    { key: 'companies', label: 'Sociétés', value: 0, icon: 'bi-building', tint: 'sky', route: '/companies/read', hint: 'Entités gérées' },
+    { key: 'factures', label: 'Factures', value: 0, display: 0, icon: 'bi-receipt', tint: 'gold', route: '/factures/read', hint: 'Total émises' },
+    { key: 'clients', label: 'Clients', value: 0, display: 0, icon: 'bi-people', tint: 'spruce', route: '/clients/read', hint: 'Portefeuille' },
+    { key: 'consultants', label: 'Consultants', value: 0, display: 0, icon: 'bi-person-badge', tint: 'amber', route: '/consultants/read', hint: 'Intervenants' },
+    { key: 'companies', label: 'Sociétés', value: 0, display: 0, icon: 'bi-building', tint: 'slate', route: '/companies/read', hint: 'Entités gérées' },
   ];
 
   totalRevenue = 0;
@@ -64,21 +65,21 @@ export class DashboardComponent implements OnInit {
   chartType: ApexChart = {
     type: 'area',
     height: 300,
-    fontFamily: 'Plus Jakarta Sans, sans-serif',
+    fontFamily: 'Hanken Grotesk, sans-serif',
     toolbar: { show: false },
     zoom: { enabled: false },
-    animations: { enabled: true, speed: 800 },
+    animations: { enabled: true, speed: 900 },
   };
-  chartXaxis: ApexXAxis = { categories: [], labels: { style: { colors: '#8a90a6' } }, axisBorder: { show: false }, axisTicks: { show: false } };
-  chartYaxis: ApexYAxis = { labels: { style: { colors: '#8a90a6' }, formatter: (v) => this.compact(v) } };
-  chartStroke: ApexStroke = { curve: 'smooth', width: 3, colors: ['#6366f1'] };
+  chartXaxis: ApexXAxis = { categories: [], labels: { style: { colors: '#9A8E7C' } }, axisBorder: { show: false }, axisTicks: { show: false } };
+  chartYaxis: ApexYAxis = { labels: { style: { colors: '#9A8E7C' }, formatter: (v) => this.compact(v) } };
+  chartStroke: ApexStroke = { curve: 'smooth', width: 2.75, colors: ['#C6902B'] };
   chartFill: ApexFill = {
     type: 'gradient',
-    gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.02, stops: [0, 90, 100] },
-    colors: ['#8b5cf6'],
+    gradient: { shadeIntensity: 1, opacityFrom: 0.42, opacityTo: 0.02, stops: [0, 92, 100] },
+    colors: ['#E0A93B'],
   };
   chartDataLabels: ApexDataLabels = { enabled: false };
-  chartGrid: ApexGrid = { borderColor: 'rgba(140,140,170,0.15)', strokeDashArray: 4, xaxis: { lines: { show: false } } };
+  chartGrid: ApexGrid = { borderColor: 'rgba(155,142,124,0.18)', strokeDashArray: 4, xaxis: { lines: { show: false } } };
   chartTooltip: ApexTooltip = { theme: 'dark', y: { formatter: (v) => this.currency(v) } };
 
   hasChartData = false;
@@ -117,9 +118,38 @@ export class DashboardComponent implements OnInit {
         .sort((a, b) => (b.dateFacturation ?? '').localeCompare(a.dateFacturation ?? ''))
         .slice(0, 6);
 
-      // Let the skeletons breathe for a beat, then reveal.
-      setTimeout(() => (this.loading = false), 350);
+      // Let the skeletons breathe for a beat, then reveal + count up.
+      setTimeout(() => {
+        this.loading = false;
+        this.animateCounts();
+      }, 350);
     });
+  }
+
+  /** Tween each KPI from 0 → value for a premium count-up effect. */
+  private animateCounts(): void {
+    const reduce = typeof window !== 'undefined'
+      && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) {
+      this.kpis.forEach((k) => (k.display = k.value));
+      return;
+    }
+    const duration = 1100;
+    for (const kpi of this.kpis) {
+      const target = kpi.value;
+      const start = performance.now();
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        kpi.display = Math.round(target * eased);
+        if (t < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          kpi.display = target;
+        }
+      };
+      requestAnimationFrame(tick);
+    }
   }
 
   private setKpi(key: string, value: number): void {

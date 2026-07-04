@@ -19,7 +19,7 @@
       </div>
       <div class="kpi-body">
         <ng-container *ngIf="!loading; else kpiSkel">
-          <div class="kpi-value">{{ k.value }}</div>
+          <div class="kpi-value tnum">{{ k.display }}</div>
         </ng-container>
         <ng-template #kpiSkel><div class="skeleton" style="height:2rem;width:60%;"></div></ng-template>
         <div class="kpi-label">{{ k.label }}</div>
