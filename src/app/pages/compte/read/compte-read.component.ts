@@ -60,6 +60,13 @@ export class CompteReadComponent implements OnInit, OnDestroy {
   searchTerm = '';
   private searchSubject = new Subject<string>();
 
+  get sommeMontant(): number {
+    return (this.operations ?? []).reduce(
+      (sum, o) => sum + (Number(o.montantOperation) || 0),
+      0,
+    );
+  }
+
   router = inject(Router);
   constructor(
     private readonly sharedDataService: SharedDataService,
@@ -72,6 +79,12 @@ export class CompteReadComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
+    if (!this.siret) {
+      this.operations = [];
+      this.operationsFiltred = [];
+      this.isLoaded = true;
+      return;
+    }
     this.loadExercicesRef();
     this.selectedType = 'Tous';
     this.selectedExercice = 'Tous';

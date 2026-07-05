@@ -74,6 +74,12 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
+    if (!this.siret) {
+      this.operations = [];
+      this.operationsFiltred = [];
+      this.isLoaded = true;
+      return;
+    }
     this.loadExercicesRef();
     this.loadTvaInfo('Tous');
     this.loadOperations('Tous', 'Tous');

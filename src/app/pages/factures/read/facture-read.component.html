@@ -6,9 +6,10 @@
   <!-- HEADER -->
   <div class="page-head">
     <div>
-      <h1 class="page-title">Factures</h1>
+      <h1 class="page-title"><i class="bi bi-receipt me-2 text-primary"></i>Factures</h1>
       <p class="page-subtitle">Exercice {{ selectedExercice }} — suivi de la facturation et de la TVA</p>
     </div>
+    @if(siret){
     <div class="toolbar">
       <bill-search class="w-100" (search)="onSearch($event)" placeholder="Chercher facture..."></bill-search>
 
@@ -24,9 +25,18 @@
       </button>
       }
     </div>
+    }
   </div>
 
-  <!-- FILTER + KPI -->
+  @if(!siret){
+  <div class="surface-card empty-state">
+    <div class="empty-glyph"><i class="bi bi-building"></i></div>
+    <h3>Sélectionnez une société</h3>
+    <p>Choisissez une société active pour afficher ses factures.</p>
+  </div>
+  } @else {
+
+  <!-- FILTER -->
   <div class="filter-bar">
     <div class="filter-field" style="min-width: 160px">
       <label for="yearSelect" class="form-label">Exercice</label>
@@ -38,42 +48,58 @@
     </div>
   </div>
 
+  <!-- KPI -->
   @if(tvaInfos){
-  <div class="kpi-cards mb-3 stagger">
+  <div class="kpi-cards stagger">
     <div class="kpi-card">
-      <span class="kpi-label">CA TTC</span>
+      <span class="kpi-icon"><i class="bi bi-cash-coin"></i></span>
       <span class="kpi-value tnum">{{ tvaInfos.totalTTC | customDecimalPipe }} €</span>
+      <span class="kpi-label">CA TTC</span>
     </div>
     <div class="kpi-card">
-      <span class="kpi-label">CA NET</span>
+      <span class="kpi-icon"><i class="bi bi-wallet2"></i></span>
       <span class="kpi-value tnum">{{ tvaInfos.totalCAHorsTaxe | customDecimalPipe }} €</span>
+      <span class="kpi-label">CA NET</span>
     </div>
-    <div class="kpi-card">
-      <span class="kpi-label">Total TVA</span>
+    <div class="kpi-card is-info">
+      <span class="kpi-icon"><i class="bi bi-percent"></i></span>
       <span class="kpi-value tnum">{{ tvaInfos.montantTvaFacture | customDecimalPipe }} €</span>
-    </div>
-    <div class="kpi-card">
-      <span class="kpi-label">Total réglé</span>
-      <span class="kpi-value tnum">{{ tvaInfos.totalTvaPaye | customDecimalPipe }} €</span>
+      <span class="kpi-label">Total TVA</span>
     </div>
     @if(tvaInfos.totalTvaRestant > 0){
     <div class="kpi-card is-negative">
+      <span class="kpi-icon"><i class="bi bi-x-octagon"></i></span>
+      <span class="kpi-value tnum">{{ tvaInfos.totalTvaRestant | customDecimalPipe }} €</span>
       <span class="kpi-label">Reste à payer</span>
-      <span class="kpi-value tnum"><i class="bi bi-x-octagon me-1"></i>{{ tvaInfos.totalTvaRestant | customDecimalPipe }} €</span>
     </div>
     }@else if(tvaInfos.totalTvaRestant < 0){
     <div class="kpi-card is-positive">
+      <span class="kpi-icon"><i class="bi bi-check-lg"></i></span>
+      <span class="kpi-value tnum">{{ -tvaInfos.totalTvaRestant | customDecimalPipe }} €</span>
       <span class="kpi-label">Trop-perçu</span>
-      <span class="kpi-value tnum"><i class="bi bi-check-lg me-1"></i>{{ -tvaInfos.totalTvaRestant | customDecimalPipe }} €</span>
     </div>
     }@else{
     <div class="kpi-card is-positive">
+      <span class="kpi-icon"><i class="bi bi-check-lg"></i></span>
+      <span class="kpi-value tnum">Match (0:0)</span>
       <span class="kpi-label">Solde TVA</span>
-      <span class="kpi-value tnum"><i class="bi bi-check-lg me-1"></i>Match (0:0)</span>
     </div>
     }
   </div>
   }
+
+  <!-- STATUS TABS -->
+  <div class="status-tabs">
+    <button class="status-tab" [class.active]="factureStatusFilter === 'all'" (click)="factureStatusFilter = 'all'">
+      Toutes <span class="status-tab-count">{{ factures.length }}</span>
+    </button>
+    <button class="status-tab" [class.active]="factureStatusFilter === 'paid'" (click)="factureStatusFilter = 'paid'">
+      Réglées <span class="status-tab-count">{{ paidCount }}</span>
+    </button>
+    <button class="status-tab" [class.active]="factureStatusFilter === 'unpaid'" (click)="factureStatusFilter = 'unpaid'">
+      En attente <span class="status-tab-count">{{ unpaidCount }}</span>
+    </button>
+  </div>
 
   <!-- TABLE PRINCIPALE -->
   <div class="table-shell">
@@ -89,6 +115,7 @@
           <th>HT</th>
           <th>Facturation</th>
           <th>Encaissement</th>
+          <th>Statut</th>
           <th>TVA</th>
           <th>Débit TVA</th>
           <th>Actions</th>
@@ -96,7 +123,7 @@
       </thead>
       <tbody>
 
-        @for (facture of factures; track facture.id) {
+        @for (facture of displayedFactures; track facture.id) {
         <tr [ngClass]="{
           'table-success': facture.factureStatus == 'OK',
           'table-danger': facture.factureStatus == 'KO'
@@ -109,6 +136,12 @@
           <td class="money tnum" data-label="HT">{{ facture.prixTotalHT! | customDecimalPipe }}</td>
           <td data-label="Facturation">{{ facture.dateFacturation }}</td>
           <td data-label="Encaissement">{{ facture.dateEncaissement }}</td>
+          <td data-label="Statut">
+            <span class="chip" [ngClass]="facture.dateEncaissement ? 'chip-success' : 'chip-warning'">
+              <i class="bi" [ngClass]="facture.dateEncaissement ? 'bi-check-lg' : 'bi-hourglass-split'"></i>
+              {{ facture.dateEncaissement ? "Réglée" : "En attente" }}
+            </span>
+          </td>
           <td class="money tnum" data-label="TVA">{{ facture.montantTVA! | customDecimalPipe }}</td>
           <td class="money tnum" data-label="Débit TVA">{{ facture.montantTvaPaye! | customDecimalPipe }}</td>
           <td class="cell-actions d-flex flex-wrap gap-1" data-label="Actions">
@@ -145,7 +178,7 @@
         </tr>
         } @empty {
         <tr>
-          <td colspan="11">
+          <td colspan="12">
             <div class="empty-state">
               <div class="empty-glyph"><i class="bi bi-receipt"></i></div>
               <h3>Aucune facture</h3>
@@ -171,6 +204,7 @@
     </div>
     }
   </div>
+  }
 </div>
 
 }

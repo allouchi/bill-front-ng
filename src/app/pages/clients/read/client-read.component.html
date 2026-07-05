@@ -12,6 +12,24 @@
     </div>
   </div>
 
+  <div class="kpi-cards stagger">
+    <div class="kpi-card">
+      <span class="kpi-icon"><i class="bi bi-people"></i></span>
+      <span class="kpi-value">{{ clients.length }}</span>
+      <span class="kpi-label">Total clients</span>
+    </div>
+    <div class="kpi-card is-info">
+      <span class="kpi-icon"><i class="bi bi-envelope"></i></span>
+      <span class="kpi-value">{{ totalEmails }}</span>
+      <span class="kpi-label">Adresses email</span>
+    </div>
+    <div class="kpi-card is-positive">
+      <span class="kpi-icon"><i class="bi bi-briefcase"></i></span>
+      <span class="kpi-value">{{ billableCount }}</span>
+      <span class="kpi-label">Avec prestation</span>
+    </div>
+  </div>
+
   @if (clients.length) {
   <div class="table-shell">
     <div class="table-scroll">

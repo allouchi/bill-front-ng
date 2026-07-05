@@ -29,6 +29,13 @@ export class ClientReadComponent implements OnInit, OnDestroy {
   parent = 'read';
   siret: string | null = '';
 
+  get totalEmails(): number {
+    return this.clients.reduce((sum, c) => sum + (c.emails?.length || 0), 0);
+  }
+  get billableCount(): number {
+    return this.clients.filter((c) => c.hasPrestation).length;
+  }
+
   private readonly modalService = inject(NgbModal);
   private readonly clientService = inject(ClientService);
   private readonly alertService = inject(AlertService);

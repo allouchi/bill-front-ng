@@ -72,7 +72,27 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   showPenalite = true;
   hidePenalite = false;
   searchTerm: string = '';
+  factureStatusFilter: 'all' | 'paid' | 'unpaid' = 'all';
   private searchSubject = new Subject<string>();
+
+  private isPaid(facture: Facture): boolean {
+    return !!facture.dateEncaissement && facture.dateEncaissement.trim() !== '';
+  }
+  get paidCount(): number {
+    return this.factures.filter((f) => this.isPaid(f)).length;
+  }
+  get unpaidCount(): number {
+    return this.factures.filter((f) => !this.isPaid(f)).length;
+  }
+  get displayedFactures(): Facture[] {
+    if (this.factureStatusFilter === 'paid') {
+      return this.factures.filter((f) => this.isPaid(f));
+    }
+    if (this.factureStatusFilter === 'unpaid') {
+      return this.factures.filter((f) => !this.isPaid(f));
+    }
+    return this.factures;
+  }
 
   private readonly router = inject(Router);
 
@@ -89,6 +109,11 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     this.siret = this.sharedDataService.getSiret();
+    if (!this.siret) {
+      this.factures = [];
+      this.isLoaded = true;
+      return;
+    }
     this.selectedExercice = new Date().getFullYear().toString();
     this.loadExercisesRef();
     this.isEdition = this.sharedDataService.getIsEditionFacture();

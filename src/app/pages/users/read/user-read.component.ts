@@ -29,6 +29,23 @@ export class UserReadComponent implements OnInit, OnDestroy {
   isLoaded = false;
   isAdmin = false;
   parent = 'read';
+  statusFilter: 'all' | 'active' | 'inactive' = 'all';
+
+  get activeCount(): number {
+    return this.filtredUsers.filter((u) => u.activated).length;
+  }
+  get inactiveCount(): number {
+    return this.filtredUsers.filter((u) => !u.activated).length;
+  }
+  get displayedUsers(): User[] {
+    if (this.statusFilter === 'active') {
+      return this.filtredUsers.filter((u) => u.activated);
+    }
+    if (this.statusFilter === 'inactive') {
+      return this.filtredUsers.filter((u) => !u.activated);
+    }
+    return this.filtredUsers;
+  }
 
   constructor(
     private readonly modalService: NgbModal,

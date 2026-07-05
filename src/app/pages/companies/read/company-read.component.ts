@@ -29,6 +29,23 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   siret: string | null = '';
   isAdmin = false;
   parent = 'read';
+  statusFilter: 'all' | 'valid' | 'pending' = 'all';
+
+  get validCount(): number {
+    return this.companies.filter((c) => c.checked).length;
+  }
+  get pendingCount(): number {
+    return this.companies.filter((c) => !c.checked).length;
+  }
+  get displayedCompanies(): Company[] {
+    if (this.statusFilter === 'valid') {
+      return this.companies.filter((c) => c.checked);
+    }
+    if (this.statusFilter === 'pending') {
+      return this.companies.filter((c) => !c.checked);
+    }
+    return this.companies;
+  }
 
   constructor(
     private readonly modalService: NgbModal,

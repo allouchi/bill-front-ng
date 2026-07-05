@@ -3,7 +3,7 @@
 <div class="app-page">
   <div class="page-head">
     <div>
-      <h1 class="page-title">Consultants</h1>
+      <h1 class="page-title"><i class="bi bi-person-badge me-2 text-primary"></i>Consultants</h1>
       <p class="page-subtitle">{{ consultants.length }} consultant(s) enregistré(s)</p>
     </div>
     <div class="toolbar">
@@ -12,6 +12,20 @@
       </button>
     </div>
   </div>
+
+  <div class="kpi-cards stagger">
+    <div class="kpi-card">
+      <span class="kpi-icon"><i class="bi bi-person-badge"></i></span>
+      <span class="kpi-value">{{ consultants.length }}</span>
+      <span class="kpi-label">Total consultants</span>
+    </div>
+    <div class="kpi-card is-positive">
+      <span class="kpi-icon"><i class="bi bi-briefcase"></i></span>
+      <span class="kpi-value">{{ affectedCount }}</span>
+      <span class="kpi-label">Affectés</span>
+    </div>
+  </div>
+
   <div class="table-shell">
     <div class="table-scroll">
     <table class="table table-success table-striped">

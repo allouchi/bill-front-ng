@@ -83,6 +83,11 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.siret = this.sharedDataService.getSiret();
     this.isAdmin = this.authService.isAdmin();
+    if (!this.siret) {
+      this.tvas = [];
+      this.isLoaded = true;
+      return;
+    }
     this.loadCompanies();
     this.loadMonthInYear();
     this.loadExercicesRef();

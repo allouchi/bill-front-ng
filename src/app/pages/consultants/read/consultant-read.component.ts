@@ -28,6 +28,10 @@ siret: string | null = '';
   observableEvent$ = new Subscription();
   isAdmin = false;
 
+  get affectedCount(): number {
+    return this.consultants.filter((c) => c.hasPrestation).length;
+  }
+
   constructor(
     private readonly modalService: NgbModal,
     private readonly consultantService: ConsultantService,

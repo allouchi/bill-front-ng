@@ -3,14 +3,37 @@
 <div class="app-page">
   <div class="page-head">
     <div>
-      <h1 class="page-title">Compte bancaire</h1>
+      <h1 class="page-title"><i class="bi bi-bank me-2 text-primary"></i>Compte bancaire</h1>
       <p class="page-subtitle">Relevé des opérations importées</p>
     </div>
     <div class="toolbar">
+      @if(siret){
       <bill-search (search)="onSearch($event)" placeholder="Chercher opération..."></bill-search>
-      <button id="add" class="btn btn-primary" (click)="importOperations()" title="Ajouter une opération">
+      }
+      <button id="add" class="btn btn-primary" (click)="importOperations()" title="Ajouter une opération" [disabled]="!siret">
         <i class="bi bi-upload me-1"></i> Importer
       </button>
+    </div>
+  </div>
+
+  @if(!siret){
+  <div class="surface-card empty-state">
+    <div class="empty-glyph"><i class="bi bi-building"></i></div>
+    <h3>Sélectionnez une société</h3>
+    <p>Choisissez une société active pour afficher le relevé du compte.</p>
+  </div>
+  } @else {
+
+  <div class="kpi-cards stagger">
+    <div class="kpi-card">
+      <span class="kpi-icon"><i class="bi bi-list-ol"></i></span>
+      <span class="kpi-value">{{ totalOperation }}</span>
+      <span class="kpi-label">Opérations</span>
+    </div>
+    <div class="kpi-card is-positive">
+      <span class="kpi-icon"><i class="bi bi-cash-stack"></i></span>
+      <span class="kpi-value tnum">{{ sommeMontant | customDecimalPipe }} €</span>
+      <span class="kpi-label">Total montant</span>
     </div>
   </div>
 
@@ -104,6 +127,7 @@
     </div>
     }
   </div>
+  }
 </div>
 
 } @else {

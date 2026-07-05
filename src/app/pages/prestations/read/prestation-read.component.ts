@@ -57,6 +57,16 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
   remoteClientError = false;
   remoteConsultantError = false;
 
+  get totalHT(): number {
+    return (this.prestations ?? []).reduce((sum, p) => sum + (Number(p.tarifHT) || 0), 0);
+  }
+  get facturableCount(): number {
+    return (this.prestations ?? []).filter((p) => p.isPrestaNoteValid).length;
+  }
+  get nonFactureesCount(): number {
+    return (this.prestations ?? []).filter((p) => p.deletePresta).length;
+  }
+
   private readonly router = inject(Router);
   constructor(
     private readonly fb: FormBuilder,
@@ -74,6 +84,11 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
       prestaDateFin: ['', Validators.required],
     });
     this.siret = this.sharedDataService.getSiret();
+    if (!this.siret) {
+      this.prestations = [];
+      this.isLoaded = true;
+      return;
+    }
     this.loadPrestations();
   }
 
