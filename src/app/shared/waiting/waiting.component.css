@@ -1,8 +1,10 @@
 .overlay-loader {
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle at center, rgba(10, 10, 20, 0.6), rgba(5, 5, 10, 0.9));
-    backdrop-filter: blur(6px);
+    background: radial-gradient(circle at center,
+        color-mix(in srgb, var(--bg) 55%, transparent),
+        color-mix(in srgb, var(--bg) 88%, transparent));
+    backdrop-filter: blur(8px) saturate(140%);
     z-index: 9999;
 
     display: flex;
@@ -12,14 +14,16 @@
 
 .loader-glass {
     padding: 2.5rem 3rem;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+    border: 1px solid var(--border);
     box-shadow:
-        0 0 40px rgba(0, 229, 255, 0.25),
-        inset 0 0 20px rgba(255, 255, 255, 0.05);
+        var(--shadow-lg),
+        0 0 60px color-mix(in srgb, var(--gold-400) 22%, transparent),
+        inset 0 1px 0 rgba(255, 255, 255, .12);
     text-align: center;
     min-width: 320px;
+    animation: popIn .28s var(--spring) both;
 }
 
 /* SVG spinner */
@@ -31,14 +35,15 @@
 }
 
 .tech-spinner circle {
-    filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.6));
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--gold-400) 60%, transparent));
 }
 
 /* Texte */
 .loader-text {
-    color: #e3f2fd;
-    font-weight: 600;
-    letter-spacing: 0.03em;
+    color: var(--text);
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: 0.01em;
     margin-bottom: 1.2rem;
 }
 
@@ -46,9 +51,10 @@
 .pulse-line {
     height: 3px;
     width: 100%;
-    background: linear-gradient(90deg, transparent, #00e5ff, transparent);
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, var(--gold-500), transparent);
     animation: pulse 1.4s ease-in-out infinite;
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
 @keyframes rotate {

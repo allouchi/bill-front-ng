@@ -1,54 +1,42 @@
-/* ==== Apparence générale ==== */
+/* ==== Base appearance — on-brand glass toast ==== */
 .toast {
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  backdrop-filter: saturate(160%) blur(12px);
+  color: var(--text);
+  box-shadow: var(--shadow-lg);
   opacity: 0;
-  transform: translateY(15px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(15px) scale(.98);
+  transition: opacity .3s var(--ease), transform .3s var(--spring);
 }
 
-/* Lorsqu’il devient visible */
+/* Visible state */
 .toast.show {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
 }
 
-/* ==== Styles par type ==== */
-
-/* Succès */
-.success-toast {
-  border-left: 6px solid #28a745;
-  background-color: #d4edda;
-  color: #155724;
-}
-
-/* Info */
-.info-toast {
-  border-left: 6px solid #17a2b8;
-  background-color: #d1ecf1;
-  color: #0c5460;
-}
-
-/* Avertissement */
-.warning-toast {
-  border-left: 6px solid #ffc107;
-  background-color: #fff3cd;
-  color: #856404;
-}
-
-/* Erreur */
-.danger-toast {
-  border-left: 6px solid #dc3545;
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-/* Bouton de fermeture plus visible */
-.toast .btn-close {
-  filter: invert(0.4);
+.toast .toast-header {
+  background: transparent;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-display);
+  font-weight: 500;
 }
 
 .toast-body {
   text-align: center;
-  font-weight: bold;
+  font-weight: 600;
+  color: var(--text-soft);
 }
+
+/* ==== Accent by type — left rule in palette tints ==== */
+.success-toast { border-left: 5px solid var(--spruce-500); }
+.info-toast    { border-left: 5px solid var(--slate-500); }
+.warning-toast { border-left: 5px solid var(--gold-500); }
+.danger-toast  { border-left: 5px solid var(--clay-500); }
+
+/* Close button stays legible in both themes */
+.toast .btn-close { filter: invert(.35); }
+html[data-theme="dark"] .toast .btn-close { filter: invert(1) grayscale(1) brightness(1.6); }

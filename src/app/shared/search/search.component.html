@@ -1,7 +1,15 @@
-<input
-  type="text"
-  class="form-control shadow-sm rounded-pill px-4"
-  style="width: 250px; transition: all 0.3s ease;"
-  [formControl]="control"
-  [placeholder]="placeholder"
-/>
+<div class="search-field" [class.has-text]="control.value">
+  <i class="bi bi-search search-icon" aria-hidden="true"></i>
+  <input
+    type="text"
+    class="search-input"
+    [formControl]="control"
+    [placeholder]="placeholder"
+    aria-label="Rechercher"
+  />
+  @if (control.value) {
+  <button type="button" class="search-clear" (click)="control.setValue('')" aria-label="Effacer">
+    <i class="bi bi-x-lg"></i>
+  </button>
+  }
+</div>

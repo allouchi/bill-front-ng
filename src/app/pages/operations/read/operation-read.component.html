@@ -1,9 +1,22 @@
 @if(isLoaded){
 
 <div class="app-page">
-  <div class="d-flex justify-content-between align-items-end flex-wrap mb-3" style="gap: 10px;">
-    <div style="width: 150px ; margin-right: 0;">
-      <label for="yearSelect" class="form-label fw-bold">Exercice</label>
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">Opérations</h1>
+      <p class="page-subtitle">Mouvements bancaires rapprochés du chiffre d'affaires</p>
+    </div>
+    <div class="toolbar">
+      <bill-search (search)="onSearch($event)" placeholder="Chercher opération..."></bill-search>
+      <button id="add" class="btn btn-primary" (click)="importerOperations()" title="Importer opérations">
+        <i class="bi bi-plus-lg me-1"></i> Ajouter
+      </button>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="filter-field" style="min-width: 150px">
+      <label for="yearSelect" class="form-label">Exercice</label>
       <select (change)="setExerciceValue($event)" class="form-select" id="yearSelect">
         @for (year of exercises; track year.id) {
         <option [value]="year.exercise">{{ year.exercise }}</option>
@@ -11,36 +24,29 @@
       </select>
     </div>
 
-    <div style="width: 150px; margin-left: 0;">
-      <label for="typeSelect" class="form-label fw-bold">Type</label>
+    <div class="filter-field" style="min-width: 150px">
+      <label for="typeSelect" class="form-label">Type</label>
       <select (change)="setTypeValue($event)" class="form-select" id="typeSelect">
         @for (type of typeOperations; track type) {
         <option [value]="type">{{ type }}</option>
         }
       </select>
     </div>
+  </div>
 
+  <div class="kpi-cards mb-3 stagger">
     @if(tvaInfosFilterd){
-    <div><strong>CA NET : </strong> {{ tvaInfosFilterd!.totalCAHorsTaxe | customDecimalPipe}}</div>
-    }
-
-    <div><strong>Total Opérations : </strong> {{totalOperation | customDecimalPipe }}</div>
-
-     <div class="d-flex align-items-center gap-0">
-     <bill-search
-          (search)="onSearch($event)"
-          placeholder="Chercher opération..."
-          >
-      </bill-search>
-    <div>
-      <label class="form-label invisible" for="add">Ajouter</label>
-      <button id="add" class="btn btn-pink" (click)="importerOperations()" title="Importer opérations">
-        <i class="bi bi-plus-circle me-1"></i>
-        Ajouter
-      </button>
+    <div class="kpi-card">
+      <span class="kpi-label">CA NET</span>
+      <span class="kpi-value tnum">{{ tvaInfosFilterd!.totalCAHorsTaxe | customDecimalPipe }} €</span>
     </div>
+    }
+    <div class="kpi-card is-positive">
+      <span class="kpi-label">Total Opérations</span>
+      <span class="kpi-value tnum">{{ totalOperation | customDecimalPipe }} €</span>
     </div>
   </div>
+
   <div class="table-shell">
     <div class="table-scroll">
     <table class="table table-success table-striped">
@@ -57,8 +63,10 @@
         @for (operation of operationsFiltred; track operation.id) {
         <tr>
           <td style="text-align: center" data-label="Type Opération">{{ operation.typeOperation }}</td>
-          <td style="text-align: center" data-label="Exercice">{{ operation.exercise }}</td>
-          <td style="text-align: center" data-label="Montant Opération">{{ operation.montantOperation | customDecimalPipe }}</td>
+          <td style="text-align: center" data-label="Exercice">
+            <span class="chip chip-brand">{{ operation.exercise }}</span>
+          </td>
+          <td class="money tnum" style="text-align: center" data-label="Montant Opération">{{ operation.montantOperation | customDecimalPipe }}</td>
           <td style="text-align: center" data-label="Date Opération">{{ operation.dateOperation }}</td>
 
           <td class="cell-actions" data-label="Actions">
@@ -74,8 +82,12 @@
         </tr>
         } @empty {
         <tr>
-          <td colspan="8" class="text-center text-muted py-3">
-            Aucune Opération
+          <td colspan="5">
+            <div class="empty-state">
+              <div class="empty-glyph"><i class="bi bi-bank"></i></div>
+              <h3>Aucune Opération</h3>
+              <p>Importez vos opérations bancaires pour commencer le rapprochement.</p>
+            </div>
           </td>
         </tr>
         }
@@ -83,14 +95,13 @@
     </table>
     </div>
     @if(totalPages > 1){
-    <!-- ✅ Pagination bien placée et centrée -->
-    <div class="pagination d-flex justify-content-center align-items-center gap-3 mt-3 scroll-x-mobile">
-      <button class="btn btn-outline-primary" (click)="previousPage()" [disabled]="page === 0">
-        ← Précédent
+    <div class="pagination-bar scroll-x-mobile">
+      <button class="page-btn" (click)="previousPage()" [disabled]="page === 0" aria-label="Page précédente">
+        <i class="bi bi-arrow-left"></i>
       </button>
-      <span>Page {{ page + 1 }} / {{ totalPages }}</span>
-      <button class="btn btn-outline-primary" (click)="nextPage()" [disabled]="page >= totalPages - 1">
-        Suivant →
+      <span class="page-indicator">Page {{ page + 1 }} / {{ totalPages }}</span>
+      <button class="page-btn" (click)="nextPage()" [disabled]="page >= totalPages - 1" aria-label="Page suivante">
+        <i class="bi bi-arrow-right"></i>
       </button>
     </div>
     }

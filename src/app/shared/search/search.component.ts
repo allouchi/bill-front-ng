@@ -9,7 +9,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
   styleUrl: './search.component.css',
 })
 export class SearchComponent implements OnInit{
-  @Input() placeholder: string = '🔍 Rechercher...';
+  @Input() placeholder: string = 'Rechercher...';
   @Input() debounce: number = 300;
 
   @Output() search = new EventEmitter<string>();

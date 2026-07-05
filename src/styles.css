@@ -789,3 +789,111 @@ html[data-theme="dark"] .empty-glyph { background: color-mix(in srgb, var(--gold
 
 /* Horizontal scroll safety for any element that must stay wide */
 .scroll-x-mobile { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ================================================================== */
+/*  UI-OVERHAUL · shared widgets & list/form polish utilities          */
+/* ================================================================== */
+
+/* ---- Filter fields in list toolbars --------------------------------- */
+.filter-field { display: flex; flex-direction: column; gap: .35rem; min-width: 0; }
+.filter-field .form-label { margin: 0; }
+.filter-bar {
+  display: flex; align-items: flex-end; gap: .75rem 1rem;
+  flex-wrap: wrap; margin-bottom: 1.1rem;
+}
+.filter-bar .toolbar { margin-left: auto; align-items: flex-end; }
+
+/* ---- KPI summary cards (replace dark summary tables) ---------------- */
+.kpi-cards {
+  display: grid; gap: .8rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+.kpi-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: .85rem 1rem;
+  box-shadow: var(--shadow-xs);
+  display: flex; flex-direction: column; gap: .25rem;
+  overflow: hidden;
+}
+.kpi-card::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--gradient-gold-sheen); opacity: .8;
+}
+.kpi-card.is-positive::before { background: var(--gradient-spruce); }
+.kpi-card.is-negative::before { background: linear-gradient(180deg, var(--clay-400), var(--clay-600)); }
+.kpi-card .kpi-label {
+  font-size: .66rem; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--text-mute); font-weight: 700;
+}
+.kpi-card .kpi-value {
+  font-family: var(--font-display); font-size: 1.18rem; font-weight: 500;
+  color: var(--text); letter-spacing: -.01em;
+}
+.kpi-card.is-positive .kpi-value { color: var(--spruce-500); }
+.kpi-card.is-negative .kpi-value { color: var(--clay-500); }
+html[data-theme="dark"] .kpi-card.is-positive .kpi-value { color: var(--spruce-300); }
+html[data-theme="dark"] .kpi-card.is-negative .kpi-value { color: var(--clay-400); }
+
+/* ---- On-brand pagination ------------------------------------------- */
+.pagination-bar {
+  display: flex; justify-content: center; align-items: center;
+  gap: 1rem; margin-top: 1.15rem; flex-wrap: wrap;
+}
+.pagination-bar .page-indicator {
+  font-family: var(--font-display); font-size: .95rem; color: var(--text-soft);
+  min-width: 8ch; text-align: center;
+}
+.page-btn {
+  display: inline-grid; place-items: center;
+  min-width: 42px; height: 42px; padding: 0 .8rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface); color: var(--text);
+  transition: transform .16s var(--ease), background-color .18s var(--ease), border-color .18s var(--ease), color .18s var(--ease);
+}
+.page-btn:hover:not(:disabled) {
+  background: var(--gold-500); border-color: var(--gold-500); color: var(--on-gold);
+  transform: translateY(-1px);
+}
+.page-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ---- Table footer totals ------------------------------------------- */
+.table tfoot td,
+.table > tfoot.table-dark td,
+.table tfoot.table-dark > tr > td {
+  background: var(--surface-2) !important;
+  color: var(--text) !important;
+  font-family: var(--font-display);
+  font-weight: 500;
+  border-top: 2px solid var(--border-strong) !important;
+  border-bottom: none !important;
+}
+
+/* ---- Status row tints (on-brand, dark-safe) ------------------------ */
+.table tbody tr.table-success > * { background: color-mix(in srgb, var(--spruce-500) 9%, transparent) !important; }
+.table tbody tr.table-danger  > * { background: color-mix(in srgb, var(--clay-500) 9%, transparent) !important; }
+.table tbody tr.table-success:hover > *,
+.table tbody tr.table-danger:hover  > * { background: var(--surface-hover) !important; }
+@media (max-width: 767.98px) {
+  .table tbody tr.table-success,
+  .table tbody tr.table-danger { background: var(--surface) !important; }
+  .table tbody tr.table-success > *,
+  .table tbody tr.table-danger  > * { background: transparent !important; }
+  .table tbody tr.table-success { box-shadow: inset 3px 0 0 var(--spruce-500), var(--shadow-xs); }
+  .table tbody tr.table-danger  { box-shadow: inset 3px 0 0 var(--clay-500), var(--shadow-xs); }
+}
+
+/* ---- Form composition helpers -------------------------------------- */
+.form-hint { color: var(--text-mute); font-size: .92rem; margin: .2rem 0 0; }
+.section-title {
+  font-family: var(--font-display); font-weight: 500;
+  font-size: 1.05rem; letter-spacing: -.01em;
+  margin: 1.6rem 0 .2rem; color: var(--text);
+}
+.section-title:first-of-type { margin-top: .25rem; }
+
+/* Modal surface entrance (apply .animate-in to modal body wrapper) */
+.modal-body .kpi-card { box-shadow: none; }

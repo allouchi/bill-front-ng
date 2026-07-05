@@ -2,82 +2,80 @@
 <bill-waiting [sendMail]="sendMail" [edit]="parent"></bill-waiting>
 }@else {
 
-<div class="container-fluid mt-3 px-2 px-md-4">
+<div class="app-page">
   <!-- HEADER -->
-  <div class="row g-3 align-items-end mb-3">
-    <!-- Exercice -->
-    <div class="col-12 col-md-3 col-lg-2">
-      <label for="yearSelect" class="form-label fw-bold">Exercice</label>
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">Factures</h1>
+      <p class="page-subtitle">Exercice {{ selectedExercice }} — suivi de la facturation et de la TVA</p>
+    </div>
+    <div class="toolbar">
+      <bill-search class="w-100" (search)="onSearch($event)" placeholder="Chercher facture..."></bill-search>
+
+      @if(showPenalite){
+      <button class="btn btn-outline-primary" (click)="runBatch()">
+        <i class="bi bi-calculator me-1"></i> Calcul Pénalités
+      </button>
+      }
+
+      @if(hidePenalite){
+      <button class="btn btn-outline-primary" (click)="hide()">
+        <i class="bi bi-eye-slash me-1"></i> Cacher Pénalités
+      </button>
+      }
+    </div>
+  </div>
+
+  <!-- FILTER + KPI -->
+  <div class="filter-bar">
+    <div class="filter-field" style="min-width: 160px">
+      <label for="yearSelect" class="form-label">Exercice</label>
       <select (change)="setYearValue($event)" class="form-select" id="yearSelect" [(ngModel)]="selectedExercice">
         @for (year of exercises; track year.id) {
         <option [value]="year.exercise">{{ year.exercise }}</option>
         }
       </select>
     </div>
-
-    <!-- Tableau résumé -->
-    <div class="col-12 col-md-6">
-      <div class="table-responsive">
-        <table class="table table-bordered table-dark text-nowrap text-center">
-          <thead>
-            <tr>
-              <th>CA TTC</th>
-              <th>CA NET</th>
-              <th>TOTAL TVA</th>
-              <th>TOTAL REGLE</th>
-              @if(tvaInfos && tvaInfos.totalTvaRestant>0 ){
-              <th>RESTE A PAYER</th>
-              }@else if(tvaInfos && tvaInfos.totalTvaRestant<0){ <th>TROP-PERÇU</th>
-                } @else{
-                <th>Match (0:0)</th>
-                }
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              @if(tvaInfos){
-              <td data-label="CA TTC">{{ tvaInfos.totalTTC | customDecimalPipe }} €</td>
-              <td data-label="CA NET">{{ tvaInfos.totalCAHorsTaxe | customDecimalPipe }} €</td>
-              <td data-label="TOTAL TVA">{{ tvaInfos.montantTvaFacture | customDecimalPipe }} €</td>
-              <td data-label="TOTAL REGLE">{{ tvaInfos.totalTvaPaye | customDecimalPipe }} €</td>
-              @if(tvaInfos.totalTvaRestant >= 0 ){
-              <td class="text-success" data-label="Solde TVA">
-                <i class="bi bi-check-lg me-1"></i>
-                {{ tvaInfos.totalTvaRestant | customDecimalPipe }} €
-              </td>
-              }@else {
-              <td class="text-danger" data-label="Solde TVA">
-                <i class="bi bi-x-octagon me-1"></i>
-                {{ -tvaInfos.totalTvaRestant | customDecimalPipe }} €
-              </td>
-              } }
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Actions -->
-    <div class="col-12 col-md-3 d-flex flex-column flex-md-row gap-2">
-      <bill-search class="w-100" (search)="onSearch($event)" placeholder="Chercher facture...">
-      </bill-search>
-
-      @if(showPenalite){
-      <button class="btn btn-outline-primary w-100" (click)="runBatch()">
-        Calcul Pénalités
-      </button>
-      }
-
-      @if(hidePenalite){
-      <button class="btn btn-outline-primary w-100" (click)="hide()">
-        Cacher Pénalités
-      </button>
-      }
-    </div>
   </div>
 
+  @if(tvaInfos){
+  <div class="kpi-cards mb-3 stagger">
+    <div class="kpi-card">
+      <span class="kpi-label">CA TTC</span>
+      <span class="kpi-value tnum">{{ tvaInfos.totalTTC | customDecimalPipe }} €</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">CA NET</span>
+      <span class="kpi-value tnum">{{ tvaInfos.totalCAHorsTaxe | customDecimalPipe }} €</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Total TVA</span>
+      <span class="kpi-value tnum">{{ tvaInfos.montantTvaFacture | customDecimalPipe }} €</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Total réglé</span>
+      <span class="kpi-value tnum">{{ tvaInfos.totalTvaPaye | customDecimalPipe }} €</span>
+    </div>
+    @if(tvaInfos.totalTvaRestant > 0){
+    <div class="kpi-card is-negative">
+      <span class="kpi-label">Reste à payer</span>
+      <span class="kpi-value tnum"><i class="bi bi-x-octagon me-1"></i>{{ tvaInfos.totalTvaRestant | customDecimalPipe }} €</span>
+    </div>
+    }@else if(tvaInfos.totalTvaRestant < 0){
+    <div class="kpi-card is-positive">
+      <span class="kpi-label">Trop-perçu</span>
+      <span class="kpi-value tnum"><i class="bi bi-check-lg me-1"></i>{{ -tvaInfos.totalTvaRestant | customDecimalPipe }} €</span>
+    </div>
+    }@else{
+    <div class="kpi-card is-positive">
+      <span class="kpi-label">Solde TVA</span>
+      <span class="kpi-value tnum"><i class="bi bi-check-lg me-1"></i>Match (0:0)</span>
+    </div>
+    }
+  </div>
+  }
+
   <!-- TABLE PRINCIPALE -->
-  <!-- @if(showPenalite){ -->
   <div class="table-shell">
     <div class="table-scroll">
     <table class="table table-success table-striped text-nowrap">
@@ -103,46 +101,56 @@
           'table-success': facture.factureStatus == 'OK',
           'table-danger': facture.factureStatus == 'KO'
         }">
-          <td class="text-center" data-label="Numéro">{{ facture.numeroFacture }}</td>
+          <td class="text-center fw-bold" data-label="Numéro">{{ facture.numeroFacture }}</td>
           <td data-label="Mois">{{ facture.moisFacture }}</td>
-          <td data-label="Tarif HT">{{ facture.tarifHT }}</td>
-          <td data-label="Qté">{{ facture.quantite | customDecimalPipe }}</td>
-          <td data-label="TTC">{{ facture.prixTotalTTC! | customDecimalPipe }}</td>
-          <td data-label="HT">{{ facture.prixTotalHT! | customDecimalPipe }}</td>
+          <td class="money tnum" data-label="Tarif HT">{{ facture.tarifHT }}</td>
+          <td class="tnum" data-label="Qté">{{ facture.quantite | customDecimalPipe }}</td>
+          <td class="money tnum" data-label="TTC">{{ facture.prixTotalTTC! | customDecimalPipe }}</td>
+          <td class="money tnum" data-label="HT">{{ facture.prixTotalHT! | customDecimalPipe }}</td>
           <td data-label="Facturation">{{ facture.dateFacturation }}</td>
           <td data-label="Encaissement">{{ facture.dateEncaissement }}</td>
-          <td data-label="TVA">{{ facture.montantTVA! | customDecimalPipe }}</td>
-          <td data-label="Débit TVA">{{ facture.montantTvaPaye! | customDecimalPipe }}</td>
+          <td class="money tnum" data-label="TVA">{{ facture.montantTVA! | customDecimalPipe }}</td>
+          <td class="money tnum" data-label="Débit TVA">{{ facture.montantTvaPaye! | customDecimalPipe }}</td>
           <td class="cell-actions d-flex flex-wrap gap-1" data-label="Actions">
 
             <button class="btn btn-outline-primary btn-sm" (click)="encaissementFacture($event, facture)"
-              [disabled]="!isAdmin">
+              title="Encaisser" [disabled]="!isAdmin">
               <i class="bi bi-pencil"></i>
             </button>
 
             <button class="btn btn-outline-primary btn-sm" (click)="cancelModif($event, facture)"
-              [disabled]="!isAdmin || facture.factureStatus == 'KO'">
+              title="Annuler modification" [disabled]="!isAdmin || facture.factureStatus == 'KO'">
               <i class="bi bi-x-circle"></i>
             </button>
 
             <button class="btn btn-outline-primary btn-sm" (click)="detailFacture($event, facture)"
-              [disabled]="!isAdmin">
+              title="Détail" [disabled]="!isAdmin">
               <i class="bi bi-info-circle"></i>
             </button>
 
             <button class="btn btn-outline-danger btn-sm" (click)="deleteFacture($event, facture)"
-              [disabled]="!isAdmin">
+              title="Supprimer" [disabled]="!isAdmin">
               <i class="bi bi-trash"></i>
             </button>
 
-            <button class="btn btn-primary btn-sm" (click)="downloadFacture(facture)" [disabled]="!isAdmin">
+            <button class="btn btn-primary btn-sm" (click)="downloadFacture(facture)" title="Télécharger" [disabled]="!isAdmin">
               <i class="bi bi-download"></i>
             </button>
 
             <button class="btn btn-primary btn-sm" (click)="sendFacture($event,facture)"
-              [disabled]="!isAdmin || facture.sended">
+              title="Envoyer" [disabled]="!isAdmin || facture.sended">
               <i class="bi bi-send"></i>
             </button>
+          </td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="11">
+            <div class="empty-state">
+              <div class="empty-glyph"><i class="bi bi-receipt"></i></div>
+              <h3>Aucune facture</h3>
+              <p>Aucune facture n'a été trouvée pour cet exercice.</p>
+            </div>
           </td>
         </tr>
         }
@@ -152,32 +160,17 @@
 
     <!-- PAGINATION -->
     @if(totalPages && totalPages > 1){
-    <div class="d-flex justify-content-center align-items-center gap-3 mt-3 flex-wrap scroll-x-mobile">
-      <button class="btn btn-outline-primary" (click)="previousPage()" [disabled]="page === 0">
-        ←
+    <div class="pagination-bar scroll-x-mobile">
+      <button class="page-btn" (click)="previousPage()" [disabled]="page === 0" aria-label="Page précédente">
+        <i class="bi bi-arrow-left"></i>
       </button>
-      <span>Page {{ page + 1 }} / {{ totalPages }}</span>
-      <button class="btn btn-outline-primary" (click)="nextPage()" [disabled]="page >= totalPages - 1">
-        →
+      <span class="page-indicator">Page {{ page + 1 }} / {{ totalPages }}</span>
+      <button class="page-btn" (click)="nextPage()" [disabled]="page >= totalPages - 1" aria-label="Page suivante">
+        <i class="bi bi-arrow-right"></i>
       </button>
     </div>
     }
   </div>
-  <!--  } -->
 </div>
-
-<!-- CSS CONSEILLÉ -->
-<style>
-  @media (max-width: 768px) {
-    table {
-      font-size: 12px;
-    }
-
-    th,
-    td {
-      padding: 6px !important;
-    }
-  }
-</style>
 
 }

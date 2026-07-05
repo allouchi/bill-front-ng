@@ -5,15 +5,17 @@
     }@else{
     <h1 class="page-title">Ajout d'une société</h1>
     }
+    <p class="form-hint">Renseignez les informations ci-dessous. Les champs marqués d'un astérisque (*) sont obligatoires.</p>
   </div>
+
+  <hr class="rule-gold mb-4">
 
   <div class="card">
     <div class="card-body">
       <form [formGroup]="formCompany" #form="ngForm" (ngSubmit)="editCompany()">
 
-        <div class="fw-bold mb-2">
-          Informations société
-        </div>
+        <h2 class="section-title">Informations société</h2>
+        <hr class="rule-gold mb-3">
 
         <div class="form-grid cols-2">
 
@@ -141,9 +143,8 @@
           </div>
         </div>
 
-        <div class="fw-bold mt-4 mb-2">
-          Adresse société
-        </div>
+        <h2 class="section-title mt-4">Adresse société</h2>
+        <hr class="rule-gold mb-3">
 
         <div class="form-grid cols-2">
           <div>

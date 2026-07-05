@@ -2,11 +2,12 @@
 <div class="app-page">
   <div class="page-head">
     <div>
-      <label for="companySelect" class="form-label fw-bold mb-0">Société</label>
+      <h1 class="page-title">Sociétés</h1>
+      <p class="page-subtitle">{{ companies.length }} société(s) émettrice(s) de factures</p>
     </div>
     <div class="toolbar">
-      <button class="btn btn-pink" title="Nouveau" (click)="addCampany()">
-        Ajouter
+      <button class="btn btn-primary" title="Nouveau" (click)="addCampany()">
+        <i class="bi bi-plus-lg me-1"></i> Ajouter
       </button>
     </div>
   </div>
@@ -20,10 +21,11 @@
           <th scope="col">RCS</th>
           <th scope="col">Nom TVA</th>
           <th scope="col">Code APE</th>
+          <th scope="col">Statut</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="stagger">
         @for (company of companies; track company.id) {
         <tr [ngClass]="{
             'table-success': company.checked== true,
@@ -34,13 +36,14 @@
           <td data-label="RCS">{{ company.rcsName }}</td>
           <td data-label="Nom TVA">{{ company.numeroTva }}</td>
           <td data-label="Code APE">{{ company.codeApe }}</td>
+          <td data-label="Statut">
+            <span class="chip" [ngClass]="company.checked ? 'chip-success' : 'chip-danger'">
+              <i class="bi" [ngClass]="company.checked ? 'bi-patch-check' : 'bi-hourglass-split'"></i>
+              {{ company.checked ? "Validée" : "En attente" }}
+            </span>
+          </td>
 
           <td class="cell-actions" data-label="Actions">
-            <label for="companyCheck">
-              <input class="form-check-input custom-checkbox me-4" type="checkbox" [checked]="company.checked"
-                id="companyCheck" disabled />
-            </label>
-
             <button class="btn btn-outline-primary btn-sm me-2" (click)="editCompany($event,company)"
               title="Modifier Company" [disabled]="!isAdmin || !company.checked">
               <i class="bi bi-pencil"></i>
@@ -49,6 +52,16 @@
               title="Supprimer Company" [disabled]="!isAdmin || !company.checked">
               <i class="bi bi-trash"></i>
             </button>
+          </td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="7">
+            <div class="empty-state">
+              <div class="empty-glyph"><i class="bi bi-buildings"></i></div>
+              <h3>Aucune société</h3>
+              <p>Ajoutez la société qui émettra vos factures.</p>
+            </div>
           </td>
         </tr>
         }

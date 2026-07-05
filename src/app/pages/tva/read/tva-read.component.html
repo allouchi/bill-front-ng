@@ -1,95 +1,77 @@
 @if(isLoaded){
 
 <div class="app-page">
-  <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-3">
-    <div style="width: 200px">
-      <label for="yearSelect" class="form-label fw-bold">Exercice</label>
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">Paiements de TVA</h1>
+      <p class="page-subtitle">Exercice {{ selectedExercice }} — suivi des déclarations et règlements</p>
+    </div>
+    <div class="toolbar">
+      <bill-search (search)="onSearch($event)" placeholder="Chercher TVA..."></bill-search>
+      <button id="add" class="btn btn-primary" (click)="addTva()" title="Nouveau">
+        <i class="bi bi-plus-lg me-1"></i> Ajouter
+      </button>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="filter-field" style="min-width: 160px">
+      <label for="yearSelect" class="form-label">Exercice</label>
       <select (change)="setYearValue($event)" class="form-select" id="yearSelect" [(ngModel)]="selectedExercice">
         @for (year of exercises; track year.id) {
         <option [value]="year.exercise">{{ year.exercise }}</option>
         }
       </select>
     </div>
-
-    <div class="table-responsive">
-      <table class="table table-bordered table-dark">
-        <thead>
-          <tr>
-            <th scope="col">CA TTC</th>
-            <th scope="col">CA NET</th>
-            <th scope="col">TOTAL TVA</th>
-            <!--
-            <th scope="col">TOTAL NET</th>
-            -->
-            <th scope="col">TOTAL REGLE</th>
-            @if(tvaInfos && tvaInfos.totalTvaRestant>0 ){
-            <th scope="col">RESTE A PAYER</th>
-            }@else if(tvaInfos && tvaInfos.totalTvaRestant<0){ <th scope="col">TROP-PERÇU</th>
-              } @else{
-              <th scope="col">Match (0:0)</th>
-              }
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            @if(tvaInfosFilterd ){
-            <td style="text-align: center" data-label="CA TTC">
-              {{ tvaInfosFilterd.totalTTC | customDecimalPipe }} €
-            </td>
-            <td style="text-align: center" data-label="CA NET">
-              {{ tvaInfosFilterd.totalCAHorsTaxe | customDecimalPipe }} €
-            </td>
-            <td class="text-center" data-label="TOTAL TVA">
-              {{ tvaInfosFilterd.montantTvaFacture | customDecimalPipe }} €
-            </td>
-            <!--
-            <td class="text-center">
-              {{ tvaInfosFilterd.totalTvaNet | customDecimalPipe }}
-            </td>
-            -->
-            <td style="text-align: center" data-label="TOTAL REGLE">
-              {{ tvaInfosFilterd.totalTvaPaye | customDecimalPipe }} €
-            </td>
-            @if(tvaInfosFilterd.totalTvaRestant>=0 ){
-            <td class="text-center" data-label="Solde TVA">
-              <i class="bi bi-check-lg text-success me-1"></i>
-              {{ tvaInfosFilterd.totalTvaRestant | customDecimalPipe }} €
-            </td>
-            }@else {
-            <td class="text-center" data-label="Solde TVA">
-              <i class="bi bi-x-octagon text-danger me-1"></i>
-              {{ -tvaInfosFilterd.totalTvaRestant | customDecimalPipe }} €
-            </td>
-            } }
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="d-flex align-items-center gap-1">
-      <bill-search
-          (search)="onSearch($event)"
-          placeholder="Chercher TVA..."
-          >
-      </bill-search>
-    <div>
-      <label class="form-label invisible" for="add">Ajouter</label>
-      <button id="add" class="btn btn-pink" (click)="addTva()" title="Nouveau">
-        <i class="bi bi-plus-circle me-1"></i>
-        Ajouter
-      </button>
-    </div>
-    </div>
   </div>
+
+  @if(tvaInfosFilterd){
+  <div class="kpi-cards mb-3 stagger">
+    <div class="kpi-card">
+      <span class="kpi-label">CA TTC</span>
+      <span class="kpi-value tnum">{{ tvaInfosFilterd.totalTTC | customDecimalPipe }} €</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">CA NET</span>
+      <span class="kpi-value tnum">{{ tvaInfosFilterd.totalCAHorsTaxe | customDecimalPipe }} €</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Total TVA</span>
+      <span class="kpi-value tnum">{{ tvaInfosFilterd.montantTvaFacture | customDecimalPipe }} €</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Total réglé</span>
+      <span class="kpi-value tnum">{{ tvaInfosFilterd.totalTvaPaye | customDecimalPipe }} €</span>
+    </div>
+    @if(tvaInfosFilterd.totalTvaRestant > 0){
+    <div class="kpi-card is-negative">
+      <span class="kpi-label">Reste à payer</span>
+      <span class="kpi-value tnum"><i class="bi bi-x-octagon me-1"></i>{{ tvaInfosFilterd.totalTvaRestant | customDecimalPipe }} €</span>
+    </div>
+    }@else if(tvaInfosFilterd.totalTvaRestant < 0){
+    <div class="kpi-card is-negative">
+      <span class="kpi-label">Trop-perçu</span>
+      <span class="kpi-value tnum"><i class="bi bi-x-octagon me-1"></i>{{ -tvaInfosFilterd.totalTvaRestant | customDecimalPipe }} €</span>
+    </div>
+    }@else{
+    <div class="kpi-card is-positive">
+      <span class="kpi-label">Solde TVA</span>
+      <span class="kpi-value tnum"><i class="bi bi-check-lg me-1"></i>Match (0:0)</span>
+    </div>
+    }
+  </div>
+  }
+
   <div class="table-shell">
     <div class="table-scroll">
     <table class="table table-success table-striped">
       <thead class="table-dark">
         <tr>
           <th scope="col">Numéro Facture</th>
-          <th scope="col">Montant Facture (€)</th>        
+          <th scope="col">Montant Facture (€)</th>
           <th scope="col">TVA Facture (€)</th>
           <th scope="col">Débit TVA (€)</th>
-            <th scope="col">Date Encaissement</th>
+          <th scope="col">Date Encaissement</th>
           <th scope="col">Date de paiement TVA</th>
           <th scope="col">Exercice</th>
           <th scope="col">Actions</th>
@@ -106,13 +88,13 @@
               <strong>{{ tva.monthFacture }}</strong>
             </div>
           </td>
-          <td style="text-align: center" data-label="Montant Facture (€)">
+          <td class="money tnum" style="text-align: center" data-label="Montant Facture (€)">
             {{ tva.montantTTC | customDecimalPipe }}
           </td>
-          <td style="text-align: center" data-label="TVA Facture (€)">
+          <td class="money tnum" style="text-align: center" data-label="TVA Facture (€)">
             {{ tva.montantTvaFacture | customDecimalPipe }}
           </td>
-          <td style="text-align: center" data-label="Débit TVA (€)">
+          <td class="money tnum" style="text-align: center" data-label="Débit TVA (€)">
             {{ tva.montantPayment | customDecimalPipe }}
           </td>
            <td style="text-align: center" data-label="Date Encaissement">
@@ -122,7 +104,9 @@
             {{ tva.datePayment }}
             <strong>{{ tva.monthPayment }}</strong>
           </td>
-          <td style="text-align: center" data-label="Exercice">{{ tva.exercise }}</td>
+          <td style="text-align: center" data-label="Exercice">
+            <span class="chip chip-brand">{{ tva.exercise }}</span>
+          </td>
           <td class="cell-actions" data-label="Actions">
             <button class="btn btn-outline-primary btn-sm me-2" (click)="updateTva(tva)" title="Modifier TVA">
               <i class="bi bi-pencil"></i>
@@ -137,8 +121,12 @@
 
         } @else {
         <tr>
-          <td colspan="8" class="text-center text-muted py-3">
-            Aucune TVA payée
+          <td colspan="8">
+            <div class="empty-state">
+              <div class="empty-glyph"><i class="bi bi-percent"></i></div>
+              <h3>Aucune TVA payée</h3>
+              <p>Aucun règlement de TVA n'a été enregistré pour cet exercice.</p>
+            </div>
           </td>
         </tr>
         }
@@ -148,10 +136,10 @@
       <tfoot class="fw-bold table-dark">
         <tr>
           <td>Total</td>
-          <td class="text-center">{{nbLignesTva}} mois</td>
+          <td class="text-center tnum">{{nbLignesTva}} mois</td>
           <td></td>
-          <td class="text-center">{{ totalTvaFacture | customDecimalPipe }} €</td>
-          <td class="text-center">{{ totalDebitTva | customDecimalPipe }} €</td>
+          <td class="text-center money tnum">{{ totalTvaFacture | customDecimalPipe }} €</td>
+          <td class="text-center money tnum">{{ totalDebitTva | customDecimalPipe }} €</td>
           <td colspan="3"></td>
         </tr>
       </tfoot>
@@ -160,14 +148,13 @@
     </div>
 
     @if(totalPages > 1){
-    <!-- ✅ Pagination bien placée et centrée -->
-    <div class="pagination d-flex justify-content-center align-items-center gap-3 mt-3 scroll-x-mobile">
-      <button class="btn btn-outline-primary" (click)="previousPage()" [disabled]="page === 0">
-        ← Précédent
+    <div class="pagination-bar scroll-x-mobile">
+      <button class="page-btn" (click)="previousPage()" [disabled]="page === 0" aria-label="Page précédente">
+        <i class="bi bi-arrow-left"></i>
       </button>
-      <span>Page {{ page + 1 }} / {{ totalPages }}</span>
-      <button class="btn btn-outline-primary" (click)="nextPage()" [disabled]="page >= totalPages - 1">
-        Suivant →
+      <span class="page-indicator">Page {{ page + 1 }} / {{ totalPages }}</span>
+      <button class="page-btn" (click)="nextPage()" [disabled]="page >= totalPages - 1" aria-label="Page suivante">
+        <i class="bi bi-arrow-right"></i>
       </button>
     </div>
     }

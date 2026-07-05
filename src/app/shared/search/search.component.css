@@ -1,0 +1,76 @@
+:host { display: block; width: 100%; }
+
+.search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 200px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: saturate(160%) blur(10px);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-xs);
+  transition: border-color .18s var(--ease), box-shadow .18s var(--ease), background-color .18s var(--ease);
+}
+
+.search-field:hover {
+  border-color: color-mix(in srgb, var(--gold-500) 45%, var(--border-strong));
+}
+
+/* Gold focus glow driven by the inner input */
+.search-field:focus-within {
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--gold-400) 22%, transparent);
+  background: var(--surface);
+}
+
+.search-icon {
+  flex: none;
+  margin-left: .95rem;
+  color: var(--text-mute);
+  font-size: .95rem;
+  transition: color .18s var(--ease);
+  pointer-events: none;
+}
+.search-field:focus-within .search-icon { color: var(--gold-600); }
+html[data-theme="dark"] .search-field:focus-within .search-icon { color: var(--gold-400); }
+
+.search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: .92rem;
+  padding: .6rem .5rem .6rem .6rem;
+}
+.search-input::placeholder { color: var(--text-mute); }
+
+.search-clear {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-right: .45rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  color: var(--text-mute);
+  font-size: .72rem;
+  cursor: pointer;
+  transition: background-color .15s var(--ease), color .15s var(--ease), transform .15s var(--ease);
+  animation: popIn .18s var(--ease) both;
+}
+.search-clear:hover {
+  background: var(--clay-500);
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+@media (max-width: 767.98px) {
+  .search-field { min-height: 44px; }
+}
