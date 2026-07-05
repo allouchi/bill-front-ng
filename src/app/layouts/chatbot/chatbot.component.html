@@ -1,6 +1,6 @@
 <!-- Bouton flottant -->
 <button class="chat-toggle" (click)="toggleChat()">
-  💬
+  <i class="bi bi-chat-dots-fill"></i>
 </button>
 
 <!-- Chat -->
@@ -9,11 +9,11 @@
   <!-- HEADER -->
   <div class="chat-header">
     <div class="header-left">
-      <div class="avatar">🤖</div>
+      <div class="avatar"><i class="bi bi-robot"></i></div>
       <span>Assistant</span>
     </div>
 
-    <button class="close-btn" (click)="toggleChat()">✖</button>
+    <button class="close-btn" (click)="toggleChat()"><i class="bi bi-x-lg"></i></button>
   </div>
 
   <!-- Messages -->
@@ -42,7 +42,7 @@
 </textarea>
 
     <button (click)="sendMessage()" [disabled]="isLoading">
-      ➤
+      <i class="bi bi-send-fill"></i>
     </button>
   </div>
 </div>
