@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FactureService } from '../../../services/factures/facture.service';
 import Facture from '../../../models/Facture';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
@@ -31,15 +31,45 @@ export default class FactureEditComponent implements OnInit {
     private readonly router: Router,
     private readonly factureService: FactureService,
     private readonly alertService: AlertService,
-    private readonly sharedDataService: SharedDataService
+    private readonly sharedDataService: SharedDataService,
+    private readonly route: ActivatedRoute
   ) { }
   ngOnInit(): void {
-    this.facture = this.sharedDataService.getSelectedFacture();
-    this.numeroFacture = this.facture!.numeroFacture!;
     const today = new Date().toISOString().substring(0, 10);
     this.formFacture = this.fb.group({
       dateEncaissement: [today, Validators.required],
     });
+
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const seed = this.sharedDataService.getSelectedFacture();
+    if (seed && (!idParam || seed.id === Number(idParam))) {
+      this.setFacture(seed);
+      return;
+    }
+
+    // Deep-link / refresh: no seed. There is no GET facture-by-id endpoint,
+    // so resolve it from the siret-scoped (noPage) list.
+    const siret = this.sharedDataService.getSiret();
+    if (idParam && siret) {
+      this.factureService.findBySiretAndExercice(siret, '').subscribe({
+        next: (factures) => {
+          const found = factures.find((f) => f.id === Number(idParam));
+          if (found) {
+            this.setFacture(found);
+          } else {
+            this.router.navigate(['/factures/read']);
+          }
+        },
+        error: (err) => this.onError(err),
+      });
+    } else {
+      this.router.navigate(['/factures/read']);
+    }
+  }
+
+  private setFacture(facture: Facture): void {
+    this.facture = facture;
+    this.numeroFacture = facture.numeroFacture ?? '';
   }
 
   encaisserFacture() {

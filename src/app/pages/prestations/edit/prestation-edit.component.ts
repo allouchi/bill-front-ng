@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PrestationService } from '../../../services/prestations/prestation.service';
 import Prestation from '../../../models/Prestation';
 import Consultant from '../../../models/Consultant';
@@ -30,6 +30,7 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
   consultants: Consultant[] = [];
   clients: Client[] = [];
   siret: string | null = '';
+  isEdit = false;
   observableEvent$ = new Subscription();
 
   router = inject(Router);
@@ -41,7 +42,8 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
     private readonly clientService: ClientService,
     private readonly consultantService: ConsultantService,
     private readonly sharedDataService: SharedDataService,
-    private readonly sharedMessagesService: SharedMessagesService
+    private readonly sharedMessagesService: SharedMessagesService,
+    private readonly route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -59,6 +61,50 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
     this.selectedPrestation = this.sharedDataService.getSelectedPrestation();
     this.loadClients();
     this.loadConsultants();
+
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      this.isEdit = true;
+      // Instant seed from the list navigation, if it matches...
+      if (
+        this.selectedPrestation &&
+        this.selectedPrestation.id === Number(idParam)
+      ) {
+        this.populateForm(this.selectedPrestation);
+      }
+      // ...but always (re)fetch by id so refresh / deep-link works.
+      this.prestationService.getPrestationById(Number(idParam)).subscribe({
+        next: (prestation) => this.populateForm(prestation),
+        error: (err) => this.onError(err),
+      });
+    }
+  }
+
+  private populateForm(prestation: Prestation | null): void {
+    if (!prestation) return;
+    this.selectedPrestation = prestation;
+    this.selectedClient = prestation.client ?? null;
+    this.selectedConsultant = prestation.consultant ?? null;
+    this.sharedMessagesService.setMessage("Mise à jour d'une Prestation");
+    this.formPrestation.patchValue({
+      client: prestation.client?.socialReason ?? '',
+      consultant: prestation.consultant?.firstName ?? '',
+      tarifHT: prestation.tarifHT,
+      numeroCommande: prestation.numeroCommande,
+      delaiPaiement: prestation.delaiPaiement,
+      dateDebut: this.toInputDate(prestation.dateDebut),
+      dateFin: this.toInputDate(prestation.dateFin),
+    });
+  }
+
+  /** Normalise a backend date (dd/MM/yyyy or yyyy-MM-dd) to the yyyy-MM-dd an <input type=date> needs. */
+  private toInputDate(date?: string): string {
+    if (!date) return '';
+    if (date.includes('/')) {
+      const [d, m, y] = date.split('/');
+      return `${y}-${m}-${d}`;
+    }
+    return date.substring(0, 10);
   }
 
   private loadClients() {
@@ -131,7 +177,11 @@ export class PrestationEditComponent implements OnInit, OnDestroy {
         .createOrUpdatePrestation(prestation, this.siret!)
         .subscribe({
           next: () => {
-            this.alertService.show('ADD', 'PRESTATION', 'success');
+            this.alertService.show(
+              prestationId ? 'UPDATE' : 'ADD',
+              'PRESTATION',
+              'success',
+            );
             this.router.navigate(['/prestations/read']);
           },
           error: (err) => {

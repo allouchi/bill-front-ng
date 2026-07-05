@@ -23,7 +23,6 @@ export class FactureService implements IFactureService {
   private readonly FACTURES_PATH: string = `${this.apiURL}`;
   private readonly EXERCISE_PATH: string = `${this.exerciseURL}` + '/exerciseRef';
   private readonly EDITION_PATH: string = environment.editionURL;
-  private readonly BATCH_PATH: string = `${this.apiURL}` + '/batchs';
 
   constructor(private readonly http: HttpClient) { }
 
@@ -56,8 +55,9 @@ export class FactureService implements IFactureService {
     siret: string,
     exercice: string,
   ): Observable<Facture[]> {
+    // Backend only exposes GET /factures/noPage/{siret} (single path variable).
     return this.http.get<Facture[]>(
-      `${this.FACTURES_PATH}/noPage/${siret}/${exercice}`,
+      `${this.FACTURES_PATH}/noPage/${siret}`,
     );
   }
 
@@ -104,10 +104,6 @@ export class FactureService implements IFactureService {
     return this.http.get<number>(
       `${this.EDITION_PATH}/workingDays/${year}/${month}`,
     );
-  }
-
-  runBatch(siret: string): Observable<Facture[]> {
-    return this.http.get<Facture[]>(`${this.BATCH_PATH}/${siret}`);
   }
 
   searchFactures(

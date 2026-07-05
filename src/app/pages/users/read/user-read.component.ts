@@ -129,7 +129,7 @@ export class UserReadComponent implements OnInit, OnDestroy {
   editUser(event: Event, user: User) {
     event.preventDefault();
     this.sharedDataService.setSelectedUser(user);
-    this.router.navigate(['users/edit']);
+    this.router.navigate(['users/edit', user.email]);
   }
 
   addUser() {

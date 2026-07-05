@@ -397,7 +397,7 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
     event.preventDefault();
     this.sharedDataService.setSelectedFacture(facture);
     this.sharedMessagesService.setMessage('Mise à jour de Facture');
-    this.router.navigate(['factures/edit']);
+    this.router.navigate(['factures/edit', facture.id]);
   }
 
   downloadFacture(facture: Facture) {
@@ -483,19 +483,6 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
       next: (mails) => {
         this.emailAdresses = mails;
         this.choixDestinataires(event, id!, mails);
-      },
-      error: (err) => {
-        this.onError(err);
-      },
-    });
-  }
-
-  runBatch() {
-    this.factureService.runBatch(this.siret!).subscribe({
-      next: (factures) => {
-        this.factures = factures;
-        this.showPenalite = false;
-        this.hidePenalite = true;
       },
       error: (err) => {
         this.onError(err);

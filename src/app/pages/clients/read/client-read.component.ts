@@ -120,7 +120,7 @@ export class ClientReadComponent implements OnInit, OnDestroy {
     event.preventDefault();
     this.sharedDataService.setSelectedClient(client);
     this.sharedMessagesService.setMessage("Mise à jour d'un Client");
-    this.router.navigate(['clients/edit']);
+    this.router.navigate(['clients/edit', client.id]);
   }
 
   addClient() {

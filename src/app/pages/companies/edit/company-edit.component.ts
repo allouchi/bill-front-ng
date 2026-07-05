@@ -11,7 +11,7 @@ import { NgbCollapseModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { CompanyService } from '../../../services/companies/company-service';
 
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import Adresse from '../../../models/Adresse';
 import Company from '../../../models/Company';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
@@ -63,6 +63,7 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly sharedMessagesService: SharedMessagesService,
     private readonly countryService: CountryService,
+    private readonly route: ActivatedRoute,
   ) {}
   ngOnInit(): void {
     this.loadCountries();
@@ -87,13 +88,30 @@ export default class CompanyEditComponent implements OnInit, OnDestroy {
       checked: [''],
     });
 
-    this.currentUrl = this.router.url;
-    if (this.currentUrl.includes('/edit')) {
-      this.company = this.sharedDataService.getSelectedCompany();
+    const siretParam = this.route.snapshot.paramMap.get('siret');
+    if (siretParam) {
       this.isEdit = true;
-      this.sharedMessagesService.setMessage(
-        `Mise à jour de ${this.company?.socialReason}`,
-      );
+      // Instant seed from the list navigation, if it matches...
+      const seed = this.sharedDataService.getSelectedCompany();
+      if (seed && seed.siret === siretParam) {
+        this.company = seed;
+        this.sharedMessagesService.setMessage(
+          `Mise à jour de ${seed.socialReason}`,
+        );
+        this.buildDataCompany(this.company);
+      }
+      // ...but always (re)fetch by siret so refresh / deep-link works.
+      this.companyService.getCompanyBySiret(siretParam).subscribe({
+        next: (data: any) => {
+          const company = Array.isArray(data) ? data[0] : data;
+          this.company = company;
+          this.sharedMessagesService.setMessage(
+            `Mise à jour de ${company?.socialReason}`,
+          );
+          this.buildDataCompany(company);
+        },
+        error: (err) => this.onError(err),
+      });
     }
 
     this.formCompany

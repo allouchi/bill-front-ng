@@ -31,8 +31,8 @@ export class ClientService implements IClientService {
     }
   }
 
-  findClientsBySiret(siret: string): Observable<Client[]> {
-    return this.http.get<Client[]>(`${this.CLIENT_PATH}/${siret}`);
+  getClientById(id: number): Observable<Client> {
+    return this.http.get<Client>(`${this.CLIENT_PATH}/${id}`);
   }
 
   findClients(): Observable<Client[]> {

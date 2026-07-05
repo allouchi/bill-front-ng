@@ -57,7 +57,7 @@ export const BILLING_ROUTE: Routes = [
         loadComponent: () => OperationReadComponent,
       },
       {
-        path: 'edit',
+        path: 'edit/:id',
         loadComponent: () => OperationEditComponent,
       },
       {
@@ -87,7 +87,7 @@ export const BILLING_ROUTE: Routes = [
         loadComponent: () => CompanyReadComponent,
       },
       {
-        path: 'edit',
+        path: 'edit/:siret',
         loadComponent: () => CompanyEditComponent,
       },
       {
@@ -105,7 +105,7 @@ export const BILLING_ROUTE: Routes = [
         loadComponent: () => FactureReadComponent,
       },
       {
-        path: 'edit',
+        path: 'edit/:id',
         loadComponent: () => FactureEditComponent,
       },
 
@@ -124,7 +124,7 @@ export const BILLING_ROUTE: Routes = [
         loadComponent: () => ClientReadComponent,
       },
       {
-        path: 'edit',
+        path: 'edit/:id',
         loadComponent: () => ClientEditComponent,
       },
 
@@ -144,7 +144,7 @@ export const BILLING_ROUTE: Routes = [
         loadComponent: () => PrestationReadComponent,
       },
       {
-        path: 'edit',
+        path: 'edit/:id',
         loadComponent: () => PrestationEditComponent,
       },
       {
@@ -166,7 +166,7 @@ export const BILLING_ROUTE: Routes = [
         loadComponent: () => ConsultantReadComponent,
       },
       {
-        path: 'edit',
+        path: 'edit/:id',
         loadComponent: () => ConsultantEditComponent,
       },
       {
@@ -188,7 +188,7 @@ export const BILLING_ROUTE: Routes = [
         loadComponent: () => TvaEditComponent,
       },
       {
-        path: 'edit',
+        path: 'edit/:id',
         loadComponent: () => TvaEditComponent,
       },
     ],
@@ -199,7 +199,7 @@ export const BILLING_ROUTE: Routes = [
     canActivate: [AuthGuard],
     children: [
       {
-        path: 'edit',
+        path: 'edit/:userName',
         loadComponent: () => EditUserComponent,
       },
       {

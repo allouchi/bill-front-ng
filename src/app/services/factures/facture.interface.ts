@@ -76,8 +76,6 @@ export interface IFactureService {
 
   getWorkingDays(year: number, month: number): Observable<number>;
 
-  runBatch(siret: string): Observable<Facture[]>;
-
   searchFactures(
     siret: string,
     pattern: string,

@@ -21,10 +21,9 @@ export class UserService implements IUserService, IRolesService {
   findUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${this.USER_PATH}`);
   }
-  login(user: User): Observable<User> {
-    return this.http.get<User>(
-      `${this.USER_PATH}/${user.email}/${user.password}`
-    );
+
+  getUserByUserName(userName: string): Observable<User> {
+    return this.http.get<User>(`${this.USER_PATH}/${encodeURIComponent(userName)}`);
   }
 
   logout(): Observable<string> {
@@ -37,9 +36,6 @@ export class UserService implements IUserService, IRolesService {
 
   editUser(user: User): Observable<User> {
     return this.http.put<User>(`${this.USER_PATH}/edit`, user);
-  }
-  findByEmailAndPassword(email: string, password: string): Observable<User> {
-    return this.http.get<User>(`${this.USER_PATH}/${email}/${password}`);
   }
 
   getRoles(): Observable<Role[]> {

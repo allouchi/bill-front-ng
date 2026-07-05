@@ -26,14 +26,6 @@ export interface ICompanyService {
    * Get all schemas if no project or all schemas for project name in otherwise
    *
    * @param company company name
-   * @returns Observable<Company>
-   */
-  findByUserName(siret: string): Observable<Company[]>;
-
-  /**
-   * Get all schemas if no project or all schemas for project name in otherwise
-   *
-   * @param company company name
    * @returns Observable<Company[]>
    */
   findCompanies(): Observable<Company[]>;
@@ -44,6 +36,4 @@ export interface ICompanyService {
    * @param id facture id to delete
    */
   deleteCompanyById(id: number): Observable<string>;
-
-  switchCompany(company: Company): Observable<void>;
 }

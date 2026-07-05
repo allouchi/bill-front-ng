@@ -10,7 +10,9 @@ import {
 } from '@angular/forms';
 import Tva from '../../../models/Tva';
 import { TvaService } from '../../../services/tva/tva-service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { CompanyService } from '../../../services/companies/company-service';
 
 import Company from '../../../models/Company';
 import Exercise from '../../../models/Exercise';
@@ -48,7 +50,9 @@ export class TvaEditComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly fb: FormBuilder,
     private readonly sharedMessagesService: SharedMessagesService,
-    private readonly factureService: FactureService
+    private readonly factureService: FactureService,
+    private readonly companyService: CompanyService,
+    private readonly route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -60,18 +64,37 @@ export class TvaEditComponent implements OnInit, OnDestroy {
       numeroFacture: ['', Validators.required],
     });
 
-    this.currentUrl = this.router.url;
+    this.isEdit = !!this.route.snapshot.paramMap.get('id');
 
-    if (this.currentUrl.includes('/edit')) {
-      this.isEdit = true;
-    }
-
-    this.companies = this.sharedDataService.getCompanies();
     this.tva = this.sharedDataService.getSelectedTva();
-    this.exercices = this.sharedDataService.getExercices();
     this.siret = this.sharedDataService.getSiret();
 
-    this.exercices = this.exercices!.filter((ex) => ex.exercise !== 'Tous');
+    // TVA has no GET-by-id endpoint; an edit deep-link without a seed can't be
+    // hydrated, so bounce back to the list instead of showing a broken form.
+    if (this.isEdit && !this.tva) {
+      this.router.navigate(['/tvas/read']);
+      return;
+    }
+
+    const cachedCompanies = this.sharedDataService.getCompanies();
+    const cachedExercices = this.sharedDataService.getExercices();
+    if (cachedCompanies?.length && cachedExercices?.length) {
+      this.hydrate(cachedCompanies, cachedExercices);
+    } else {
+      // Refresh on /tvas/add: reference data was lost, refetch it.
+      forkJoin({
+        companies: this.companyService.findCompanies(),
+        exercices: this.tvaService.findExercisesRef(),
+      }).subscribe({
+        next: ({ companies, exercices }) => this.hydrate(companies, exercices),
+        error: (err) => this.onError(err),
+      });
+    }
+  }
+
+  private hydrate(companies: Company[], exercices: Exercise[]): void {
+    this.companies = companies;
+    this.exercices = (exercices ?? []).filter((ex) => ex.exercise !== 'Tous');
 
     if (this.companies) {
       this.companies.forEach((c) => {

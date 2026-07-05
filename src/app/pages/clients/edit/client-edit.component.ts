@@ -10,7 +10,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime, Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -54,6 +54,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     private readonly i18nService: I18nService,
     private readonly authService: AuthService,
     private readonly countryService: CountryService,
+    private readonly route: ActivatedRoute,
   ) { }
 
   // ========================
@@ -70,8 +71,19 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     this.currentUrl = this.router.url;
     this.siret = this.sharedDataService.getSiret()!;
 
-    if (this.currentUrl.includes('/edit')) {
-      this.initEditMode();
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      this.isEdit = true;
+      // Instant seed from the list navigation, if present...
+      const seed = this.sharedDataService.getSelectedClient();
+      if (seed && seed.id === Number(idParam)) {
+        this.initEditMode(seed);
+      }
+      // ...but always (re)fetch by id so refresh / deep-link works.
+      this.clientService.getClientById(Number(idParam)).subscribe({
+        next: (client) => this.initEditMode(client),
+        error: (err) => this.onError(err),
+      });
     }
   }
 
@@ -109,8 +121,8 @@ export class ClientEditComponent implements OnInit, OnDestroy {
   // ========================
   // EDIT MODE
   // ========================
-  private initEditMode(): void {
-    this.client = this.sharedDataService.getSelectedClient();
+  private initEditMode(client: Client | null): void {
+    this.client = client;
     if (!this.client) return;
 
     this.isEdit = true;

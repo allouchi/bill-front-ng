@@ -18,7 +18,6 @@ import User from '../../models/User';
 import { SharedDataService } from '../../services/shared/shared-data-service';
 import { TranslateModule } from '@ngx-translate/core';
 import Company from '../../models/Company';
-import { CompanyService } from '../../services/companies/company-service';
 
 @Component({
   selector: 'bill-navbar',
@@ -69,7 +68,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private readonly modalService: NgbModal,
     private readonly translateService: I18nService,
     private readonly userService: UserService,
-    private readonly companyService: CompanyService,
     private readonly sharedDataService: SharedDataService
   ) { }
 
@@ -171,15 +169,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
   }
 
-  switchCompanyService(company: Company) {
-    this.companyService.switchCompany(company).subscribe({
-      next: () => {
-        this.reload();
-      },
-      error: (err) => this.onError(err),
-    });
-  }
-
   private onError(error: any) {
     this.alertService.showFunctionlError(error);
   }
@@ -206,9 +195,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
             this.updateUserService(this.user!);
           }
           if (result.company) {
-            this.switchCompanyService(result.company);           
+            // Active-company switch is siret-scoped (localStorage) — the scoped
+            // lists resolve their data from getSiret(). No dead /companies/switch call.
             this.sharedDataService.setSiret(result.company.siret);
             this.sharedDataService.setSelectCompany(result.company);
+            this.libelleCompanyService.setMessage(result.company.socialReason);
+            this.reload();
           }
         }
       })

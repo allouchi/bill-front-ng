@@ -133,15 +133,25 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
 
     modal.result
       .then((result) => {
-        if (result === 'confirm') {
-          this.prestations = this.prestations.filter(
-            (t) => t.id !== prestation.id
-          );
+        if (result === 'confirm' && prestation.id) {
+          this.deletePrestationService(prestation.id);
         }
       })
       .catch(() => {
         console.log('Annulé');
       });
+  }
+
+  private deletePrestationService(id: number) {
+    this.prestationService.deletePrestationById(id).subscribe({
+      next: () => {
+        this.alertService.show('DELETE', 'PRESTATION', 'success');
+        this.loadPrestations();
+      },
+      error: (err) => {
+        this.onError(err);
+      },
+    });
   }
 
   updatePrestaDateFin() {
@@ -162,6 +172,13 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
   addPrestation() {
     this.sharedMessagesService.setMessage("Ajout d'une Prestation");
     this.router.navigate(['/prestations/add']);
+  }
+
+  editPrestation(event: Event, prestation: Prestation) {
+    event.preventDefault();
+    this.sharedDataService.setSelectedPrestation(prestation);
+    this.sharedMessagesService.setMessage("Mise à jour d'une Prestation");
+    this.router.navigate(['/prestations/edit', prestation.id]);
   }
 
   editNewFacture(event: Event, prestation: Prestation) {

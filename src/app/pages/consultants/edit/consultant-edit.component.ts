@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ConsultantService } from '../../../services/consultants/consultant-service';
 
 import Consultant from '../../../models/Consultant';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   FormBuilder,
   FormGroup,
@@ -40,7 +40,8 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
     private readonly router: Router,
-    private readonly sharedMessagesService: SharedMessagesService
+    private readonly sharedMessagesService: SharedMessagesService,
+    private readonly route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -51,26 +52,37 @@ export class ConsultantEditComponent implements OnInit, OnDestroy {
       fonction: ['', Validators.required],
     });
 
-    this.currentUrl = this.router.url;
     this.siret = this.sharedDataService.getSiret();
 
-    if (this.currentUrl.includes('/edit')) {
-      this.consultant = this.sharedDataService.getSelectedConsultant();
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
       this.isEdit = true;
-      this.sharedMessagesService.setMessage(
-        `Mise à jour de ${this.consultant?.firstName} ${this.consultant?.lastName}`
-      );
-    }
-
-    if (this.consultant) {
-      this.consultantId = this.consultant.id;
-      this.formConsultant.patchValue({
-        firstName: this.consultant.firstName,
-        lastName: this.consultant.lastName,
-        email: this.consultant.email,
-        fonction: this.consultant.fonction,
+      // Instant seed from the list navigation, if present...
+      const seed = this.sharedDataService.getSelectedConsultant();
+      if (seed && seed.id === Number(idParam)) {
+        this.populateForm(seed);
+      }
+      // ...but always (re)fetch by id so refresh / deep-link works.
+      this.consultantService.getConsultantById(Number(idParam)).subscribe({
+        next: (consultant) => this.populateForm(consultant),
+        error: (err) => this.onError(err),
       });
     }
+  }
+
+  private populateForm(consultant: Consultant | null): void {
+    if (!consultant) return;
+    this.consultant = consultant;
+    this.consultantId = consultant.id;
+    this.sharedMessagesService.setMessage(
+      `Mise à jour de ${consultant.firstName} ${consultant.lastName}`
+    );
+    this.formConsultant.patchValue({
+      firstName: consultant.firstName,
+      lastName: consultant.lastName,
+      email: consultant.email,
+      fonction: consultant.fonction,
+    });
   }
 
   addConsultant() {

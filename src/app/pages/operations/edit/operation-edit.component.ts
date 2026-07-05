@@ -8,7 +8,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import Exercise from '../../../models/Exercise';
 import { CommonModule } from '@angular/common';
@@ -17,6 +17,7 @@ import { OperationService } from '../../../services/operations/operation-service
 import { numericFrValidator } from '../../../shared/utils/numeric-fr.validator';
 import { SharedMessagesService } from '../../../services/shared/messages.service';
 import { AlertService } from '../../../services/alert/alertService';
+import { TvaService } from '../../../services/tva/tva-service';
 
 @Component({
   selector: 'bill-operation-edit',
@@ -40,14 +41,57 @@ export class OperationEditComponent implements OnInit, OnDestroy {
     private readonly operationService: OperationService,
     private readonly alertService: AlertService,
     private readonly fb: FormBuilder,
-    private readonly sharedMessagesService: SharedMessagesService
+    private readonly sharedMessagesService: SharedMessagesService,
+    private readonly tvaService: TvaService,
+    private readonly route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    const exercisces = this.sharedDataService.getExercices();
     this.selectedOperation = this.sharedDataService.getSelectedOperation();
     this.siret = this.sharedDataService.getSiret();
-    this.exercises = exercisces!.filter((ex) => ex.exercise !== 'Tous');
+
+    // Reference exercices: use cached list, otherwise refetch (refresh/deep-link).
+    const cachedExercices = this.sharedDataService.getExercices();
+    if (cachedExercices?.length) {
+      this.exercises = cachedExercices.filter((ex) => ex.exercise !== 'Tous');
+    } else {
+      this.tvaService.findExercisesRef().subscribe({
+        next: (ex) => (this.exercises = ex.filter((e) => e.exercise !== 'Tous')),
+        error: (err) => this.onError(err),
+      });
+    }
+
+    // Always build a form synchronously so the template binding is never undefined.
+    this.buildForm();
+
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (
+      idParam &&
+      (!this.selectedOperation || this.selectedOperation.id !== Number(idParam))
+    ) {
+      // Deep-link / refresh: resolve the operation from the siret-scoped list.
+      if (this.siret) {
+        this.operationService
+          .getOperations(this.siret, 'Tous', 'Tous', 0, 1000)
+          .subscribe({
+            next: (page) => {
+              const found = page.content.find((o) => o.id === Number(idParam));
+              if (found) {
+                this.selectedOperation = found;
+                this.buildForm();
+              } else {
+                this.router.navigate(['/operations/read']);
+              }
+            },
+            error: (err) => this.onError(err),
+          });
+      } else {
+        this.router.navigate(['/operations/read']);
+      }
+    }
+  }
+
+  private buildForm(): void {
     let formatedDate;
     if (this.selectedOperation) {
       const dateOperation = this.selectedOperation.dateOperation.split('/');

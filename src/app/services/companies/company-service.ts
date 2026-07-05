@@ -34,17 +34,12 @@ export class CompanyService implements ICompanyService {
     return this.http.get<Company[]>(`${this.COMPNAY_PATH}/${siret}`);
   }
 
-  findByUserName(userName: string): Observable<Company[]> {
-    const userPath = 'user';
-    return this.http.get<Company[]>(
-      `${this.COMPNAY_PATH}/${userPath}/${userName}`,
-    );
-  }
-  deleteCompanyById(id: number): Observable<string> {
-    return this.http.delete<string>(`${this.COMPNAY_PATH}/${id}`);
+  /** Fetch a single company by its siret (used to hydrate the edit form on deep-link/refresh). */
+  getCompanyBySiret(siret: string): Observable<Company> {
+    return this.http.get<Company>(`${this.COMPNAY_PATH}/${siret}`);
   }
 
-  switchCompany(company: Company): Observable<void> {
-    return this.http.put<void>(`${this.COMPNAY_PATH}/switch`, company);
+  deleteCompanyById(id: number): Observable<string> {
+    return this.http.delete<string>(`${this.COMPNAY_PATH}/${id}`);
   }
 }

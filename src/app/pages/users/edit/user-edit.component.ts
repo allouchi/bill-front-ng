@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
 import Company from '../../../models/Company';
 import { CompanyService } from '../../../services/companies/company-service';
 import User from '../../../models/User';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import GetMessagesError from '../../../shared/utils/messages-error';
 import Role from '../../../models/Role';
 import { SharedDataService } from '../../../services/shared/shared-data-service';
@@ -44,13 +44,39 @@ export class EditUserComponent {
     private readonly alertService: AlertService,
     private readonly sharedDataService: SharedDataService,
     private readonly router: Router,
-    private readonly sharedMessagesService: SharedMessagesService
+    private readonly sharedMessagesService: SharedMessagesService,
+    private readonly route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    this.loadRoles();
-    this.user = this.sharedDataService.getSelectedUser();
+    const userName = this.route.snapshot.paramMap.get('userName');
+    if (userName) {
+      // Deep-link / refresh safe: authoritative fetch by userName.
+      this.userService.getUserByUserName(userName).subscribe({
+        next: (user) => this.initFromUser(user),
+        error: (err) => {
+          const seed = this.sharedDataService.getSelectedUser();
+          if (seed) {
+            this.initFromUser(seed);
+          } else {
+            this.onError(err);
+          }
+        },
+      });
+    } else {
+      this.initFromUser(this.sharedDataService.getSelectedUser());
+    }
+  }
 
+  private initFromUser(user: User | null): void {
+    this.user = user;
+    this.buildForm();
+    this.loadRoles();
+    this.loadCompanies();
+    this.initPassword();
+  }
+
+  private buildForm(): void {
     this.userForm = this.fb.group({
       email: [
         { value: this.user?.email, disabled: true },
@@ -70,8 +96,6 @@ export class EditUserComponent {
       roles: this.fb.array([]),
       activated: [this.user?.activated, Validators.required]
     });
-    this.loadCompanies();
-    this.initPassword();
   }
 
   initPassword() {
@@ -93,11 +117,12 @@ export class EditUserComponent {
   }
 
   private addCheckboxes() {
-    const checkedRoles = this.user?.roles.map((r) => r.roleName);
+    const checkedRoles = this.user?.roles?.map((r) => r.roleName) ?? [];
 
     const rolesFormArray = this.userForm.get('roles') as FormArray;
+    rolesFormArray.clear();
     this.roles.forEach((role) => {
-      const isSelected = checkedRoles!.includes(role.roleName);
+      const isSelected = checkedRoles.includes(role.roleName);
       rolesFormArray.push(new FormControl(isSelected));
     });
   }

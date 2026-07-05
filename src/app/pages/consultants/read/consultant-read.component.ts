@@ -129,7 +129,7 @@ siret: string | null = '';
     );
     if (ok) {
       this.sharedDataService.setSelectedConsultant(consultant);
-      this.router.navigate(['consultants/edit']);
+      this.router.navigate(['consultants/edit', consultant.id]);
     }
   }
 
@@ -137,7 +137,7 @@ siret: string | null = '';
     event.preventDefault();
     this.sharedDataService.setSelectedConsultant(consultant);
     this.sharedMessagesService.setMessage("Mise à jour d'un Consultant");
-    this.router.navigate(['consultants/edit']);
+    this.router.navigate(['consultants/edit', consultant.id]);
   }
   private onError(error: any) {
     this.isLoaded = true;

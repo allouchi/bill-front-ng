@@ -24,8 +24,9 @@ export class PrestationService implements IPrestationService {
         prestation,
       );
     } else {
+      // Update targets the collection root (PUT /api/prestations); the {siret} suffix 404s.
       return this.http.put<Prestation>(
-        `${this.PRESTATION_PATH}/${siret}`,
+        `${this.PRESTATION_PATH}`,
         prestation,
       );
     }
@@ -40,5 +41,9 @@ export class PrestationService implements IPrestationService {
   }
   getPrestationsBySiret(siret: string): Observable<Prestation[]> {
     return this.http.get<Prestation[]>(`${this.PRESTATION_PATH}/${siret}`);
+  }
+
+  getPrestationById(id: number): Observable<Prestation> {
+    return this.http.get<Prestation>(`${this.PRESTATION_PATH}/byId/${id}`);
   }
 }

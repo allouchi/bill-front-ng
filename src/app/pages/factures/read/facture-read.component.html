@@ -12,18 +12,6 @@
     @if(siret){
     <div class="toolbar">
       <bill-search class="w-100" (search)="onSearch($event)" placeholder="Chercher facture..."></bill-search>
-
-      @if(showPenalite){
-      <button class="btn btn-outline-primary" (click)="runBatch()">
-        <i class="bi bi-calculator me-1"></i> Calcul Pénalités
-      </button>
-      }
-
-      @if(hidePenalite){
-      <button class="btn btn-outline-primary" (click)="hide()">
-        <i class="bi bi-eye-slash me-1"></i> Cacher Pénalités
-      </button>
-      }
     </div>
     }
   </div>

@@ -245,7 +245,7 @@ export class OperationReadComponent implements OnInit, OnDestroy {
     this.sharedMessagesService.setMessage("Edition d'une Opération");
     this.sharedDataService.setExercices(this.exercises);
     this.sharedDataService.setSelectOperation(operation);
-    this.router.navigate(['/operations/edit']);
+    this.router.navigate(['/operations/edit', operation.id]);
   }
 
   deleteOperationService(id: number) {

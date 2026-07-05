@@ -161,7 +161,7 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
     event.preventDefault();
     this.sharedMessagesService.setMessage('Modifier une Société');
     this.sharedDataService.setSelectCompany(company);
-    this.router.navigate(['/companies/edit']);
+    this.router.navigate(['/companies/edit', company.siret]);
   }
 
   addCampany() {

@@ -287,7 +287,7 @@ export class TvaReadComponent implements OnInit, OnDestroy {
     this.sharedMessagesService.setMessage("Mise à jour d'une TVA");
     this.sharedDataService.setExercices(this.exercises);
     this.sharedDataService.setCompanies(this.companies);
-    this.router.navigate(['/tvas/edit']);
+    this.router.navigate(['/tvas/edit', tva.id]);
   }
 
   deleteTvaSerice(id: number) {

@@ -40,6 +40,10 @@ export class ConsultantService implements IConsultantService {
     return this.http.get<Consultant[]>(`${this.CONSULTANT_PATH}`);
   }
 
+  getConsultantById(id: number): Observable<Consultant> {
+    return this.http.get<Consultant>(`${this.CONSULTANT_PATH}/${id}`);
+  }
+
   deleteConsultantById(id: number): Observable<string> {
     return this.http.delete<string>(`${this.CONSULTANT_PATH}/${id}`);
   }

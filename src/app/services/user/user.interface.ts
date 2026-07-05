@@ -15,23 +15,6 @@ export interface IUserService {
    */
   createUser(user: User): Observable<User>;
 
-  /**
-   * Find user
-   *
-   * @param email email
-   * @param password password
-   * @returns Promise<User>
-   */
-  findByEmailAndPassword(email: string, password: string): Observable<User>;
-
-  /**
-   * Connect user
-   *
-   * @param user user to find
-   * @returns Promise<User>
-   */
-  login(user: User): Observable<User>;
-
   findUsers(): Observable<User[]>;
 
   deleteUser(id: number): Observable<User>;
