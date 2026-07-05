@@ -431,9 +431,12 @@ html[data-theme="dark"] .table > thead.table-dark th {
 .table tbody tr:first-child td { border-top: none; }
 
 .table tbody tr { transition: background-color .16s var(--ease); }
-.table-striped > tbody > tr:nth-of-type(odd) > * { background: color-mix(in srgb, var(--surface-2) 50%, transparent); }
+/* IMS look: uniform rows — no zebra striping. All rows share the same surface;
+   only hover tints them. Neutralises Bootstrap's .table-striped alternation. */
+.table-striped > tbody > tr:nth-of-type(odd) > *,
+.table-striped > tbody > tr:nth-of-type(even) > * { background: transparent; }
 .table-striped tbody tr:hover,
-.table tbody tr:hover { background: rgba(0, 167, 111, 0.08) !important; cursor: pointer; }
+.table tbody tr:hover { background: rgba(0, 167, 111, 0.06) !important; cursor: pointer; }
 .table tbody tr:hover td { background: transparent; }
 
 /* Neutralise Bootstrap's green tint */
@@ -938,18 +941,21 @@ html[data-theme="dark"] .table tfoot td,
 html[data-theme="dark"] .table > tfoot.table-dark td,
 html[data-theme="dark"] .table tfoot.table-dark > tr > td { background: var(--surface-2) !important; }
 
-/* ---- Status row tints (on-brand, dark-safe) ------------------------ */
-.table tbody tr.table-success > * { background: rgba(34, 197, 94, 0.08) !important; }
-.table tbody tr.table-danger  > * { background: rgba(255, 86, 48, 0.08) !important; }
+/* ---- Uniform rows (IMS): status is shown by the chip, NOT the row color. ---- */
+/* Every row shares the same surface — no per-status full-row tint, no rails.   */
+.table tbody tr.table-success > *,
+.table tbody tr.table-danger  > *,
+.table tbody tr.table-warning > * { background: transparent !important; }
 .table tbody tr.table-success:hover > *,
-.table tbody tr.table-danger:hover  > * { background: rgba(0, 167, 111, 0.08) !important; }
+.table tbody tr.table-danger:hover  > *,
+.table tbody tr.table-warning:hover > * { background: transparent !important; }
 @media (max-width: 767.98px) {
   .table tbody tr.table-success,
-  .table tbody tr.table-danger { background: var(--surface) !important; }
+  .table tbody tr.table-danger,
+  .table tbody tr.table-warning { background: var(--surface) !important; box-shadow: var(--shadow-card); }
   .table tbody tr.table-success > *,
-  .table tbody tr.table-danger  > * { background: transparent !important; }
-  .table tbody tr.table-success { box-shadow: inset 3px 0 0 var(--success), var(--shadow-card); }
-  .table tbody tr.table-danger  { box-shadow: inset 3px 0 0 var(--error), var(--shadow-card); }
+  .table tbody tr.table-danger  > *,
+  .table tbody tr.table-warning > * { background: transparent !important; }
 }
 
 /* ---- Form composition helpers -------------------------------------- */
