@@ -14,11 +14,13 @@ import Company from '../../../models/Company';
 import { RaisonSocialePipe } from '../../../shared/pipes/raison-sociale.pipe';
 import { CommonModule } from '@angular/common';
 import { AlertService } from '../../../services/alert/alertService';
+import { EntityCardComponent } from '../../../shared/entity-card/entity-card.component';
+import { DetailModalComponent, DetailField } from '../../../shared/detail-modal/detail-modal.component';
 
 @Component({
   selector: 'bill-User-read',
   standalone: true,
-  imports: [WaitingComponent, UserNamePipe, RaisonSocialePipe, CommonModule],
+  imports: [WaitingComponent, UserNamePipe, RaisonSocialePipe, CommonModule, EntityCardComponent, DetailModalComponent],
   templateUrl: './user-read.component.html',
   styleUrl: './user-read.component.css',
 })
@@ -30,6 +32,56 @@ export class UserReadComponent implements OnInit, OnDestroy {
   isAdmin = false;
   parent = 'read';
   statusFilter: 'all' | 'active' | 'inactive' = 'all';
+
+  selectedUser: User | null = null;
+  detailOpen = false;
+
+  openDetail(user: User): void {
+    this.selectedUser = user;
+    this.detailOpen = true;
+  }
+  closeDetail(): void {
+    this.detailOpen = false;
+  }
+  onEditDetail(): void {
+    if (this.selectedUser) {
+      this.editUser(new Event('click'), this.selectedUser);
+    }
+    this.closeDetail();
+  }
+  onDeleteDetail(): void {
+    if (this.selectedUser) {
+      this.deleteUser(new Event('click'), this.selectedUser);
+    }
+    this.closeDetail();
+  }
+  fullName(u: User): string {
+    return `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim() || u.email;
+  }
+  rolesLabel(u: User): string {
+    return (u.roles || []).map((r) => r.description).join(', ');
+  }
+  societyName(u: User): string {
+    const match = this.companies.find((c) => c.siret === u.siret);
+    return match ? match.socialReason : (u.siret || '');
+  }
+  get detailFields(): DetailField[] {
+    const u = this.selectedUser;
+    if (!u) return [];
+    return [
+      { label: 'Prénom', value: u.firstName, section: 'Identité' },
+      { label: 'Nom', value: u.lastName },
+      { label: 'Adresse email', value: u.email, wide: true },
+      { label: 'Société', value: this.societyName(u), section: 'Accès' },
+      { label: 'Langue', value: u.language },
+      { label: 'Rôles', value: this.rolesLabel(u), wide: true },
+      {
+        label: 'Statut',
+        value: u.activated ? 'Actif' : 'Inactif',
+        tone: u.activated ? 'success' : 'default',
+      },
+    ];
+  }
 
   get activeCount(): number {
     return this.filtredUsers.filter((u) => u.activated).length;

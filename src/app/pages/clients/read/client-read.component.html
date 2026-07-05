@@ -31,7 +31,8 @@
   </div>
 
   @if (clients.length) {
-  <div class="table-shell">
+  <!-- TABLE (desktop ≥768px) -->
+  <div class="table-shell list-desktop">
     <div class="table-scroll">
       <table class="table table-striped mb-0" [@listStagger]="clients.length">
         <thead class="table-dark">
@@ -44,7 +45,7 @@
         </thead>
         <tbody>
           @for (client of clients; track client.id) {
-          <tr>
+          <tr (click)="openDetail(client)">
             <td class="text-start fw-bold" data-label="Raison sociale">{{ client.socialReason }}</td>
             <td class="text-start" data-label="Adresse Email">
               @for (mail of client.emails; track mail.id) {
@@ -52,7 +53,7 @@
               }
             </td>
             <td class="text-start" data-label="Adresse client">{{ client.adresseClient | adresseClientPipe }}</td>
-            <td class="text-end cell-actions" data-label="Actions">
+            <td class="text-end cell-actions" data-label="Actions" (click)="$event.stopPropagation()">
               <button class="btn btn-outline-primary btn-sm me-2" (click)="editClient($event, client)"
                 title="Modifier Client" [disabled]="!isAdmin">
                 <i class="bi bi-pencil"></i>
@@ -68,6 +69,32 @@
       </table>
     </div>
   </div>
+
+  <!-- ENTITY CARDS (mobile <768px) -->
+  <div class="entity-grid stagger">
+    @for (client of clients; track client.id) {
+    <bill-entity-card
+      icon="bi-people"
+      accent="brand"
+      [title]="client.socialReason"
+      [meta]="[
+        { icon: 'bi-envelope', text: firstEmail(client) },
+        { icon: 'bi-geo-alt', text: clientAddress(client) }
+      ]"
+      [status]="client.hasPrestation ? { label: 'Facturable', tone: 'brand' } : undefined"
+      (open)="openDetail(client)">
+      <div card-actions>
+        <button class="btn btn-sm" (click)="editClient($event, client)" [disabled]="!isAdmin">
+          <i class="bi bi-pencil"></i> Modifier
+        </button>
+        <button class="btn btn-sm btn-outline-danger" (click)="deleteClient($event, client)"
+          [disabled]="!isAdmin || client.hasPrestation">
+          <i class="bi bi-trash"></i> Supprimer
+        </button>
+      </div>
+    </bill-entity-card>
+    }
+  </div>
   } @else {
   <div class="surface-card empty-state">
     <div class="empty-glyph"><i class="bi bi-people"></i></div>
@@ -76,6 +103,21 @@
     <button class="btn btn-primary mt-2" (click)="addClient()"><i class="bi bi-plus-lg me-1"></i> Ajouter un client</button>
   </div>
   }
+
+  <!-- DETAIL MODAL -->
+  <bill-detail-modal
+    [open]="detailOpen"
+    icon="bi-people"
+    accent="brand"
+    [title]="selectedClient?.socialReason || 'Client'"
+    [status]="selectedClient?.hasPrestation ? { label: 'Facturable', tone: 'brand' } : undefined"
+    [fields]="detailFields"
+    [canEdit]="isAdmin"
+    [canDelete]="isAdmin && !selectedClient?.hasPrestation"
+    (close)="closeDetail()"
+    (edit)="onEditDetail()"
+    (remove)="onDeleteDetail()">
+  </bill-detail-modal>
 </div>
 } @else {
 <bill-waiting [edit]="parent"></bill-waiting>

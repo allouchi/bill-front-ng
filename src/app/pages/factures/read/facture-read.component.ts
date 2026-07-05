@@ -32,6 +32,8 @@ import { AlertService } from '../../../services/alert/alertService';
 
 import EmailClient from '../../../models/EmailClient';
 import { SearchComponent } from '../../../shared/search/search.component';
+import { EntityCardComponent } from '../../../shared/entity-card/entity-card.component';
+import { DetailModalComponent, DetailField } from '../../../shared/detail-modal/detail-modal.component';
 
 @Component({
   selector: 'bill-facture-read',
@@ -43,6 +45,8 @@ import { SearchComponent } from '../../../shared/search/search.component';
     ReactiveFormsModule,
     CustomDecimalPipe,
     FormsModule,
+    EntityCardComponent,
+    DetailModalComponent,
   ],
   templateUrl: './facture-read.component.html',
   styleUrls: ['./facture-read.component.scss'],
@@ -75,8 +79,58 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
   factureStatusFilter: 'all' | 'paid' | 'unpaid' = 'all';
   private searchSubject = new Subject<string>();
 
-  private isPaid(facture: Facture): boolean {
+  selectedFacture: Facture | null = null;
+  detailOpen = false;
+
+  isPaid(facture: Facture): boolean {
     return !!facture.dateEncaissement && facture.dateEncaissement.trim() !== '';
+  }
+  private money(v: number | null | undefined): string {
+    return new CustomDecimalPipe().transform(v as number) + ' €';
+  }
+  openDetail(facture: Facture): void {
+    this.selectedFacture = facture;
+    this.detailOpen = true;
+  }
+  closeDetail(): void {
+    this.detailOpen = false;
+  }
+  onEditDetail(): void {
+    if (this.selectedFacture) {
+      this.encaissementFacture(new Event('click'), this.selectedFacture);
+    }
+    this.closeDetail();
+  }
+  onDeleteDetail(): void {
+    if (this.selectedFacture) {
+      this.deleteFacture(new Event('click'), this.selectedFacture);
+    }
+    this.closeDetail();
+  }
+  get detailFields(): DetailField[] {
+    const f = this.selectedFacture;
+    if (!f) return [];
+    return [
+      { label: 'Numéro', value: f.numeroFacture, section: 'Facture' },
+      { label: 'Mois', value: f.moisFacture },
+      { label: 'Date facturation', value: f.dateFacturation },
+      { label: 'Date échéance', value: f.dateEcheance },
+      { label: 'Date encaissement', value: f.dateEncaissement || 'Non acquittée' },
+      {
+        label: 'Statut',
+        value: this.isPaid(f) ? 'Réglée' : 'En attente',
+        tone: this.isPaid(f) ? 'success' : 'warning',
+      },
+      { label: 'Tarif HT', value: this.money(f.tarifHT), isMoney: true, section: 'Montants' },
+      { label: 'Quantité', value: f.quantite, isMoney: true },
+      { label: 'Total HT', value: this.money(f.prixTotalHT), isMoney: true },
+      { label: 'Total TTC', value: this.money(f.prixTotalTTC), isMoney: true },
+      { label: 'Montant TVA', value: this.money(f.montantTVA), isMoney: true },
+      { label: 'Débit TVA', value: this.money(f.montantTvaPaye), isMoney: true },
+      { label: 'Description', value: f.statusDesc, wide: true, section: 'Suivi' },
+      { label: 'Jours de retard', value: f.nbJourRetard },
+      { label: 'Pénalités', value: f.fraisRetard ? this.money(f.fraisRetard) : null, isMoney: true },
+    ];
   }
   get paidCount(): number {
     return this.factures.filter((f) => this.isPaid(f)).length;

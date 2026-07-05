@@ -27,6 +27,8 @@ import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-del
 import { AuthService } from '../../../services/auth/auth-service';
 import { Util } from '../../../shared/utils/utils';
 import { AlertService } from '../../../services/alert/alertService';
+import { EntityCardComponent } from '../../../shared/entity-card/entity-card.component';
+import { DetailModalComponent, DetailField } from '../../../shared/detail-modal/detail-modal.component';
 
 @Component({
   selector: 'bill-prestation-read',
@@ -38,6 +40,8 @@ import { AlertService } from '../../../services/alert/alertService';
     WaitingComponent,
     ReactiveFormsModule,
     FormsModule,
+    EntityCardComponent,
+    DetailModalComponent,
   ],
   templateUrl: './prestation-read.component.html',
   styleUrl: './prestation-read.component.css',
@@ -56,6 +60,64 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
   parent = 'read';
   remoteClientError = false;
   remoteConsultantError = false;
+
+  selectedPrestationDetail: Prestation | null = null;
+  detailOpen = false;
+
+  openDetail(prestation: Prestation): void {
+    this.selectedPrestationDetail = prestation;
+    this.detailOpen = true;
+  }
+  closeDetail(): void {
+    this.detailOpen = false;
+  }
+  onEditDetail(): void {
+    if (this.selectedPrestationDetail) {
+      this.editPrestation(new Event('click'), this.selectedPrestationDetail);
+    }
+    this.closeDetail();
+  }
+  onDeleteDetail(): void {
+    if (this.selectedPrestationDetail) {
+      this.deletePrestation(new Event('click'), this.selectedPrestationDetail);
+    }
+    this.closeDetail();
+  }
+  clientName(p: Prestation): string {
+    return p.client?.socialReason ?? '';
+  }
+  consultantName(p: Prestation): string {
+    const c = p.consultant;
+    if (!c) return '';
+    return `${c.firstName ?? ''} ${c.lastName ?? ''}`.trim();
+  }
+  dateRange(p: Prestation): string {
+    const parts = [p.dateDebut, p.dateFin].filter((d) => !!d);
+    return parts.join(' → ');
+  }
+  private money(v: number | null | undefined): string {
+    return v == null ? '—' : `${v} €`;
+  }
+  get detailFields(): DetailField[] {
+    const p = this.selectedPrestationDetail;
+    if (!p) return [];
+    return [
+      { label: 'Numéro de commande', value: p.numeroCommande, section: 'Prestation' },
+      { label: 'Désignation', value: p.designation, wide: true },
+      { label: 'Client', value: this.clientName(p) },
+      { label: 'Consultant', value: this.consultantName(p) },
+      { label: 'Date début', value: p.dateDebut, section: 'Planning' },
+      { label: 'Date fin', value: p.dateFin },
+      { label: 'Tarif HT', value: this.money(p.tarifHT), isMoney: true, section: 'Montants' },
+      { label: 'Quantité', value: p.quantite },
+      { label: 'Délai de paiement', value: p.delaiPaiement != null ? p.delaiPaiement + ' j' : null },
+      {
+        label: 'Facturable',
+        value: p.isPrestaNoteValid ? 'Oui' : 'Pas encore',
+        tone: p.isPrestaNoteValid ? 'success' : 'default',
+      },
+    ];
+  }
 
   get totalHT(): number {
     return (this.prestations ?? []).reduce((sum, p) => sum + (Number(p.tarifHT) || 0), 0);

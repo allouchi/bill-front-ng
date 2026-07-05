@@ -1,0 +1,52 @@
+<article class="entity-card" (click)="onBodyClick()"
+  tabindex="0" role="button" [attr.aria-label]="title"
+  (keydown.enter)="onBodyClick()" (keydown.space)="onBodyClick(); $event.preventDefault()">
+
+  <!-- Top row: tinted icon · title · kebab -->
+  <div class="ec-top">
+    <span class="ec-icon" [ngClass]="'ec-accent-' + accent">
+      <i class="bi" [ngClass]="icon"></i>
+    </span>
+    <h3 class="ec-title">{{ title }}</h3>
+    @if (hasMenu) {
+    <div class="ec-menu-wrap">
+      <button type="button" class="ec-kebab" (click)="toggleMenu($event)"
+        [attr.aria-expanded]="menuOpen" aria-haspopup="menu" aria-label="Actions">
+        <i class="bi bi-three-dots-vertical"></i>
+      </button>
+      @if (menuOpen) {
+      <div class="ec-menu" role="menu" (click)="onMenuClick($event)">
+        <ng-content select="[card-actions]"></ng-content>
+      </div>
+      }
+    </div>
+    }
+  </div>
+
+  @if (subtitle) {
+  <p class="ec-subtitle">{{ subtitle }}</p>
+  }
+
+  @if (visibleMeta.length) {
+  <div class="ec-meta">
+    @for (m of visibleMeta; track $index) {
+    <div class="ec-meta-line">
+      <i class="bi" [ngClass]="m.icon"></i>
+      <span>{{ m.text }}</span>
+    </div>
+    }
+  </div>
+  }
+
+  @if (metricValue || status) {
+  <div class="ec-footer">
+    <div class="ec-metric">
+      @if (metricLabel) { <span class="ec-metric-label">{{ metricLabel }}</span> }
+      @if (metricValue) { <span class="ec-metric-value tnum" [ngClass]="'ec-metric-' + accent">{{ metricValue }}</span> }
+    </div>
+    @if (status) {
+    <span class="chip" [ngClass]="'chip-' + status.tone">{{ status.label }}</span>
+    }
+  </div>
+  }
+</article>

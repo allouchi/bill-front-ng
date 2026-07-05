@@ -1,0 +1,63 @@
+@if (open) {
+<div class="dm-backdrop" (click)="onBackdrop()">
+  <div class="dm-dialog" role="dialog" aria-modal="true" [attr.aria-label]="title"
+    cdkTrapFocus cdkTrapFocusAutoCapture (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <header class="dm-header">
+      <span class="dm-icon" [ngClass]="'ec-accent-' + accent">
+        <i class="bi" [ngClass]="icon"></i>
+      </span>
+      <div class="dm-head-text">
+        <h2 class="dm-title">{{ title }}</h2>
+        @if (subtitle) { <p class="dm-subtitle">{{ subtitle }}</p> }
+      </div>
+      @if (status) {
+      <span class="chip dm-status" [ngClass]="'chip-' + status.tone">{{ status.label }}</span>
+      }
+      <button type="button" class="dm-close" (click)="close.emit()" aria-label="Fermer">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </header>
+    <hr class="rule-gold dm-rule" />
+
+    <!-- Body -->
+    <div class="dm-body">
+      @for (group of groups; track $index) {
+        @if (group.title) { <h3 class="dm-section">{{ group.title }}</h3> }
+        <dl class="dm-grid">
+          @for (f of group.fields; track $index) {
+          <div class="dm-field" [class.dm-span]="f.wide">
+            <dt class="dm-label">{{ f.label }}</dt>
+            <dd class="dm-value">
+              @if (f.tone) {
+              <span class="chip" [ngClass]="'chip-' + f.tone">{{ f.value || '—' }}</span>
+              } @else {
+              <span [class.tnum]="f.isMoney">{{ (f.value === null || f.value === undefined || f.value === '') ? '—' : f.value }}</span>
+              }
+            </dd>
+          </div>
+          }
+        </dl>
+      }
+    </div>
+
+    <!-- Footer -->
+    <footer class="dm-footer">
+      <button type="button" class="btn btn-secondary" (click)="close.emit()">
+        <i class="bi bi-x-circle me-1"></i> Fermer
+      </button>
+      @if (canEdit) {
+      <button type="button" class="btn btn-outline-primary" (click)="edit.emit()">
+        <i class="bi bi-pencil me-1"></i> Modifier
+      </button>
+      }
+      @if (canDelete) {
+      <button type="button" class="btn btn-danger" (click)="remove.emit()">
+        <i class="bi bi-trash me-1"></i> Supprimer
+      </button>
+      }
+    </footer>
+  </div>
+</div>
+}

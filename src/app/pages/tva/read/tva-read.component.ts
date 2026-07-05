@@ -30,6 +30,8 @@ import { CustomDecimalPipe } from '../../../shared/pipes/customDecimal-pipe';
 import { AlertService } from '../../../services/alert/alertService';
 import Facture from '../../../models/Facture';
 import { SearchComponent } from '../../../shared/search/search.component';
+import { EntityCardComponent } from '../../../shared/entity-card/entity-card.component';
+import { DetailModalComponent, DetailField } from '../../../shared/detail-modal/detail-modal.component';
 
 @Component({
   selector: 'bill-tva-read',
@@ -39,6 +41,8 @@ import { SearchComponent } from '../../../shared/search/search.component';
     ReactiveFormsModule,
     CustomDecimalPipe,
     FormsModule,
+    EntityCardComponent,
+    DetailModalComponent,
   ],
   templateUrl: './tva-read.component.html',
   styleUrl: './tva-read.component.css',
@@ -69,6 +73,55 @@ export class TvaReadComponent implements OnInit, OnDestroy {
   nbLignesTva = 0;
   searchTerm: string = '';
   searchControl = new FormControl('');
+
+  selectedTvaDetail: Tva | null = null;
+  detailOpen = false;
+
+  openDetail(tva: Tva): void {
+    this.selectedTvaDetail = tva;
+    this.detailOpen = true;
+  }
+  closeDetail(): void {
+    this.detailOpen = false;
+  }
+  isTvaPaid(tva: Tva): boolean {
+    return (tva.montantPayment || 0) > 0;
+  }
+  onEditDetail(): void {
+    if (this.selectedTvaDetail) {
+      this.updateTva(this.selectedTvaDetail);
+    }
+    this.closeDetail();
+  }
+  onDeleteDetail(): void {
+    if (this.selectedTvaDetail) {
+      this.deleteTva(new Event('click'), this.selectedTvaDetail);
+    }
+    this.closeDetail();
+  }
+  private money(v: number | null | undefined): string {
+    return new CustomDecimalPipe().transform(v as number) + ' €';
+  }
+  get detailFields(): DetailField[] {
+    const t = this.selectedTvaDetail;
+    if (!t) return [];
+    return [
+      { label: 'Numéro facture', value: t.numeroFacture, section: 'Déclaration' },
+      { label: 'Mois facture', value: (t.monthFacture || '').trim() },
+      { label: 'Exercice', value: t.exercise, tone: 'brand' },
+      { label: 'Montant TTC', value: this.money(t.montantTTC), isMoney: true, section: 'Montants' },
+      { label: 'TVA facturée', value: this.money(t.montantTvaFacture), isMoney: true },
+      { label: 'Débit TVA', value: this.money(t.montantPayment), isMoney: true },
+      { label: 'Date encaissement', value: t.dateEncaissement, section: 'Règlement' },
+      { label: 'Date de paiement TVA', value: t.datePayment },
+      { label: 'Mois de paiement', value: (t.monthPayment || '').trim() },
+      {
+        label: 'Statut',
+        value: this.isTvaPaid(t) ? 'Réglée' : 'En attente',
+        tone: this.isTvaPaid(t) ? 'success' : 'warning',
+      },
+    ];
+  }
 
   constructor(
     private readonly tvaService: TvaService,

@@ -74,7 +74,8 @@
   </div>
   }
 
-  <div class="table-shell">
+  <!-- TABLE (desktop ≥768px) -->
+  <div class="table-shell list-desktop">
     <div class="table-scroll">
     <table class="table table-success table-striped">
       <thead class="table-dark">
@@ -93,7 +94,7 @@
       <tbody>
         @if (tvas && tvas.length > 0) {
         @for (tva of tvas; track tva.id) {
-        <tr>
+        <tr (click)="openDetail(tva)">
           <td style="text-align: center" data-label="Numéro Facture">
             <div style="display: inline-block; text-align: left; min-width: 140px">
               {{ tva.numeroFacture }}
@@ -119,7 +120,7 @@
           <td style="text-align: center" data-label="Exercice">
             <span class="chip chip-brand">{{ tva.exercise }}</span>
           </td>
-          <td class="cell-actions" data-label="Actions">
+          <td class="cell-actions" data-label="Actions" (click)="$event.stopPropagation()">
             <button class="btn btn-outline-primary btn-sm me-2" (click)="updateTva(tva)" title="Modifier TVA">
               <i class="bi bi-pencil"></i>
             </button>
@@ -158,19 +159,70 @@
     }
     </table>
     </div>
+  </div>
 
-    @if(totalPages > 1){
-    <div class="pagination-bar scroll-x-mobile">
-      <button class="page-btn" (click)="previousPage()" [disabled]="page === 0" aria-label="Page précédente">
-        <i class="bi bi-arrow-left"></i>
-      </button>
-      <span class="page-indicator">Page {{ page + 1 }} / {{ totalPages }}</span>
-      <button class="page-btn" (click)="nextPage()" [disabled]="page >= totalPages - 1" aria-label="Page suivante">
-        <i class="bi bi-arrow-right"></i>
-      </button>
+  <!-- ENTITY CARDS (mobile <768px) -->
+  <div class="entity-grid stagger">
+    @for (tva of tvas; track tva.id) {
+    <bill-entity-card
+      icon="bi-percent"
+      accent="info"
+      [title]="tva.numeroFacture"
+      [meta]="[
+        { icon: 'bi-calendar3', text: tva.exercise },
+        { icon: 'bi-cash-coin', text: tva.datePayment }
+      ]"
+      metricLabel="TVA facturée"
+      [metricValue]="(tva.montantTvaFacture | customDecimalPipe) + ' €'"
+      [status]="isTvaPaid(tva) ? { label: 'Réglée', tone: 'success' } : { label: 'En attente', tone: 'warning' }"
+      (open)="openDetail(tva)">
+      <div card-actions>
+        <button class="btn btn-sm" (click)="updateTva(tva)">
+          <i class="bi bi-pencil"></i> Modifier
+        </button>
+        <button class="btn btn-sm btn-outline-danger" (click)="deleteTva($event, tva)" [disabled]="!isAdmin">
+          <i class="bi bi-trash"></i> Supprimer
+        </button>
+      </div>
+    </bill-entity-card>
+    } @empty {
+    <div class="surface-card empty-state">
+      <div class="empty-glyph"><i class="bi bi-percent"></i></div>
+      <h3>Aucune TVA payée</h3>
+      <p>Aucun règlement de TVA n'a été enregistré pour cet exercice.</p>
     </div>
     }
   </div>
+
+  @if(totalPages > 1){
+  <div class="pagination-bar scroll-x-mobile">
+    <button class="page-btn" (click)="previousPage()" [disabled]="page === 0" aria-label="Page précédente">
+      <i class="bi bi-arrow-left"></i>
+    </button>
+    <span class="page-indicator">Page {{ page + 1 }} / {{ totalPages }}</span>
+    <button class="page-btn" (click)="nextPage()" [disabled]="page >= totalPages - 1" aria-label="Page suivante">
+      <i class="bi bi-arrow-right"></i>
+    </button>
+  </div>
+  }
+
+  <!-- DETAIL MODAL -->
+  <bill-detail-modal
+    [open]="detailOpen"
+    icon="bi-percent"
+    [accent]="selectedTvaDetail && isTvaPaid(selectedTvaDetail) ? 'success' : 'warning'"
+    [title]="'TVA ' + (selectedTvaDetail?.numeroFacture || '')"
+    [subtitle]="selectedTvaDetail?.exercise ? ('Exercice ' + selectedTvaDetail?.exercise) : undefined"
+    [status]="selectedTvaDetail
+      ? (isTvaPaid(selectedTvaDetail) ? { label: 'Réglée', tone: 'success' } : { label: 'En attente', tone: 'warning' })
+      : undefined"
+    [fields]="detailFields"
+    [canEdit]="true"
+    [canDelete]="isAdmin"
+    (close)="closeDetail()"
+    (edit)="onEditDetail()"
+    (remove)="onDeleteDetail()">
+  </bill-detail-modal>
   }
 </div>
 

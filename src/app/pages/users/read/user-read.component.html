@@ -43,7 +43,8 @@
     </button>
   </div>
 
-  <div class="table-shell">
+  <!-- TABLE (desktop ≥768px) -->
+  <div class="table-shell list-desktop">
     <div class="table-scroll">
   <table class="table table-success table-striped">
     <thead class="table-dark">
@@ -58,7 +59,7 @@
     </thead>
     <tbody class="stagger">
       @for (user of displayedUsers; track user.id) {
-      <tr>
+      <tr (click)="openDetail(user)">
         <td style="text-align: center" data-label="Identité">
           {{ user | userPipe }}
         </td>
@@ -78,7 +79,7 @@
           </span>
         </td>
 
-        <td class="cell-actions" data-label="Actions">
+        <td class="cell-actions" data-label="Actions" (click)="$event.stopPropagation()">
           <button
             class="btn btn-outline-primary btn-sm me-2"
             (click)="editUser($event, user)"
@@ -113,6 +114,55 @@
   </table>
     </div>
   </div>
+
+  <!-- ENTITY CARDS (mobile <768px) -->
+  <div class="entity-grid stagger">
+    @for (user of displayedUsers; track user.id) {
+    <bill-entity-card
+      icon="bi-person-gear"
+      accent="brand"
+      [title]="fullName(user)"
+      [meta]="[
+        { icon: 'bi-envelope', text: user.email },
+        { icon: 'bi-shield-lock', text: rolesLabel(user) }
+      ]"
+      [status]="user.activated ? { label: 'Actif', tone: 'success' } : { label: 'Inactif', tone: 'default' }"
+      (open)="openDetail(user)">
+      <div card-actions>
+        <button class="btn btn-sm" (click)="editUser($event, user)" [disabled]="!isAdmin">
+          <i class="bi bi-pencil"></i> Modifier
+        </button>
+        <button class="btn btn-sm btn-outline-danger" (click)="deleteUser($event, user)" [disabled]="!isAdmin">
+          <i class="bi bi-trash"></i> Supprimer
+        </button>
+      </div>
+    </bill-entity-card>
+    } @empty {
+    <div class="surface-card empty-state">
+      <div class="empty-glyph"><i class="bi bi-people"></i></div>
+      <h3>Aucun utilisateur</h3>
+      <p>Créez un premier compte pour donner accès à l'application.</p>
+    </div>
+    }
+  </div>
+
+  <!-- DETAIL MODAL -->
+  <bill-detail-modal
+    [open]="detailOpen"
+    icon="bi-person-gear"
+    accent="brand"
+    [title]="selectedUser ? fullName(selectedUser) : 'Utilisateur'"
+    [subtitle]="selectedUser?.email"
+    [status]="selectedUser
+      ? (selectedUser.activated ? { label: 'Actif', tone: 'success' } : { label: 'Inactif', tone: 'default' })
+      : undefined"
+    [fields]="detailFields"
+    [canEdit]="isAdmin"
+    [canDelete]="isAdmin"
+    (close)="closeDetail()"
+    (edit)="onEditDetail()"
+    (remove)="onDeleteDetail()">
+  </bill-detail-modal>
 </div>
 }@else {
 <bill-waiting [edit]="parent"></bill-waiting>

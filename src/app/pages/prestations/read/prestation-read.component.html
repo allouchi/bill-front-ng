@@ -44,7 +44,8 @@
     </div>
   </div>
 
-  <div class="table-shell">
+  <!-- TABLE (desktop ≥768px) -->
+  <div class="table-shell list-desktop">
     <div class="table-scroll">
     <table class="table table-success table-striped">
       <thead class="table-dark">
@@ -69,7 +70,7 @@
       </thead>
       <tbody class="stagger">
         @for (prestation of prestations; track prestation.id) {
-        <tr>
+        <tr (click)="openDetail(prestation)">
           <td style="text-align: center;" class="fw-bold" data-label="Numéro de commande">{{ prestation.numeroCommande }}</td>
           <td data-label="Date début">{{ prestation.dateDebut }}</td>
           <td data-label="Date fin">{{ prestation.dateFin }}</td>
@@ -77,7 +78,7 @@
           <td data-label="Délai de paiement">{{ prestation.delaiPaiement }}</td>
           <td data-label="Consultant">{{ prestation.consultant! | consultantPipe }}</td>
           <td data-label="Client">{{ prestation.client! | clientPipe }}</td>
-          <td class="cell-actions" data-label="Actions">
+          <td class="cell-actions" data-label="Actions" (click)="$event.stopPropagation()">
             <button class="btn btn-outline-secondary btn-sm me-2" (click)="editPrestation($event, prestation)"
               title="Modifier la Prestation" [disabled]="!isAdmin">
               <i class="bi bi-pencil"></i>
@@ -114,6 +115,67 @@
     </table>
     </div>
   </div>
+
+  <!-- ENTITY CARDS (mobile <768px) -->
+  <div class="entity-grid stagger">
+    @for (prestation of prestations; track prestation.id) {
+    <bill-entity-card
+      icon="bi-briefcase"
+      accent="brand"
+      [title]="prestation.numeroCommande || prestation.designation || '—'"
+      [meta]="[
+        { icon: 'bi-person', text: clientName(prestation) },
+        { icon: 'bi-calendar-range', text: dateRange(prestation) }
+      ]"
+      metricLabel="Tarif HT"
+      [metricValue]="(prestation.tarifHT != null ? prestation.tarifHT + ' €' : '—')"
+      [status]="prestation.isPrestaNoteValid
+        ? { label: 'Facturable', tone: 'success' }
+        : { label: 'En cours', tone: 'default' }"
+      (open)="openDetail(prestation)">
+      <div card-actions>
+        <button class="btn btn-sm" (click)="editPrestation($event, prestation)" [disabled]="!isAdmin">
+          <i class="bi bi-pencil"></i> Modifier
+        </button>
+        <button class="btn btn-sm" (click)="editNewFacture($event, prestation)"
+          [disabled]="!isAdmin || !prestation.isPrestaNoteValid">
+          <i class="bi bi-receipt"></i> Éditer facture
+        </button>
+        <button class="btn btn-sm" (click)="prolongerPrestation(prestation)" [disabled]="!isAdmin">
+          <i class="bi bi-plus"></i> Prolonger
+        </button>
+        <button class="btn btn-sm btn-outline-danger" (click)="deletePrestation($event, prestation)"
+          [disabled]="!isAdmin || !prestation.deletePresta">
+          <i class="bi bi-trash"></i> Supprimer
+        </button>
+      </div>
+    </bill-entity-card>
+    } @empty {
+    <div class="surface-card empty-state">
+      <div class="empty-glyph"><i class="bi bi-briefcase"></i></div>
+      <h3>Aucune prestation</h3>
+      <p>Créez une prestation pour générer des factures.</p>
+    </div>
+    }
+  </div>
+
+  <!-- DETAIL MODAL -->
+  <bill-detail-modal
+    [open]="detailOpen"
+    icon="bi-briefcase"
+    accent="brand"
+    [title]="selectedPrestationDetail?.numeroCommande || 'Prestation'"
+    [subtitle]="selectedPrestationDetail?.designation"
+    [status]="selectedPrestationDetail
+      ? (selectedPrestationDetail.isPrestaNoteValid ? { label: 'Facturable', tone: 'success' } : { label: 'En cours', tone: 'default' })
+      : undefined"
+    [fields]="detailFields"
+    [canEdit]="isAdmin"
+    [canDelete]="isAdmin && !!selectedPrestationDetail?.deletePresta"
+    (close)="closeDetail()"
+    (edit)="onEditDetail()"
+    (remove)="onDeleteDetail()">
+  </bill-detail-modal>
   }
 </div>
 } @else {

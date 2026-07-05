@@ -22,6 +22,8 @@ import {
   switchMap,
 } from 'rxjs';
 import { SearchComponent } from '../../../shared/search/search.component';
+import { EntityCardComponent } from '../../../shared/entity-card/entity-card.component';
+import { DetailModalComponent, DetailField } from '../../../shared/detail-modal/detail-modal.component';
 
 @Component({
   selector: 'bill-compte-read',
@@ -32,6 +34,8 @@ import { SearchComponent } from '../../../shared/search/search.component';
     ReactiveFormsModule,
     CustomDecimalPipe,
     FormsModule,
+    EntityCardComponent,
+    DetailModalComponent,
   ],
   templateUrl: './compte-read.component.html',
   styleUrl: './compte-read.component.css',
@@ -59,6 +63,28 @@ export class CompteReadComponent implements OnInit, OnDestroy {
   totalElements = 0;
   searchTerm = '';
   private searchSubject = new Subject<string>();
+
+  selectedCompte: Compte | null = null;
+  detailOpen = false;
+
+  openDetail(compte: Compte): void {
+    this.selectedCompte = compte;
+    this.detailOpen = true;
+  }
+  closeDetail(): void {
+    this.detailOpen = false;
+  }
+  get detailFields(): DetailField[] {
+    const o = this.selectedCompte;
+    if (!o) return [];
+    return [
+      { label: 'Date', value: o.dateOperation, section: 'Opération' },
+      { label: 'Type', value: o.typeOperation },
+      { label: 'Description', value: o.descriptionOperation, wide: true },
+      { label: 'Montant', value: new CustomDecimalPipe().transform(o.montantOperation) + ' €', isMoney: true, section: 'Montants' },
+      { label: 'Exercice', value: o.exercise, tone: 'brand' },
+    ];
+  }
 
   get sommeMontant(): number {
     return (this.operations ?? []).reduce(

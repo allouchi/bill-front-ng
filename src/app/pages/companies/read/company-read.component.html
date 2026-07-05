@@ -42,7 +42,8 @@
     </button>
   </div>
 
-  <div class="table-shell">
+  <!-- TABLE (desktop ≥768px) -->
+  <div class="table-shell list-desktop">
     <div class="table-scroll">
     <table class="table table-success table-striped">
       <thead class="table-dark">
@@ -58,7 +59,7 @@
       </thead>
       <tbody class="stagger">
         @for (company of displayedCompanies; track company.id) {
-        <tr [ngClass]="{
+        <tr (click)="openDetail(company)" [ngClass]="{
             'table-success': company.checked== true,
             'table-danger': company.checked== false
           }">
@@ -74,7 +75,7 @@
             </span>
           </td>
 
-          <td class="cell-actions" data-label="Actions">
+          <td class="cell-actions" data-label="Actions" (click)="$event.stopPropagation()">
             <button class="btn btn-outline-primary btn-sm me-2" (click)="editCompany($event,company)"
               title="Modifier Company" [disabled]="!isAdmin || !company.checked">
               <i class="bi bi-pencil"></i>
@@ -100,6 +101,55 @@
     </table>
     </div>
   </div>
+
+  <!-- ENTITY CARDS (mobile <768px) -->
+  <div class="entity-grid stagger">
+    @for (company of displayedCompanies; track company.id) {
+    <bill-entity-card
+      icon="bi-building"
+      accent="brand"
+      [title]="company.socialReason"
+      [meta]="[
+        { icon: 'bi-upc-scan', text: company.siret },
+        { icon: 'bi-bank', text: company.rcsName }
+      ]"
+      [status]="company.checked ? { label: 'Validée', tone: 'success' } : { label: 'En attente', tone: 'warning' }"
+      (open)="openDetail(company)">
+      <div card-actions>
+        <button class="btn btn-sm" (click)="editCompany($event, company)" [disabled]="!isAdmin || !company.checked">
+          <i class="bi bi-pencil"></i> Modifier
+        </button>
+        <button class="btn btn-sm btn-outline-danger" (click)="deleteCompany($event, company)"
+          [disabled]="!isAdmin || !company.checked">
+          <i class="bi bi-trash"></i> Supprimer
+        </button>
+      </div>
+    </bill-entity-card>
+    } @empty {
+    <div class="surface-card empty-state">
+      <div class="empty-glyph"><i class="bi bi-buildings"></i></div>
+      <h3>Aucune société</h3>
+      <p>Ajoutez la société qui émettra vos factures.</p>
+    </div>
+    }
+  </div>
+
+  <!-- DETAIL MODAL -->
+  <bill-detail-modal
+    [open]="detailOpen"
+    icon="bi-building"
+    [accent]="selectedCompany?.checked ? 'success' : 'warning'"
+    [title]="selectedCompany?.socialReason || 'Société'"
+    [status]="selectedCompany
+      ? (selectedCompany.checked ? { label: 'Validée', tone: 'success' } : { label: 'En attente', tone: 'warning' })
+      : undefined"
+    [fields]="detailFields"
+    [canEdit]="isAdmin && !!selectedCompany?.checked"
+    [canDelete]="isAdmin && !!selectedCompany?.checked"
+    (close)="closeDetail()"
+    (edit)="onEditDetail()"
+    (remove)="onDeleteDetail()">
+  </bill-detail-modal>
 </div>
 } @else {
 <bill-waiting [edit]="parent"></bill-waiting>

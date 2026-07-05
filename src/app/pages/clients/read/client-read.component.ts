@@ -12,11 +12,13 @@ import { AuthService } from '../../../services/auth/auth-service';
 import { AlertService } from '../../../services/alert/alertService';
 import Prestation from '../../../models/Prestation';
 import { listStagger } from '../../../shared/animations/app.animations';
+import { EntityCardComponent } from '../../../shared/entity-card/entity-card.component';
+import { DetailModalComponent, DetailField } from '../../../shared/detail-modal/detail-modal.component';
 
 @Component({
   selector: 'bill-client-read',
   standalone: true,
-  imports: [AdresseClientPipe, WaitingComponent],
+  imports: [AdresseClientPipe, WaitingComponent, EntityCardComponent, DetailModalComponent],
   templateUrl: './client-read.component.html',
   styleUrl: './client-read.component.css',
   animations: [listStagger],
@@ -28,6 +30,54 @@ export class ClientReadComponent implements OnInit, OnDestroy {
   isAdmin = false;
   parent = 'read';
   siret: string | null = '';
+
+  selectedClient: Client | null = null;
+  detailOpen = false;
+
+  openDetail(client: Client): void {
+    this.selectedClient = client;
+    this.detailOpen = true;
+  }
+  closeDetail(): void {
+    this.detailOpen = false;
+  }
+  onEditDetail(): void {
+    if (this.selectedClient) {
+      this.editClient(new Event('click'), this.selectedClient);
+    }
+    this.closeDetail();
+  }
+  onDeleteDetail(): void {
+    if (this.selectedClient) {
+      this.deleteClient(new Event('click'), this.selectedClient);
+    }
+    this.closeDetail();
+  }
+  clientEmails(client: Client): string {
+    return (client.emails || []).map((e) => e.email).join(', ');
+  }
+  firstEmail(client: Client): string {
+    return client.emails && client.emails.length ? client.emails[0].email : '';
+  }
+  clientAddress(client: Client): string {
+    const a = client.adresseClient;
+    if (!a) return '';
+    return `${a.numero ?? ''}, ${a.rue ?? ''} ${a.codePostal ?? ''} ${a.localite ?? ''}`.trim();
+  }
+  get detailFields(): DetailField[] {
+    const c = this.selectedClient;
+    if (!c) return [];
+    return [
+      { label: 'Raison sociale', value: c.socialReason, wide: true, section: 'Client' },
+      { label: 'Adresses email', value: this.clientEmails(c) || '—', wide: true },
+      { label: 'Adresse', value: this.clientAddress(c), wide: true, section: 'Coordonnées' },
+      {
+        label: 'Facturation',
+        value: c.hasPrestation ? 'Avec prestation' : 'Aucune prestation',
+        tone: c.hasPrestation ? 'brand' : 'default',
+      },
+    ];
+  }
 
   get totalEmails(): number {
     return this.clients.reduce((sum, c) => sum + (c.emails?.length || 0), 0);

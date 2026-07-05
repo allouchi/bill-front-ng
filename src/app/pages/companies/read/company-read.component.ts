@@ -14,11 +14,13 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AlertService } from '../../../services/alert/alertService';
 import { CommonModule } from '@angular/common';
+import { EntityCardComponent } from '../../../shared/entity-card/entity-card.component';
+import { DetailModalComponent, DetailField } from '../../../shared/detail-modal/detail-modal.component';
 
 @Component({
   selector: 'company-read',
   standalone: true,
-  imports: [WaitingComponent, FormsModule, CommonModule],
+  imports: [WaitingComponent, FormsModule, CommonModule, EntityCardComponent, DetailModalComponent],
   templateUrl: './company-read.component.html',
   styleUrls: ['./company-read.component.scss'],
 })
@@ -30,6 +32,53 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   isAdmin = false;
   parent = 'read';
   statusFilter: 'all' | 'valid' | 'pending' = 'all';
+
+  selectedCompany: Company | null = null;
+  detailOpen = false;
+
+  openDetail(company: Company): void {
+    this.selectedCompany = company;
+    this.detailOpen = true;
+  }
+  closeDetail(): void {
+    this.detailOpen = false;
+  }
+  onEditDetail(): void {
+    if (this.selectedCompany) {
+      this.editCompany(new Event('click'), this.selectedCompany);
+    }
+    this.closeDetail();
+  }
+  onDeleteDetail(): void {
+    if (this.selectedCompany) {
+      this.deleteCompany(new Event('click'), this.selectedCompany);
+    }
+    this.closeDetail();
+  }
+  companyAddress(company: Company): string {
+    const a = company.companyAdresse;
+    if (!a) return '';
+    return `${a.numero ?? ''}, ${a.rue ?? ''} ${a.codePostal ?? ''} ${a.localite ?? ''}`.trim();
+  }
+  get detailFields(): DetailField[] {
+    const c = this.selectedCompany;
+    if (!c) return [];
+    return [
+      { label: 'Raison sociale', value: c.socialReason, wide: true, section: 'Société' },
+      { label: 'Siret', value: c.siret },
+      { label: 'RCS', value: c.rcsName },
+      { label: 'Numéro TVA', value: c.numeroTva },
+      { label: 'Code APE', value: c.codeApe },
+      {
+        label: 'Statut',
+        value: c.checked ? 'Validée' : 'En attente',
+        tone: c.checked ? 'success' : 'warning',
+      },
+      { label: 'IBAN', value: c.numeroIban, wide: true, section: 'Banque' },
+      { label: 'BIC', value: c.numeroBic },
+      { label: 'Adresse', value: this.companyAddress(c), wide: true, section: 'Coordonnées' },
+    ];
+  }
 
   get validCount(): number {
     return this.companies.filter((c) => c.checked).length;

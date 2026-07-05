@@ -25,6 +25,8 @@ import {
   switchMap,
 } from 'rxjs';
 import { SearchComponent } from '../../../shared/search/search.component';
+import { EntityCardComponent } from '../../../shared/entity-card/entity-card.component';
+import { DetailModalComponent, DetailField } from '../../../shared/detail-modal/detail-modal.component';
 
 @Component({
   selector: 'bill-operation-read',
@@ -35,6 +37,8 @@ import { SearchComponent } from '../../../shared/search/search.component';
     ReactiveFormsModule,
     CustomDecimalPipe,
     FormsModule,
+    EntityCardComponent,
+    DetailModalComponent,
   ],
   templateUrl: './operation-read.component.html',
   styleUrl: './operation-read.component.css',
@@ -59,6 +63,39 @@ export class OperationReadComponent implements OnInit, OnDestroy {
   totalElements = 0;
   searchTerm = '';
   private searchSubject = new Subject<string>();
+
+  selectedOperation: Operation | null = null;
+  detailOpen = false;
+
+  openDetail(operation: Operation): void {
+    this.selectedOperation = operation;
+    this.detailOpen = true;
+  }
+  closeDetail(): void {
+    this.detailOpen = false;
+  }
+  onEditDetail(): void {
+    if (this.selectedOperation) {
+      this.updateOperation(this.selectedOperation);
+    }
+    this.closeDetail();
+  }
+  onDeleteDetail(): void {
+    if (this.selectedOperation) {
+      this.deleteOperation(new Event('click'), this.selectedOperation);
+    }
+    this.closeDetail();
+  }
+  get detailFields(): DetailField[] {
+    const o = this.selectedOperation;
+    if (!o) return [];
+    return [
+      { label: 'Type d\'opération', value: o.typeOperation, section: 'Opération' },
+      { label: 'Exercice', value: o.exercise, tone: 'brand' },
+      { label: 'Montant', value: new CustomDecimalPipe().transform(o.montantOperation) + ' €', isMoney: true },
+      { label: 'Date', value: o.dateOperation },
+    ];
+  }
 
   router = inject(Router);
   constructor(

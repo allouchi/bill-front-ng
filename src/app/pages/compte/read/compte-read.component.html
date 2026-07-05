@@ -66,7 +66,8 @@
     </div>
   </div>
 
-  <div class="table-shell">
+  <!-- TABLE (desktop ≥768px) -->
+  <div class="table-shell list-desktop">
     <div class="table-scroll">
     <table class="table table-success table-striped">
       <thead class="table-dark">
@@ -80,7 +81,7 @@
       </thead>
       <tbody>
         @for (operation of operations; track operation.id) {
-        <tr>
+        <tr (click)="openDetail(operation)">
           <td style="text-align: center" data-label="Date Opération">{{ operation.dateOperation }}</td>
           <td style="text-align: left" data-label="Description">{{ operation.descriptionOperation }}</td>
           <td style="text-align: center" data-label="Type">{{ operation.typeOperation }}</td>
@@ -115,18 +116,56 @@
       }
     </table>
     </div>
-    @if(totalPages > 1){
-    <div class="pagination-bar scroll-x-mobile">
-      <button class="page-btn" (click)="previousPage()" [disabled]="page === 0" aria-label="Page précédente">
-        <i class="bi bi-arrow-left"></i>
-      </button>
-      <span class="page-indicator">Page {{ page + 1 }} / {{ totalPages }}</span>
-      <button class="page-btn" (click)="nextPage()" [disabled]="page >= totalPages - 1" aria-label="Page suivante">
-        <i class="bi bi-arrow-right"></i>
-      </button>
+  </div>
+
+  <!-- ENTITY CARDS (mobile <768px) -->
+  <div class="entity-grid stagger">
+    @for (operation of operations; track operation.id) {
+    <bill-entity-card
+      icon="bi-wallet2"
+      [accent]="operation.montantOperation < 0 ? 'error' : 'success'"
+      [title]="operation.descriptionOperation || operation.typeOperation"
+      [hasMenu]="false"
+      [meta]="[
+        { icon: 'bi-calendar-event', text: operation.dateOperation },
+        { icon: 'bi-tag', text: operation.typeOperation }
+      ]"
+      metricLabel="Montant"
+      [metricValue]="(operation.montantOperation | customDecimalPipe) + ' €'"
+      [status]="{ label: operation.exercise, tone: 'brand' }"
+      (open)="openDetail(operation)">
+    </bill-entity-card>
+    } @empty {
+    <div class="surface-card empty-state">
+      <div class="empty-glyph"><i class="bi bi-bank"></i></div>
+      <h3>Aucune Opération</h3>
+      <p>Aucune opération ne correspond aux filtres sélectionnés.</p>
     </div>
     }
   </div>
+
+  @if(totalPages > 1){
+  <div class="pagination-bar scroll-x-mobile">
+    <button class="page-btn" (click)="previousPage()" [disabled]="page === 0" aria-label="Page précédente">
+      <i class="bi bi-arrow-left"></i>
+    </button>
+    <span class="page-indicator">Page {{ page + 1 }} / {{ totalPages }}</span>
+    <button class="page-btn" (click)="nextPage()" [disabled]="page >= totalPages - 1" aria-label="Page suivante">
+      <i class="bi bi-arrow-right"></i>
+    </button>
+  </div>
+  }
+
+  <!-- DETAIL MODAL -->
+  <bill-detail-modal
+    [open]="detailOpen"
+    icon="bi-wallet2"
+    [accent]="selectedCompte && selectedCompte.montantOperation < 0 ? 'error' : 'success'"
+    [title]="selectedCompte?.descriptionOperation || selectedCompte?.typeOperation || 'Opération'"
+    [subtitle]="selectedCompte?.dateOperation"
+    [fields]="detailFields"
+    (close)="closeDetail()">
+  </bill-detail-modal>
   }
 </div>
 

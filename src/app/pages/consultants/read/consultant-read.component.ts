@@ -12,11 +12,13 @@ import { AuthService } from '../../../services/auth/auth-service';
 import { AlertService } from '../../../services/alert/alertService';
 import Prestation from '../../../models/Prestation';
 import { PrestationService } from '../../../services/prestations/prestation.service';
+import { EntityCardComponent } from '../../../shared/entity-card/entity-card.component';
+import { DetailModalComponent, DetailField } from '../../../shared/detail-modal/detail-modal.component';
 
 @Component({
   selector: 'bill-consultant-read',
   standalone: true,
-  imports: [WaitingComponent],
+  imports: [WaitingComponent, EntityCardComponent, DetailModalComponent],
   templateUrl: './consultant-read.component.html',
   styleUrl: './consultant-read.component.css',
 })
@@ -27,6 +29,42 @@ export class ConsultantReadComponent {
 siret: string | null = '';
   observableEvent$ = new Subscription();
   isAdmin = false;
+
+  selectedConsultant: Consultant | null = null;
+  detailOpen = false;
+
+  openDetail(consultant: Consultant): void {
+    this.selectedConsultant = consultant;
+    this.detailOpen = true;
+  }
+  closeDetail(): void {
+    this.detailOpen = false;
+  }
+  fullName(c: Consultant): string {
+    return `${c.firstName ?? ''} ${c.lastName ?? ''}`.trim();
+  }
+  onEditDetail(): void {
+    if (this.selectedConsultant) {
+      this.editConsultant(new Event('click'), this.selectedConsultant);
+    }
+    this.closeDetail();
+  }
+  onDeleteDetail(): void {
+    if (this.selectedConsultant) {
+      this.deleteConsultant(new Event('click'), this.selectedConsultant);
+    }
+    this.closeDetail();
+  }
+  get detailFields(): DetailField[] {
+    const c = this.selectedConsultant;
+    if (!c) return [];
+    return [
+      { label: 'Prénom', value: c.firstName, section: 'Consultant' },
+      { label: 'Nom', value: c.lastName },
+      { label: 'Fonction', value: c.fonction, tone: 'default' },
+      { label: 'Adresse email', value: c.email, wide: true, section: 'Contact' },
+    ];
+  }
 
   get affectedCount(): number {
     return this.consultants.filter((c) => c.hasPrestation).length;

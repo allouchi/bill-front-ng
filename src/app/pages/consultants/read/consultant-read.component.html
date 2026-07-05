@@ -26,7 +26,8 @@
     </div>
   </div>
 
-  <div class="table-shell">
+  <!-- TABLE (desktop ≥768px) -->
+  <div class="table-shell list-desktop">
     <div class="table-scroll">
     <table class="table table-success table-striped">
       <thead class="table-dark">
@@ -40,7 +41,7 @@
       </thead>
       <tbody class="stagger">
         @for (consultant of consultants; track consultant.id) {
-        <tr>
+        <tr (click)="openDetail(consultant)">
           <td style="text-align: center;" data-label="Prénom">{{ consultant.firstName }}</td>
           <td data-label="Nom">{{ consultant.lastName }}</td>
           <td data-label="Fonction"><span class="chip">{{ consultant.fonction }}</span></td>
@@ -48,7 +49,7 @@
             <span class="chip chip-info"><i class="bi bi-envelope"></i>{{ consultant.email }}</span>
           </td>
 
-          <td class="cell-actions" data-label="Actions">
+          <td class="cell-actions" data-label="Actions" (click)="$event.stopPropagation()">
             <button class="btn btn-outline-primary btn-sm me-2" (click)="editConsultant($event, consultant)"
               title="Modifier Consultant" [disabled]="!isAdmin">
               <i class="bi bi-pencil"></i>
@@ -76,6 +77,52 @@
     </table>
     </div>
   </div>
+
+  <!-- ENTITY CARDS (mobile <768px) -->
+  <div class="entity-grid stagger">
+    @for (consultant of consultants; track consultant.id) {
+    <bill-entity-card
+      icon="bi-person-badge"
+      accent="info"
+      [title]="fullName(consultant)"
+      [meta]="[
+        { icon: 'bi-briefcase', text: consultant.fonction },
+        { icon: 'bi-envelope', text: consultant.email }
+      ]"
+      (open)="openDetail(consultant)">
+      <div card-actions>
+        <button class="btn btn-sm" (click)="editConsultant($event, consultant)" [disabled]="!isAdmin">
+          <i class="bi bi-pencil"></i> Modifier
+        </button>
+        <button class="btn btn-sm btn-outline-danger" (click)="deleteConsultant($event, consultant)"
+          [disabled]="!isAdmin || consultant.hasPrestation">
+          <i class="bi bi-trash"></i> Supprimer
+        </button>
+      </div>
+    </bill-entity-card>
+    } @empty {
+    <div class="surface-card empty-state">
+      <div class="empty-glyph"><i class="bi bi-person-badge"></i></div>
+      <h3>Aucun consultant</h3>
+      <p>Ajoutez votre premier consultant pour l'affecter à une prestation.</p>
+    </div>
+    }
+  </div>
+
+  <!-- DETAIL MODAL -->
+  <bill-detail-modal
+    [open]="detailOpen"
+    icon="bi-person-badge"
+    accent="info"
+    [title]="selectedConsultant ? fullName(selectedConsultant) : 'Consultant'"
+    [subtitle]="selectedConsultant?.fonction"
+    [fields]="detailFields"
+    [canEdit]="isAdmin"
+    [canDelete]="isAdmin && !selectedConsultant?.hasPrestation"
+    (close)="closeDetail()"
+    (edit)="onEditDetail()"
+    (remove)="onDeleteDetail()">
+  </bill-detail-modal>
 </div>
 }@else {
 <bill-waiting></bill-waiting>

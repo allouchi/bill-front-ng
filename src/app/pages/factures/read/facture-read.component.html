@@ -89,8 +89,8 @@
     </button>
   </div>
 
-  <!-- TABLE PRINCIPALE -->
-  <div class="table-shell">
+  <!-- TABLE PRINCIPALE (desktop ≥768px) -->
+  <div class="table-shell list-desktop">
     <div class="table-scroll">
     <table class="table table-success table-striped text-nowrap">
       <thead class="table-dark">
@@ -112,7 +112,7 @@
       <tbody>
 
         @for (facture of displayedFactures; track facture.id) {
-        <tr [ngClass]="{
+        <tr (click)="openDetail(facture)" [ngClass]="{
           'table-success': facture.factureStatus == 'OK',
           'table-danger': facture.factureStatus == 'KO'
         }">
@@ -132,7 +132,7 @@
           </td>
           <td class="money tnum" data-label="TVA">{{ facture.montantTVA! | customDecimalPipe }}</td>
           <td class="money tnum" data-label="Débit TVA">{{ facture.montantTvaPaye! | customDecimalPipe }}</td>
-          <td class="cell-actions d-flex flex-wrap gap-1" data-label="Actions">
+          <td class="cell-actions d-flex flex-wrap gap-1" data-label="Actions" (click)="$event.stopPropagation()">
 
             <button class="btn btn-outline-primary btn-sm" (click)="encaissementFacture($event, facture)"
               title="Encaisser" [disabled]="!isAdmin">
@@ -178,21 +178,83 @@
       </tbody>
     </table>
     </div>
+  </div>
 
-    <!-- PAGINATION -->
-    @if(totalPages && totalPages > 1){
-    <div class="pagination-bar scroll-x-mobile">
-      <button class="page-btn" (click)="previousPage()" [disabled]="page === 0" aria-label="Page précédente">
-        <i class="bi bi-arrow-left"></i>
-      </button>
-      <span class="page-indicator">Page {{ page + 1 }} / {{ totalPages }}</span>
-      <button class="page-btn" (click)="nextPage()" [disabled]="page >= totalPages - 1" aria-label="Page suivante">
-        <i class="bi bi-arrow-right"></i>
-      </button>
+  <!-- ENTITY CARDS (mobile <768px) -->
+  <div class="entity-grid stagger">
+    @for (facture of displayedFactures; track facture.id) {
+    <bill-entity-card
+      icon="bi-receipt"
+      accent="brand"
+      [title]="facture.numeroFacture || '—'"
+      [meta]="[
+        { icon: 'bi-calendar3', text: facture.moisFacture },
+        { icon: 'bi-calendar-check', text: facture.dateFacturation }
+      ]"
+      metricLabel="TTC"
+      [metricValue]="(facture.prixTotalTTC! | customDecimalPipe) + ' €'"
+      [status]="facture.dateEncaissement
+        ? { label: 'Réglée', tone: 'success' }
+        : { label: 'En attente', tone: 'warning' }"
+      (open)="openDetail(facture)">
+      <div card-actions>
+        <button class="btn btn-sm" (click)="encaissementFacture($event, facture)" [disabled]="!isAdmin">
+          <i class="bi bi-pencil"></i> Encaisser
+        </button>
+        <button class="btn btn-sm" (click)="cancelModif($event, facture)" [disabled]="!isAdmin || facture.factureStatus == 'KO'">
+          <i class="bi bi-x-circle"></i> Annuler modif.
+        </button>
+        <button class="btn btn-sm" (click)="downloadFacture(facture)" [disabled]="!isAdmin">
+          <i class="bi bi-download"></i> Télécharger
+        </button>
+        <button class="btn btn-sm" (click)="sendFacture($event, facture)" [disabled]="!isAdmin || facture.sended">
+          <i class="bi bi-send"></i> Envoyer
+        </button>
+        <button class="btn btn-sm btn-outline-danger" (click)="deleteFacture($event, facture)" [disabled]="!isAdmin">
+          <i class="bi bi-trash"></i> Supprimer
+        </button>
+      </div>
+    </bill-entity-card>
+    } @empty {
+    <div class="surface-card empty-state">
+      <div class="empty-glyph"><i class="bi bi-receipt"></i></div>
+      <h3>Aucune facture</h3>
+      <p>Aucune facture n'a été trouvée pour cet exercice.</p>
     </div>
     }
   </div>
+
+  <!-- PAGINATION -->
+  @if(totalPages && totalPages > 1){
+  <div class="pagination-bar scroll-x-mobile">
+    <button class="page-btn" (click)="previousPage()" [disabled]="page === 0" aria-label="Page précédente">
+      <i class="bi bi-arrow-left"></i>
+    </button>
+    <span class="page-indicator">Page {{ page + 1 }} / {{ totalPages }}</span>
+    <button class="page-btn" (click)="nextPage()" [disabled]="page >= totalPages - 1" aria-label="Page suivante">
+      <i class="bi bi-arrow-right"></i>
+    </button>
+  </div>
+  }
   }
 </div>
+
+<!-- DETAIL MODAL -->
+<bill-detail-modal
+  [open]="detailOpen"
+  icon="bi-receipt"
+  [accent]="selectedFacture && isPaid(selectedFacture) ? 'success' : 'warning'"
+  [title]="'Facture ' + (selectedFacture?.numeroFacture || '')"
+  [subtitle]="selectedFacture?.dateFacturation ? ('Éditée le ' + selectedFacture?.dateFacturation) : undefined"
+  [status]="selectedFacture
+    ? (isPaid(selectedFacture) ? { label: 'Réglée', tone: 'success' } : { label: 'En attente', tone: 'warning' })
+    : undefined"
+  [fields]="detailFields"
+  [canEdit]="isAdmin"
+  [canDelete]="isAdmin"
+  (close)="closeDetail()"
+  (edit)="onEditDetail()"
+  (remove)="onDeleteDetail()">
+</bill-detail-modal>
 
 }
