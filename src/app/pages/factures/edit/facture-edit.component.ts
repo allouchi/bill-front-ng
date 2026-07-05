@@ -47,15 +47,12 @@ export default class FactureEditComponent implements OnInit {
       return;
     }
 
-    // Deep-link / refresh: no seed. There is no GET facture-by-id endpoint,
-    // so resolve it from the siret-scoped (noPage) list.
-    const siret = this.sharedDataService.getSiret();
-    if (idParam && siret) {
-      this.factureService.findBySiretAndExercice(siret, '').subscribe({
-        next: (factures) => {
-          const found = factures.find((f) => f.id === Number(idParam));
-          if (found) {
-            this.setFacture(found);
+    // Deep-link / refresh: no seed → fetch the facture directly by id.
+    if (idParam) {
+      this.factureService.getFactureById(Number(idParam)).subscribe({
+        next: (facture) => {
+          if (facture) {
+            this.setFacture(facture);
           } else {
             this.router.navigate(['/factures/read']);
           }

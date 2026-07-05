@@ -23,6 +23,10 @@ export class TvaService implements ITvaService {
 
   constructor(private readonly http: HttpClient) { }
 
+  getTvaById(id: number): Observable<Tva> {
+    return this.http.get<Tva>(`${this.TVA_PATH}/byId/${id}`);
+  }
+
   createOrUpdateTva(tva: Tva): Observable<Tva> {
     const isNew: boolean = !tva.id || tva.id === null;
 

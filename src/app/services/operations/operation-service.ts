@@ -22,6 +22,10 @@ export class OperationService {
 
   constructor(private readonly http: HttpClient) { }
 
+  getOperationById(id: number): Observable<Operation> {
+    return this.http.get<Operation>(`${this.OPERATION_PATH}/byId/${id}`);
+  }
+
   createOrUpdateOperation(operation: Operation): Observable<Operation> {
     const isNew: boolean = !operation.id || operation.id === 0;
     if (isNew) {

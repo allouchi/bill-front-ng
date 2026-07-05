@@ -69,13 +69,27 @@ export class TvaEditComponent implements OnInit, OnDestroy {
     this.tva = this.sharedDataService.getSelectedTva();
     this.siret = this.sharedDataService.getSiret();
 
-    // TVA has no GET-by-id endpoint; an edit deep-link without a seed can't be
-    // hydrated, so bounce back to the list instead of showing a broken form.
-    if (this.isEdit && !this.tva) {
-      this.router.navigate(['/tvas/read']);
+    // Edit deep-link / refresh without a seed → fetch the TVA directly by id.
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (this.isEdit && !this.tva && idParam) {
+      this.tvaService.getTvaById(Number(idParam)).subscribe({
+        next: (tva) => {
+          if (!tva) {
+            this.router.navigate(['/tvas/read']);
+            return;
+          }
+          this.tva = tva;
+          this.hydrateRefData();
+        },
+        error: (err) => this.onError(err),
+      });
       return;
     }
 
+    this.hydrateRefData();
+  }
+
+  private hydrateRefData(): void {
     const cachedCompanies = this.sharedDataService.getCompanies();
     const cachedExercices = this.sharedDataService.getExercices();
     if (cachedCompanies?.length && cachedExercices?.length) {

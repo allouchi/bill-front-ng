@@ -26,6 +26,10 @@ export class FactureService implements IFactureService {
 
   constructor(private readonly http: HttpClient) { }
 
+  getFactureById(id: number): Observable<Facture> {
+    return this.http.get<Facture>(`${this.FACTURES_PATH}/byId/${id}`);
+  }
+
   findFacturesBySiret(
     siret: string,
     page: number,

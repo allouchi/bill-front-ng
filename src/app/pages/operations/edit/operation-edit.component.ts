@@ -69,25 +69,18 @@ export class OperationEditComponent implements OnInit, OnDestroy {
       idParam &&
       (!this.selectedOperation || this.selectedOperation.id !== Number(idParam))
     ) {
-      // Deep-link / refresh: resolve the operation from the siret-scoped list.
-      if (this.siret) {
-        this.operationService
-          .getOperations(this.siret, 'Tous', 'Tous', 0, 1000)
-          .subscribe({
-            next: (page) => {
-              const found = page.content.find((o) => o.id === Number(idParam));
-              if (found) {
-                this.selectedOperation = found;
-                this.buildForm();
-              } else {
-                this.router.navigate(['/operations/read']);
-              }
-            },
-            error: (err) => this.onError(err),
-          });
-      } else {
-        this.router.navigate(['/operations/read']);
-      }
+      // Deep-link / refresh: fetch the operation directly by id.
+      this.operationService.getOperationById(Number(idParam)).subscribe({
+        next: (operation) => {
+          if (operation) {
+            this.selectedOperation = operation;
+            this.buildForm();
+          } else {
+            this.router.navigate(['/operations/read']);
+          }
+        },
+        error: (err) => this.onError(err),
+      });
     }
   }
 
