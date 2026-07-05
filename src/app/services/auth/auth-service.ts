@@ -76,7 +76,10 @@ export class AuthService {
       })
       .pipe(
         tap((res) => {
-          this.saveAccessToken(res.refreshToken);
+          this.saveAccessToken(res.accessToken);
+          if (res.refreshToken) {
+            this.saveRefreshToken(res.refreshToken);
+          }
         })
       );
   }
@@ -174,11 +177,7 @@ export class AuthService {
   }
 
   hasRole(expectedRole: string): boolean {
-    const role = this.userRoles.filter((u) => u.roleName === expectedRole);
-    if (role) {
-      return true;
-    }
-    return false;
+    return this.userRoles?.some((r) => r.roleName === expectedRole) ?? false;
   }
 
   // Pour plusieurs rôles autorisés :

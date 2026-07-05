@@ -25,7 +25,6 @@ import { SharedDataService } from '../../../services/shared/shared-data-service'
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
-import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { Util } from '../../../shared/utils/utils';
 import { AlertService } from '../../../services/alert/alertService';
 
@@ -152,24 +151,10 @@ export class PrestationReadComponent implements OnInit, OnDestroy {
 
   editNewFacture(event: Event, prestation: Prestation) {
     event.preventDefault();
-
-    const modal = this.modalService.open(ConfirmEditComponent, {
-      size: 'lg',
-      backdrop: 'static',
-    });
-    modal.componentInstance.item = 'Prestation';
-    modal.componentInstance.composant = prestation;
-
-    modal.result
-      .then((result) => {
-        this.sharedDataService.setSelectedPrestation(prestation);
-        this.sharedMessagesService.setMessage("Edition d'une nouvelle facture");
-        this.parent = 'edit';
-        this.router.navigate(['/factures/add']);
-      })
-      .catch(() => {
-        console.log('Annulé');
-      });
+    this.sharedDataService.setSelectedPrestation(prestation);
+    this.sharedMessagesService.setMessage("Edition d'une nouvelle facture");
+    this.parent = 'edit';
+    this.router.navigate(['/factures/add']);
   }
 
 

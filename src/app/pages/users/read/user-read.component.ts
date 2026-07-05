@@ -7,7 +7,6 @@ import { SharedMessagesService } from '../../../services/shared/messages.service
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
-import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { UserService } from '../../../services/user/user-service';
 import { UserNamePipe } from '../../../shared/pipes/userName-pipe';
 import { CompanyService } from '../../../services/companies/company-service';
@@ -112,26 +111,8 @@ export class UserReadComponent implements OnInit, OnDestroy {
 
   editUser(event: Event, user: User) {
     event.preventDefault();
-    const modal = this.modalService.open(ConfirmEditComponent, {
-      size: 'lg',
-      backdrop: 'static',
-      keyboard: false,
-      centered: true,
-    });
-
-    modal.componentInstance.item = 'User';
-    modal.componentInstance.composant = user;
-
-    modal.result
-      .then((result) => {
-        if (result.comment === 'confirm') {
-          this.sharedDataService.setSelectedUser(user);
-          this.router.navigate(['users/edit']);
-        }
-      })
-      .catch(() => {
-        console.log('Annulé');
-      });
+    this.sharedDataService.setSelectedUser(user);
+    this.router.navigate(['users/edit']);
   }
 
   addUser() {

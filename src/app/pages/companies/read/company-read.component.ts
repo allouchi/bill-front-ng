@@ -12,7 +12,6 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth-service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
-import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { AlertService } from '../../../services/alert/alertService';
 import { CommonModule } from '@angular/common';
 
@@ -144,25 +143,8 @@ export default class CompanyReadComponent implements OnInit, OnDestroy {
   editCompany(event: Event, company: Company) {
     event.preventDefault();
     this.sharedMessagesService.setMessage('Modifier une Société');
-    const modal = this.modalService.open(ConfirmEditComponent, {
-      size: 'lg',
-      backdrop: 'static',
-      keyboard: false,
-      centered: true,
-    });
-
-    modal.componentInstance.item = 'Company';
-    modal.componentInstance.composant = company;
-    modal.result
-      .then((result) => {
-        if (result.comment === 'confirm') {
-          this.sharedDataService.setSelectCompany(company);
-          this.router.navigate(['/companies/edit']);
-        }
-      })
-      .catch(() => {
-        console.log('Annulé');
-      });
+    this.sharedDataService.setSelectCompany(company);
+    this.router.navigate(['/companies/edit']);
   }
 
   addCampany() {

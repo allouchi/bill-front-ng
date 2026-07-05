@@ -9,7 +9,6 @@ import { SharedMessagesService } from '../../../services/shared/messages.service
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { AuthService } from '../../../services/auth/auth-service';
-import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { AlertService } from '../../../services/alert/alertService';
 import Prestation from '../../../models/Prestation';
 import { listStagger } from '../../../shared/animations/app.animations';
@@ -112,27 +111,9 @@ export class ClientReadComponent implements OnInit, OnDestroy {
 
   editClient(event: Event, client: Client) {
     event.preventDefault();
-    const modal = this.modalService.open(ConfirmEditComponent, {
-      size: 'lg',
-      backdrop: 'static',
-      keyboard: false,
-      centered: true,
-    });
-
-    modal.componentInstance.item = 'Client';
-    modal.componentInstance.composant = client;
-
-    modal.result
-      .then((result) => {
-        if (result.comment === 'confirm') {
-          this.sharedDataService.setSelectedClient(client);
-          this.sharedMessagesService.setMessage("Mise à jour d'un Client");
-          this.router.navigate(['clients/edit']);
-        }
-      })
-      .catch(() => {
-        console.log('Annulé');
-      });
+    this.sharedDataService.setSelectedClient(client);
+    this.sharedMessagesService.setMessage("Mise à jour d'un Client");
+    this.router.navigate(['clients/edit']);
   }
 
   addClient() {

@@ -8,7 +8,6 @@ import { SharedMessagesService } from '../../../services/shared/messages.service
 import { Subscription } from 'rxjs';
 import { ConfirmDeleteComponent } from '../../../shared/modal/delete/confirm-delete.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmEditComponent } from '../../../shared/modal/edit/confirm-update.component';
 import { AuthService } from '../../../services/auth/auth-service';
 import { AlertService } from '../../../services/alert/alertService';
 import Prestation from '../../../models/Prestation';
@@ -132,27 +131,9 @@ siret: string | null = '';
 
   editConsultant(event: Event, consultant: Consultant) {
     event.preventDefault();
-    const modal = this.modalService.open(ConfirmEditComponent, {
-      size: 'lg',
-      backdrop: 'static',
-      keyboard: false,
-      centered: true,
-    });
-
-    modal.componentInstance.item = 'Consultant';
-    modal.componentInstance.composant = consultant;
-
-    modal.result
-      .then((result) => {
-        if (result.comment === 'confirm') {
-          this.sharedDataService.setSelectedConsultant(consultant);
-          this.sharedMessagesService.setMessage("Mise à jour d'un Consultant");
-          this.router.navigate(['consultants/edit']);
-        }
-      })
-      .catch(() => {
-        console.log('Annulé');
-      });
+    this.sharedDataService.setSelectedConsultant(consultant);
+    this.sharedMessagesService.setMessage("Mise à jour d'un Consultant");
+    this.router.navigate(['consultants/edit']);
   }
   private onError(error: any) {
     this.isLoaded = true;

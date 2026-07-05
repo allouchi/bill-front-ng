@@ -370,26 +370,9 @@ export default class FactureReadComponent implements OnInit, OnDestroy {
 
   encaissementFacture(event: Event, facture: Facture) {
     event.preventDefault();
-    const modal = this.modalService.open(ConfirmEditComponent, {
-      size: 'lg',
-      backdrop: 'static',
-      keyboard: false,
-      centered: true,
-    });
-    modal.componentInstance.item = 'Facture';
-    modal.componentInstance.composant = facture;
-
-    modal.result
-      .then((result) => {
-        if (result.comment === 'confirm') {
-          this.sharedDataService.setSelectedFacture(facture);
-          this.sharedMessagesService.setMessage('Mise à jour de Facture');
-          this.router.navigate(['factures/edit']);
-        }
-      })
-      .catch(() => {
-        console.log('Annulé');
-      });
+    this.sharedDataService.setSelectedFacture(facture);
+    this.sharedMessagesService.setMessage('Mise à jour de Facture');
+    this.router.navigate(['factures/edit']);
   }
 
   downloadFacture(facture: Facture) {

@@ -155,23 +155,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   userLogout(event: Event) {
     event.preventDefault();
-    const modal = this.modalService.open(ConfirmEditComponent, {
-      size: 'lg',
-      backdrop: 'static',
-      keyboard: false,
-      centered: true,
-    });
-
-    modal.componentInstance.item = 'Logout';
-    modal.result
-      .then((result) => {
-        if (result.comment === 'confirm') {
-          this.logout();
-        }
-      })
-      .catch(() => {
-        console.log('Annulé');
-      });
+    this.logout();
   }
 
   updateUserService(user: User) {
