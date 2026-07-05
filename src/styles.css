@@ -942,20 +942,29 @@ html[data-theme="dark"] .table > tfoot.table-dark td,
 html[data-theme="dark"] .table tfoot.table-dark > tr > td { background: var(--surface-2) !important; }
 
 /* ---- Uniform rows (IMS): status is shown by the chip, NOT the row color. ---- */
-/* Every row shares the same surface — no per-status full-row tint, no rails.   */
+/* Every row shares the same surface — no per-status full-row tint, no rails.    */
+/* Bootstrap colours .table-* variants with an inset box-shadow on the cells      */
+/* (not background-color), so both must be neutralised.                            */
+.table.table-success,
+.table tbody tr.table-success,
+.table tbody tr.table-danger,
+.table tbody tr.table-warning,
+.table.table-success > :not(caption) > * > *,
 .table tbody tr.table-success > *,
 .table tbody tr.table-danger  > *,
-.table tbody tr.table-warning > * { background: transparent !important; }
-.table tbody tr.table-success:hover > *,
-.table tbody tr.table-danger:hover  > *,
-.table tbody tr.table-warning:hover > * { background: transparent !important; }
+.table tbody tr.table-warning > * {
+  --bs-table-bg: transparent;
+  --bs-table-accent-bg: transparent;
+  background: transparent !important;
+  box-shadow: none !important;
+}
 @media (max-width: 767.98px) {
   .table tbody tr.table-success,
   .table tbody tr.table-danger,
-  .table tbody tr.table-warning { background: var(--surface) !important; box-shadow: var(--shadow-card); }
+  .table tbody tr.table-warning { background: var(--surface) !important; box-shadow: var(--shadow-card) !important; }
   .table tbody tr.table-success > *,
   .table tbody tr.table-danger  > *,
-  .table tbody tr.table-warning > * { background: transparent !important; }
+  .table tbody tr.table-warning > * { background: transparent !important; box-shadow: none !important; }
 }
 
 /* ---- Form composition helpers -------------------------------------- */
